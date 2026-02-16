@@ -27,6 +27,7 @@ export interface DaisyFontConfig {
   bodyFont?: string;
   headingFont?: string;
   headingWeight?: string;
+  googleFonts?: string[]; // Font names to import from Google Fonts
 }
 
 export interface DaisyTheme {
@@ -225,8 +226,17 @@ export async function deleteCustomTheme(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export function generateCustomThemeCSS(slug: string, tokens: DaisyThemeTokens): string {
-  return `[data-theme="${slug}"] {
+export function generateCustomThemeCSS(slug: string, tokens: DaisyThemeTokens, fontConfig?: DaisyFontConfig | null): string {
+  let css = '';
+  
+  // Add Google Fonts import if needed
+  const googleFonts = extractGoogleFontNames(fontConfig);
+  if (googleFonts.length > 0) {
+    const weights = ['300', '400', '500', '600', '700', '800', '900'];
+    css += generateGoogleFontsImport(googleFonts, weights) + '\n\n';
+  }
+  
+  css += `[data-theme="${slug}"] {
   --p: ${tokens.primary};
   --pc: ${tokens['primary-content']};
   --s: ${tokens.secondary};
@@ -246,8 +256,86 @@ export function generateCustomThemeCSS(slug: string, tokens: DaisyThemeTokens): 
   --wa: ${tokens.warning};
   --wac: ${tokens['warning-content']};
   --er: ${tokens.error};
-  --erc: ${tokens['error-content']};
-}`;
+  --erc: ${tokens['error-content']};`;
+
+  if (fontConfig?.bodyFont) {
+    css += `\n  font-family: ${fontConfig.bodyFont};`;
+  }
+  
+  css += `\n}`;
+
+  if (fontConfig?.headingFont) {
+    css += `\n\n[data-theme="${slug}"] h1,
+[data-theme="${slug}"] h2,
+[data-theme="${slug}"] h3,
+[data-theme="${slug}"] h4,
+[data-theme="${slug}"] h5,
+[data-theme="${slug}"] h6 {
+  font-family: ${fontConfig.headingFont};`;
+    if (fontConfig.headingWeight) {
+      css += `\n  font-weight: ${fontConfig.headingWeight};`;
+    }
+    css += `\n}`;
+  }
+
+  return css;
+}
+
+/**
+ * Extract Google Font names from font family strings
+ * E.g., "Roboto, sans-serif" -> "Roboto"
+ */
+export function extractGoogleFontNames(fontConfig?: DaisyFontConfig | null): string[] {
+  if (!fontConfig) return [];
+  
+  const fonts: string[] = [];
+  
+  // Extract from bodyFont
+  if (fontConfig.bodyFont) {
+    const firstFont = fontConfig.bodyFont.split(',')[0].trim().replace(/['"]/g, '');
+    if (firstFont && !isSystemFont(firstFont)) {
+      fonts.push(firstFont);
+    }
+  }
+  
+  // Extract from headingFont
+  if (fontConfig.headingFont) {
+    const firstFont = fontConfig.headingFont.split(',')[0].trim().replace(/['"]/g, '');
+    if (firstFont && !isSystemFont(firstFont) && !fonts.includes(firstFont)) {
+      fonts.push(firstFont);
+    }
+  }
+  
+  return fonts;
+}
+
+/**
+ * Check if a font is a system font (no need to import)
+ */
+function isSystemFont(fontName: string): boolean {
+  const systemFonts = [
+    'system-ui', 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy',
+    'arial', 'helvetica', 'times', 'courier', 'verdana', 'georgia', 'palatino',
+    'garamond', 'bookman', 'comic sans ms', 'trebuchet ms', 'impact'
+  ];
+  return systemFonts.includes(fontName.toLowerCase());
+}
+
+/**
+ * Generate Google Fonts import URL
+ */
+export function generateGoogleFontsImport(fonts: string[], weights: string[] = ['400', '700']): string {
+  if (fonts.length === 0) return '';
+  
+  const fontParams = fonts
+    .map(font => {
+      const fontName = font.replace(/ /g, '+');
+      const weightParam = weights.join(';');
+      return `family=${fontName}:wght@${weightParam}`;
+    })
+    .join('&');
+  
+  return `@import url('https://fonts.googleapis.com/css2?${fontParams}&display=swap');`;
 }
 
 export function slugify(name: string): string {

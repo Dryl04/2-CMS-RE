@@ -53,7 +53,7 @@ function injectCustomThemeCSS(themes: DaisyTheme[]) {
     return;
   }
 
-  const css = customThemes.map(t => generateCustomThemeCSS(t.slug, t.tokens)).join('\n\n');
+  const css = customThemes.map(t => generateCustomThemeCSS(t.slug, t.tokens, t.font_config)).join('\n\n');
 
   if (!customStyleEl) {
     customStyleEl = document.createElement('style');
