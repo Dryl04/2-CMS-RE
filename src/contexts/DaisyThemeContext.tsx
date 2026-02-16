@@ -63,10 +63,14 @@ export function DaisyThemeProvider({ children }: { children: ReactNode }) {
       setError(null);
       const allThemes = await loadAllDaisyThemes();
       const sortedThemes = [...allThemes].sort((a, b) => {
-        if (a.slug === 'light') return -1;
-        if (b.slug === 'light') return 1;
-        if (a.slug === 'dark') return -1;
-        if (b.slug === 'dark') return 1;
+        const priority = (slug: string) => {
+          if (slug === 'light') return 0;
+          if (slug === 'dark') return 1;
+          return 2;
+        };
+        const aPriority = priority(a.slug);
+        const bPriority = priority(b.slug);
+        if (aPriority !== bPriority) return aPriority - bPriority;
         if (a.source !== b.source) return a.source === 'daisyui' ? -1 : 1;
         return a.name.localeCompare(b.name);
       });

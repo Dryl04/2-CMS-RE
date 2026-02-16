@@ -1,4 +1,5 @@
 const daisyThemes = require('daisyui/src/theming/themes');
+// Keep DaisyUI official order sourced from package while forcing light/dark first in UI.
 const officialDaisyThemes = [
   'light',
   'dark',

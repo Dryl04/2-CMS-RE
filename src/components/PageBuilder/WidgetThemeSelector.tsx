@@ -138,7 +138,7 @@ export default function WidgetThemeSelector({ section, onUpdateSection }: Widget
             <option value="__none__">Aucun thème</option>
             {themes.map(t => (
               <option key={t.id} value={t.slug}>
-                {t.name} {t.source === 'custom' ? '(personnalise)' : ''}
+                {t.name} {t.source === 'custom' ? '(personnalisé)' : ''}
               </option>
             ))}
           </select>

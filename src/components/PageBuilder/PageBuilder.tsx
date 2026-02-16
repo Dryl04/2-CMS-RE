@@ -44,6 +44,7 @@ interface PageBuilderProps {
 }
 
 type BuilderView = 'list' | 'editor';
+type ExtendedPageTemplate = PageTemplate & { page_theme_id?: string | null; daisy_theme_slug?: string | null };
 
 export default function PageBuilder({
   onNavigate,
@@ -64,7 +65,7 @@ export default function PageBuilder({
   const [sections, setSections] = useState<PageBuilderSection[]>(initialSections || []);
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
   const [device, setDevice] = useState<DeviceType>('desktop');
-  const [templateName, setTemplateName] = useState('Nouveau modele');
+  const [templateName, setTemplateName] = useState('Nouveau modèle');
   const [templateDescription, setTemplateDescription] = useState('');
   const [pageThemeId, setPageThemeId] = useState<string | null>(null);
   const [showThemeEditor, setShowThemeEditor] = useState(false);
@@ -241,11 +242,12 @@ export default function PageBuilder({
   };
 
   const editTemplate = (template: PageTemplate) => {
+    const themedTemplate = template as ExtendedPageTemplate;
     setEditingTemplateId(template.id);
     setTemplateName(template.name);
     setTemplateDescription(template.description || '');
-    setPageThemeId((template as any).page_theme_id || null);
-    setModelThemeRef((template as any).daisy_theme_slug || activeTheme?.slug || 'light');
+    setPageThemeId(themedTemplate.page_theme_id || null);
+    setModelThemeRef(themedTemplate.daisy_theme_slug || activeTheme?.slug || 'light');
     const loadedSections = (template.sections_data || []) as PageBuilderSection[];
     setSections(loadedSections);
     setHistory([loadedSections]);
@@ -273,7 +275,7 @@ export default function PageBuilder({
 
   const resetEditor = () => {
     setEditingTemplateId(null);
-    setTemplateName('Nouveau modele');
+    setTemplateName('Nouveau modèle');
     setTemplateDescription('');
     setPageThemeId(pageThemes.length > 0 ? pageThemes[0].id : null);
     setModelThemeRef(activeTheme?.slug || 'light');
@@ -299,6 +301,9 @@ export default function PageBuilder({
 
   const inheritedWidgetThemeRef = modelThemeRef === '__none__'
     ? '__none__'
+    : (modelThemeRef || activeTheme?.slug || 'light');
+  const resolvedModelDataTheme = modelThemeRef === '__none__'
+    ? undefined
     : (modelThemeRef || activeTheme?.slug || 'light');
 
   const renderTemplateListView = () => (
@@ -659,7 +664,7 @@ export default function PageBuilder({
           <PageThemeInjector themeId={pageThemeId} />
           <div
             className="mx-auto bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 page-themed"
-            data-theme={inheritedWidgetThemeRef === '__none__' ? undefined : inheritedWidgetThemeRef}
+            data-theme={resolvedModelDataTheme}
             style={{ width: getDeviceWidth(), maxWidth: '100%' }}
           >
             {sections.length === 0 ? (
@@ -697,7 +702,7 @@ export default function PageBuilder({
                 return (
                   <div
                     key={section.id}
-                    data-theme={inheritedWidgetThemeRef === '__none__' ? undefined : inheritedWidgetThemeRef}
+                    data-theme={resolvedModelDataTheme}
                     style={{
                       backgroundColor: section.design.background.type === 'color' ? section.design.background.value : undefined,
                       paddingTop: section.design.spacing.paddingTop,
@@ -722,7 +727,7 @@ export default function PageBuilder({
           <div className="flex-1 overflow-auto bg-gray-100 p-6 custom-scrollbar">
             <div
               className="mx-auto transition-all duration-300 page-themed"
-              data-theme={inheritedWidgetThemeRef === '__none__' ? undefined : inheritedWidgetThemeRef}
+              data-theme={resolvedModelDataTheme}
               style={{ width: getDeviceWidth(), maxWidth: '100%' }}
             >
               <Canvas

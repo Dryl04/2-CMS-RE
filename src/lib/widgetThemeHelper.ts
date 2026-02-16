@@ -2,11 +2,13 @@ import { PageBuilderSection } from './pageBuilderTypes';
 
 export function getWidgetThemeProps(section: PageBuilderSection, inheritedThemeRef?: string | null) {
   const themeConfig = section.themeConfig;
-  const dataTheme = themeConfig?.themeMode === 'named'
-    ? themeConfig.themeRef === '__none__' ? undefined : themeConfig.themeRef
-    : themeConfig?.themeMode === 'inherit'
-      ? (inheritedThemeRef === '__none__' ? undefined : inheritedThemeRef || undefined)
-      : undefined;
+  let dataTheme: string | undefined;
+
+  if (themeConfig?.themeMode === 'named') {
+    dataTheme = themeConfig.themeRef === '__none__' ? undefined : themeConfig.themeRef;
+  } else if (themeConfig?.themeMode === 'inherit') {
+    dataTheme = inheritedThemeRef === '__none__' || !inheritedThemeRef ? undefined : inheritedThemeRef;
+  }
 
   const customStyles: Record<string, string> = {};
   if (themeConfig?.themeMode === 'custom' && themeConfig.customTokens) {
