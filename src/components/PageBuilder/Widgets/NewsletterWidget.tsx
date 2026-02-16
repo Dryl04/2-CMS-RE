@@ -88,7 +88,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
             <button
               type="submit"
               className="btn btn-primary w-full sm:w-auto px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-lg flex items-center justify-center"
-              
+
             >
               {buttonText || 'Subscribe Now'}
             </button>
@@ -146,7 +146,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
             <button
               type="submit"
               className="btn btn-primary px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all hover:shadow-lg"
-              
+
             >
               {buttonText || 'Sign Up'}
             </button>
@@ -198,7 +198,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
           <button
             type="submit"
             className="btn btn-primary w-full py-4 rounded-xl font-semibold text-lg transition-all hover:shadow-xl"
-            
+
           >
             {buttonText || 'Subscribe'}
           </button>

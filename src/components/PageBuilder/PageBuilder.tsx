@@ -227,7 +227,6 @@ export default function PageBuilder({
     setTemplateName(template.name);
     setTemplateDescription(template.description || '');
     setDaisyThemeSlug(template.daisy_theme_slug || null);
-    setDaisyThemeSlug(template.daisy_theme_slug || null);
     const loadedSections = (template.sections_data || []) as PageBuilderSection[];
     setSections(loadedSections);
     setHistory([loadedSections]);
