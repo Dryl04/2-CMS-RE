@@ -178,9 +178,9 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">
             {logo ? (
-              <img src={logo} alt={logoText || 'Logo'} className="h-8 w-auto" />
+              <img src={logo} alt={logoText || 'Logo'} className="h-8 w-auto drop-shadow-md" />
             ) : (
-              <span className="text-xl font-bold text-base-100">
+              <span className="text-xl font-bold text-white drop-shadow-md">
                 {logoText || 'Brand'}
               </span>
             )}
@@ -191,7 +191,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               <a
                 key={index}
                 href={item.link || '#'}
-                className="text-base-100 hover:text-base-100/70 font-medium transition-colors"
+                className="text-white hover:text-white/80 font-medium transition-colors drop-shadow-md"
               >
                 {item.label}
               </a>
@@ -202,7 +202,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {ctaText && (
               <a
                 href={ctaLink || '#'}
-                className="bg-base-100 hover:bg-base-200 text-base-content px-6 py-2 rounded-lg font-medium transition-colors"
+                className="bg-primary hover:bg-primary/90 text-primary-content px-6 py-2 rounded-lg font-medium transition-colors shadow-lg"
               >
                 {ctaText}
               </a>
@@ -211,7 +211,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-base-100"
+            className="md:hidden p-2 text-white drop-shadow-md"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -219,14 +219,13 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden bg-base-100 border-t border-base-content/10">
+        <div className="md:hidden bg-base-100 border-t border-base-300">
           <div className="px-4 py-3 space-y-3">
             {(navItems || []).map((item: any, index: number) => (
               <a
                 key={index}
                 href={item.link || '#'}
-                className="block font-medium py-2 hover:opacity-80 text-base-content/70"
-                style={{ color: textColor }}
+                className="block font-medium py-2 hover:opacity-80 text-base-content"
               >
                 {item.label}
               </a>
@@ -235,7 +234,6 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               <a
                 href={ctaLink || '#'}
                 className="block text-center px-6 py-2 rounded-lg font-medium mt-4 bg-primary text-primary-content"
-                style={{ backgroundColor: buttonBg, color: buttonText }}
               >
                 {ctaText}
               </a>
