@@ -20,6 +20,7 @@ import GalleryWidget from './PageBuilder/Widgets/GalleryWidget';
 import TimelineWidget from './PageBuilder/Widgets/TimelineWidget';
 import NewsletterWidget from './PageBuilder/Widgets/NewsletterWidget';
 import ProcessWidget from './PageBuilder/Widgets/ProcessWidget';
+import { getWidgetThemeProps, normalizeSectionForTheme } from '../lib/widgetThemeHelper';
 
 interface SEOPageViewerProps {
   page: SEOMetadata;
@@ -33,8 +34,9 @@ interface SEOPageViewerProps {
 }
 
 function SectionRenderer({ section }: { section: PageBuilderSection }) {
-  const noop = () => {};
-  const props = { section, onUpdate: noop };
+  const noop = () => { };
+  const normalizedSection = normalizeSectionForTheme(section);
+  const props = { section: normalizedSection, onUpdate: noop };
 
   switch (section.type) {
     case 'header':
@@ -79,18 +81,30 @@ function SectionRenderer({ section }: { section: PageBuilderSection }) {
 function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
   return (
     <>
-      {sections.map((section) => (
-        <div
-          key={section.id}
-          style={{
-            backgroundColor: section.design.background.type === 'color' ? section.design.background.value : undefined,
-            paddingTop: section.design.spacing.paddingTop,
-            paddingBottom: section.design.spacing.paddingBottom,
-          }}
-        >
-          <SectionRenderer section={section} />
-        </div>
-      ))}
+      {sections.map((section) => {
+        const normalizedSection = normalizeSectionForTheme(section);
+        const widgetTheme = getWidgetThemeProps(normalizedSection);
+
+        return (
+          <div
+            key={normalizedSection.id}
+            data-theme={widgetTheme.dataTheme}
+            style={{
+              backgroundColor:
+                normalizedSection.design.background.type === 'color' && normalizedSection.design.background.value
+                  ? normalizedSection.design.background.value
+                  : undefined,
+              paddingTop: normalizedSection.design.spacing.paddingTop,
+              paddingBottom: normalizedSection.design.spacing.paddingBottom,
+              marginTop: normalizedSection.design.spacing.marginTop,
+              marginBottom: normalizedSection.design.spacing.marginBottom,
+              ...widgetTheme.customStyles,
+            }}
+          >
+            <SectionRenderer section={normalizedSection} />
+          </div>
+        );
+      })}
     </>
   );
 }
@@ -98,13 +112,13 @@ function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
 function FallbackPage({ page }: { page: SEOMetadata }) {
   return (
     <div>
-      <section className="bg-white py-20 px-6">
+      <section className="bg-base-100 py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-5xl font-bold text-base-content mb-6 leading-tight">
             {page.title}
           </h1>
           {page.description && (
-            <p className="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
               {page.description}
             </p>
           )}
@@ -113,18 +127,18 @@ function FallbackPage({ page }: { page: SEOMetadata }) {
 
       {page.content && (
         <section className="py-16 px-6">
-          <div className="max-w-4xl mx-auto prose prose-lg max-w-none">
+          <div className="max-w-4xl mx-auto prose prose-lg">
             <div dangerouslySetInnerHTML={{ __html: page.content }} />
           </div>
         </section>
       )}
 
       {page.keywords && page.keywords.length > 0 && (
-        <section className="py-12 px-6 bg-gray-50">
+        <section className="py-12 px-6 bg-base-200">
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-wrap gap-2 justify-center">
               {page.keywords.map((keyword, i) => (
-                <span key={i} className="px-4 py-2 bg-white text-gray-600 text-sm rounded-full border border-gray-200">
+                <span key={i} className="px-4 py-2 bg-base-100 text-base-content/70 text-sm rounded-full border border-base-content/10">
                   {keyword}
                 </span>
               ))}
@@ -140,13 +154,13 @@ export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThem
   const sections = (page.sections_data || []) as PageBuilderSection[];
   const hasSections = sections.length > 0;
   const [showAdminPanel, setShowAdminPanel] = useState(false);
-  
+
   // Get the DaisyUI theme to apply to this page
   const daisyThemeSlug = page.daisy_theme_slug || undefined;
 
   return (
-    <div 
-      className="min-h-screen bg-white page-themed"
+    <div
+      className="min-h-screen bg-base-100 text-base-content page-themed"
       data-theme={daisyThemeSlug}
     >
       <PageThemeInjector themeId={pageThemeId} />

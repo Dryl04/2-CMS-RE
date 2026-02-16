@@ -16,9 +16,9 @@ const socialIconMap: { [key: string]: any } = {
 export default function SocialFollowWidget({ section }: SocialFollowWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const buttonBg = design.colors?.buttonBackground || undefined;
-  const buttonText = design.colors?.buttonText || undefined;
+  const headingColor = design.typography?.headingColor;
+  const buttonBg = design.colors?.buttonBackground;
+  const buttonText = design.colors?.buttonText;
 
   return (
     <div className="bg-neutral" style={{ backgroundColor: bg }}>

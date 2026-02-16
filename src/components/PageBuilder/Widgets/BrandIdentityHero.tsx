@@ -14,10 +14,10 @@ const socialIconMap: { [key: string]: any } = {
 export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
-  const circleBg = design.colors?.circleBg || undefined;
-  const circleText = design.colors?.circleText || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
+  const circleBg = design.colors?.circleBg;
+  const circleText = design.colors?.circleText;
 
   return (
     <div className="bg-base-200" style={{ backgroundColor: bg }}>

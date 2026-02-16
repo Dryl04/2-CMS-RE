@@ -51,16 +51,9 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
           fontFamily: 'inherit',
           fontSize: '1rem',
           lineHeight: '1.5',
-          headingColor: '#111827',
-          textColor: '#4B5563',
           ...(widget.defaultDesign.typography || {}),
         },
         colors: {
-          primary: '#000000',
-          secondary: '#ffffff',
-          buttonBackground: '#000000',
-          buttonText: '#ffffff',
-          buttonBackgroundHover: '#1F2937',
           ...(widget.defaultDesign.colors || {}),
         },
       },
@@ -165,16 +158,9 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
         fontFamily: 'inherit',
         fontSize: '1rem',
         lineHeight: '1.5',
-        headingColor: '#111827',
-        textColor: '#4B5563',
         ...(widget.defaultDesign.typography || {}),
       },
       colors: {
-        primary: '#000000',
-        secondary: '#ffffff',
-        buttonBackground: '#000000',
-        buttonText: '#ffffff',
-        buttonBackgroundHover: '#1F2937',
         ...(widget.defaultDesign.colors || {}),
       },
     },
@@ -192,12 +178,12 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
 
   if (showPreview) {
     return (
-      <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-        <div className="flex-shrink-0 bg-white border-b border-gray-200 shadow-sm">
+      <div className="h-screen bg-base-200 text-base-content flex flex-col overflow-hidden">
+        <div className="flex-shrink-0 bg-base-100 border-b border-base-content/10 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <button
               onClick={() => setShowPreview(false)}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+              className="flex items-center space-x-2 text-base-content/70 hover:text-base-content"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Retour à l'éditeur</span>
@@ -206,13 +192,17 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
             <div className="w-32"></div>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto bg-white">
+        <div className="flex-1 overflow-y-auto bg-base-100">
           {selectedSections.map((section) => (
             <SectionRenderer
               key={section.id}
               section={section}
               isSelected={false}
-              onSelect={() => {}}
+              onSelect={() => { }}
+              onDelete={() => { }}
+              onDuplicate={() => { }}
+              onUpdate={() => { }}
+              previewMode
             />
           ))}
         </div>
@@ -296,11 +286,10 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-2 rounded-lg font-medium transition ${
-                  selectedCategory === cat.id
+                className={`px-4 py-2 rounded-lg font-medium transition ${selectedCategory === cat.id
                     ? 'bg-blue-600 text-white'
                     : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                }`}
+                  }`}
               >
                 {cat.label}
               </button>
@@ -317,79 +306,82 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredVariants.map((wv) => {
-            const section = createPreviewSection(wv.widget, wv.variant.id);
-            const added = isAdded(wv.widget.type, wv.variant.id);
+            {filteredVariants.map((wv) => {
+              const section = createPreviewSection(wv.widget, wv.variant.id);
+              const added = isAdded(wv.widget.type, wv.variant.id);
 
-            return (
-              <div
-                key={wv.id}
-                className="group relative bg-white rounded-2xl border-2 border-gray-200 overflow-hidden hover:border-blue-400 transition-all duration-300 hover:shadow-xl"
-                onMouseEnter={() => setHoveredWidget(wv.id)}
-                onMouseLeave={() => setHoveredWidget(null)}
-              >
-                <div className="absolute top-4 left-4 z-10 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200">
-                  <span className="text-sm font-bold text-gray-900">{wv.number}</span>
-                </div>
-
-                {added && (
-                  <div className="absolute top-4 right-4 z-10 bg-green-500 rounded-full w-10 h-10 flex items-center justify-center shadow-md">
-                    <Check className="w-5 h-5 text-white" />
-                  </div>
-                )}
-
-                <div className="relative overflow-hidden bg-gray-50" style={{ height: '300px' }}>
-                  <div
-                    className="absolute inset-0 origin-top-left"
-                    style={{
-                      transform: 'scale(0.4)',
-                      transformOrigin: 'top left',
-                      width: '250%',
-                      height: '250%',
-                    }}
-                  >
-                    <SectionRenderer
-                      section={section}
-                      isSelected={false}
-                      onSelect={() => {}}
-                    />
+              return (
+                <div
+                  key={wv.id}
+                  className="group relative bg-white rounded-2xl border-2 border-gray-200 overflow-hidden hover:border-blue-400 transition-all duration-300 hover:shadow-xl"
+                  onMouseEnter={() => setHoveredWidget(wv.id)}
+                  onMouseLeave={() => setHoveredWidget(null)}
+                >
+                  <div className="absolute top-4 left-4 z-10 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200">
+                    <span className="text-sm font-bold text-gray-900">{wv.number}</span>
                   </div>
 
-                  <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300 ${hoveredWidget === wv.id ? 'opacity-100' : 'opacity-0'}`} />
+                  {added && (
+                    <div className="absolute top-4 right-4 z-10 bg-green-500 rounded-full w-10 h-10 flex items-center justify-center shadow-md">
+                      <Check className="w-5 h-5 text-white" />
+                    </div>
+                  )}
 
-                  <button
-                    onClick={() => addSection(wv.widget, wv.variant.id)}
-                    disabled={added}
-                    className={`absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold shadow-lg transition-all duration-300 ${
-                      added
-                        ? 'bg-green-500 text-white cursor-not-allowed'
-                        : 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-105'
-                    } ${hoveredWidget === wv.id ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}
-                  >
-                    {added ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        <span>Ajoutée</span>
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-4 h-4" />
-                        <span>Ajouter</span>
-                      </>
-                    )}
-                  </button>
-                </div>
+                  <div className="relative overflow-hidden bg-gray-50" style={{ height: '300px' }}>
+                    <div
+                      className="absolute inset-0 origin-top-left"
+                      style={{
+                        transform: 'scale(0.4)',
+                        transformOrigin: 'top left',
+                        width: '250%',
+                        height: '250%',
+                      }}
+                    >
+                      <SectionRenderer
+                        section={section}
+                        isSelected={false}
+                        onSelect={() => { }}
+                        onDelete={() => { }}
+                        onDuplicate={() => { }}
+                        onUpdate={() => { }}
+                        previewMode
+                      />
+                    </div>
 
-                <div className="p-4 border-t border-gray-200">
-                  <h3 className="font-bold text-lg text-gray-900 mb-1">
-                    {wv.widget.label}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-2">{wv.variant.label}</p>
-                  <p className="text-xs text-gray-500">{wv.widget.description}</p>
+                    <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300 ${hoveredWidget === wv.id ? 'opacity-100' : 'opacity-0'}`} />
+
+                    <button
+                      onClick={() => addSection(wv.widget, wv.variant.id)}
+                      disabled={added}
+                      className={`absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold shadow-lg transition-all duration-300 ${added
+                          ? 'bg-green-500 text-white cursor-not-allowed'
+                          : 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-105'
+                        } ${hoveredWidget === wv.id ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}
+                    >
+                      {added ? (
+                        <>
+                          <Check className="w-4 h-4" />
+                          <span>Ajoutée</span>
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-4 h-4" />
+                          <span>Ajouter</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="p-4 border-t border-gray-200">
+                    <h3 className="font-bold text-lg text-gray-900 mb-1">
+                      {wv.widget.label}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-2">{wv.variant.label}</p>
+                    <p className="text-xs text-gray-500">{wv.widget.description}</p>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
           </div>
         </div>
       </div>

@@ -9,9 +9,9 @@ interface TimelineWidgetProps {
 export default function TimelineWidget({ section }: TimelineWidgetProps) {
   const { title, subtitle, events } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const accentColor = section.design?.colors?.accent || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
+  const accentColor = section.design?.colors?.accent;
 
   const defaultEvents = [
     {

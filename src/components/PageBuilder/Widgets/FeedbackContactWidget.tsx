@@ -8,10 +8,10 @@ interface FeedbackContactWidgetProps {
 export default function FeedbackContactWidget({ section }: FeedbackContactWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
-  const buttonBg = design.colors?.buttonBackground || undefined;
-  const buttonText = design.colors?.buttonText || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
+  const buttonBg = design.colors?.buttonBackground;
+  const buttonText = design.colors?.buttonText;
 
   return (
     <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>

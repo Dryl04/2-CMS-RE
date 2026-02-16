@@ -11,9 +11,9 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   const { title, subtitle, videoUrl, thumbnail, ctaText, ctaLink } = section.content;
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const accentColor = section.design?.colors?.accent || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
+  const accentColor = section.design?.colors?.accent;
 
   const getEmbedUrl = (url: string) => {
     if (!url) return '';

@@ -16,9 +16,9 @@ const iconMap: { [key: string]: any } = {
 export default function ContentWithServicesWidget({ section }: ContentWithServicesWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
-  const servicesBg = design.colors?.servicesBackground || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
+  const servicesBg = design.colors?.servicesBackground;
 
   const gridCols = content.services?.length === 2 ? 'grid-cols-2' : 'grid-cols-2';
 

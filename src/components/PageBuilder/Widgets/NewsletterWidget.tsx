@@ -9,9 +9,9 @@ interface NewsletterWidgetProps {
 export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
   const { title, subtitle, placeholder, buttonText, privacyNote, image } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const accentColor = section.design?.colors?.accent || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
+  const accentColor = section.design?.colors?.accent;
 
   const headingStyle = headingColor ? { color: headingColor } : undefined;
   const textStyle = textColor ? { color: textColor } : undefined;

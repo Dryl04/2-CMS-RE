@@ -9,8 +9,8 @@ interface TestimonialsWidgetProps {
 export default function TestimonialsWidget({ section }: TestimonialsWidgetProps) {
   const { title, subtitle, testimonials } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
 
   const headingStyle = headingColor ? { color: headingColor } : undefined;
   const textStyle = textColor ? { color: textColor } : undefined;
@@ -20,9 +20,8 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
       {[...Array(5)].map((_, i) => (
         <Star
           key={i}
-          className={`w-4 h-4 ${
-            i < rating ? 'text-warning fill-warning' : 'text-base-content/30'
-          }`}
+          className={`w-4 h-4 ${i < rating ? 'text-warning fill-warning' : 'text-base-content/30'
+            }`}
         />
       ))}
     </div>
@@ -74,7 +73,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
                 </div>
                 <div
                   className="text-xs sm:text-sm text-base-content/50"
-                  style={textColor ? { color: textColor, opacity: 0.7 } : undefined}
+                  style={textStyle}
                 >
                   {testimonial.title}
                 </div>
@@ -124,7 +123,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
             </div>
             <div
               className="text-sm sm:text-base text-base-content/50"
-              style={textColor ? { color: textColor, opacity: 0.7 } : undefined}
+              style={textStyle}
             >
               {testimonial.title}
             </div>
@@ -176,7 +175,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
               {testimonial.title && (
                 <span
                   className="text-base-content/50"
-                  style={textColor ? { color: textColor, opacity: 0.7 } : undefined}
+                  style={textStyle}
                 >
                   {' '}&mdash; {testimonial.title}
                 </span>

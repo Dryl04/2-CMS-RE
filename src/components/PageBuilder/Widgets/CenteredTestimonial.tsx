@@ -7,8 +7,8 @@ interface CenteredTestimonialProps {
 export default function CenteredTestimonial({ section }: CenteredTestimonialProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
 
   return (
     <div className="bg-base-100" style={{ backgroundColor: bg }}>

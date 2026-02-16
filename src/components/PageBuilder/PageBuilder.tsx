@@ -31,6 +31,7 @@ import ContentShowcaseWidget from './Widgets/ContentShowcaseWidget';
 import CenteredContentWidget from './Widgets/CenteredContentWidget';
 import TextColumnsWidget from './Widgets/TextColumnsWidget';
 import DaisyThemeManager from '../DaisyThemeManager';
+import { getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
 
 interface PageBuilderProps {
   onNavigate?: (view: string) => void;
@@ -616,10 +617,12 @@ export default function PageBuilder({
               <div className="p-12 text-center text-gray-500">Aucune section a previsualiser</div>
             ) : (
               sections.map((section) => {
+                const normalizedSection = normalizeSectionForTheme(section);
+                const widgetTheme = getWidgetThemeProps(normalizedSection);
                 const noop = () => {};
-                const widgetProps = { section, onUpdate: noop };
+                const widgetProps = { section: normalizedSection, onUpdate: noop };
                 const renderWidget = () => {
-                  switch (section.type) {
+                  switch (normalizedSection.type) {
                     case 'header': return <HeaderWidget {...widgetProps} />;
                     case 'hero': return <HeroWidget {...widgetProps} />;
                     case 'features': return <FeaturesWidget {...widgetProps} />;
@@ -646,11 +649,18 @@ export default function PageBuilder({
                 };
                 return (
                   <div
-                    key={section.id}
+                    key={normalizedSection.id}
+                    data-theme={widgetTheme.dataTheme}
                     style={{
-                      backgroundColor: section.design.background.type === 'color' ? section.design.background.value : undefined,
-                      paddingTop: section.design.spacing.paddingTop,
-                      paddingBottom: section.design.spacing.paddingBottom,
+                      backgroundColor:
+                        normalizedSection.design.background.type === 'color' && normalizedSection.design.background.value
+                          ? normalizedSection.design.background.value
+                          : undefined,
+                      paddingTop: normalizedSection.design.spacing.paddingTop,
+                      paddingBottom: normalizedSection.design.spacing.paddingBottom,
+                      marginTop: normalizedSection.design.spacing.marginTop,
+                      marginBottom: normalizedSection.design.spacing.marginBottom,
+                      ...widgetTheme.customStyles,
                     }}
                   >
                     {renderWidget()}

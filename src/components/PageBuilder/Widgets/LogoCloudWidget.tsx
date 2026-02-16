@@ -8,8 +8,8 @@ interface LogoCloudWidgetProps {
 export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
   const { title, subtitle, logos } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
 
   const defaultLogos = [
     { name: 'Company 1', url: 'https://via.placeholder.com/200x80/cccccc/666666?text=Logo+1' },

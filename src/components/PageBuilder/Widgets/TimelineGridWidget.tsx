@@ -7,21 +7,21 @@ interface TimelineGridWidgetProps {
 export default function TimelineGridWidget({ section }: TimelineGridWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
 
   return (
-    <div className="bg-base-200" style={{ backgroundColor: bg }}>
+    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
       }}>
         {content.subtitle && (
-          <p className="text-sm font-medium tracking-wider uppercase mb-4 text-base-content/70" style={{ color: textColor }}>
+          <p className="text-sm font-medium tracking-wider uppercase mb-4 text-base-content/70" style={textColor ? { color: textColor } : undefined}>
             {content.subtitle}
           </p>
         )}
-        <h2 className="text-4xl md:text-5xl font-bold mb-16 text-base-content" style={{ color: headingColor }}>
+        <h2 className="text-4xl md:text-5xl font-bold mb-16 text-base-content" style={headingColor ? { color: headingColor } : undefined}>
           {content.title || "Find out about our company's background."}
         </h2>
 
@@ -33,15 +33,15 @@ export default function TimelineGridWidget({ section }: TimelineGridWidgetProps)
               <div className="relative pl-8 pb-12">
                 <div className="absolute left-0 top-0 w-3 h-3 bg-base-content rounded-full transform -translate-x-[5px]"></div>
 
-                <p className="text-sm mb-4 text-base-content/70" style={{ color: textColor }}>
+                <p className="text-sm mb-4 text-base-content/70" style={textColor ? { color: textColor } : undefined}>
                   {event.period || '1985 - 2013'}
                 </p>
 
-                <h3 className="text-2xl font-bold mb-4 text-base-content" style={{ color: headingColor }}>
+                <h3 className="text-2xl font-bold mb-4 text-base-content" style={headingColor ? { color: headingColor } : undefined}>
                   {event.title || 'This is heading'}
                 </h3>
 
-                <p className="text-base leading-relaxed text-base-content/70" style={{ color: textColor }}>
+                <p className="text-base leading-relaxed text-base-content/70" style={textColor ? { color: textColor } : undefined}>
                   {event.description || 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et aliqua exceur sante.'}
                 </p>
               </div>

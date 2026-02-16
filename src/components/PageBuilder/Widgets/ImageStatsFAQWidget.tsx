@@ -8,8 +8,8 @@ interface ImageStatsFAQWidgetProps {
 export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
 
   return (
     <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>

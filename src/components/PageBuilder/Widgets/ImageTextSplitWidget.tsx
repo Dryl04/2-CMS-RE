@@ -17,11 +17,11 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
     image
   } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const subtitleColor = section.design?.typography?.subtitleColor || undefined;
-  const linkColor = section.design?.typography?.linkColor || undefined;
-  const bgColor = section.design?.background?.value || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
+  const subtitleColor = section.design?.typography?.subtitleColor;
+  const linkColor = section.design?.typography?.linkColor;
+  const bgColor = section.design?.background?.value;
 
   const renderDefault = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -11,13 +11,9 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
   const { title, subtitle, faqs } = section.content;
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const accentColor = section.design?.colors?.accent || undefined;
-
-  const headingStyle = headingColor ? { color: headingColor } : undefined;
-  const textStyle = textColor ? { color: textColor } : undefined;
-  const accentStyle = accentColor ? { color: accentColor } : undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
+  const accentColor = section.design?.colors?.accent;
 
   const defaultFaqs = [
     {
@@ -51,13 +47,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingStyle}
+          {...(headingColor && { style: { color: headingColor } })}
         >
           {title || 'Frequently Asked Questions'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textStyle}
+          {...(textColor && { style: { color: textColor } })}
         >
           {subtitle || 'Find answers to common questions'}
         </p>
@@ -77,20 +73,20 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
               >
                 <span
                   className="text-lg font-semibold pr-8 text-base-content"
-                  style={headingStyle}
+                  {...(headingColor && { style: { color: headingColor } })}
                 >
                   {faq.question}
                 </span>
                 <ChevronDown
                   className={`w-5 h-5 flex-shrink-0 transition-transform text-primary ${isOpen ? 'rotate-180' : ''}`}
-                  style={accentStyle}
+                  {...(accentColor && { style: { color: accentColor } })}
                 />
               </button>
               {isOpen && (
                 <div className="px-6 pb-5 pt-0">
                   <p
                     className="text-base leading-relaxed text-base-content/70"
-                    style={textStyle}
+                    {...(textColor && { style: { color: textColor } })}
                   >
                     {faq.answer}
                   </p>
@@ -108,13 +104,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingStyle}
+          {...(headingColor && { style: { color: headingColor } })}
         >
           {title || 'FAQ'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textStyle}
+          {...(textColor && { style: { color: textColor } })}
         >
           {subtitle || 'Everything you need to know'}
         </p>
@@ -134,20 +130,20 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
               >
                 <span
                   className="text-base font-semibold pr-4 text-base-content"
-                  style={headingStyle}
+                  {...(headingColor && { style: { color: headingColor } })}
                 >
                   {faq.question}
                 </span>
                 <ChevronDown
                   className={`w-5 h-5 flex-shrink-0 transition-transform mt-0.5 text-primary ${isOpen ? 'rotate-180' : ''}`}
-                  style={accentStyle}
+                  {...(accentColor && { style: { color: accentColor } })}
                 />
               </button>
               {isOpen && (
                 <div className="px-6 pb-4">
                   <p
                     className="text-sm leading-relaxed text-base-content/70"
-                    style={textStyle}
+                    {...(textColor && { style: { color: textColor } })}
                   >
                     {faq.answer}
                   </p>
@@ -165,13 +161,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingStyle}
+          {...(headingColor && { style: { color: headingColor } })}
         >
           {title || 'Common Questions'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textStyle}
+          {...(textColor && { style: { color: textColor } })}
         >
           {subtitle || 'Quick answers to questions you may have'}
         </p>
@@ -185,24 +181,24 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-primary/10"
-              style={accentColor ? { backgroundColor: `${accentColor}15` } : undefined}
+              {...(accentColor && { style: { backgroundColor: `${accentColor}15` } })}
             >
               <span
                 className="text-xl font-bold text-primary"
-                style={accentStyle}
+                {...(accentColor && { style: { color: accentColor } })}
               >
                 Q
               </span>
             </div>
             <h3
               className="text-lg font-bold mb-3 text-base-content"
-              style={headingStyle}
+              {...(headingColor && { style: { color: headingColor } })}
             >
               {faq.question}
             </h3>
             <p
               className="text-sm leading-relaxed text-base-content/70"
-              style={textStyle}
+              {...(textColor && { style: { color: textColor } })}
             >
               {faq.answer}
             </p>
@@ -217,13 +213,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingStyle}
+          {...(headingColor && { style: { color: headingColor } })}
         >
           {title || 'Got Questions?'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textStyle}
+          {...(textColor && { style: { color: textColor } })}
         >
           {subtitle || 'We have answers'}
         </p>

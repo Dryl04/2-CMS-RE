@@ -9,20 +9,20 @@ interface PricingWidgetProps {
 export default function PricingWidget({ section }: PricingWidgetProps) {
   const { title, subtitle, plans } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const accentColor = section.design?.colors?.accent || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
+  const accentColor = section.design?.colors?.accent;
 
   const renderCards = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={{ color: headingColor }}
+          style={headingColor ? { color: headingColor } : undefined}
         >
           {title || 'Simple, Transparent Pricing'}
         </h2>
-        <p className="text-lg sm:text-xl text-base-content/70" style={{ color: textColor }}>
+        <p className="text-lg sm:text-xl text-base-content/70" style={textColor ? { color: textColor } : undefined}>
           {subtitle || 'Choose the perfect plan for your needs'}
         </p>
       </div>
@@ -38,12 +38,12 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
             className={`relative bg-base-100 rounded-2xl shadow-xl p-8 transition-transform hover:scale-105 ${
               plan.popular ? 'ring-2 ring-offset-2 border-primary ring-primary' : 'border border-base-content/10'
             }`}
-            style={plan.popular && accentColor ? { borderColor: accentColor, ringColor: accentColor } : {}}
+            style={plan.popular && accentColor ? { borderColor: accentColor, ringColor: accentColor } : undefined}
           >
             {plan.popular && (
               <div
                 className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-sm font-semibold bg-primary text-primary-content"
-                style={{ backgroundColor: accentColor }}
+                style={accentColor ? { backgroundColor: accentColor } : undefined}
               >
                 Most Popular
               </div>
@@ -53,7 +53,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
                 {plan.name}
               </h3>
               <div className="flex items-baseline justify-center">
-                <span className="text-5xl font-bold text-primary" style={{ color: accentColor }}>
+                <span className="text-5xl font-bold text-primary" style={accentColor ? { color: accentColor } : undefined}>
                   {plan.price}
                 </span>
                 <span className="text-base-content/50 ml-2">{plan.period}</span>
@@ -62,7 +62,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
             <ul className="space-y-4 mb-8">
               {plan.features.map((feature: string, idx: number) => (
                 <li key={idx} className="flex items-start">
-                  <Check className="w-5 h-5 mr-3 flex-shrink-0 text-primary" style={{ color: accentColor }} />
+                  <Check className="w-5 h-5 mr-3 flex-shrink-0 text-primary" style={accentColor ? { color: accentColor } : undefined} />
                   <span className="text-base-content/70" style={{ color: textColor }}>{feature}</span>
                 </li>
               ))}
@@ -71,11 +71,11 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
               className={`w-full py-3 px-6 rounded-xl font-semibold transition-all hover:shadow-lg ${
                 plan.popular ? 'bg-primary text-primary-content' : 'bg-transparent text-primary border-2 border-primary'
               }`}
-              style={{
+              style={accentColor ? {
                 backgroundColor: plan.popular ? accentColor : undefined,
                 color: plan.popular ? undefined : accentColor,
                 borderColor: accentColor,
-              }}
+              } : undefined}
             >
               Get Started
             </button>
@@ -90,18 +90,18 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={{ color: headingColor }}
+          style={headingColor ? { color: headingColor } : undefined}
         >
           {title || 'Compare Plans'}
         </h2>
-        <p className="text-lg sm:text-xl text-base-content/70" style={{ color: textColor }}>
+        <p className="text-lg sm:text-xl text-base-content/70" style={textColor ? { color: textColor } : undefined}>
           {subtitle || 'Find the perfect fit for your business'}
         </p>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full bg-base-100 rounded-2xl shadow-xl overflow-hidden">
-          <thead className="bg-primary text-primary-content" style={{ backgroundColor: accentColor }}>
+          <thead className="bg-primary text-primary-content" style={accentColor ? { backgroundColor: accentColor } : undefined}>
             <tr>
               <th className="px-6 py-4 text-left font-semibold">Features</th>
               {(plans || [
@@ -118,7 +118,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           <tbody className="divide-y divide-base-content/10">
             {['Projects', 'Storage', 'Support', 'Analytics', 'Custom Domain'].map((feature, idx) => (
               <tr key={idx}>
-                <td className="px-6 py-4 font-medium text-base-content" style={{ color: headingColor }}>
+                <td className="px-6 py-4 font-medium text-base-content" style={headingColor ? { color: headingColor } : undefined}>
                   {feature}
                 </td>
                 <td className="px-6 py-4 text-center">
@@ -143,15 +143,15 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
       <div className="text-center mb-8">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={{ color: headingColor }}
+          style={headingColor ? { color: headingColor } : undefined}
         >
           {title || 'Flexible Pricing'}
         </h2>
-        <p className="text-lg sm:text-xl mb-6 text-base-content/70" style={{ color: textColor }}>
+        <p className="text-lg sm:text-xl mb-6 text-base-content/70" style={textColor ? { color: textColor } : undefined}>
           {subtitle || 'Save 20% with annual billing'}
         </p>
         <div className="inline-flex items-center bg-base-200 rounded-full p-1">
-          <button className="px-6 py-2 rounded-full font-semibold bg-primary text-primary-content" style={{ backgroundColor: accentColor }}>
+          <button className="px-6 py-2 rounded-full font-semibold bg-primary text-primary-content" style={accentColor ? { backgroundColor: accentColor } : undefined}>
             Monthly
           </button>
           <button className="px-6 py-2 rounded-full font-semibold text-base-content/60">
@@ -166,11 +166,11 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           { name: 'Enterprise', price: '$199', features: ['Everything in Pro', '24/7 Support', 'Custom Solutions'] },
         ]).slice(0, 2).map((plan: any, index: number) => (
           <div key={index} className="bg-base-100 rounded-2xl shadow-xl p-8 border-2 border-base-content/5 hover:border-base-content/20 transition-all">
-            <h3 className="text-2xl font-bold mb-2 text-base-content" style={{ color: headingColor }}>
+            <h3 className="text-2xl font-bold mb-2 text-base-content" style={headingColor ? { color: headingColor } : undefined}>
               {plan.name}
             </h3>
             <div className="flex items-baseline mb-6">
-              <span className="text-5xl font-bold text-primary" style={{ color: accentColor }}>
+              <span className="text-5xl font-bold text-primary" style={accentColor ? { color: accentColor } : undefined}>
                 {plan.price}
               </span>
               <span className="text-base-content/50 ml-2">/month</span>
@@ -178,14 +178,14 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
             <ul className="space-y-3 mb-8">
               {plan.features.map((feature: string, idx: number) => (
                 <li key={idx} className="flex items-center">
-                  <Check className="w-5 h-5 mr-3 text-primary" style={{ color: accentColor }} />
+                  <Check className="w-5 h-5 mr-3 text-primary" style={accentColor ? { color: accentColor } : undefined} />
                   <span className="text-base-content/70" style={{ color: textColor }}>{feature}</span>
                 </li>
               ))}
             </ul>
             <button
               className="w-full py-3 px-6 rounded-xl font-semibold transition-all hover:shadow-lg bg-primary text-primary-content"
-              style={{ backgroundColor: accentColor }}
+              style={accentColor ? { backgroundColor: accentColor } : undefined}
             >
               Start Free Trial
             </button>

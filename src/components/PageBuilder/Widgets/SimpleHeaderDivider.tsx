@@ -7,8 +7,8 @@ interface SimpleHeaderDividerProps {
 export default function SimpleHeaderDivider({ section }: SimpleHeaderDividerProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const dividerColor = design.colors?.dividerColor || undefined;
+  const headingColor = design.typography?.headingColor;
+  const dividerColor = design.colors?.dividerColor;
 
   return (
     <div className="bg-base-100" style={{ backgroundColor: bg }}>

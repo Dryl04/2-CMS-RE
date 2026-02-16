@@ -7,8 +7,8 @@ interface ProcessAlternatingProps {
 export default function ProcessAlternating({ section }: ProcessAlternatingProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
 
   return (
     <div className="bg-base-200" style={{ backgroundColor: bg }}>

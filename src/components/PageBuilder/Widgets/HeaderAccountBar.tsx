@@ -16,9 +16,9 @@ export default function HeaderAccountBar({ section }: HeaderAccountBarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const topBg = design.colors?.topBarBg || undefined;
-  const textColor = design.typography?.textColor || undefined;
-  const headingColor = design.typography?.headingColor || undefined;
+  const topBg = design.colors?.topBarBg;
+  const textColor = design.typography?.textColor;
+  const headingColor = design.typography?.headingColor;
 
   return (
     <header className="bg-base-100" style={{ backgroundColor: bg }}>

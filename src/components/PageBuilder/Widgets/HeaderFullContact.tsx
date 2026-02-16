@@ -14,11 +14,11 @@ const socialIconMap: { [key: string]: any } = {
 export default function HeaderFullContact({ section }: HeaderFullContactProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const topBg = design.colors?.topBarBg || undefined;
-  const textColor = design.typography?.textColor || undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const buttonBg = design.colors?.buttonBg || undefined;
-  const buttonText = design.colors?.buttonText || undefined;
+  const topBg = design.colors?.topBarBg;
+  const textColor = design.typography?.textColor;
+  const headingColor = design.typography?.headingColor;
+  const buttonBg = design.colors?.buttonBg;
+  const buttonText = design.colors?.buttonText;
 
   return (
     <header className="bg-base-100" style={{ backgroundColor: bg }}>
