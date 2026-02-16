@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import {
   DaisyTheme,
   DaisyThemeTokens,
+  DaisyFontConfig,
   loadAllDaisyThemes,
   loadActiveTheme,
   setActiveTheme as setActiveThemeDB,
@@ -21,8 +22,8 @@ interface DaisyThemeContextType {
   loading: boolean;
   error: string | null;
   setActiveTheme: (themeId: string) => Promise<void>;
-  createTheme: (name: string, slug: string, tokens: DaisyThemeTokens) => Promise<DaisyTheme>;
-  updateTheme: (id: string, updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens }) => Promise<void>;
+  createTheme: (name: string, slug: string, tokens: DaisyThemeTokens, fontConfig?: DaisyFontConfig | null) => Promise<DaisyTheme>;
+  updateTheme: (id: string, updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens; font_config?: DaisyFontConfig | null }) => Promise<void>;
   removeTheme: (id: string, force?: boolean) => Promise<{ success: boolean; usage?: ThemeUsage }>;
   refreshThemes: () => Promise<void>;
   getThemeBySlug: (slug: string) => DaisyTheme | undefined;
@@ -115,12 +116,12 @@ export function DaisyThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const createTheme = async (name: string, slug: string, tokens: DaisyThemeTokens): Promise<DaisyTheme> => {
+  const createTheme = async (name: string, slug: string, tokens: DaisyThemeTokens, fontConfig?: DaisyFontConfig | null): Promise<DaisyTheme> => {
     try {
       setError(null);
       if (!profile) throw new Error('Not authenticated');
 
-      const newTheme = await createCustomThemeWithValidation(name, slug, tokens, profile.id, themes);
+      const newTheme = await createCustomThemeWithValidation(name, slug, tokens, profile.id, themes, fontConfig);
       await refreshThemes();
       return newTheme;
     } catch (err) {
@@ -134,7 +135,7 @@ export function DaisyThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateTheme = async (id: string, updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens }) => {
+  const updateTheme = async (id: string, updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens; font_config?: DaisyFontConfig | null }) => {
     try {
       setError(null);
       await updateCustomThemeWithValidation(id, updates, themes);

@@ -23,12 +23,19 @@ export interface DaisyThemeTokens {
   'error-content': string;
 }
 
+export interface DaisyFontConfig {
+  bodyFont?: string;
+  headingFont?: string;
+  headingWeight?: string;
+}
+
 export interface DaisyTheme {
   id: string;
   name: string;
   slug: string;
   source: 'daisyui' | 'custom';
   tokens: DaisyThemeTokens;
+  font_config?: DaisyFontConfig | null;
   is_active: boolean;
   user_id: string | null;
   created_at: string;
@@ -184,11 +191,12 @@ export async function createCustomTheme(
   name: string,
   slug: string,
   tokens: DaisyThemeTokens,
-  userId: string
+  userId: string,
+  fontConfig?: DaisyFontConfig | null
 ): Promise<DaisyTheme> {
   const { data, error } = await supabase
     .from('daisyui_themes')
-    .insert({ name, slug, source: 'custom', tokens, user_id: userId })
+    .insert({ name, slug, source: 'custom', tokens, user_id: userId, font_config: fontConfig || null })
     .select()
     .single();
 
@@ -198,7 +206,7 @@ export async function createCustomTheme(
 
 export async function updateCustomTheme(
   id: string,
-  updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens }
+  updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens; font_config?: DaisyFontConfig | null }
 ): Promise<void> {
   const { error } = await supabase
     .from('daisyui_themes')
@@ -296,7 +304,8 @@ export async function createCustomThemeWithValidation(
   slug: string,
   tokens: DaisyThemeTokens,
   userId: string,
-  existingThemes: DaisyTheme[]
+  existingThemes: DaisyTheme[],
+  fontConfig?: DaisyFontConfig | null
 ): Promise<DaisyTheme> {
   // Check for duplicate slug
   const duplicateSlug = existingThemes.find(t => t.slug === slug);
@@ -314,12 +323,12 @@ export async function createCustomThemeWithValidation(
     );
   }
 
-  return await createCustomTheme(name, slug, tokens, userId);
+  return await createCustomTheme(name, slug, tokens, userId, fontConfig);
 }
 
 export async function updateCustomThemeWithValidation(
   id: string,
-  updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens },
+  updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens; font_config?: DaisyFontConfig | null },
   existingThemes: DaisyTheme[]
 ): Promise<void> {
   const theme = existingThemes.find(t => t.id === id);
