@@ -148,7 +148,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
                 </p>
               </div>
               <div className={isEven ? '' : 'md:col-start-1'}>
-                <div className="bg-gray-200 rounded-2xl h-48 sm:h-64" />
+                <div className="bg-base-200 rounded-2xl h-48 sm:h-64" />
               </div>
             </div>
           );

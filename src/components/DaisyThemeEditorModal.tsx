@@ -4,6 +4,7 @@ import { useDaisyTheme } from '../contexts/DaisyThemeContext';
 import {
   DaisyTheme,
   DaisyThemeTokens,
+  DaisyFontConfig,
   TOKEN_GROUPS,
   TOKEN_LABELS,
   createEmptyTokens,
@@ -24,6 +25,11 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
   const [name, setName] = useState(theme?.name || '');
   const [slug, setSlug] = useState(theme?.slug || '');
   const [tokens, setTokens] = useState<DaisyThemeTokens>(theme?.tokens || createEmptyTokens());
+  const [fontConfig, setFontConfig] = useState<DaisyFontConfig>({
+    bodyFont: theme?.font_config?.bodyFont || '',
+    headingFont: theme?.font_config?.headingFont || '',
+    headingWeight: theme?.font_config?.headingWeight || '700',
+  });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [autoSlug, setAutoSlug] = useState(!theme?.id);
@@ -38,6 +44,10 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
     setTokens(prev => ({ ...prev, [key]: value }));
   };
 
+  const updateFontConfig = (key: keyof DaisyFontConfig, value: string) => {
+    setFontConfig(prev => ({ ...prev, [key]: value }));
+  };
+
   const handleSave = async () => {
     if (!name.trim()) { setError('Le nom est requis'); return; }
     if (!slug.trim()) { setError('Le slug est requis'); return; }
@@ -46,10 +56,14 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
     setError(null);
 
     try {
+      const finalFontConfig = (fontConfig.bodyFont || fontConfig.headingFont || fontConfig.headingWeight) 
+        ? fontConfig 
+        : null;
+
       if (isNew || isOfficial) {
-        await createTheme(name.trim(), slug.trim(), tokens);
+        await createTheme(name.trim(), slug.trim(), tokens, finalFontConfig);
       } else {
-        await updateTheme(theme!.id, { name: name.trim(), slug: slug.trim(), tokens });
+        await updateTheme(theme!.id, { name: name.trim(), slug: slug.trim(), tokens, font_config: finalFontConfig });
       }
       onSaved();
     } catch (err) {
@@ -98,6 +112,60 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
                 className="input input-bordered w-full font-mono text-sm"
                 placeholder="mon-theme"
               />
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Configuration des polices (optionnel)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-medium">Police du corps de texte</span>
+                </label>
+                <input
+                  type="text"
+                  value={fontConfig.bodyFont || ''}
+                  onChange={(e) => updateFontConfig('bodyFont', e.target.value)}
+                  className="input input-bordered w-full text-sm"
+                  placeholder="Inter, system-ui, sans-serif"
+                />
+                <label className="label">
+                  <span className="label-text-alt">Ex: Inter, Roboto, Arial, sans-serif</span>
+                </label>
+              </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-medium">Police des titres</span>
+                </label>
+                <input
+                  type="text"
+                  value={fontConfig.headingFont || ''}
+                  onChange={(e) => updateFontConfig('headingFont', e.target.value)}
+                  className="input input-bordered w-full text-sm"
+                  placeholder="Playfair Display, Georgia, serif"
+                />
+                <label className="label">
+                  <span className="label-text-alt">Ex: Playfair Display, Montserrat, serif</span>
+                </label>
+              </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-medium">Poids des titres</span>
+                </label>
+                <select
+                  value={fontConfig.headingWeight || '700'}
+                  onChange={(e) => updateFontConfig('headingWeight', e.target.value)}
+                  className="select select-bordered w-full"
+                >
+                  <option value="300">Light (300)</option>
+                  <option value="400">Normal (400)</option>
+                  <option value="500">Medium (500)</option>
+                  <option value="600">Semi-Bold (600)</option>
+                  <option value="700">Bold (700)</option>
+                  <option value="800">Extra-Bold (800)</option>
+                  <option value="900">Black (900)</option>
+                </select>
+              </div>
             </div>
           </div>
 

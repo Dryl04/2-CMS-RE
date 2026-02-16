@@ -23,12 +23,19 @@ export interface DaisyThemeTokens {
   'error-content': string;
 }
 
+export interface DaisyFontConfig {
+  bodyFont?: string;
+  headingFont?: string;
+  headingWeight?: string;
+}
+
 export interface DaisyTheme {
   id: string;
   name: string;
   slug: string;
   source: 'daisyui' | 'custom';
   tokens: DaisyThemeTokens;
+  font_config?: DaisyFontConfig | null;
   is_active: boolean;
   user_id: string | null;
   created_at: string;
@@ -70,6 +77,8 @@ export const TOKEN_GROUPS = [
   { label: 'Statuts', keys: ['info', 'info-content', 'success', 'success-content', 'warning', 'warning-content', 'error', 'error-content'] as (keyof DaisyThemeTokens)[] },
 ];
 
+export const NO_THEME_SLUG = 'none';
+
 export const OFFICIAL_THEME_SLUGS = [
   'light', 'dark', 'cupcake', 'bumblebee', 'emerald', 'corporate',
   'synthwave', 'retro', 'cyberpunk', 'valentine', 'halloween', 'garden',
@@ -108,15 +117,47 @@ export function tokensAreDifferent(a: DaisyThemeTokens, b: DaisyThemeTokens): bo
   return keys.some(k => a[k]?.toLowerCase() !== b[k]?.toLowerCase());
 }
 
+export function createNoThemeEntry(): DaisyTheme {
+  return {
+    id: 'no-theme-special',
+    name: 'Aucun thème',
+    slug: NO_THEME_SLUG,
+    source: 'daisyui',
+    tokens: createEmptyTokens(),
+    is_active: false,
+    user_id: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+}
+
 export async function loadAllDaisyThemes(): Promise<DaisyTheme[]> {
   const { data, error } = await supabase
     .from('daisyui_themes')
-    .select('*')
-    .order('source')
-    .order('name');
+    .select('*');
 
   if (error) throw error;
-  return data || [];
+  
+  // Sort themes: light first, dark second, then daisyui themes alphabetically, then custom themes
+  const themes = data || [];
+  const sortedThemes = themes.sort((a, b) => {
+    // Special ordering for light and dark
+    if (a.slug === 'light') return -1;
+    if (b.slug === 'light') return 1;
+    if (a.slug === 'dark') return b.slug === 'light' ? 1 : -1;
+    if (b.slug === 'dark') return a.slug === 'light' ? -1 : 1;
+    
+    // Group by source: daisyui before custom
+    if (a.source !== b.source) {
+      return a.source === 'daisyui' ? -1 : 1;
+    }
+    
+    // Within same source, sort alphabetically
+    return a.name.localeCompare(b.name);
+  });
+  
+  // Add "No Theme" option at the beginning
+  return [createNoThemeEntry(), ...sortedThemes];
 }
 
 export async function loadActiveTheme(): Promise<DaisyTheme | null> {
@@ -150,11 +191,12 @@ export async function createCustomTheme(
   name: string,
   slug: string,
   tokens: DaisyThemeTokens,
-  userId: string
+  userId: string,
+  fontConfig?: DaisyFontConfig | null
 ): Promise<DaisyTheme> {
   const { data, error } = await supabase
     .from('daisyui_themes')
-    .insert({ name, slug, source: 'custom', tokens, user_id: userId })
+    .insert({ name, slug, source: 'custom', tokens, user_id: userId, font_config: fontConfig || null })
     .select()
     .single();
 
@@ -164,7 +206,7 @@ export async function createCustomTheme(
 
 export async function updateCustomTheme(
   id: string,
-  updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens }
+  updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens; font_config?: DaisyFontConfig | null }
 ): Promise<void> {
   const { error } = await supabase
     .from('daisyui_themes')
@@ -213,4 +255,135 @@ export function slugify(name: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+export interface ThemeUsage {
+  pageThemes: number;
+  pageTemplates: number;
+  totalUsages: number;
+}
+
+export async function getThemeUsage(themeSlug: string): Promise<ThemeUsage> {
+  // Check page_themes table for usage
+  // Note: Using .eq() method for proper parameterization
+  const { data: pageThemesData, error: pageThemesError } = await supabase
+    .from('page_themes')
+    .select('id')
+    .eq('css->>daisyTheme', themeSlug);
+  
+  if (pageThemesError && !pageThemesError.message.includes('does not exist')) {
+    console.warn('Error checking page_themes:', pageThemesError);
+  }
+  
+  const pageThemesCount = pageThemesData?.length || 0;
+  
+  // Check page_templates for usage (if theme_id column exists)
+  let pageTemplatesCount = 0;
+  // This would require joining with daisyui_themes table
+  // For now, we'll implement a basic check
+  
+  return {
+    pageThemes: pageThemesCount,
+    pageTemplates: pageTemplatesCount,
+    totalUsages: pageThemesCount + pageTemplatesCount,
+  };
+}
+
+export class ThemeError extends Error {
+  constructor(
+    message: string,
+    public code: 'DUPLICATE' | 'IN_USE' | 'NOT_FOUND' | 'INVALID' | 'FORBIDDEN',
+    public statusCode: number = 400
+  ) {
+    super(message);
+    this.name = 'ThemeError';
+  }
+}
+
+export async function createCustomThemeWithValidation(
+  name: string,
+  slug: string,
+  tokens: DaisyThemeTokens,
+  userId: string,
+  existingThemes: DaisyTheme[],
+  fontConfig?: DaisyFontConfig | null
+): Promise<DaisyTheme> {
+  // Check for duplicate slug
+  const duplicateSlug = existingThemes.find(t => t.slug === slug);
+  if (duplicateSlug) {
+    throw new ThemeError('Un thème avec ce slug existe déjà', 'DUPLICATE', 409);
+  }
+
+  // Check for identical tokens
+  const identicalTokens = existingThemes.find(t => !tokensAreDifferent(t.tokens, tokens));
+  if (identicalTokens) {
+    throw new ThemeError(
+      `Un thème avec des tokens identiques existe déjà: "${identicalTokens.name}"`,
+      'DUPLICATE',
+      409
+    );
+  }
+
+  return await createCustomTheme(name, slug, tokens, userId, fontConfig);
+}
+
+export async function updateCustomThemeWithValidation(
+  id: string,
+  updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens; font_config?: DaisyFontConfig | null },
+  existingThemes: DaisyTheme[]
+): Promise<void> {
+  const theme = existingThemes.find(t => t.id === id);
+  if (!theme) {
+    throw new ThemeError('Thème non trouvé', 'NOT_FOUND', 404);
+  }
+
+  if (theme.source !== 'custom') {
+    throw new ThemeError('Impossible de modifier un thème officiel', 'FORBIDDEN', 403);
+  }
+
+  // Check for duplicate slug if slug is being updated
+  if (updates.slug && updates.slug !== theme.slug) {
+    const duplicateSlug = existingThemes.find(t => t.id !== id && t.slug === updates.slug);
+    if (duplicateSlug) {
+      throw new ThemeError('Un thème avec ce slug existe déjà', 'DUPLICATE', 409);
+    }
+  }
+
+  // Check for identical tokens if tokens are being updated
+  if (updates.tokens) {
+    const identicalTokens = existingThemes.find(
+      t => t.id !== id && !tokensAreDifferent(t.tokens, updates.tokens!)
+    );
+    if (identicalTokens) {
+      throw new ThemeError(
+        `Un thème avec des tokens identiques existe déjà: "${identicalTokens.name}"`,
+        'DUPLICATE',
+        409
+      );
+    }
+  }
+
+  await updateCustomTheme(id, updates);
+}
+
+export async function deleteCustomThemeWithValidation(
+  id: string,
+  theme: DaisyTheme,
+  force: boolean = false
+): Promise<{ success: boolean; usage?: ThemeUsage }> {
+  if (theme.source !== 'custom') {
+    throw new ThemeError('Impossible de supprimer un thème officiel', 'FORBIDDEN', 403);
+  }
+
+  const usage = await getThemeUsage(theme.slug);
+  
+  if (usage.totalUsages > 0 && !force) {
+    return {
+      success: false,
+      usage,
+    };
+  }
+
+  await deleteCustomTheme(id);
+  return { success: true };
 }

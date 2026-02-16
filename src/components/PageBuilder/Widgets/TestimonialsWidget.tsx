@@ -21,7 +21,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
         <Star
           key={i}
           className={`w-4 h-4 ${
-            i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-base-content/30'
+            i < rating ? 'text-warning fill-warning' : 'text-base-content/30'
           }`}
         />
       ))}

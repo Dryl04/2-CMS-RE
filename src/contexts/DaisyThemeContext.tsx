@@ -2,13 +2,16 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import {
   DaisyTheme,
   DaisyThemeTokens,
+  DaisyFontConfig,
   loadAllDaisyThemes,
   loadActiveTheme,
   setActiveTheme as setActiveThemeDB,
-  createCustomTheme,
-  updateCustomTheme,
-  deleteCustomTheme,
-  tokensAreDifferent,
+  createCustomThemeWithValidation,
+  updateCustomThemeWithValidation,
+  deleteCustomThemeWithValidation,
+  ThemeError,
+  ThemeUsage,
+  NO_THEME_SLUG,
   generateCustomThemeCSS,
 } from '../lib/daisyThemes';
 import { useAuth } from './AuthContext';
@@ -19,9 +22,9 @@ interface DaisyThemeContextType {
   loading: boolean;
   error: string | null;
   setActiveTheme: (themeId: string) => Promise<void>;
-  createTheme: (name: string, slug: string, tokens: DaisyThemeTokens) => Promise<DaisyTheme>;
-  updateTheme: (id: string, updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens }) => Promise<void>;
-  removeTheme: (id: string) => Promise<void>;
+  createTheme: (name: string, slug: string, tokens: DaisyThemeTokens, fontConfig?: DaisyFontConfig | null) => Promise<DaisyTheme>;
+  updateTheme: (id: string, updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens; font_config?: DaisyFontConfig | null }) => Promise<void>;
+  removeTheme: (id: string, force?: boolean) => Promise<{ success: boolean; usage?: ThemeUsage }>;
   refreshThemes: () => Promise<void>;
   getThemeBySlug: (slug: string) => DaisyTheme | undefined;
   isThemeInUse: (themeId: string) => boolean;
@@ -32,7 +35,12 @@ const DaisyThemeContext = createContext<DaisyThemeContextType | undefined>(undef
 let customStyleEl: HTMLStyleElement | null = null;
 
 function applyThemeToDocument(slug: string) {
-  document.documentElement.setAttribute('data-theme', slug);
+  // If "No Theme" is selected, remove the data-theme attribute
+  if (slug === NO_THEME_SLUG) {
+    document.documentElement.removeAttribute('data-theme');
+  } else {
+    document.documentElement.setAttribute('data-theme', slug);
+  }
 }
 
 function injectCustomThemeCSS(themes: DaisyTheme[]) {
@@ -108,61 +116,72 @@ export function DaisyThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const createTheme = async (name: string, slug: string, tokens: DaisyThemeTokens): Promise<DaisyTheme> => {
+  const createTheme = async (name: string, slug: string, tokens: DaisyThemeTokens, fontConfig?: DaisyFontConfig | null): Promise<DaisyTheme> => {
     try {
       setError(null);
       if (!profile) throw new Error('Not authenticated');
 
-      const duplicate = themes.find(t => t.slug === slug);
-      if (duplicate) throw new Error('Un thème avec ce slug existe déjà');
-
-      const identicalTokens = themes.find(t => !tokensAreDifferent(t.tokens, tokens));
-      if (identicalTokens) throw new Error('Un thème avec des tokens identiques existe déjà');
-
-      const newTheme = await createCustomTheme(name, slug, tokens, profile.id);
+      const newTheme = await createCustomThemeWithValidation(name, slug, tokens, profile.id, themes, fontConfig);
       await refreshThemes();
       return newTheme;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create theme');
-      throw err;
+      if (err instanceof ThemeError) {
+        setError(err.message);
+        throw err;
+      }
+      const message = err instanceof Error ? err.message : 'Failed to create theme';
+      setError(message);
+      throw new Error(message);
     }
   };
 
-  const updateTheme = async (id: string, updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens }) => {
+  const updateTheme = async (id: string, updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens; font_config?: DaisyFontConfig | null }) => {
     try {
       setError(null);
-      const theme = themes.find(t => t.id === id);
-      if (!theme || theme.source !== 'custom') throw new Error('Cannot update official themes');
-
-      if (updates.tokens) {
-        const identicalTokens = themes.find(t => t.id !== id && !tokensAreDifferent(t.tokens, updates.tokens!));
-        if (identicalTokens) throw new Error('Un thème avec des tokens identiques existe déjà');
-      }
-
-      await updateCustomTheme(id, updates);
+      await updateCustomThemeWithValidation(id, updates, themes);
       await refreshThemes();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update theme');
-      throw err;
+      if (err instanceof ThemeError) {
+        setError(err.message);
+        throw err;
+      }
+      const message = err instanceof Error ? err.message : 'Failed to update theme';
+      setError(message);
+      throw new Error(message);
     }
   };
 
-  const removeTheme = async (id: string) => {
+  const removeTheme = async (id: string, force: boolean = false): Promise<{ success: boolean; usage?: ThemeUsage }> => {
     try {
       setError(null);
       const theme = themes.find(t => t.id === id);
-      if (!theme || theme.source !== 'custom') throw new Error('Cannot delete official themes');
+      if (!theme) throw new Error('Theme not found');
 
+      const result = await deleteCustomThemeWithValidation(id, theme, force);
+      
+      if (!result.success) {
+        // Theme is in use, return usage info
+        return result;
+      }
+
+      // If the deleted theme was active, switch to light theme
       if (theme.is_active) {
         const fallback = themes.find(t => t.slug === 'light') || themes[0];
-        if (fallback) await setActiveTheme(fallback.id);
+        if (fallback && fallback.id !== id) {
+          await setActiveTheme(fallback.id);
+        }
       }
 
-      await deleteCustomTheme(id);
       await refreshThemes();
+      return { success: true };
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete theme');
-      throw err;
+      if (err instanceof ThemeError) {
+        setError(err.message);
+        throw err;
+      }
+      const message = err instanceof Error ? err.message : 'Failed to delete theme';
+      setError(message);
+      throw new Error(message);
     }
   };
 

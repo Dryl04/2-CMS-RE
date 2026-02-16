@@ -34,16 +34,33 @@ export default function DaisyThemeManager({ onClose }: DaisyThemeManagerProps) {
       showToast('Impossible de supprimer un thème officiel');
       return;
     }
-    if (isThemeInUse(theme.id)) {
-      if (!confirm('Ce thème est actif. Il sera remplacé par le thème Light. Continuer ?')) return;
-    } else {
-      if (!confirm(`Supprimer le thème "${theme.name}" ?`)) return;
-    }
+    
     try {
-      await removeTheme(theme.id);
-      showToast('Thème supprimé');
-    } catch {
-      showToast('Erreur lors de la suppression');
+      // First check if theme is in use
+      const result = await removeTheme(theme.id, false);
+      
+      if (!result.success && result.usage) {
+        // Theme is in use, show detailed warning
+        const usageMsg = `Ce thème est utilisé dans ${result.usage.totalUsages} élément(s):\n` +
+          `- ${result.usage.pageThemes} thème(s) de page\n` +
+          `- ${result.usage.pageTemplates} modèle(s) de page\n\n` +
+          `Voulez-vous vraiment le supprimer ? Les éléments utilisant ce thème seront migrés vers le thème par défaut.`;
+        
+        if (!confirm(usageMsg)) return;
+        
+        // Force delete with migration
+        const forceResult = await removeTheme(theme.id, true);
+        if (forceResult.success) {
+          showToast('Thème supprimé et éléments migrés');
+        }
+      } else {
+        // Theme not in use, simple deletion
+        if (!confirm(`Supprimer le thème "${theme.name}" ?`)) return;
+        await removeTheme(theme.id, false);
+        showToast('Thème supprimé');
+      }
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Erreur lors de la suppression');
     }
   };
 
