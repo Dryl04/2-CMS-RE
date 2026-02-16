@@ -45,10 +45,10 @@ export default function FeedbackContactWidget({ section }: FeedbackContactWidget
             )}
 
             <div className="flex items-center space-x-4">
-              <button className="bg-primary text-primary-content px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition">
+              <button className="btn btn-primary px-8">
                 {content.ctaText || 'Learn More'}
               </button>
-              <button className="w-12 h-12 bg-primary rounded flex items-center justify-center hover:opacity-90 transition">
+              <button className="btn btn-primary btn-square w-12 h-12 min-h-12">
                 <Play className="w-5 h-5 text-primary-content fill-primary-content" />
               </button>
             </div>
@@ -146,7 +146,7 @@ export default function FeedbackContactWidget({ section }: FeedbackContactWidget
 
               <button
                 type="submit"
-                className="w-full py-4 rounded-lg font-semibold text-lg transition hover:opacity-90 bg-primary text-primary-content"
+                className="btn btn-primary w-full h-auto py-4 text-lg"
                 style={buttonBg || buttonText ? { backgroundColor: buttonBg, color: buttonText } : undefined}
               >
                 {content.buttonText || 'Send Message'}

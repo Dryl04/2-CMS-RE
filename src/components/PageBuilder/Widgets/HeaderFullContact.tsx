@@ -89,7 +89,7 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
                 </div>
               )}
               {content.ctaText && (
-                <button className="px-6 py-3 font-semibold hover:opacity-90 transition bg-primary text-primary-content" style={buttonBg || buttonText ? {
+                <button className="btn btn-primary px-6" style={buttonBg || buttonText ? {
                   backgroundColor: buttonBg,
                   color: buttonText,
                 } : undefined}>

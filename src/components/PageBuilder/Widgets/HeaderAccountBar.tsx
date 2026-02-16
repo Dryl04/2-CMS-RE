@@ -46,7 +46,7 @@ export default function HeaderAccountBar({ section }: HeaderAccountBarProps) {
               </p>
             )}
 
-            <button className="hover:opacity-70 transition">
+            <button className="btn btn-ghost btn-square btn-sm hover:opacity-70 transition">
               <Search className="w-4 h-4 sm:w-5 sm:h-5 text-base-content" style={{ color: headingColor }} />
             </button>
           </div>

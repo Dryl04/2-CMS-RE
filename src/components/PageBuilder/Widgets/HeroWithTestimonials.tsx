@@ -32,7 +32,7 @@ export default function HeroWithTestimonials({ section }: HeroWithTestimonialsPr
           </p>
         )}
         {content.ctaText && (
-          <button className="bg-base-100 text-base-content px-10 py-4 rounded-full font-semibold hover:bg-base-200 transition text-lg">
+          <button className="btn px-10 rounded-full bg-base-100 text-base-content border-transparent hover:bg-base-200 text-lg">
             {content.ctaText}
           </button>
         )}

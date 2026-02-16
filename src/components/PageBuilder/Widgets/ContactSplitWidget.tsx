@@ -235,7 +235,7 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
 
               <button
                 type="submit"
-                className="w-full py-4 rounded-lg font-semibold text-lg transition hover:opacity-90 bg-primary text-primary-content"
+                className="btn btn-primary w-full h-auto py-4 text-lg"
                 style={buttonBg || buttonText ? { backgroundColor: buttonBg, color: buttonText } : undefined}
               >
                 {content.buttonText || 'Send Message'}

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 import { useDaisyTheme } from '../contexts/DaisyThemeContext';
+import { supabase } from '../lib/supabase';
+import FontImporter from './FontImporter';
 import {
   DaisyTheme,
   DaisyThemeTokens,
@@ -16,6 +18,27 @@ interface Props {
   onClose: () => void;
   onSaved: () => void;
 }
+
+interface FontLibraryItem {
+  id: string;
+  font_name: string;
+  font_family: string;
+}
+
+const FONT_WEIGHTS = [
+  { value: '300', label: 'Light (300)' },
+  { value: '400', label: 'Normal (400)' },
+  { value: '500', label: 'Medium (500)' },
+  { value: '600', label: 'Semi-Bold (600)' },
+  { value: '700', label: 'Bold (700)' },
+  { value: '800', label: 'Extra-Bold (800)' },
+  { value: '900', label: 'Black (900)' },
+];
+
+const extractPrimaryFontName = (fontStack?: string) => {
+  if (!fontStack) return '';
+  return fontStack.split(',')[0]?.trim().replace(/['"]/g, '') || '';
+};
 
 export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props) {
   const { createTheme, updateTheme } = useDaisyTheme();
@@ -33,12 +56,40 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [autoSlug, setAutoSlug] = useState(!theme?.id);
+  const [showFontImporter, setShowFontImporter] = useState(false);
+  const [availableFonts, setAvailableFonts] = useState<FontLibraryItem[]>([]);
 
   useEffect(() => {
     if (autoSlug && name) {
       setSlug(slugify(name));
     }
   }, [name, autoSlug]);
+
+  useEffect(() => {
+    loadAvailableFonts();
+  }, []);
+
+  const loadAvailableFonts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('fonts_library')
+        .select('id, font_name, font_family')
+        .order('font_name');
+
+      if (error) throw error;
+      setAvailableFonts(data || []);
+    } catch {
+      setAvailableFonts([]);
+    }
+  };
+
+  const applyFontFamily = (fontName: string, target: 'bodyFont' | 'headingFont') => {
+    if (!fontName) {
+      updateFontConfig(target, '');
+      return;
+    }
+    updateFontConfig(target, `"${fontName}", system-ui, sans-serif`);
+  };
 
   const updateToken = (key: keyof DaisyThemeTokens, value: string) => {
     setTokens(prev => ({ ...prev, [key]: value }));
@@ -56,8 +107,9 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
     setError(null);
 
     try {
-      const finalFontConfig = (fontConfig.bodyFont || fontConfig.headingFont || fontConfig.headingWeight) 
-        ? fontConfig 
+      const hasCustomFonts = Boolean(fontConfig.bodyFont || fontConfig.headingFont || (fontConfig.headingWeight && fontConfig.headingWeight !== '700'));
+      const finalFontConfig = hasCustomFonts
+        ? fontConfig
         : null;
 
       if (isNew || isOfficial) {
@@ -117,42 +169,38 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
 
           <div>
             <h3 className="text-lg font-semibold mb-3">Configuration des polices (optionnel)</h3>
-            <div className="alert alert-info text-xs mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              <span>
-                <strong>Google Fonts:</strong> Recherchez des polices sur <a href="https://fonts.google.com" target="_blank" rel="noopener noreferrer" className="link">fonts.google.com</a>, puis copiez le nom exact ici. Les polices seront automatiquement importées.
-              </span>
-            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="form-control">
                 <label className="label">
                   <span className="label-text font-medium">Police du corps de texte</span>
                 </label>
-                <input
-                  type="text"
-                  value={fontConfig.bodyFont || ''}
-                  onChange={(e) => updateFontConfig('bodyFont', e.target.value)}
-                  className="input input-bordered w-full text-sm"
-                  placeholder="Inter, system-ui, sans-serif"
-                />
-                <label className="label">
-                  <span className="label-text-alt">Ex: Inter, Roboto, Arial, sans-serif</span>
-                </label>
+                <select
+                  className="select select-bordered w-full"
+                  value={extractPrimaryFontName(fontConfig.bodyFont)}
+                  onChange={(e) => applyFontFamily(e.target.value, 'bodyFont')}
+                  disabled={availableFonts.length === 0}
+                >
+                  <option value="">Par défaut</option>
+                  {availableFonts.map((font) => (
+                    <option key={`body-${font.id}`} value={font.font_name}>{font.font_name}</option>
+                  ))}
+                </select>
               </div>
               <div className="form-control">
                 <label className="label">
                   <span className="label-text font-medium">Police des titres</span>
                 </label>
-                <input
-                  type="text"
-                  value={fontConfig.headingFont || ''}
-                  onChange={(e) => updateFontConfig('headingFont', e.target.value)}
-                  className="input input-bordered w-full text-sm"
-                  placeholder="Playfair Display, Georgia, serif"
-                />
-                <label className="label">
-                  <span className="label-text-alt">Ex: Playfair Display, Montserrat, serif</span>
-                </label>
+                <select
+                  className="select select-bordered w-full"
+                  value={extractPrimaryFontName(fontConfig.headingFont)}
+                  onChange={(e) => applyFontFamily(e.target.value, 'headingFont')}
+                  disabled={availableFonts.length === 0}
+                >
+                  <option value="">Par défaut</option>
+                  {availableFonts.map((font) => (
+                    <option key={`heading-${font.id}`} value={font.font_name}>{font.font_name}</option>
+                  ))}
+                </select>
               </div>
               <div className="form-control">
                 <label className="label">
@@ -163,15 +211,25 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
                   onChange={(e) => updateFontConfig('headingWeight', e.target.value)}
                   className="select select-bordered w-full"
                 >
-                  <option value="300">Light (300)</option>
-                  <option value="400">Normal (400)</option>
-                  <option value="500">Medium (500)</option>
-                  <option value="600">Semi-Bold (600)</option>
-                  <option value="700">Bold (700)</option>
-                  <option value="800">Extra-Bold (800)</option>
-                  <option value="900">Black (900)</option>
+                  {FONT_WEIGHTS.map((weight) => (
+                    <option key={weight.value} value={weight.value}>{weight.label}</option>
+                  ))}
                 </select>
               </div>
+            </div>
+            <div className="mt-4">
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => setShowFontImporter(true)}
+              >
+                Importer depuis Google Fonts
+              </button>
+              {availableFonts.length === 0 && (
+                <p className="text-xs opacity-70 mt-2">
+                  Aucune police importée pour le moment. Utilisez le bouton d'import.
+                </p>
+              )}
             </div>
           </div>
 
@@ -209,10 +267,21 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
             <h3 className="text-lg font-semibold mb-3">Aperçu</h3>
             <div
               className="rounded-xl p-6 space-y-4 border border-base-300"
-              style={{ backgroundColor: tokens['base-100'], color: tokens['base-content'] }}
+              style={{
+                backgroundColor: tokens['base-100'],
+                color: tokens['base-content'],
+                fontFamily: fontConfig.bodyFont || undefined,
+              }}
             >
               <div>
-                <h4 className="text-xl font-bold mb-1" style={{ color: tokens['base-content'] }}>
+                <h4
+                  className="text-xl font-bold mb-1"
+                  style={{
+                    color: tokens['base-content'],
+                    fontFamily: fontConfig.headingFont || undefined,
+                    fontWeight: fontConfig.headingWeight || '700',
+                  }}
+                >
                   Titre de la page
                 </h4>
                 <p className="text-sm opacity-70">Texte secondaire du contenu</p>
@@ -260,6 +329,15 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
           </button>
         </div>
       </div>
+
+      {showFontImporter && (
+        <FontImporter
+          onClose={() => setShowFontImporter(false)}
+          onFontImported={() => {
+            loadAvailableFonts();
+          }}
+        />
+      )}
     </div>
   );
 }

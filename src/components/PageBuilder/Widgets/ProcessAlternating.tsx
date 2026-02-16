@@ -34,7 +34,7 @@ export default function ProcessAlternating({ section }: ProcessAlternatingProps)
               </p>
             )}
             {content.headerCta && (
-              <button className="bg-primary text-primary-content px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition">
+              <button className="btn btn-primary px-8">
                 {content.headerCta}
               </button>
             )}

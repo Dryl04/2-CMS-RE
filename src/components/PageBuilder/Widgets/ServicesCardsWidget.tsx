@@ -47,7 +47,7 @@ export default function ServicesCardsWidget({ section }: ServicesCardsWidgetProp
             </p>
           )}
           {content.ctaText && (
-            <button className="mt-6 bg-primary text-primary-content px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition">
+            <button className="btn btn-primary mt-6 px-8">
               {content.ctaText}
             </button>
           )}

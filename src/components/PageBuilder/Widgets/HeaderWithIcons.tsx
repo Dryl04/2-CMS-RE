@@ -25,7 +25,7 @@ export default function HeaderWithIcons({ section }: HeaderWithIconsProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
               {content.showAccount && (
-                <button className="flex items-center space-x-1 text-sm font-semibold hover:opacity-70 transition text-base-content" style={{ color: headingColor }}>
+                <button className="btn btn-ghost btn-sm flex items-center space-x-1 text-sm font-semibold text-base-content" style={{ color: headingColor }}>
                   <span>ACCOUNT</span>
                   <ChevronDown className="w-4 h-4" />
                 </button>

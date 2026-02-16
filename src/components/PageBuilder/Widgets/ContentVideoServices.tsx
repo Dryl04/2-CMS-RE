@@ -44,7 +44,7 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
               </p>
             )}
             {content.ctaText && (
-              <button className="bg-primary text-primary-content px-8 py-4 rounded-full font-semibold hover:opacity-90 transition">
+              <button className="btn btn-primary px-8">
                 {content.ctaText}
               </button>
             )}
@@ -54,13 +54,13 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
             <div className="relative bg-base-300 rounded-2xl" style={{ height: '450px' }}>
               {content.videoUrl ? (
                 <div className="w-full h-full flex items-center justify-center">
-                  <button className="w-20 h-20 rounded-full border-4 border-base-100 flex items-center justify-center hover:scale-110 transition">
+                  <button className="btn btn-circle btn-outline w-20 h-20 border-4 border-base-100 hover:scale-110 transition">
                     <Play className="w-10 h-10 text-base-100 fill-base-100" />
                   </button>
                 </div>
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <button className="w-20 h-20 rounded-full border-4 border-base-100 flex items-center justify-center hover:scale-110 transition">
+                  <button className="btn btn-circle btn-outline w-20 h-20 border-4 border-base-100 hover:scale-110 transition">
                     <Play className="w-10 h-10 text-base-100 fill-base-100" />
                   </button>
                 </div>

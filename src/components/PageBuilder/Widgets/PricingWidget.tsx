@@ -35,9 +35,8 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
         ]).map((plan: any, index: number) => (
           <div
             key={index}
-            className={`relative bg-base-100 rounded-2xl shadow-xl p-8 transition-transform hover:scale-105 ${
-              plan.popular ? 'ring-2 ring-offset-2 border-primary ring-primary' : 'border border-base-content/10'
-            }`}
+            className={`relative bg-base-100 rounded-2xl shadow-xl p-8 transition-transform hover:scale-105 ${plan.popular ? 'ring-2 ring-offset-2 border-primary ring-primary' : 'border border-base-content/10'
+              }`}
             style={plan.popular && accentColor ? { borderColor: accentColor, ringColor: accentColor } : undefined}
           >
             {plan.popular && (
@@ -68,9 +67,8 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
               ))}
             </ul>
             <button
-              className={`w-full py-3 px-6 rounded-xl font-semibold transition-all hover:shadow-lg ${
-                plan.popular ? 'bg-primary text-primary-content' : 'bg-transparent text-primary border-2 border-primary'
-              }`}
+              className={`w-full py-3 px-6 rounded-xl font-semibold transition-all hover:shadow-lg ${plan.popular ? 'bg-primary text-primary-content' : 'bg-transparent text-primary border-2 border-primary'
+                }`}
               style={accentColor ? {
                 backgroundColor: plan.popular ? accentColor : undefined,
                 color: plan.popular ? undefined : accentColor,
@@ -151,10 +149,10 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           {subtitle || 'Save 20% with annual billing'}
         </p>
         <div className="inline-flex items-center bg-base-200 rounded-full p-1">
-          <button className="px-6 py-2 rounded-full font-semibold bg-primary text-primary-content" style={accentColor ? { backgroundColor: accentColor } : undefined}>
+          <button className="btn btn-sm btn-primary px-6 rounded-full" style={accentColor ? { backgroundColor: accentColor } : undefined}>
             Monthly
           </button>
-          <button className="px-6 py-2 rounded-full font-semibold text-base-content/60">
+          <button className="btn btn-sm btn-ghost px-6 rounded-full text-base-content/60">
             Annual
           </button>
         </div>
@@ -184,7 +182,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
               ))}
             </ul>
             <button
-              className="w-full py-3 px-6 rounded-xl font-semibold transition-all hover:shadow-lg bg-primary text-primary-content"
+              className="btn btn-primary w-full h-auto py-3 px-6"
               style={accentColor ? { backgroundColor: accentColor } : undefined}
             >
               Start Free Trial

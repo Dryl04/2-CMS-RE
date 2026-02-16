@@ -49,7 +49,7 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
               </p>
             )}
             {content.ctaText && (
-              <button className="bg-primary text-primary-content px-8 py-4 rounded-lg font-semibold hover:opacity-90 transition">
+              <button className="btn btn-primary px-8">
                 {content.ctaText}
               </button>
             )}
@@ -92,9 +92,8 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
                 {[0, 1].map((dot, index) => (
                   <button
                     key={index}
-                    className={`w-2 h-2 rounded-full transition ${
-                      index === 0 ? 'bg-base-content' : 'bg-base-content/40'
-                    }`}
+                    className={`w-2 h-2 rounded-full transition ${index === 0 ? 'bg-base-content' : 'bg-base-content/40'
+                      }`}
                     aria-label={`Go to slide ${index + 1}`}
                   />
                 ))}
