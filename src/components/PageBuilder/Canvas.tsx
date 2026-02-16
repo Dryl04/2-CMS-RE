@@ -17,6 +17,7 @@ import SectionRenderer from './SectionRenderer';
 
 interface CanvasProps {
   sections: PageBuilderSection[];
+  inheritedThemeRef?: string | null;
   selectedSectionId: string | null;
   onSelectSection: (id: string) => void;
   onUpdateSection: (id: string, updates: Partial<PageBuilderSection>) => void;
@@ -27,6 +28,7 @@ interface CanvasProps {
 
 export default function Canvas({
   sections,
+  inheritedThemeRef,
   selectedSectionId,
   onSelectSection,
   onUpdateSection,
@@ -93,6 +95,7 @@ export default function Canvas({
             <SectionRenderer
               key={section.id}
               section={section}
+              inheritedThemeRef={inheritedThemeRef}
               isSelected={section.id === selectedSectionId}
               onSelect={() => onSelectSection(section.id)}
               onDelete={() => onDeleteSection(section.id)}

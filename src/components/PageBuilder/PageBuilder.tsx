@@ -4,6 +4,7 @@ import { PageBuilderSection, DeviceType } from '../../lib/pageBuilderTypes';
 import { supabase, PageTemplate, SEOMetadata } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePageTheme } from '../../contexts/PageThemeContext';
+import { useDaisyTheme } from '../../contexts/DaisyThemeContext';
 import { exportTemplateAsJSON, exportTemplateAsCSV, downloadFile } from '../../lib/templateExport';
 import WidgetLibrary from './WidgetLibrary';
 import Canvas from './Canvas';
@@ -32,6 +33,7 @@ import CenteredContentWidget from './Widgets/CenteredContentWidget';
 import TextColumnsWidget from './Widgets/TextColumnsWidget';
 import PageThemeInjector from '../PageThemeInjector';
 import PageThemeEditor from '../PageThemeEditor';
+import DaisyThemeManager from '../DaisyThemeManager';
 
 interface PageBuilderProps {
   onNavigate?: (view: string) => void;
@@ -52,6 +54,7 @@ export default function PageBuilder({
 }: PageBuilderProps) {
   const { profile } = useAuth();
   const { pageThemes, refreshThemes } = usePageTheme();
+  const { themes: daisyThemes, activeTheme } = useDaisyTheme();
   const [builderView, setBuilderView] = useState<BuilderView>(editingPageId ? 'editor' : 'list');
   const [templates, setTemplates] = useState<PageTemplate[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState(true);
@@ -65,6 +68,8 @@ export default function PageBuilder({
   const [templateDescription, setTemplateDescription] = useState('');
   const [pageThemeId, setPageThemeId] = useState<string | null>(null);
   const [showThemeEditor, setShowThemeEditor] = useState(false);
+  const [showDaisyThemeManager, setShowDaisyThemeManager] = useState(false);
+  const [modelThemeRef, setModelThemeRef] = useState<string | null>(null);
   const [history, setHistory] = useState<PageBuilderSection[][]>([initialSections || []]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -84,6 +89,12 @@ export default function PageBuilder({
       setPageThemeId(pageThemes[0].id);
     }
   }, [pageThemes]);
+
+  useEffect(() => {
+    if (modelThemeRef === null) {
+      setModelThemeRef(activeTheme?.slug || 'light');
+    }
+  }, [activeTheme, modelThemeRef]);
 
   const loadTemplates = async () => {
     setLoadingTemplates(true);
@@ -233,7 +244,8 @@ export default function PageBuilder({
     setEditingTemplateId(template.id);
     setTemplateName(template.name);
     setTemplateDescription(template.description || '');
-    setSelectedThemeId((template as any).theme_id || null);
+    setPageThemeId((template as any).page_theme_id || null);
+    setModelThemeRef((template as any).daisy_theme_slug || activeTheme?.slug || 'light');
     const loadedSections = (template.sections_data || []) as PageBuilderSection[];
     setSections(loadedSections);
     setHistory([loadedSections]);
@@ -264,6 +276,7 @@ export default function PageBuilder({
     setTemplateName('Nouveau modele');
     setTemplateDescription('');
     setPageThemeId(pageThemes.length > 0 ? pageThemes[0].id : null);
+    setModelThemeRef(activeTheme?.slug || 'light');
     setSections([]);
     setHistory([[]]);
     setHistoryIndex(0);
@@ -283,6 +296,10 @@ export default function PageBuilder({
       default: return '100%';
     }
   };
+
+  const inheritedWidgetThemeRef = modelThemeRef === '__none__'
+    ? '__none__'
+    : (modelThemeRef || activeTheme?.slug || 'light');
 
   const renderTemplateListView = () => (
     <div className="flex flex-col flex-1">
@@ -534,13 +551,37 @@ export default function PageBuilder({
                 ))}
               </select>
               <button
-                onClick={() => {
-                  setShowThemeEditor(true);
-                }}
+                onClick={() => setShowThemeEditor(true)}
                 className="p-1.5 hover:bg-blue-100 rounded transition-colors"
-                title="Gérer les thèmes"
+                title="Éditer les polices du thème de page"
               >
-                <Settings className="w-4 h-4 text-blue-500" />
+                <Edit3 className="w-4 h-4 text-blue-500" />
+              </button>
+            </div>
+          )}
+
+          {daisyThemes.length > 0 && (
+            <div className="flex items-center gap-2 border-l pl-4">
+              <Settings className="w-4 h-4 text-violet-500" />
+              <select
+                value={modelThemeRef || activeTheme?.slug || 'light'}
+                onChange={(e) => setModelThemeRef(e.target.value || null)}
+                className="text-xs bg-violet-50 border border-violet-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                title="Thème DaisyUI du modèle"
+              >
+                <option value="__none__">Aucun thème</option>
+                {daisyThemes.map(theme => (
+                  <option key={theme.id} value={theme.slug}>
+                    {theme.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={() => setShowDaisyThemeManager(true)}
+                className="p-1.5 hover:bg-violet-100 rounded transition-colors"
+                title="Gestionnaire DaisyUI"
+              >
+                <Settings className="w-4 h-4 text-violet-500" />
               </button>
             </div>
           )}
@@ -618,6 +659,7 @@ export default function PageBuilder({
           <PageThemeInjector themeId={pageThemeId} />
           <div
             className="mx-auto bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 page-themed"
+            data-theme={inheritedWidgetThemeRef === '__none__' ? undefined : inheritedWidgetThemeRef}
             style={{ width: getDeviceWidth(), maxWidth: '100%' }}
           >
             {sections.length === 0 ? (
@@ -655,10 +697,12 @@ export default function PageBuilder({
                 return (
                   <div
                     key={section.id}
+                    data-theme={inheritedWidgetThemeRef === '__none__' ? undefined : inheritedWidgetThemeRef}
                     style={{
                       backgroundColor: section.design.background.type === 'color' ? section.design.background.value : undefined,
                       paddingTop: section.design.spacing.paddingTop,
                       paddingBottom: section.design.spacing.paddingBottom,
+                      transition: 'background-color 200ms, color 200ms',
                     }}
                   >
                     {renderWidget()}
@@ -678,10 +722,12 @@ export default function PageBuilder({
           <div className="flex-1 overflow-auto bg-gray-100 p-6 custom-scrollbar">
             <div
               className="mx-auto transition-all duration-300 page-themed"
+              data-theme={inheritedWidgetThemeRef === '__none__' ? undefined : inheritedWidgetThemeRef}
               style={{ width: getDeviceWidth(), maxWidth: '100%' }}
             >
               <Canvas
                 sections={sections}
+                inheritedThemeRef={inheritedWidgetThemeRef}
                 selectedSectionId={selectedSectionId}
                 onSelectSection={setSelectedSectionId}
                 onUpdateSection={updateSection}
@@ -712,6 +758,10 @@ export default function PageBuilder({
             refreshThemes();
           }}
         />
+      )}
+
+      {showDaisyThemeManager && (
+        <DaisyThemeManager onClose={() => setShowDaisyThemeManager(false)} />
       )}
     </div>
   );

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Palette, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
 import { PageBuilderSection } from '../../lib/pageBuilderTypes';
 import { useDaisyTheme } from '../../contexts/DaisyThemeContext';
-import { DaisyThemeTokens, TOKEN_GROUPS } from '../../lib/daisyThemes';
+import { DaisyThemeTokens } from '../../lib/daisyThemes';
 
 interface WidgetThemeSelectorProps {
   section: PageBuilderSection;
@@ -135,6 +135,7 @@ export default function WidgetThemeSelector({ section, onUpdateSection }: Widget
             onChange={(e) => updateThemeConfig({ themeRef: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-black focus:border-transparent"
           >
+            <option value="__none__">Aucun thème</option>
             {themes.map(t => (
               <option key={t.id} value={t.slug}>
                 {t.name} {t.source === 'custom' ? '(personnalise)' : ''}

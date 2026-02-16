@@ -57,6 +57,7 @@ import HeaderFullContact from './Widgets/HeaderFullContact';
 
 interface SectionRendererProps {
   section: PageBuilderSection;
+  inheritedThemeRef?: string | null;
   isSelected: boolean;
   onSelect: () => void;
   onDelete: () => void;
@@ -66,6 +67,7 @@ interface SectionRendererProps {
 
 export default function SectionRenderer({
   section,
+  inheritedThemeRef,
   isSelected,
   onSelect,
   onDelete,
@@ -272,14 +274,14 @@ export default function SectionRenderer({
       >
 
         <div
-          data-theme={getWidgetThemeProps(section).dataTheme}
+          data-theme={getWidgetThemeProps(section, inheritedThemeRef).dataTheme}
           style={{
             backgroundColor: section.design.background.type === 'color' ? section.design.background.value : undefined,
             paddingTop: section.design.spacing.paddingTop,
             paddingBottom: section.design.spacing.paddingBottom,
             marginTop: section.design.spacing.marginTop,
             marginBottom: section.design.spacing.marginBottom,
-            ...getWidgetThemeProps(section).customStyles,
+            ...getWidgetThemeProps(section, inheritedThemeRef).customStyles,
           }}
         >
           {renderWidget()}

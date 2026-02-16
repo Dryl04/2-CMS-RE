@@ -3,7 +3,6 @@ import {
   DaisyTheme,
   DaisyThemeTokens,
   loadAllDaisyThemes,
-  loadActiveTheme,
   setActiveTheme as setActiveThemeDB,
   createCustomTheme,
   updateCustomTheme,
@@ -30,10 +29,6 @@ interface DaisyThemeContextType {
 const DaisyThemeContext = createContext<DaisyThemeContextType | undefined>(undefined);
 
 let customStyleEl: HTMLStyleElement | null = null;
-
-function applyThemeToDocument(slug: string) {
-  document.documentElement.setAttribute('data-theme', slug);
-}
 
 function injectCustomThemeCSS(themes: DaisyTheme[]) {
   const customThemes = themes.filter(t => t.source === 'custom');
@@ -67,13 +62,20 @@ export function DaisyThemeProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
       const allThemes = await loadAllDaisyThemes();
-      setThemes(allThemes);
-      injectCustomThemeCSS(allThemes);
+      const sortedThemes = [...allThemes].sort((a, b) => {
+        if (a.slug === 'light') return -1;
+        if (b.slug === 'light') return 1;
+        if (a.slug === 'dark') return -1;
+        if (b.slug === 'dark') return 1;
+        if (a.source !== b.source) return a.source === 'daisyui' ? -1 : 1;
+        return a.name.localeCompare(b.name);
+      });
+      setThemes(sortedThemes);
+      injectCustomThemeCSS(sortedThemes);
 
-      const active = allThemes.find(t => t.is_active) || allThemes.find(t => t.slug === 'light') || allThemes[0];
+      const active = sortedThemes.find(t => t.is_active) || sortedThemes.find(t => t.slug === 'light') || sortedThemes[0];
       if (active) {
         setActiveThemeState(active);
-        applyThemeToDocument(active.slug);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load themes');
@@ -99,7 +101,6 @@ export function DaisyThemeProvider({ children }: { children: ReactNode }) {
       const theme = themes.find(t => t.id === themeId);
       if (theme) {
         setActiveThemeState(theme);
-        applyThemeToDocument(theme.slug);
         setThemes(prev => prev.map(t => ({ ...t, is_active: t.id === themeId })));
       }
     } catch (err) {

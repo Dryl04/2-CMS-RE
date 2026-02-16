@@ -1,8 +1,12 @@
 import { PageBuilderSection } from './pageBuilderTypes';
 
-export function getWidgetThemeProps(section: PageBuilderSection) {
+export function getWidgetThemeProps(section: PageBuilderSection, inheritedThemeRef?: string | null) {
   const themeConfig = section.themeConfig;
-  const dataTheme = themeConfig?.themeMode === 'named' ? themeConfig.themeRef : undefined;
+  const dataTheme = themeConfig?.themeMode === 'named'
+    ? themeConfig.themeRef === '__none__' ? undefined : themeConfig.themeRef
+    : themeConfig?.themeMode === 'inherit'
+      ? (inheritedThemeRef === '__none__' ? undefined : inheritedThemeRef || undefined)
+      : undefined;
 
   const customStyles: Record<string, string> = {};
   if (themeConfig?.themeMode === 'custom' && themeConfig.customTokens) {
