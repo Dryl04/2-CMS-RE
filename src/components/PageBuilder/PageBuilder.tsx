@@ -33,6 +33,7 @@ import CenteredContentWidget from './Widgets/CenteredContentWidget';
 import TextColumnsWidget from './Widgets/TextColumnsWidget';
 import PageThemeInjector from '../PageThemeInjector';
 import PageThemeEditor from '../PageThemeEditor';
+import DaisyThemeManager from '../DaisyThemeManager';
 
 interface PageBuilderProps {
   onNavigate?: (view: string) => void;
@@ -68,6 +69,7 @@ export default function PageBuilder({
   const [pageThemeId, setPageThemeId] = useState<string | null>(null);
   const [daisyThemeSlug, setDaisyThemeSlug] = useState<string | null>(null);
   const [showThemeEditor, setShowThemeEditor] = useState(false);
+  const [showDaisyThemeManager, setShowDaisyThemeManager] = useState(false);
   const [history, setHistory] = useState<PageBuilderSection[][]>([initialSections || []]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -237,7 +239,7 @@ export default function PageBuilder({
     setEditingTemplateId(template.id);
     setTemplateName(template.name);
     setTemplateDescription(template.description || '');
-    setSelectedThemeId((template as any).theme_id || null);
+    setPageThemeId((template as any).page_theme_id || null);
     setDaisyThemeSlug(template.daisy_theme_slug || null);
     const loadedSections = (template.sections_data || []) as PageBuilderSection[];
     setSections(loadedSections);
@@ -567,6 +569,13 @@ export default function PageBuilder({
                   </option>
                 ))}
               </select>
+              <button
+                onClick={() => setShowDaisyThemeManager(true)}
+                className="p-1.5 hover:bg-purple-100 rounded transition-colors"
+                title="Gérer les thèmes DaisyUI"
+              >
+                <Settings className="w-4 h-4 text-purple-500" />
+              </button>
             </div>
           )}
         </div>
@@ -738,6 +747,12 @@ export default function PageBuilder({
             setShowThemeEditor(false);
             refreshThemes();
           }}
+        />
+      )}
+
+      {showDaisyThemeManager && (
+        <DaisyThemeManager
+          onClose={() => setShowDaisyThemeManager(false)}
         />
       )}
     </div>
