@@ -14,6 +14,18 @@
   .font-serif {
     font-family: 'Playfair Display', Georgia, serif;
   }
+  
+  /* Smooth theme transitions */
+  * {
+    transition-property: background-color, color, border-color, fill, stroke;
+    transition-duration: 200ms;
+    transition-timing-function: ease-in-out;
+  }
+  
+  /* Prevent transitions on page load */
+  .no-transitions * {
+    transition: none !important;
+  }
 }
 
 @layer utilities {
