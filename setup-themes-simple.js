@@ -1,0 +1,375 @@
+import { createClient } from '@supabase/supabase-js';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ Missing Supabase credentials in .env file');
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+const defaultThemes = [
+  {
+    name: 'Modern Professional',
+    description: 'Clean and professional design with neutral tones',
+    colors: {
+      primary: '#2563eb',
+      secondary: '#64748b',
+      accent: '#0ea5e9',
+      background: '#ffffff',
+      surface: '#f8fafc',
+      text: '#0f172a',
+      textSecondary: '#475569',
+      border: '#e2e8f0',
+      success: '#10b981',
+      warning: '#f59e0b',
+      error: '#ef4444',
+    },
+    typography: {
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      fontSize: {
+        xs: '0.75rem',
+        sm: '0.875rem',
+        base: '1rem',
+        lg: '1.125rem',
+        xl: '1.25rem',
+        '2xl': '1.5rem',
+        '3xl': '1.875rem',
+        '4xl': '2.25rem',
+        '5xl': '3rem',
+      },
+      fontWeight: {
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+      },
+      lineHeight: {
+        tight: '1.2',
+        normal: '1.5',
+        relaxed: '1.75',
+      },
+    },
+    spacing: {
+      scale: ['0', '0.25rem', '0.5rem', '0.75rem', '1rem', '1.5rem', '2rem', '3rem', '4rem', '6rem', '8rem'],
+    },
+    components: {
+      borderRadius: {
+        sm: '0.25rem',
+        md: '0.5rem',
+        lg: '0.75rem',
+        xl: '1rem',
+      },
+      shadow: {
+        sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+        lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+        xl: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
+      },
+    },
+    user_id: null,
+    is_default: true,
+  },
+  {
+    name: 'Bold & Dynamic',
+    description: 'Energetic design with vibrant colors and strong contrast',
+    colors: {
+      primary: '#dc2626',
+      secondary: '#0891b2',
+      accent: '#f59e0b',
+      background: '#fefefe',
+      surface: '#fef2f2',
+      text: '#1e1e1e',
+      textSecondary: '#525252',
+      border: '#fecaca',
+      success: '#16a34a',
+      warning: '#ea580c',
+      error: '#dc2626',
+    },
+    typography: {
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      fontSize: {
+        xs: '0.75rem',
+        sm: '0.875rem',
+        base: '1rem',
+        lg: '1.125rem',
+        xl: '1.375rem',
+        '2xl': '1.75rem',
+        '3xl': '2.25rem',
+        '4xl': '3rem',
+        '5xl': '4rem',
+      },
+      fontWeight: {
+        normal: '400',
+        medium: '600',
+        semibold: '700',
+        bold: '800',
+      },
+      lineHeight: {
+        tight: '1.1',
+        normal: '1.4',
+        relaxed: '1.6',
+      },
+    },
+    spacing: {
+      scale: ['0', '0.25rem', '0.5rem', '1rem', '1.5rem', '2rem', '3rem', '4rem', '6rem', '8rem', '12rem'],
+    },
+    components: {
+      borderRadius: {
+        sm: '0.125rem',
+        md: '0.375rem',
+        lg: '0.5rem',
+        xl: '0.75rem',
+      },
+      shadow: {
+        sm: '0 2px 4px 0 rgb(0 0 0 / 0.1)',
+        md: '0 6px 12px -2px rgb(0 0 0 / 0.15)',
+        lg: '0 12px 24px -4px rgb(0 0 0 / 0.2)',
+        xl: '0 24px 48px -8px rgb(0 0 0 / 0.25)',
+      },
+    },
+    user_id: null,
+    is_default: true,
+  },
+  {
+    name: 'Minimalist Elegance',
+    description: 'Refined and minimal design with subtle accents',
+    colors: {
+      primary: '#18181b',
+      secondary: '#71717a',
+      accent: '#a855f7',
+      background: '#ffffff',
+      surface: '#fafafa',
+      text: '#09090b',
+      textSecondary: '#71717a',
+      border: '#e4e4e7',
+      success: '#22c55e',
+      warning: '#eab308',
+      error: '#ef4444',
+    },
+    typography: {
+      fontFamily: 'ui-serif, Georgia, serif',
+      fontSize: {
+        xs: '0.8125rem',
+        sm: '0.9375rem',
+        base: '1.0625rem',
+        lg: '1.1875rem',
+        xl: '1.3125rem',
+        '2xl': '1.625rem',
+        '3xl': '2rem',
+        '4xl': '2.5rem',
+        '5xl': '3.5rem',
+      },
+      fontWeight: {
+        normal: '300',
+        medium: '400',
+        semibold: '500',
+        bold: '600',
+      },
+      lineHeight: {
+        tight: '1.25',
+        normal: '1.625',
+        relaxed: '1.875',
+      },
+    },
+    spacing: {
+      scale: ['0', '0.125rem', '0.25rem', '0.5rem', '0.75rem', '1rem', '1.5rem', '2rem', '3rem', '4rem', '6rem'],
+    },
+    components: {
+      borderRadius: {
+        sm: '0.125rem',
+        md: '0.25rem',
+        lg: '0.375rem',
+        xl: '0.5rem',
+      },
+      shadow: {
+        sm: '0 1px 2px 0 rgb(0 0 0 / 0.03)',
+        md: '0 2px 4px -1px rgb(0 0 0 / 0.06)',
+        lg: '0 4px 8px -2px rgb(0 0 0 / 0.08)',
+        xl: '0 8px 16px -4px rgb(0 0 0 / 0.1)',
+      },
+    },
+    user_id: null,
+    is_default: true,
+  },
+  {
+    name: 'Dark Mode Premium',
+    description: 'Sophisticated dark theme with premium feel',
+    colors: {
+      primary: '#3b82f6',
+      secondary: '#6366f1',
+      accent: '#8b5cf6',
+      background: '#0a0a0a',
+      surface: '#171717',
+      text: '#fafafa',
+      textSecondary: '#a3a3a3',
+      border: '#262626',
+      success: '#10b981',
+      warning: '#f59e0b',
+      error: '#f43f5e',
+    },
+    typography: {
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      fontSize: {
+        xs: '0.75rem',
+        sm: '0.875rem',
+        base: '1rem',
+        lg: '1.125rem',
+        xl: '1.25rem',
+        '2xl': '1.5rem',
+        '3xl': '1.875rem',
+        '4xl': '2.25rem',
+        '5xl': '3rem',
+      },
+      fontWeight: {
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+      },
+      lineHeight: {
+        tight: '1.2',
+        normal: '1.5',
+        relaxed: '1.75',
+      },
+    },
+    spacing: {
+      scale: ['0', '0.25rem', '0.5rem', '0.75rem', '1rem', '1.5rem', '2rem', '3rem', '4rem', '6rem', '8rem'],
+    },
+    components: {
+      borderRadius: {
+        sm: '0.375rem',
+        md: '0.5rem',
+        lg: '0.75rem',
+        xl: '1rem',
+      },
+      shadow: {
+        sm: '0 1px 3px 0 rgb(0 0 0 / 0.5)',
+        md: '0 4px 8px -2px rgb(0 0 0 / 0.5)',
+        lg: '0 12px 20px -4px rgb(0 0 0 / 0.5)',
+        xl: '0 24px 40px -8px rgb(0 0 0 / 0.5)',
+      },
+    },
+    user_id: null,
+    is_default: true,
+  },
+  {
+    name: 'Ocean Breeze',
+    description: 'Calm and refreshing design inspired by ocean colors',
+    colors: {
+      primary: '#0891b2',
+      secondary: '#06b6d4',
+      accent: '#14b8a6',
+      background: '#f0fdfa',
+      surface: '#ffffff',
+      text: '#134e4a',
+      textSecondary: '#0f766e',
+      border: '#99f6e4',
+      success: '#14b8a6',
+      warning: '#f59e0b',
+      error: '#ef4444',
+    },
+    typography: {
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      fontSize: {
+        xs: '0.75rem',
+        sm: '0.875rem',
+        base: '1rem',
+        lg: '1.125rem',
+        xl: '1.25rem',
+        '2xl': '1.5rem',
+        '3xl': '1.875rem',
+        '4xl': '2.25rem',
+        '5xl': '3rem',
+      },
+      fontWeight: {
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+      },
+      lineHeight: {
+        tight: '1.2',
+        normal: '1.5',
+        relaxed: '1.75',
+      },
+    },
+    spacing: {
+      scale: ['0', '0.25rem', '0.5rem', '0.75rem', '1rem', '1.5rem', '2rem', '3rem', '4rem', '6rem', '8rem'],
+    },
+    components: {
+      borderRadius: {
+        sm: '0.5rem',
+        md: '0.75rem',
+        lg: '1rem',
+        xl: '1.5rem',
+      },
+      shadow: {
+        sm: '0 1px 2px 0 rgb(8 145 178 / 0.1)',
+        md: '0 4px 6px -1px rgb(8 145 178 / 0.15)',
+        lg: '0 10px 15px -3px rgb(8 145 178 / 0.2)',
+        xl: '0 20px 25px -5px rgb(8 145 178 / 0.25)',
+      },
+    },
+    user_id: null,
+    is_default: true,
+  },
+];
+
+async function checkTableExists() {
+  const { data, error } = await supabase.from('themes').select('id').limit(1);
+  return !error || !error.message.includes('does not exist');
+}
+
+async function insertThemes() {
+  console.log('🚀 Setting up themes...\n');
+
+  const tableExists = await checkTableExists();
+
+  if (!tableExists) {
+    console.error('❌ The "themes" table does not exist!');
+    console.log('\n📝 Please create the table first:');
+    console.log('   1. Open Supabase Dashboard → SQL Editor');
+    console.log('   2. Copy and paste content from create_themes_system.sql');
+    console.log('   3. Execute the script');
+    console.log('   4. Run this script again\n');
+    process.exit(1);
+  }
+
+  console.log('✅ Table exists, inserting themes...\n');
+
+  const { data, error } = await supabase
+    .from('themes')
+    .insert(defaultThemes)
+    .select();
+
+  if (error) {
+    if (error.message.includes('duplicate key')) {
+      console.log('⚠️  Themes already exist, skipping insertion');
+
+      const { data: existingThemes } = await supabase
+        .from('themes')
+        .select('name')
+        .eq('is_default', true);
+
+      console.log(`\n📊 Found ${existingThemes?.length || 0} default themes:`);
+      existingThemes?.forEach(theme => console.log(`   - ${theme.name}`));
+    } else {
+      console.error('❌ Error inserting themes:', error.message);
+      process.exit(1);
+    }
+  } else {
+    console.log('✅ Successfully inserted themes!');
+    console.log(`\n📊 Created ${data.length} themes:`);
+    data.forEach(theme => console.log(`   - ${theme.name}`));
+  }
+
+  console.log('\n🎉 Setup complete! You can now use the Theme Manager.\n');
+}
+
+insertThemes();

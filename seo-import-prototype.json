@@ -1,0 +1,624 @@
+{
+  "pages": [
+    {
+      "page_key": "plombier-paris-15",
+      "title": "Plombier Paris 15 - Depannage Rapide 24h/24 | AquaPro",
+      "description": "Plombier agree a Paris 15e. Intervention en 30 min, devis gratuit, tarifs transparents. Depannage, installation, renovation. Appelez le 01 23 45 67 89.",
+      "keywords": ["plombier paris 15", "depannage plomberie", "plombier urgence paris", "reparation fuite eau", "installation sanitaire"],
+      "og_title": "Plombier Paris 15e - Intervention Express 30 min",
+      "og_description": "Votre plombier de confiance dans le 15e arrondissement. Depannage 24h/24, devis gratuit. Plus de 2000 clients satisfaits.",
+      "og_image": "https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "canonical_url": "https://votre-site.com/plombier-paris-15",
+      "language": "fr",
+      "status": "published",
+      "seo_h1": "Plombier a Paris 15e : Depannage et Installation Rapide",
+      "seo_h2": "Des experts certifies pour tous vos travaux de plomberie",
+      "template_id": "5afb1c2e-68fd-49ac-be5c-9ae34630bc96",
+      "sections_data": [
+        {
+          "id": "section-1770993848778",
+          "type": "header",
+          "order": 0,
+          "design": {
+            "colors": {
+              "primary": "#000000",
+              "secondary": "#ffffff",
+              "buttonText": "#ffffff",
+              "buttonBackground": "#000000",
+              "buttonBackgroundHover": "#485870"
+            },
+            "spacing": {
+              "marginTop": "0px",
+              "paddingTop": "0px",
+              "marginBottom": "0px",
+              "paddingBottom": "0px"
+            },
+            "background": {
+              "type": "color",
+              "value": "#ffffff"
+            },
+            "typography": {
+              "fontSize": "1rem",
+              "textColor": "#4B5563",
+              "fontFamily": "inherit",
+              "lineHeight": "1.5",
+              "headingColor": "#000000"
+            }
+          },
+          "content": {
+            "logo": "",
+            "ctaLink": "tel:+33123456789",
+            "ctaText": "Appeler maintenant",
+            "logoText": "AquaPro",
+            "navItems": [
+              { "link": "#services", "label": "Services" },
+              { "link": "#avantages", "label": "Nos avantages" },
+              { "link": "#temoignages", "label": "Avis clients" },
+              { "link": "#contact", "label": "Contact" }
+            ]
+          },
+          "variant": "default",
+          "advanced": {
+            "customCSS": "",
+            "animations": {},
+            "cssClasses": [],
+            "visibility": { "mobile": true, "tablet": true, "desktop": true }
+          }
+        },
+        {
+          "id": "section-1770993943426",
+          "type": "hero",
+          "order": 1,
+          "design": {
+            "colors": {
+              "primary": "#000000",
+              "secondary": "#ffffff",
+              "buttonText": "#ffffff",
+              "buttonBackground": "#000000",
+              "buttonBackgroundHover": "#1F2937"
+            },
+            "spacing": {
+              "marginTop": "0px",
+              "paddingTop": "96px",
+              "marginBottom": "0px",
+              "paddingBottom": "96px"
+            },
+            "background": {
+              "type": "color",
+              "value": "#ffffff"
+            },
+            "typography": {
+              "fontSize": "1rem",
+              "textColor": "#4B5563",
+              "fontFamily": "inherit",
+              "lineHeight": "1.5",
+              "headingColor": "#111827"
+            }
+          },
+          "content": {
+            "image": "https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750",
+            "ctaLink": "tel:+33123456789",
+            "ctaText": "Devis gratuit en 5 min",
+            "headline": "Plombier a Paris 15e : Depannage et Installation Rapide",
+            "subheadline": "Intervention en moins de 30 minutes, 7j/7. Artisan certifie RGE avec plus de 15 ans d'experience. Devis gratuit et sans engagement."
+          },
+          "variant": "default",
+          "advanced": {
+            "customCSS": "",
+            "animations": {},
+            "cssClasses": [],
+            "visibility": { "mobile": true, "tablet": true, "desktop": true }
+          }
+        },
+        {
+          "id": "section-1770993962348",
+          "type": "features",
+          "order": 2,
+          "design": {
+            "colors": {
+              "primary": "#000000",
+              "secondary": "#ffffff",
+              "buttonText": "#ffffff",
+              "buttonBackground": "#000000",
+              "buttonBackgroundHover": "#1F2937"
+            },
+            "spacing": {
+              "marginTop": "0px",
+              "paddingTop": "80px",
+              "marginBottom": "0px",
+              "paddingBottom": "80px"
+            },
+            "background": {
+              "type": "color",
+              "value": "#c0aaaa"
+            },
+            "typography": {
+              "fontSize": "1rem",
+              "textColor": "#f7f7f7",
+              "fontFamily": "inherit",
+              "lineHeight": "1.5",
+              "headingColor": "#111827"
+            }
+          },
+          "content": {
+            "title": "Nos services de plomberie a Paris 15e",
+            "features": [
+              {
+                "icon": "zap",
+                "title": "Depannage d'urgence 24h/24",
+                "description": "Fuite d'eau, canalisation bouchee, chauffe-eau en panne : nous intervenons en moins de 30 minutes dans tout le 15e arrondissement."
+              },
+              {
+                "icon": "shield",
+                "title": "Installation et renovation",
+                "description": "Salle de bain, cuisine, WC : installation complete certifiee aux normes NF. Garantie decennale sur tous nos travaux."
+              },
+              {
+                "icon": "heart",
+                "title": "Entretien preventif",
+                "description": "Contrats d'entretien annuels pour votre tranquillite. Detartrage, verification des installations, mise en conformite."
+              }
+            ],
+            "subtitle": "Des solutions professionnelles pour chaque besoin"
+          },
+          "variant": "grid-2",
+          "advanced": {
+            "customCSS": "",
+            "animations": {},
+            "cssClasses": [],
+            "visibility": { "mobile": true, "tablet": true, "desktop": true }
+          }
+        },
+        {
+          "id": "section-1770994058775",
+          "type": "testimonials",
+          "order": 3,
+          "design": {
+            "colors": {
+              "primary": "#000000",
+              "secondary": "#ffffff",
+              "buttonText": "#ffffff",
+              "buttonBackground": "#000000",
+              "buttonBackgroundHover": "#1F2937"
+            },
+            "spacing": {
+              "marginTop": "0px",
+              "paddingTop": "80px",
+              "marginBottom": "0px",
+              "paddingBottom": "80px"
+            },
+            "background": {
+              "type": "color",
+              "value": "#f9fafb"
+            },
+            "typography": {
+              "fontSize": "1rem",
+              "textColor": "#4B5563",
+              "fontFamily": "inherit",
+              "lineHeight": "1.5",
+              "headingColor": "#111827"
+            }
+          },
+          "content": {
+            "title": "Plus de 2000 clients satisfaits a Paris 15e",
+            "subtitle": "Decouvrez les avis de nos clients sur nos interventions de plomberie",
+            "testimonials": [
+              {
+                "name": "Marie Dupont",
+                "quote": "Intervention rapide pour une fuite sous l'evier. Le plombier est arrive en 20 minutes, travail propre et prix raisonnable. Je recommande vivement !",
+                "title": "Locataire, rue de Vaugirard",
+                "avatar": "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400",
+                "rating": 5
+              },
+              {
+                "name": "Thomas Martin",
+                "quote": "Renovation complete de ma salle de bain. Travail impeccable, delais respectes et equipe tres professionnelle. Le resultat depasse mes attentes.",
+                "title": "Proprietaire, rue Lecourbe",
+                "avatar": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400",
+                "rating": 5
+              },
+              {
+                "name": "Sophie Bernard",
+                "quote": "Excellent service de depannage un dimanche soir. Chauffe-eau remplace rapidement. Tarif transparent, pas de mauvaise surprise sur la facture.",
+                "title": "Syndic, avenue Felix Faure",
+                "avatar": "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400",
+                "rating": 5
+              }
+            ]
+          },
+          "variant": "grid",
+          "advanced": {
+            "customCSS": "",
+            "animations": {},
+            "cssClasses": [],
+            "visibility": { "mobile": true, "tablet": true, "desktop": true }
+          }
+        },
+        {
+          "id": "section-1770994079917",
+          "type": "footer",
+          "order": 4,
+          "design": {
+            "colors": {
+              "primary": "#000000",
+              "secondary": "#ffffff",
+              "buttonText": "#ffffff",
+              "buttonBackground": "#000000",
+              "buttonBackgroundHover": "#1F2937"
+            },
+            "spacing": {
+              "marginTop": "0px",
+              "paddingTop": "0px",
+              "marginBottom": "0px",
+              "paddingBottom": "0px"
+            },
+            "background": {
+              "type": "color",
+              "value": "#111827"
+            },
+            "typography": {
+              "fontSize": "1rem",
+              "textColor": "#4B5563",
+              "fontFamily": "inherit",
+              "lineHeight": "1.5",
+              "headingColor": "#111827"
+            }
+          },
+          "content": {
+            "logo": "",
+            "columns": [
+              {
+                "links": [
+                  { "url": "#depannage", "label": "Depannage urgence" },
+                  { "url": "#installation", "label": "Installation" },
+                  { "url": "#renovation", "label": "Renovation" }
+                ],
+                "title": "Services"
+              },
+              {
+                "links": [
+                  { "url": "#zone", "label": "Paris 15e" },
+                  { "url": "#paris-7", "label": "Paris 7e" },
+                  { "url": "#paris-14", "label": "Paris 14e" }
+                ],
+                "title": "Zones"
+              },
+              {
+                "links": [
+                  { "url": "#mentions", "label": "Mentions legales" },
+                  { "url": "#cgv", "label": "CGV" }
+                ],
+                "title": "Legal"
+              }
+            ],
+            "logoText": "AquaPro",
+            "copyright": "2024 AquaPro Plomberie - Tous droits reserves - RCS Paris 123 456 789",
+            "description": "Plombier agree a Paris 15e. Depannage, installation et renovation depuis 2008.",
+            "socialLinks": [
+              { "url": "https://facebook.com/aquapro", "platform": "facebook" },
+              { "url": "https://twitter.com/aquapro", "platform": "twitter" },
+              { "url": "https://linkedin.com/company/aquapro", "platform": "linkedin" }
+            ]
+          },
+          "variant": "default",
+          "advanced": {
+            "customCSS": "",
+            "animations": {},
+            "cssClasses": [],
+            "visibility": { "mobile": true, "tablet": true, "desktop": true }
+          }
+        }
+      ]
+    },
+    {
+      "page_key": "restaurant-italien-lyon",
+      "title": "La Dolce Vita - Restaurant Italien Lyon 2e | Pizzas",
+      "description": "Restaurant italien authentique a Lyon 2e. Pizzas au feu de bois, pates fraiches, tiramisu maison. Reservez votre table au 04 56 78 90 12.",
+      "keywords": ["restaurant italien lyon", "pizza lyon", "pates fraiches lyon", "restaurant presquile", "trattoria lyon"],
+      "og_title": "La Dolce Vita - Le meilleur italien de Lyon",
+      "og_description": "Cuisine italienne authentique au coeur de la Presqu'ile. Pizzas au feu de bois et pates fraiches maison.",
+      "og_image": "https://images.pexels.com/photos/1049626/pexels-photo-1049626.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "canonical_url": "https://votre-site.com/restaurant-italien-lyon",
+      "language": "fr",
+      "status": "published",
+      "seo_h1": "La Dolce Vita : Restaurant Italien Authentique a Lyon",
+      "seo_h2": "Une experience culinaire italienne au coeur de la Presqu'ile",
+      "template_id": "5afb1c2e-68fd-49ac-be5c-9ae34630bc96",
+      "sections_data": [
+        {
+          "id": "section-1770993848778",
+          "type": "header",
+          "order": 0,
+          "design": {
+            "colors": {
+              "primary": "#000000",
+              "secondary": "#ffffff",
+              "buttonText": "#ffffff",
+              "buttonBackground": "#000000",
+              "buttonBackgroundHover": "#485870"
+            },
+            "spacing": {
+              "marginTop": "0px",
+              "paddingTop": "0px",
+              "marginBottom": "0px",
+              "paddingBottom": "0px"
+            },
+            "background": {
+              "type": "color",
+              "value": "#ffffff"
+            },
+            "typography": {
+              "fontSize": "1rem",
+              "textColor": "#4B5563",
+              "fontFamily": "inherit",
+              "lineHeight": "1.5",
+              "headingColor": "#000000"
+            }
+          },
+          "content": {
+            "logo": "",
+            "ctaLink": "tel:+33456789012",
+            "ctaText": "Reserver une table",
+            "logoText": "La Dolce Vita",
+            "navItems": [
+              { "link": "#carte", "label": "Notre carte" },
+              { "link": "#specialites", "label": "Specialites" },
+              { "link": "#avis", "label": "Avis" },
+              { "link": "#reservation", "label": "Reservation" }
+            ]
+          },
+          "variant": "default",
+          "advanced": {
+            "customCSS": "",
+            "animations": {},
+            "cssClasses": [],
+            "visibility": { "mobile": true, "tablet": true, "desktop": true }
+          }
+        },
+        {
+          "id": "section-1770993943426",
+          "type": "hero",
+          "order": 1,
+          "design": {
+            "colors": {
+              "primary": "#000000",
+              "secondary": "#ffffff",
+              "buttonText": "#ffffff",
+              "buttonBackground": "#000000",
+              "buttonBackgroundHover": "#1F2937"
+            },
+            "spacing": {
+              "marginTop": "0px",
+              "paddingTop": "96px",
+              "marginBottom": "0px",
+              "paddingBottom": "96px"
+            },
+            "background": {
+              "type": "color",
+              "value": "#ffffff"
+            },
+            "typography": {
+              "fontSize": "1rem",
+              "textColor": "#4B5563",
+              "fontFamily": "inherit",
+              "lineHeight": "1.5",
+              "headingColor": "#111827"
+            }
+          },
+          "content": {
+            "image": "https://images.pexels.com/photos/1049626/pexels-photo-1049626.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750",
+            "ctaLink": "tel:+33456789012",
+            "ctaText": "Reserver ce soir",
+            "headline": "La Dolce Vita : Restaurant Italien Authentique a Lyon",
+            "subheadline": "Pizzas cuites au feu de bois, pates fraiches preparees chaque jour, desserts maison. Une experience culinaire italienne au coeur de la Presqu'ile depuis 2012."
+          },
+          "variant": "default",
+          "advanced": {
+            "customCSS": "",
+            "animations": {},
+            "cssClasses": [],
+            "visibility": { "mobile": true, "tablet": true, "desktop": true }
+          }
+        },
+        {
+          "id": "section-1770993962348",
+          "type": "features",
+          "order": 2,
+          "design": {
+            "colors": {
+              "primary": "#000000",
+              "secondary": "#ffffff",
+              "buttonText": "#ffffff",
+              "buttonBackground": "#000000",
+              "buttonBackgroundHover": "#1F2937"
+            },
+            "spacing": {
+              "marginTop": "0px",
+              "paddingTop": "80px",
+              "marginBottom": "0px",
+              "paddingBottom": "80px"
+            },
+            "background": {
+              "type": "color",
+              "value": "#c0aaaa"
+            },
+            "typography": {
+              "fontSize": "1rem",
+              "textColor": "#f7f7f7",
+              "fontFamily": "inherit",
+              "lineHeight": "1.5",
+              "headingColor": "#111827"
+            }
+          },
+          "content": {
+            "title": "Nos specialites italiennes authentiques",
+            "features": [
+              {
+                "icon": "zap",
+                "title": "Pizzas au feu de bois",
+                "description": "Pate petrie a la main chaque matin, sauce tomate San Marzano, mozzarella di Bufala importee. Cuisson au four a bois a 450 degres."
+              },
+              {
+                "icon": "shield",
+                "title": "Pates fraiches maison",
+                "description": "Tagliatelles, raviolis, gnocchis : toutes nos pates sont preparees sur place avec de la semoule de ble dur italienne et des oeufs fermiers."
+              },
+              {
+                "icon": "heart",
+                "title": "Desserts et vins italiens",
+                "description": "Tiramisu, panna cotta, cannoli siciliens faits maison. Carte des vins avec plus de 40 references italiennes selectionnees par notre sommelier."
+              }
+            ],
+            "subtitle": "Des produits frais importes directement d'Italie"
+          },
+          "variant": "grid-2",
+          "advanced": {
+            "customCSS": "",
+            "animations": {},
+            "cssClasses": [],
+            "visibility": { "mobile": true, "tablet": true, "desktop": true }
+          }
+        },
+        {
+          "id": "section-1770994058775",
+          "type": "testimonials",
+          "order": 3,
+          "design": {
+            "colors": {
+              "primary": "#000000",
+              "secondary": "#ffffff",
+              "buttonText": "#ffffff",
+              "buttonBackground": "#000000",
+              "buttonBackgroundHover": "#1F2937"
+            },
+            "spacing": {
+              "marginTop": "0px",
+              "paddingTop": "80px",
+              "marginBottom": "0px",
+              "paddingBottom": "80px"
+            },
+            "background": {
+              "type": "color",
+              "value": "#f9fafb"
+            },
+            "typography": {
+              "fontSize": "1rem",
+              "textColor": "#4B5563",
+              "fontFamily": "inherit",
+              "lineHeight": "1.5",
+              "headingColor": "#111827"
+            }
+          },
+          "content": {
+            "title": "Ce que disent nos clients lyonnais",
+            "subtitle": "Note moyenne de 4.8/5 sur plus de 500 avis verifies",
+            "testimonials": [
+              {
+                "name": "Claire Moreau",
+                "quote": "Les meilleures pizzas de Lyon, sans hesitation. La pate est fine et croustillante, les ingredients sont d'une fraicheur incomparable. On s'y croirait en Italie !",
+                "title": "Habituee depuis 3 ans",
+                "avatar": "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400",
+                "rating": 5
+              },
+              {
+                "name": "Laurent Petit",
+                "quote": "Cadre chaleureux, service impeccable et cuisine divine. Les raviolis a la truffe sont un pur delice. L'adresse ideale pour un diner romantique.",
+                "title": "Client regulier",
+                "avatar": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400",
+                "rating": 5
+              },
+              {
+                "name": "Amandine Roux",
+                "quote": "Nous avons organise un repas d'equipe de 25 personnes. Tout etait parfait du debut a la fin. Le menu decouverte est une pepite a prix tres raisonnable.",
+                "title": "Responsable evenementiel",
+                "avatar": "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400",
+                "rating": 5
+              }
+            ]
+          },
+          "variant": "grid",
+          "advanced": {
+            "customCSS": "",
+            "animations": {},
+            "cssClasses": [],
+            "visibility": { "mobile": true, "tablet": true, "desktop": true }
+          }
+        },
+        {
+          "id": "section-1770994079917",
+          "type": "footer",
+          "order": 4,
+          "design": {
+            "colors": {
+              "primary": "#000000",
+              "secondary": "#ffffff",
+              "buttonText": "#ffffff",
+              "buttonBackground": "#000000",
+              "buttonBackgroundHover": "#1F2937"
+            },
+            "spacing": {
+              "marginTop": "0px",
+              "paddingTop": "0px",
+              "marginBottom": "0px",
+              "paddingBottom": "0px"
+            },
+            "background": {
+              "type": "color",
+              "value": "#111827"
+            },
+            "typography": {
+              "fontSize": "1rem",
+              "textColor": "#4B5563",
+              "fontFamily": "inherit",
+              "lineHeight": "1.5",
+              "headingColor": "#111827"
+            }
+          },
+          "content": {
+            "logo": "",
+            "columns": [
+              {
+                "links": [
+                  { "url": "#pizzas", "label": "Pizzas" },
+                  { "url": "#pates", "label": "Pates" },
+                  { "url": "#desserts", "label": "Desserts" }
+                ],
+                "title": "Notre carte"
+              },
+              {
+                "links": [
+                  { "url": "#horaires", "label": "Horaires" },
+                  { "url": "#acces", "label": "Acces" },
+                  { "url": "#privatisation", "label": "Privatisation" }
+                ],
+                "title": "Infos pratiques"
+              },
+              {
+                "links": [
+                  { "url": "#mentions", "label": "Mentions legales" },
+                  { "url": "#cgv", "label": "CGV" }
+                ],
+                "title": "Legal"
+              }
+            ],
+            "logoText": "La Dolce Vita",
+            "copyright": "2024 La Dolce Vita - Restaurant Italien Lyon - SIRET 987 654 321 00012",
+            "description": "Restaurant italien authentique au coeur de Lyon. Pizzas au feu de bois et pates fraiches depuis 2012.",
+            "socialLinks": [
+              { "url": "https://facebook.com/ladolcevitalyon", "platform": "facebook" },
+              { "url": "https://instagram.com/ladolcevitalyon", "platform": "twitter" },
+              { "url": "https://linkedin.com/company/ladolcevita", "platform": "linkedin" }
+            ]
+          },
+          "variant": "default",
+          "advanced": {
+            "customCSS": "",
+            "animations": {},
+            "cssClasses": [],
+            "visibility": { "mobile": true, "tablet": true, "desktop": true }
+          }
+        }
+      ]
+    }
+  ]
+}
