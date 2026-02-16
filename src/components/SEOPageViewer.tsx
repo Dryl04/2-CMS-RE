@@ -140,9 +140,15 @@ export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThem
   const sections = (page.sections_data || []) as PageBuilderSection[];
   const hasSections = sections.length > 0;
   const [showAdminPanel, setShowAdminPanel] = useState(false);
+  
+  // Get the DaisyUI theme to apply to this page
+  const daisyThemeSlug = page.daisy_theme_slug || undefined;
 
   return (
-    <div className="min-h-screen bg-white page-themed">
+    <div 
+      className="min-h-screen bg-white page-themed"
+      data-theme={daisyThemeSlug}
+    >
       <PageThemeInjector themeId={pageThemeId} />
       {/* Bouton flottant admin - uniquement visible quand l'utilisateur est connecté */}
       {!isPublic && (

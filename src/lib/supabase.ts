@@ -41,6 +41,7 @@ export interface SEOMetadata {
   created_by?: string;
   user_id?: string;
   template_id?: string;
+  daisy_theme_slug?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -65,6 +66,7 @@ export interface PageTemplate {
   sections_data?: any[];
   seo_h1?: string;
   seo_h2?: string;
+  daisy_theme_slug?: string | null;
   is_public: boolean;
   is_system: boolean;
   created_by?: string;

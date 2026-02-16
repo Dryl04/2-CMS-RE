@@ -4,6 +4,7 @@ import { PageBuilderSection, DeviceType } from '../../lib/pageBuilderTypes';
 import { supabase, PageTemplate, SEOMetadata } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePageTheme } from '../../contexts/PageThemeContext';
+import { useDaisyTheme } from '../../contexts/DaisyThemeContext';
 import { exportTemplateAsJSON, exportTemplateAsCSV, downloadFile } from '../../lib/templateExport';
 import WidgetLibrary from './WidgetLibrary';
 import Canvas from './Canvas';
@@ -52,6 +53,7 @@ export default function PageBuilder({
 }: PageBuilderProps) {
   const { profile } = useAuth();
   const { pageThemes, refreshThemes } = usePageTheme();
+  const { themes: daisyThemes, activeTheme } = useDaisyTheme();
   const [builderView, setBuilderView] = useState<BuilderView>(editingPageId ? 'editor' : 'list');
   const [templates, setTemplates] = useState<PageTemplate[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState(true);
@@ -64,6 +66,7 @@ export default function PageBuilder({
   const [templateName, setTemplateName] = useState('Nouveau modele');
   const [templateDescription, setTemplateDescription] = useState('');
   const [pageThemeId, setPageThemeId] = useState<string | null>(null);
+  const [daisyThemeSlug, setDaisyThemeSlug] = useState<string | null>(null);
   const [showThemeEditor, setShowThemeEditor] = useState(false);
   const [history, setHistory] = useState<PageBuilderSection[][]>([initialSections || []]);
   const [historyIndex, setHistoryIndex] = useState(0);
@@ -192,6 +195,7 @@ export default function PageBuilder({
         sections_data: sections,
         is_public: true,
         page_theme_id: pageThemeId,
+        daisy_theme_slug: daisyThemeSlug,
       };
 
       if (editingTemplateId) {
@@ -234,6 +238,7 @@ export default function PageBuilder({
     setTemplateName(template.name);
     setTemplateDescription(template.description || '');
     setSelectedThemeId((template as any).theme_id || null);
+    setDaisyThemeSlug(template.daisy_theme_slug || null);
     const loadedSections = (template.sections_data || []) as PageBuilderSection[];
     setSections(loadedSections);
     setHistory([loadedSections]);
@@ -264,6 +269,7 @@ export default function PageBuilder({
     setTemplateName('Nouveau modele');
     setTemplateDescription('');
     setPageThemeId(pageThemes.length > 0 ? pageThemes[0].id : null);
+    setDaisyThemeSlug(null);
     setSections([]);
     setHistory([[]]);
     setHistoryIndex(0);
@@ -544,6 +550,25 @@ export default function PageBuilder({
               </button>
             </div>
           )}
+
+          {daisyThemes.length > 0 && (
+            <div className="flex items-center gap-2 ml-4 border-l pl-4">
+              <Palette className="w-4 h-4 text-purple-500" />
+              <select
+                value={daisyThemeSlug || ''}
+                onChange={(e) => setDaisyThemeSlug(e.target.value || null)}
+                className="text-xs bg-purple-50 border border-purple-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                title="Thème DaisyUI (couleurs)"
+              >
+                <option value="">Hérité (global)</option>
+                {daisyThemes.map(theme => (
+                  <option key={theme.id} value={theme.slug}>
+                    {theme.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center space-x-2">
@@ -619,6 +644,7 @@ export default function PageBuilder({
           <div
             className="mx-auto bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 page-themed"
             style={{ width: getDeviceWidth(), maxWidth: '100%' }}
+            data-theme={daisyThemeSlug || undefined}
           >
             {sections.length === 0 ? (
               <div className="p-12 text-center text-gray-500">Aucune section a previsualiser</div>
@@ -679,6 +705,7 @@ export default function PageBuilder({
             <div
               className="mx-auto transition-all duration-300 page-themed"
               style={{ width: getDeviceWidth(), maxWidth: '100%' }}
+              data-theme={daisyThemeSlug || undefined}
             >
               <Canvas
                 sections={sections}
