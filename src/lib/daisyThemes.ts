@@ -144,8 +144,8 @@ export async function loadAllDaisyThemes(): Promise<DaisyTheme[]> {
     // Special ordering for light and dark
     if (a.slug === 'light') return -1;
     if (b.slug === 'light') return 1;
-    if (a.slug === 'dark') return a.slug === 'light' ? 1 : -1;
-    if (b.slug === 'dark') return b.slug === 'light' ? -1 : 1;
+    if (a.slug === 'dark') return b.slug === 'light' ? 1 : -1;
+    if (b.slug === 'dark') return a.slug === 'light' ? -1 : 1;
     
     // Group by source: daisyui before custom
     if (a.source !== b.source) {
@@ -265,10 +265,11 @@ export interface ThemeUsage {
 
 export async function getThemeUsage(themeSlug: string): Promise<ThemeUsage> {
   // Check page_themes table for usage
+  // Note: Using .eq() method for proper parameterization
   const { data: pageThemesData, error: pageThemesError } = await supabase
     .from('page_themes')
     .select('id')
-    .or(`css->daisyTheme.eq.${themeSlug}`);
+    .eq('css->>daisyTheme', themeSlug);
   
   if (pageThemesError && !pageThemesError.message.includes('does not exist')) {
     console.warn('Error checking page_themes:', pageThemesError);

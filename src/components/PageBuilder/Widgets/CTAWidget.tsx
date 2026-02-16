@@ -101,7 +101,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
         {secondaryCta && (
           <a
             href={secondaryLink || '#'}
-            className="btn btn-outline border-2 px-6 sm:px-8 sm:py-4 rounded-xl font-semibold text-base-content border-neutral-content"
+            className="btn btn-outline border-2 px-6 sm:px-8 sm:py-4 rounded-xl font-semibold text-base-content border-base-content"
             style={headingColor ? { borderColor: headingColor, color: headingColor } : undefined}
           >
             {secondaryCta}
