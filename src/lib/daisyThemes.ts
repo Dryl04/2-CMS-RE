@@ -232,8 +232,7 @@ export function generateCustomThemeCSS(slug: string, tokens: DaisyThemeTokens, f
   // Add Google Fonts import if needed
   const googleFonts = extractGoogleFontNames(fontConfig);
   if (googleFonts.length > 0) {
-    const weights = ['300', '400', '500', '600', '700', '800', '900'];
-    css += generateGoogleFontsImport(googleFonts, weights) + '\n\n';
+    css += generateGoogleFontsImport(googleFonts, DEFAULT_FONT_WEIGHTS) + '\n\n';
   }
   
   css += `[data-theme="${slug}"] {
@@ -322,9 +321,14 @@ function isSystemFont(fontName: string): boolean {
 }
 
 /**
+ * Default font weights to import from Google Fonts
+ */
+const DEFAULT_FONT_WEIGHTS = ['300', '400', '500', '600', '700', '800', '900'];
+
+/**
  * Generate Google Fonts import URL
  */
-export function generateGoogleFontsImport(fonts: string[], weights: string[] = ['400', '700']): string {
+export function generateGoogleFontsImport(fonts: string[], weights: string[] = DEFAULT_FONT_WEIGHTS): string {
   if (fonts.length === 0) return '';
   
   const fontParams = fonts
