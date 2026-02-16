@@ -38,13 +38,13 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-center md:text-left">
           <h2
-            className="text-2xl sm:text-3xl font-bold mb-2 text-neutral-content"
+            className="text-2xl sm:text-3xl font-bold mb-2 text-base-content"
             style={headingStyle}
           >
             {headline || 'Ready to Get Started?'}
           </h2>
           <h2
-            className="text-base sm:text-lg font-normal text-neutral-content/80"
+            className="text-base sm:text-lg font-normal text-base-content/80"
             style={textStyle}
           >
             {description || 'Join thousands of satisfied customers today'}
@@ -63,7 +63,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
           {secondaryCta && (
             <a
               href={secondaryLink || '#'}
-              className="btn btn-ghost font-semibold whitespace-nowrap text-neutral-content"
+              className="btn btn-ghost font-semibold whitespace-nowrap text-base-content"
               style={headingStyle}
             >
               {secondaryCta}
@@ -77,13 +77,13 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
   const renderCentered = () => (
     <div className="max-w-3xl mx-auto px-4 text-center">
       <h2
-        className="text-3xl sm:text-4xl font-bold mb-4 text-neutral-content"
+        className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
         style={headingStyle}
       >
         {headline || 'Ready to Get Started?'}
       </h2>
       <h2
-        className="text-lg sm:text-xl mb-8 font-normal text-neutral-content/80"
+        className="text-lg sm:text-xl mb-8 font-normal text-base-content/80"
         style={textStyle}
       >
         {description || 'Join thousands of satisfied customers today'}
@@ -101,7 +101,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
         {secondaryCta && (
           <a
             href={secondaryLink || '#'}
-            className="btn btn-outline border-2 px-6 sm:px-8 sm:py-4 rounded-xl font-semibold text-neutral-content border-neutral-content"
+            className="btn btn-outline border-2 px-6 sm:px-8 sm:py-4 rounded-xl font-semibold text-base-content border-neutral-content"
             style={headingColor ? { borderColor: headingColor, color: headingColor } : undefined}
           >
             {secondaryCta}
@@ -115,13 +115,13 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
     <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div>
         <h2
-          className="text-3xl sm:text-4xl font-bold mb-4 text-neutral-content"
+          className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
           {headline || 'Ready to Get Started?'}
         </h2>
         <h2
-          className="text-lg sm:text-xl mb-8 font-normal text-neutral-content/80"
+          className="text-lg sm:text-xl mb-8 font-normal text-base-content/80"
           style={textStyle}
         >
           {description || 'Join thousands of satisfied customers today'}
@@ -139,7 +139,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
           {secondaryCta && (
             <a
               href={secondaryLink || '#'}
-              className="btn btn-ghost font-semibold flex items-center py-3 sm:py-4 text-neutral-content"
+              className="btn btn-ghost font-semibold flex items-center py-3 sm:py-4 text-base-content"
               style={headingStyle}
             >
               {secondaryCta} &rarr;

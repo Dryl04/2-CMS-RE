@@ -180,7 +180,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-8 w-auto" />
             ) : (
-              <span className="text-xl font-bold text-white">
+              <span className="text-xl font-bold text-base-100">
                 {logoText || 'Brand'}
               </span>
             )}
@@ -191,7 +191,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               <a
                 key={index}
                 href={item.link || '#'}
-                className="text-white hover:text-white/70 font-medium transition-colors"
+                className="text-base-100 hover:text-base-100/70 font-medium transition-colors"
               >
                 {item.label}
               </a>
@@ -211,7 +211,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-white"
+            className="md:hidden p-2 text-base-100"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
