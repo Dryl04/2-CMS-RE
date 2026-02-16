@@ -117,6 +117,12 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
 
           <div>
             <h3 className="text-lg font-semibold mb-3">Configuration des polices (optionnel)</h3>
+            <div className="alert alert-info text-xs mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>
+                <strong>Google Fonts:</strong> Recherchez des polices sur <a href="https://fonts.google.com" target="_blank" rel="noopener noreferrer" className="link">fonts.google.com</a>, puis copiez le nom exact ici. Les polices seront automatiquement importées.
+              </span>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="form-control">
                 <label className="label">

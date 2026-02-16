@@ -180,7 +180,10 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-8 w-auto drop-shadow-md" />
             ) : (
-              <span className="text-xl font-bold text-white drop-shadow-md">
+              <span 
+                className="text-xl font-bold drop-shadow-md"
+                style={headingStyle}
+              >
                 {logoText || 'Brand'}
               </span>
             )}
@@ -191,7 +194,8 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               <a
                 key={index}
                 href={item.link || '#'}
-                className="text-white hover:text-white/80 font-medium transition-colors drop-shadow-md"
+                className="hover:opacity-80 font-medium transition-opacity drop-shadow-md"
+                style={textStyle}
               >
                 {item.label}
               </a>
@@ -211,7 +215,8 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-white drop-shadow-md"
+            className="md:hidden p-2 drop-shadow-md"
+            style={textStyle}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>

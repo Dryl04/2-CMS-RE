@@ -54,14 +54,14 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
       <div className="relative h-full flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1
-            className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 text-base-content"
-            style={headingColor ? { color: headingColor } : { color: '#ffffff' }}
+            className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 text-white"
+            style={headingColor ? { color: headingColor } : undefined}
           >
             {title || 'Watch Our Story'}
           </h1>
           <p
-            className="text-lg sm:text-xl lg:text-2xl mb-8 text-base-content/70"
-            style={textColor ? { color: textColor } : { color: '#e5e7eb' }}
+            className="text-lg sm:text-xl lg:text-2xl mb-8 text-white/90"
+            style={textColor ? { color: textColor } : undefined}
           >
             {subtitle || 'Discover what makes us different'}
           </p>
