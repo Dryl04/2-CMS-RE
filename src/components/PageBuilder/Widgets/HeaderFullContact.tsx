@@ -21,8 +21,8 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
   const buttonText = design.colors?.buttonText;
 
   return (
-    <header className="bg-base-100" style={{ backgroundColor: bg }}>
-      <div className="bg-base-200" style={{ backgroundColor: topBg }}>
+    <header className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
+      <div className="bg-base-200" style={topBg ? { backgroundColor: topBg } : undefined}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6 text-sm">
@@ -80,7 +80,7 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
             <div className="flex items-center space-x-6">
               {content.phone && (
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary" style={{ backgroundColor: headingColor }}>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary" style={headingColor ? { backgroundColor: headingColor } : undefined}>
                     <Phone className="w-5 h-5 text-primary-content" />
                   </div>
                   <span className="text-lg font-bold text-base-content" style={{ color: headingColor }}>
@@ -89,10 +89,10 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
                 </div>
               )}
               {content.ctaText && (
-                <button className="px-6 py-3 font-semibold hover:opacity-90 transition bg-primary text-primary-content" style={{
+                <button className="px-6 py-3 font-semibold hover:opacity-90 transition bg-primary text-primary-content" style={buttonBg || buttonText ? {
                   backgroundColor: buttonBg,
                   color: buttonText,
-                }}>
+                } : undefined}>
                   {content.ctaText}
                 </button>
               )}

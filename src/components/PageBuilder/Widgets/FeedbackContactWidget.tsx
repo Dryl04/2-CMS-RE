@@ -147,7 +147,7 @@ export default function FeedbackContactWidget({ section }: FeedbackContactWidget
               <button
                 type="submit"
                 className="w-full py-4 rounded-lg font-semibold text-lg transition hover:opacity-90 bg-primary text-primary-content"
-                style={{ backgroundColor: buttonBg, color: buttonText }}
+                style={buttonBg || buttonText ? { backgroundColor: buttonBg, color: buttonText } : undefined}
               >
                 {content.buttonText || 'Send Message'}
               </button>

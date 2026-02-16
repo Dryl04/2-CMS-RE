@@ -12,7 +12,7 @@ export default function DropCapWithServices({ section }: DropCapWithServicesProp
   const textColor = design.typography?.textColor;
 
   return (
-    <div className="bg-base-200" style={{ backgroundColor: bg }}>
+    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,

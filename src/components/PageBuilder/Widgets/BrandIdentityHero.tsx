@@ -20,7 +20,7 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
   const circleText = design.colors?.circleText;
 
   return (
-    <div className="bg-base-200" style={{ backgroundColor: bg }}>
+    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
@@ -35,8 +35,8 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
           </div>
 
           {content.circleText && (
-            <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full flex items-center justify-center flex-shrink-0 bg-primary" style={{ backgroundColor: circleBg }}>
-              <span className="text-sm sm:text-base md:text-xl font-bold text-center px-3 sm:px-4 text-primary-content" style={{ color: circleText }}>
+            <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full flex items-center justify-center flex-shrink-0 bg-primary" style={circleBg ? { backgroundColor: circleBg } : undefined}>
+              <span className="text-sm sm:text-base md:text-xl font-bold text-center px-3 sm:px-4 text-primary-content" style={circleText ? { color: circleText } : undefined}>
                 {content.circleText}
               </span>
             </div>

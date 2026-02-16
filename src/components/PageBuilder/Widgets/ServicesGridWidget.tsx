@@ -40,7 +40,7 @@ export default function ServicesGridWidget({ section }: ServicesGridWidgetProps)
         {content.description && (
           <p
             className="text-base md:text-lg mb-6 md:mb-8 lg:mb-12 text-base-content/70"
-            style={{ ...(textColor ? { color: textColor } : {}), maxWidth: '800px' }}
+            style={textColor ? { color: textColor, maxWidth: '800px' } : { maxWidth: '800px' }}
           >
             {content.description}
           </p>

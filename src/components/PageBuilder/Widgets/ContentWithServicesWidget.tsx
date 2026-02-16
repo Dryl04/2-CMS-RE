@@ -23,7 +23,7 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
   const gridCols = content.services?.length === 2 ? 'grid-cols-2' : 'grid-cols-2';
 
   return (
-    <div className="bg-base-200" style={{ backgroundColor: bg }}>
+    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
@@ -72,7 +72,7 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
               {content.services?.map((service: any, index: number) => {
                 const IconComponent = iconMap[service.icon] || Umbrella;
                 return (
-                  <div key={index} className="p-6 rounded-lg bg-base-200" style={{ backgroundColor: servicesBg }}>
+                  <div key={index} className="p-6 rounded-lg bg-base-200" style={servicesBg ? { backgroundColor: servicesBg } : undefined}>
                     <IconComponent className="w-12 h-12 mb-4 text-base-content" style={{ color: headingColor }} />
                     <h3 className="text-lg font-bold leading-tight text-base-content" style={{ color: headingColor }}>
                       {service.title}

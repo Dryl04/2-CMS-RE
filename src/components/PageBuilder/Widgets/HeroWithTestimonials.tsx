@@ -13,7 +13,7 @@ export default function HeroWithTestimonials({ section }: HeroWithTestimonialsPr
   const cardBg = design.colors?.cardBackground;
 
   return (
-    <div className="bg-neutral relative" style={{ backgroundColor: bg }}>
+    <div className="bg-neutral relative" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: '200px',
@@ -42,7 +42,7 @@ export default function HeroWithTestimonials({ section }: HeroWithTestimonialsPr
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" style={{ marginTop: '-150px' }}>
           <div className="grid md:grid-cols-3 gap-6">
             {content.testimonials.map((testimonial: any, index: number) => (
-              <div key={index} className="rounded-3xl p-8 shadow-xl bg-base-100" style={{ backgroundColor: cardBg }}>
+              <div key={index} className="rounded-3xl p-8 shadow-xl bg-base-100" style={cardBg ? { backgroundColor: cardBg } : undefined}>
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0">
                     {testimonial.avatar ? (
