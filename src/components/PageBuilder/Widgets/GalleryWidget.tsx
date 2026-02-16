@@ -82,14 +82,14 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
                 alt={item.title}
                 className={`w-full ${heights[index % 4]} object-cover transition-transform group-hover:scale-110`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
+              <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
                 <p
                   className="text-sm font-medium mb-1 text-primary-content"
                   style={accentColor ? { color: accentColor } : undefined}
                 >
                   {item.category}
                 </p>
-                <h3 className="text-xl font-bold text-white">{item.title}</h3>
+                <h3 className="text-xl font-bold text-neutral-content">{item.title}</h3>
               </div>
             </a>
           );
@@ -127,14 +127,14 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               alt={item.title}
               className="w-full h-full object-cover transition-transform group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
+            <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
               <p
                 className="text-sm font-medium mb-1 text-primary-content"
                 style={accentColor ? { color: accentColor } : undefined}
               >
                 {item.category}
               </p>
-              <h3 className="text-xl font-bold text-white">{item.title}</h3>
+              <h3 className="text-xl font-bold text-neutral-content">{item.title}</h3>
             </div>
           </a>
         ))}
@@ -171,17 +171,17 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               alt={item.title}
               className="w-full h-96 lg:h-[600px] object-cover transition-transform group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-12">
+            <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/30 to-transparent flex flex-col justify-end p-12">
               <p
                 className="text-base font-medium mb-2 text-primary-content"
                 style={accentColor ? { color: accentColor } : undefined}
               >
                 {item.category}
               </p>
-              <h3 className="text-4xl lg:text-5xl font-bold text-white mb-4">{item.title}</h3>
+              <h3 className="text-4xl lg:text-5xl font-bold text-neutral-content mb-4">{item.title}</h3>
               <button
                 className="self-start px-8 py-3 rounded-xl font-semibold transition-all hover:shadow-xl bg-primary text-primary-content"
-                style={accentColor ? { backgroundColor: accentColor, color: '#ffffff' } : undefined}
+                style={accentColor ? { backgroundColor: accentColor } : undefined}
               >
                 View Project
               </button>
@@ -201,14 +201,14 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
                 alt={item.title}
                 className="w-full h-full object-cover transition-transform group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
+              <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
                 <p
                   className="text-sm font-medium mb-1 text-primary-content"
                   style={accentColor ? { color: accentColor } : undefined}
                 >
                   {item.category}
                 </p>
-                <h3 className="text-lg font-bold text-white">{item.title}</h3>
+                <h3 className="text-lg font-bold text-neutral-content">{item.title}</h3>
               </div>
             </a>
           ))}
@@ -242,14 +242,14 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               alt={item.title}
               className="w-full h-96 lg:h-[600px] object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-12">
+            <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/30 to-transparent flex flex-col justify-end p-12">
               <div
                 className="inline-block px-4 py-1 rounded-full text-sm font-semibold mb-4 bg-primary text-primary-content"
-                style={accentColor ? { backgroundColor: accentColor, color: '#ffffff' } : undefined}
+                style={accentColor ? { backgroundColor: accentColor } : undefined}
               >
                 {item.category}
               </div>
-              <h3 className="text-3xl lg:text-5xl font-bold text-white mb-6">{item.title}</h3>
+              <h3 className="text-3xl lg:text-5xl font-bold text-neutral-content mb-6">{item.title}</h3>
               <a
                 href={item.link}
                 className="self-start px-8 py-4 rounded-xl font-semibold bg-base-100 transition-all hover:shadow-xl text-primary"

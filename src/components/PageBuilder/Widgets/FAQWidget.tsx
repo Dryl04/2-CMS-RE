@@ -232,22 +232,22 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
       <div className="space-y-6">
         {(faqs || defaultFaqs).map((faq: any, index: number) => {
           const isOpen = openIndex === index;
-          const gradients = [
-            'from-blue-500 to-blue-600',
-            'from-purple-500 to-purple-600',
-            'from-pink-500 to-pink-600',
-            'from-orange-500 to-orange-600',
-            'from-teal-500 to-teal-600',
-            'from-red-500 to-red-600',
+          const variants = [
+            'bg-primary text-primary-content',
+            'bg-secondary text-secondary-content',
+            'bg-accent text-accent-content',
+            'bg-info text-info-content',
+            'bg-success text-success-content',
+            'bg-error text-error-content',
           ];
           return (
             <div
               key={index}
-              className={`bg-gradient-to-r ${gradients[index % 6]} rounded-2xl overflow-hidden shadow-xl`}
+              className={`${variants[index % 6]} rounded-2xl overflow-hidden shadow-xl`}
             >
               <button
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="w-full px-6 py-5 text-left flex items-center justify-between text-white hover:brightness-110 transition-all"
+                className="w-full px-6 py-5 text-left flex items-center justify-between hover:brightness-110 transition-all"
               >
                 <span className="text-lg font-semibold pr-8">{faq.question}</span>
                 {isOpen ? (
@@ -257,7 +257,7 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
                 )}
               </button>
               {isOpen && (
-                <div className="px-6 pb-5 pt-0 text-white">
+                <div className="px-6 pb-5 pt-0">
                   <p className="text-base leading-relaxed opacity-95">{faq.answer}</p>
                 </div>
               )}

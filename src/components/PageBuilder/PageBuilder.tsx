@@ -608,7 +608,7 @@ export default function PageBuilder({
       {showPreview ? (
         <div className="flex-1 overflow-auto bg-gray-100 p-8">
           <div
-            className="mx-auto bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 page-themed"
+            className="mx-auto bg-base-100 rounded-lg shadow-lg overflow-hidden transition-all duration-300 page-themed"
             style={{ width: getDeviceWidth(), maxWidth: '100%' }}
             data-theme={daisyThemeSlug || undefined}
           >
