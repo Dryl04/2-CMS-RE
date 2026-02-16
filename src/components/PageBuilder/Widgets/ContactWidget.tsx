@@ -18,11 +18,11 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
   const renderDefault = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-base-content" style={{ color: headingColor }}>
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-base-content">
           {title || 'Get in Touch'}
         </h2>
         {subtitle && (
-          <h2 className="text-lg sm:text-xl font-normal text-base-content/70" style={{ color: textColor }}>
+          <h2 className="text-lg sm:text-xl font-normal text-base-content/70">
             {subtitle}
           </h2>
         )}
@@ -30,19 +30,19 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
 
       <div className="grid md:grid-cols-2 gap-8 sm:gap-12">
         <div className="space-y-6">
-          <h3 className="text-xl sm:text-2xl font-bold mb-6 text-base-content" style={{ color: headingColor }}>Contact Information</h3>
+          <h3 className="text-xl sm:text-2xl font-bold mb-6 text-base-content">Contact Information</h3>
 
           {email && (
             <div className="flex items-start space-x-4">
               <div
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-primary"
-                style={{ backgroundColor: buttonBg }}
+               
               >
-                <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" style={{ color: buttonText }} />
+                <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" />
               </div>
               <div>
-                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content" style={{ color: headingColor }}>Email</div>
-                <a href={`mailto:${email}`} className="text-sm sm:text-base hover:underline text-base-content/70" style={{ color: textColor }}>
+                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content">Email</div>
+                <a href={`mailto:${email}`} className="text-sm sm:text-base hover:underline text-base-content/70">
                   {email}
                 </a>
               </div>
@@ -53,13 +53,13 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
             <div className="flex items-start space-x-4">
               <div
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-primary"
-                style={{ backgroundColor: buttonBg }}
+               
               >
-                <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" style={{ color: buttonText }} />
+                <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" />
               </div>
               <div>
-                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content" style={{ color: headingColor }}>Phone</div>
-                <a href={`tel:${phone}`} className="text-sm sm:text-base hover:underline text-base-content/70" style={{ color: textColor }}>
+                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content">Phone</div>
+                <a href={`tel:${phone}`} className="text-sm sm:text-base hover:underline text-base-content/70">
                   {phone}
                 </a>
               </div>
@@ -70,13 +70,13 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
             <div className="flex items-start space-x-4">
               <div
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-primary"
-                style={{ backgroundColor: buttonBg }}
+               
               >
-                <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" style={{ color: buttonText }} />
+                <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" />
               </div>
               <div>
-                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content" style={{ color: headingColor }}>Address</div>
-                <p className="text-sm sm:text-base text-base-content/70" style={{ color: textColor }}>{address}</p>
+                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content">Address</div>
+                <p className="text-sm sm:text-base text-base-content/70">{address}</p>
               </div>
             </div>
           )}
@@ -86,7 +86,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
           <div className="bg-base-100 rounded-2xl p-6 sm:p-8 border border-base-content/10">
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               <div>
-                <label className="block text-sm font-semibold mb-2 text-base-content" style={{ color: headingColor }}>
+                <label className="block text-sm font-semibold mb-2 text-base-content">
                   Name
                 </label>
                 <input
@@ -96,7 +96,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-2 text-base-content" style={{ color: headingColor }}>
+                <label className="block text-sm font-semibold mb-2 text-base-content">
                   Email
                 </label>
                 <input
@@ -106,7 +106,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-2 text-base-content" style={{ color: headingColor }}>
+                <label className="block text-sm font-semibold mb-2 text-base-content">
                   Message
                 </label>
                 <textarea
@@ -134,18 +134,18 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
 
   const renderCentered = () => (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-base-content" style={{ color: headingColor }}>
+      <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-base-content">
         {title || 'Get in Touch'}
       </h2>
       {subtitle && (
-        <h2 className="text-lg sm:text-xl mb-12 font-normal text-base-content/70" style={{ color: textColor }}>
+        <h2 className="text-lg sm:text-xl mb-12 font-normal text-base-content/70">
           {subtitle}
         </h2>
       )}
 
       <div className="space-y-4 mb-12">
         {email && (
-          <div className="flex items-center justify-center space-x-3 text-base-content/70" style={{ color: textColor }}>
+          <div className="flex items-center justify-center space-x-3 text-base-content/70">
             <Mail className="w-5 h-5" />
             <a href={`mailto:${email}`} className="hover:underline text-sm sm:text-base">
               {email}
@@ -154,7 +154,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
         )}
 
         {phone && (
-          <div className="flex items-center justify-center space-x-3 text-base-content/70" style={{ color: textColor }}>
+          <div className="flex items-center justify-center space-x-3 text-base-content/70">
             <Phone className="w-5 h-5" />
             <a href={`tel:${phone}`} className="hover:underline text-sm sm:text-base">
               {phone}
@@ -163,7 +163,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
         )}
 
         {address && (
-          <div className="flex items-center justify-center space-x-3 text-base-content/70" style={{ color: textColor }}>
+          <div className="flex items-center justify-center space-x-3 text-base-content/70">
             <MapPin className="w-5 h-5" />
             <span className="text-sm sm:text-base">{address}</span>
           </div>
@@ -205,27 +205,27 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
 
   const renderMinimal = () => (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-base-content" style={{ color: headingColor }}>
+      <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-base-content">
         {title || 'Get in Touch'}
       </h2>
 
       <div className="flex flex-col sm:flex-row flex-wrap gap-6 sm:gap-8">
         {email && (
-          <a href={`mailto:${email}`} className="flex items-center space-x-2 hover:underline text-base-content/70" style={{ color: textColor }}>
+          <a href={`mailto:${email}`} className="flex items-center space-x-2 hover:underline text-base-content/70">
             <Mail className="w-5 h-5" />
             <span className="text-sm sm:text-base">{email}</span>
           </a>
         )}
 
         {phone && (
-          <a href={`tel:${phone}`} className="flex items-center space-x-2 hover:underline text-base-content/70" style={{ color: textColor }}>
+          <a href={`tel:${phone}`} className="flex items-center space-x-2 hover:underline text-base-content/70">
             <Phone className="w-5 h-5" />
             <span className="text-sm sm:text-base">{phone}</span>
           </a>
         )}
 
         {address && (
-          <div className="flex items-center space-x-2 text-base-content/70" style={{ color: textColor }}>
+          <div className="flex items-center space-x-2 text-base-content/70">
             <MapPin className="w-5 h-5 flex-shrink-0" />
             <span className="text-sm sm:text-base">{address}</span>
           </div>
