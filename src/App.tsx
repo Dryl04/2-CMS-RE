@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { DaisyThemeProvider } from './contexts/DaisyThemeContext';
+import { PageThemeProvider } from './contexts/PageThemeContext';
 import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
 import SEOManager from './components/SEOManager';
@@ -208,9 +209,11 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <DaisyThemeProvider>
-        <AppContent />
-      </DaisyThemeProvider>
+      <PageThemeProvider>
+        <DaisyThemeProvider>
+          <AppContent />
+        </DaisyThemeProvider>
+      </PageThemeProvider>
     </AuthProvider>
   );
 }

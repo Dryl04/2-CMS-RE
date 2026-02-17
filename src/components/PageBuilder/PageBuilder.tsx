@@ -554,6 +554,7 @@ export default function PageBuilder({
                     description: previewTemplate.description,
                     status: 'published',
                     sections_data: normalizeSectionsData(previewTemplate.sections_data),
+                    daisy_theme_slug: previewTemplate.daisy_theme_slug || null,
                     created_at: previewTemplate.created_at,
                     updated_at: previewTemplate.updated_at,
                   } as SEOMetadata}
@@ -883,7 +884,8 @@ function TemplateThumbnail({ sections }: { sections: PageBuilderSection[] }) {
   return (
     <div className="w-full h-full p-3 flex flex-col gap-1.5 pointer-events-none">
       {sections.slice(0, 4).map((section, i) => {
-        const bg = section.design.background.type === 'color' ? section.design.background.value : '#f9fafb';
+        const normalizedSection = normalizeSectionForTheme(section);
+        const bg = normalizedSection.design.background.type === 'color' ? normalizedSection.design.background.value : '#f9fafb';
         const isDark = bg === '#000000' || bg === '#1a1a1a';
         return (
           <div
@@ -892,7 +894,7 @@ function TemplateThumbnail({ sections }: { sections: PageBuilderSection[] }) {
             style={{ backgroundColor: bg }}
           >
             <span className={`text-[9px] font-medium truncate px-2 ${isDark ? 'text-white/60' : 'text-gray-400'}`}>
-              {section.type}
+              {normalizedSection.type}
             </span>
           </div>
         );

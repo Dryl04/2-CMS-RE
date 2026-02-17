@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { generateThemeCSS, getPageThemeById, PAGE_THEMES } from '../lib/pageThemes';
+import { generateThemeCSS, getPageThemeById } from '../lib/pageThemes';
 import { usePageTheme } from '../contexts/PageThemeContext';
 
 interface PageThemeInjectorProps {
@@ -10,18 +10,22 @@ export default function PageThemeInjector({ themeId }: PageThemeInjectorProps) {
   const { pageThemes } = usePageTheme();
 
   useEffect(() => {
-    let theme;
-
-    if (themeId) {
-      theme = pageThemes.find(t => t.id === themeId);
-
-      if (!theme) {
-        theme = getPageThemeById(themeId);
+    if (!themeId) {
+      const existing = document.getElementById('page-theme-styles');
+      if (existing) {
+        existing.remove();
       }
+      return;
+    }
+
+    let theme = pageThemes.find(t => t.id === themeId);
+
+    if (!theme) {
+      theme = getPageThemeById(themeId);
     }
 
     if (!theme) {
-      theme = PAGE_THEMES[0];
+      return;
     }
 
     const css = generateThemeCSS(theme);

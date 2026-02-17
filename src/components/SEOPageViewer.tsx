@@ -59,6 +59,13 @@ import ClickFunnelCenterCard from './PageBuilder/Widgets/ClickFunnelCenterCard';
 import ClickFunnelTestimonials from './PageBuilder/Widgets/ClickFunnelTestimonials';
 import ClickFunnelFeatures from './PageBuilder/Widgets/ClickFunnelFeatures';
 import ClickFunnelFooter from './PageBuilder/Widgets/ClickFunnelFooter';
+import CreativeNetworkHeroWidget from './PageBuilder/Widgets/CreativeNetworkHeroWidget';
+import ImmersiveSplitShowcaseWidget from './PageBuilder/Widgets/ImmersiveSplitShowcaseWidget';
+import ProviderMasonryWidget from './PageBuilder/Widgets/ProviderMasonryWidget';
+import ProcessStepsCardsWidget from './PageBuilder/Widgets/ProcessStepsCardsWidget';
+import EditorialCardsRowWidget from './PageBuilder/Widgets/EditorialCardsRowWidget';
+import MinimalFinalCTAWidget from './PageBuilder/Widgets/MinimalFinalCTAWidget';
+import CinematicFooterWidget from './PageBuilder/Widgets/CinematicFooterWidget';
 import { getWidgetButtonRadius, getWidgetButtonSizeVars, getWidgetThemeProps, normalizeSectionForTheme } from '../lib/widgetThemeHelper';
 
 interface SEOPageViewerProps {
@@ -70,6 +77,79 @@ interface SEOPageViewerProps {
   // Quand isPublic=true, aucun contrôle admin ne sera affiché.
   isPublic?: boolean;
   pageThemeId?: string | null;
+}
+
+function canRenderSectionType(type?: string): boolean {
+  if (!type) return false;
+
+  switch (type) {
+    case 'header':
+    case 'hero':
+    case 'features':
+    case 'cta':
+    case 'testimonials':
+    case 'contact':
+    case 'footer':
+    case 'pricing':
+    case 'stats':
+    case 'team':
+    case 'faq':
+    case 'logocloud':
+    case 'videohero':
+    case 'gallery':
+    case 'timeline':
+    case 'newsletter':
+    case 'process':
+    case 'image-text-split':
+    case 'content-showcase':
+    case 'centered-content':
+    case 'text-columns':
+    case 'services-grid':
+    case 'contact-split':
+    case 'feedback-contact':
+    case 'services-cards':
+    case 'membership-pricing':
+    case 'faq-two-columns':
+    case 'integrations-grid':
+    case 'hero-with-services':
+    case 'image-stats-faq':
+    case 'timeline-grid':
+    case 'newsletter-signup':
+    case 'social-follow':
+    case 'services-carousel':
+    case 'bento-features':
+    case 'features-carousel':
+    case 'content-with-services':
+    case 'split-content-checklist':
+    case 'dropcap-services':
+    case 'centered-testimonial':
+    case 'content-video-services':
+    case 'process-alternating':
+    case 'hero-with-testimonials':
+    case 'brand-identity-hero':
+    case 'simple-centered-hero':
+    case 'simple-header-divider':
+    case 'header-top-info':
+    case 'header-with-icons':
+    case 'header-account-bar':
+    case 'header-full-contact':
+    case 'header-clickfunnel':
+    case 'clickfunnels-hero':
+    case 'clickfunnel-center-card':
+    case 'click-funnel-testimonials':
+    case 'clickfunnel-features':
+    case 'clickfunnel-footer':
+    case 'creative-network-hero':
+    case 'immersive-split-showcase':
+    case 'provider-masonry':
+    case 'process-steps-cards':
+    case 'editorial-cards-row':
+    case 'minimal-final-cta':
+    case 'cinematic-footer':
+      return true;
+    default:
+      return false;
+  }
 }
 
 function normalizeSectionsData(raw: unknown): PageBuilderSection[] {
@@ -104,7 +184,7 @@ function SectionRenderer({ section }: { section: PageBuilderSection }) {
   const normalizedSection = normalizeSectionForTheme(section);
   const props = { section: normalizedSection, onUpdate: noop };
 
-  switch (section.type) {
+  switch (normalizedSection.type) {
     case 'header':
       return <HeaderWidget {...props} />;
     case 'hero':
@@ -217,6 +297,20 @@ function SectionRenderer({ section }: { section: PageBuilderSection }) {
       return <ClickFunnelFeatures {...props} />;
     case 'clickfunnel-footer':
       return <ClickFunnelFooter {...props} />;
+    case 'creative-network-hero':
+      return <CreativeNetworkHeroWidget {...props} />;
+    case 'immersive-split-showcase':
+      return <ImmersiveSplitShowcaseWidget {...props} />;
+    case 'provider-masonry':
+      return <ProviderMasonryWidget {...props} />;
+    case 'process-steps-cards':
+      return <ProcessStepsCardsWidget {...props} />;
+    case 'editorial-cards-row':
+      return <EditorialCardsRowWidget {...props} />;
+    case 'minimal-final-cta':
+      return <MinimalFinalCTAWidget {...props} />;
+    case 'cinematic-footer':
+      return <CinematicFooterWidget {...props} />;
     default:
       return null;
   }
@@ -225,15 +319,19 @@ function SectionRenderer({ section }: { section: PageBuilderSection }) {
 function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
   return (
     <>
-      {sections.map((section) => {
+      {sections.map((section, index) => {
         const normalizedSection = normalizeSectionForTheme(section);
+        if (!normalizedSection?.type) {
+          return null;
+        }
         const widgetTheme = getWidgetThemeProps(normalizedSection);
         const buttonRadius = getWidgetButtonRadius(normalizedSection);
         const buttonSizeVars = getWidgetButtonSizeVars(normalizedSection);
 
         return (
           <div
-            key={normalizedSection.id}
+            className="widget-design-scope"
+            key={normalizedSection.id || `section-${index}`}
             data-theme={widgetTheme.dataTheme}
             style={{
               backgroundColor:
@@ -244,6 +342,14 @@ function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
               paddingBottom: normalizedSection.design.spacing.paddingBottom,
               marginTop: normalizedSection.design.spacing.marginTop,
               marginBottom: normalizedSection.design.spacing.marginBottom,
+              '--widget-heading-color': normalizedSection.design.typography?.headingColor || '',
+              '--widget-text-color': normalizedSection.design.typography?.textColor || '',
+              '--widget-btn-bg': normalizedSection.design.colors?.buttonBackground || '',
+              '--widget-btn-text': normalizedSection.design.colors?.buttonText || '',
+              '--widget-btn-bg-hover': normalizedSection.design.colors?.buttonBackgroundHover || '',
+              '--widget-accent-color': normalizedSection.design.colors?.accent || '',
+              '--widget-icon-bg': normalizedSection.design.colors?.iconBackground || '',
+              '--widget-icon-color': normalizedSection.design.colors?.iconColor || '',
               '--widget-btn-radius': buttonRadius,
               ...buttonSizeVars,
               ...widgetTheme.customStyles,
@@ -301,6 +407,7 @@ function FallbackPage({ page }: { page: SEOMetadata }) {
 export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThemeId }: SEOPageViewerProps) {
   const sections = normalizeSectionsData(page.sections_data);
   const hasSections = sections.length > 0;
+  const hasRenderableSections = sections.some((section) => canRenderSectionType(section?.type));
   const [showAdminPanel, setShowAdminPanel] = useState(false);
 
   // Get the DaisyUI theme to apply to this page
@@ -373,7 +480,7 @@ export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThem
       )}
 
       <div>
-        {hasSections ? (
+        {hasSections && hasRenderableSections ? (
           <RenderSections sections={sections} />
         ) : (
           <FallbackPage page={page} />

@@ -160,9 +160,11 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
       const pageKey = getPageKey();
       const keywordsArray = keywords.split(',').map(k => k.trim()).filter(k => k);
       let sectionsToSave = sectionsData;
+      const selectedTemplate = selectedTemplateId
+        ? templates.find((template) => template.id === selectedTemplateId)
+        : null;
 
       if (selectedTemplateId && (!Array.isArray(sectionsData) || sectionsData.length === 0)) {
-        const selectedTemplate = templates.find((template) => template.id === selectedTemplateId);
         const templateSections = (selectedTemplate?.sections_data || []) as PageBuilderSection[];
         if (templateSections.length > 0) {
           sectionsToSave = templateSections;
@@ -177,6 +179,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
         content: content || null,
         sections_data: sectionsToSave,
         template_id: selectedTemplateId || null,
+        daisy_theme_slug: selectedTemplate?.daisy_theme_slug || editingPage?.daisy_theme_slug || null,
         og_title: ogTitle || null,
         og_description: ogDescription || null,
         og_image: ogImage || null,
@@ -623,8 +626,8 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
             <button
               onClick={() => setStatus('draft')}
               className={`p-4 rounded-xl border-2 transition-all ${status === 'draft'
-                  ? 'bg-white border-amber-500 shadow-md'
-                  : 'bg-white border-gray-200 hover:border-amber-300'
+                ? 'bg-white border-amber-500 shadow-md'
+                : 'bg-white border-gray-200 hover:border-amber-300'
                 }`}
             >
               <div className="font-semibold text-gray-900">Brouillon</div>
@@ -633,8 +636,8 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
             <button
               onClick={() => setStatus('published')}
               className={`p-4 rounded-xl border-2 transition-all ${status === 'published'
-                  ? 'bg-white border-emerald-500 shadow-md'
-                  : 'bg-white border-gray-200 hover:border-emerald-300'
+                ? 'bg-white border-emerald-500 shadow-md'
+                : 'bg-white border-gray-200 hover:border-emerald-300'
                 }`}
             >
               <div className="font-semibold text-gray-900">Publie</div>
@@ -643,8 +646,8 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
             <button
               onClick={() => setStatus('archived')}
               className={`p-4 rounded-xl border-2 transition-all ${status === 'archived'
-                  ? 'bg-white border-gray-500 shadow-md'
-                  : 'bg-white border-gray-200 hover:border-gray-300'
+                ? 'bg-white border-gray-500 shadow-md'
+                : 'bg-white border-gray-200 hover:border-gray-300'
                 }`}
             >
               <div className="font-semibold text-gray-900">Archive</div>
