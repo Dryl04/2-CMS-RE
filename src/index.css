@@ -35,6 +35,10 @@
   /* Keep CTA buttons visually consistent across Daisy themes in page/template editors */
   .page-themed .btn:not(.btn-circle):not(.btn-square) {
     border-radius: var(--widget-btn-radius, 0.75rem);
+    font-size: var(--widget-btn-font-size, 0.9rem);
+    min-height: var(--widget-btn-min-height, 2.6rem);
+    padding-left: var(--widget-btn-px, 1.1rem);
+    padding-right: var(--widget-btn-px, 1.1rem);
   }
 }
 

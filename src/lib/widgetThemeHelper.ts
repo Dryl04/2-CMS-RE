@@ -159,3 +159,35 @@ function normalizeRadius(value?: string) {
 export function getWidgetButtonRadius(section: PageBuilderSection) {
   return normalizeRadius(section.design?.colors?.buttonRadius);
 }
+
+export function getWidgetButtonSizeVars(section: PageBuilderSection): Record<string, string> {
+  const size = section.design?.colors?.buttonSize || 'md';
+
+  switch (size) {
+    case 'sm':
+      return {
+        '--widget-btn-font-size': '0.8rem',
+        '--widget-btn-min-height': '2.2rem',
+        '--widget-btn-px': '0.85rem',
+      };
+    case 'lg':
+      return {
+        '--widget-btn-font-size': '1rem',
+        '--widget-btn-min-height': '3rem',
+        '--widget-btn-px': '1.35rem',
+      };
+    case 'xl':
+      return {
+        '--widget-btn-font-size': '1.125rem',
+        '--widget-btn-min-height': '3.3rem',
+        '--widget-btn-px': '1.6rem',
+      };
+    case 'md':
+    default:
+      return {
+        '--widget-btn-font-size': '0.9rem',
+        '--widget-btn-min-height': '2.6rem',
+        '--widget-btn-px': '1.1rem',
+      };
+  }
+}

@@ -30,6 +30,7 @@ export interface PageBuilderSection {
       buttonText?: string;
       buttonBackgroundHover?: string;
       buttonRadius?: string;
+      buttonSize?: 'sm' | 'md' | 'lg' | 'xl';
       iconBackground?: string;
       iconColor?: string;
     };

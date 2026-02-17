@@ -41,7 +41,7 @@ const extractPrimaryFontName = (fontStack?: string) => {
 };
 
 export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props) {
-  const { createTheme, updateTheme } = useDaisyTheme();
+  const { createTheme, updateTheme, themes } = useDaisyTheme();
   const isNew = !theme?.id;
   const isOfficial = theme?.source === 'daisyui';
 
@@ -59,11 +59,31 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
   const [showFontImporter, setShowFontImporter] = useState(false);
   const [availableFonts, setAvailableFonts] = useState<FontLibraryItem[]>([]);
 
+  const generateUniqueSlug = (themeName: string) => {
+    const baseSlug = slugify(themeName);
+    const existingSlugs = new Set(
+      themes
+        .filter((t) => t.id !== theme?.id)
+        .map((t) => t.slug)
+    );
+
+    if (!existingSlugs.has(baseSlug)) {
+      return baseSlug;
+    }
+
+    let iteration = 2;
+    while (existingSlugs.has(`${baseSlug}-${iteration}`)) {
+      iteration += 1;
+    }
+
+    return `${baseSlug}-${iteration}`;
+  };
+
   useEffect(() => {
     if (autoSlug && name) {
-      setSlug(slugify(name));
+      setSlug(generateUniqueSlug(name));
     }
-  }, [name, autoSlug]);
+  }, [name, autoSlug, themes, theme?.id]);
 
   useEffect(() => {
     loadAvailableFonts();

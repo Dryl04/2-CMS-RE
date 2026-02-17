@@ -107,24 +107,39 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           <WidgetThemeSelector section={section} onUpdateSection={onUpdateSection} />
           <div className="border-t border-gray-200 pt-4">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">Boutons</h3>
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
-              <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
-                <input
-                  type="range"
-                  min="0"
-                  max="32"
-                  step="1"
-                  value={parseInt((section.design.colors?.buttonRadius || '12').replace('px', ''), 10) || 12}
-                  onChange={(e) => updateDesign('colors', 'buttonRadius', `${e.target.value}px`)}
-                  className="w-full"
-                />
-                <input
-                  type="text"
-                  value={section.design.colors?.buttonRadius || '12px'}
-                  onChange={(e) => updateDesign('colors', 'buttonRadius', e.target.value)}
-                  className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                />
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Taille des boutons</label>
+                <select
+                  value={section.design.colors?.buttonSize || 'md'}
+                  onChange={(e) => updateDesign('colors', 'buttonSize', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+                >
+                  <option value="sm">Petit</option>
+                  <option value="md">Moyen</option>
+                  <option value="lg">Grand</option>
+                  <option value="xl">Très grand</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
+                <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                  <input
+                    type="range"
+                    min="0"
+                    max="32"
+                    step="1"
+                    value={parseInt((section.design.colors?.buttonRadius || '12').replace('px', ''), 10) || 12}
+                    onChange={(e) => updateDesign('colors', 'buttonRadius', `${e.target.value}px`)}
+                    className="w-full"
+                  />
+                  <input
+                    type="text"
+                    value={section.design.colors?.buttonRadius || '12px'}
+                    onChange={(e) => updateDesign('colors', 'buttonRadius', e.target.value)}
+                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -147,7 +162,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       <WidgetThemeSelector section={section} onUpdateSection={onUpdateSection} />
 
       <div className="border-t border-gray-200 pt-4">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Couleurs</h3>
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">Typographie</h3>
         <div className="space-y-3">
           <div>
             <label className="block text-xs text-gray-600 mb-1">Couleur titre</label>
@@ -184,7 +199,12 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               />
             </div>
           </div>
+        </div>
+      </div>
 
+      <div className="border-t border-gray-200 pt-4">
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">Boutons</h3>
+        <div className="space-y-3">
           <div>
             <label className="block text-xs text-gray-600 mb-1">Couleur bouton</label>
             <div className="flex items-center space-x-2">
@@ -237,6 +257,20 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Taille des boutons</label>
+            <select
+              value={section.design.colors?.buttonSize || 'md'}
+              onChange={(e) => updateDesign('colors', 'buttonSize', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+            >
+              <option value="sm">Petit</option>
+              <option value="md">Moyen</option>
+              <option value="lg">Grand</option>
+              <option value="xl">Très grand</option>
+            </select>
           </div>
 
           <div>

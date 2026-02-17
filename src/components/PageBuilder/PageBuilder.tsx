@@ -60,7 +60,7 @@ import HeaderWithIcons from './Widgets/HeaderWithIcons';
 import HeaderAccountBar from './Widgets/HeaderAccountBar';
 import HeaderFullContact from './Widgets/HeaderFullContact';
 import DaisyThemeManager from '../DaisyThemeManager';
-import { getWidgetButtonRadius, getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
+import { getWidgetButtonRadius, getWidgetButtonSizeVars, getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
 
 interface PageBuilderProps {
   onNavigate?: (view: string) => void;
@@ -71,6 +71,33 @@ interface PageBuilderProps {
 }
 
 type BuilderView = 'list' | 'editor';
+
+function normalizeSectionsData(raw: unknown): PageBuilderSection[] {
+  if (Array.isArray(raw)) {
+    return raw as PageBuilderSection[];
+  }
+
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw);
+      return normalizeSectionsData(parsed);
+    } catch {
+      return [];
+    }
+  }
+
+  if (raw && typeof raw === 'object') {
+    const maybeRecord = raw as Record<string, unknown>;
+    if (Array.isArray(maybeRecord.sections)) {
+      return maybeRecord.sections as PageBuilderSection[];
+    }
+    if (Array.isArray(maybeRecord.sections_data)) {
+      return maybeRecord.sections_data as PageBuilderSection[];
+    }
+  }
+
+  return [];
+}
 
 export default function PageBuilder({
   onNavigate,
@@ -257,7 +284,7 @@ export default function PageBuilder({
     setTemplateName(template.name);
     setTemplateDescription(template.description || '');
     setDaisyThemeSlug(template.daisy_theme_slug || null);
-    const loadedSections = (template.sections_data || []) as PageBuilderSection[];
+    const loadedSections = normalizeSectionsData(template.sections_data);
     setSections(loadedSections);
     setHistory([loadedSections]);
     setHistoryIndex(0);
@@ -355,7 +382,8 @@ export default function PageBuilder({
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {templates.map((template) => {
-                const sectionCount = (template.sections_data || []).length;
+                const templateSections = normalizeSectionsData(template.sections_data);
+                const sectionCount = templateSections.length;
                 return (
                   <div
                     key={template.id}
@@ -363,7 +391,7 @@ export default function PageBuilder({
                     onClick={() => setPreviewTemplate(template)}
                   >
                     <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-50 relative overflow-hidden rounded-t-2xl">
-                      <TemplateThumbnail sections={(template.sections_data || []) as PageBuilderSection[]} />
+                      <TemplateThumbnail sections={templateSections} />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
                     </div>
                     <div className="p-5">
@@ -481,7 +509,7 @@ export default function PageBuilder({
                     title: previewTemplate.name,
                     description: previewTemplate.description,
                     status: 'published',
-                    sections_data: previewTemplate.sections_data,
+                    sections_data: normalizeSectionsData(previewTemplate.sections_data),
                     created_at: previewTemplate.created_at,
                     updated_at: previewTemplate.updated_at,
                   } as SEOMetadata}
@@ -649,6 +677,7 @@ export default function PageBuilder({
                 const normalizedSection = normalizeSectionForTheme(section);
                 const widgetTheme = getWidgetThemeProps(normalizedSection);
                 const buttonRadius = getWidgetButtonRadius(normalizedSection);
+                const buttonSizeVars = getWidgetButtonSizeVars(normalizedSection);
                 const noop = () => {};
                 const widgetProps = { section: normalizedSection, onUpdate: noop };
                 const renderWidget = () => {
@@ -720,6 +749,7 @@ export default function PageBuilder({
                       marginTop: normalizedSection.design.spacing.marginTop,
                       marginBottom: normalizedSection.design.spacing.marginBottom,
                       '--widget-btn-radius': buttonRadius,
+                      ...buttonSizeVars,
                       ...widgetTheme.customStyles,
                     }}
                   >

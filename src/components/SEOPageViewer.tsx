@@ -53,7 +53,7 @@ import HeaderTopInfo from './PageBuilder/Widgets/HeaderTopInfo';
 import HeaderWithIcons from './PageBuilder/Widgets/HeaderWithIcons';
 import HeaderAccountBar from './PageBuilder/Widgets/HeaderAccountBar';
 import HeaderFullContact from './PageBuilder/Widgets/HeaderFullContact';
-import { getWidgetButtonRadius, getWidgetThemeProps, normalizeSectionForTheme } from '../lib/widgetThemeHelper';
+import { getWidgetButtonRadius, getWidgetButtonSizeVars, getWidgetThemeProps, normalizeSectionForTheme } from '../lib/widgetThemeHelper';
 
 interface SEOPageViewerProps {
   page: SEOMetadata;
@@ -64,6 +64,33 @@ interface SEOPageViewerProps {
   // Quand isPublic=true, aucun contrôle admin ne sera affiché.
   isPublic?: boolean;
   pageThemeId?: string | null;
+}
+
+function normalizeSectionsData(raw: unknown): PageBuilderSection[] {
+  if (Array.isArray(raw)) {
+    return raw as PageBuilderSection[];
+  }
+
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw);
+      return normalizeSectionsData(parsed);
+    } catch {
+      return [];
+    }
+  }
+
+  if (raw && typeof raw === 'object') {
+    const maybeRecord = raw as Record<string, unknown>;
+    if (Array.isArray(maybeRecord.sections)) {
+      return maybeRecord.sections as PageBuilderSection[];
+    }
+    if (Array.isArray(maybeRecord.sections_data)) {
+      return maybeRecord.sections_data as PageBuilderSection[];
+    }
+  }
+
+  return [];
 }
 
 function SectionRenderer({ section }: { section: PageBuilderSection }) {
@@ -184,6 +211,7 @@ function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
         const normalizedSection = normalizeSectionForTheme(section);
         const widgetTheme = getWidgetThemeProps(normalizedSection);
         const buttonRadius = getWidgetButtonRadius(normalizedSection);
+        const buttonSizeVars = getWidgetButtonSizeVars(normalizedSection);
 
         return (
           <div
@@ -199,6 +227,7 @@ function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
               marginTop: normalizedSection.design.spacing.marginTop,
               marginBottom: normalizedSection.design.spacing.marginBottom,
               '--widget-btn-radius': buttonRadius,
+              ...buttonSizeVars,
               ...widgetTheme.customStyles,
             }}
           >
@@ -252,7 +281,7 @@ function FallbackPage({ page }: { page: SEOMetadata }) {
 }
 
 export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThemeId }: SEOPageViewerProps) {
-  const sections = (page.sections_data || []) as PageBuilderSection[];
+  const sections = normalizeSectionsData(page.sections_data);
   const hasSections = sections.length > 0;
   const [showAdminPanel, setShowAdminPanel] = useState(false);
 
