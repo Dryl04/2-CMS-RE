@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Plus, Check, Trash2, Edit3, Copy, X, Palette, Type } from 'lucide-react';
+import { Plus, Trash2, Edit3, Copy, X, Type } from 'lucide-react';
 import { useDaisyTheme } from '../contexts/DaisyThemeContext';
 import { DaisyTheme, TOKEN_GROUPS, TOKEN_LABELS } from '../lib/daisyThemes';
 import DaisyThemeEditorModal from './DaisyThemeEditorModal';
@@ -9,7 +9,7 @@ interface DaisyThemeManagerProps {
 }
 
 export default function DaisyThemeManager({ onClose }: DaisyThemeManagerProps) {
-  const { themes, activeTheme, loading, setActiveTheme, removeTheme, isThemeInUse } = useDaisyTheme();
+  const { themes, loading, removeTheme } = useDaisyTheme();
   const [editingTheme, setEditingTheme] = useState<DaisyTheme | null>(null);
   const [selectedThemeId, setSelectedThemeId] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -21,34 +21,25 @@ export default function DaisyThemeManager({ onClose }: DaisyThemeManagerProps) {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const handleActivate = async (themeId: string) => {
-    try {
-      await setActiveTheme(themeId);
-      showToast('Thème activé');
-    } catch {
-      showToast('Erreur lors de l\'activation');
-    }
-  };
-
   const handleDelete = async (theme: DaisyTheme) => {
     if (theme.source === 'daisyui') {
       showToast('Impossible de supprimer un thème officiel');
       return;
     }
-    
+
     try {
       // First check if theme is in use
       const result = await removeTheme(theme.id, false);
-      
+
       if (!result.success && result.usage) {
         // Theme is in use, show detailed warning
         const usageMsg = `Ce thème est utilisé dans ${result.usage.totalUsages} élément(s):\n` +
           `- ${result.usage.pageThemes} thème(s) de page\n` +
           `- ${result.usage.pageTemplates} modèle(s) de page\n\n` +
           `Voulez-vous vraiment le supprimer ? Les éléments utilisant ce thème seront migrés vers le thème par défaut.`;
-        
+
         if (!confirm(usageMsg)) return;
-        
+
         // Force delete with migration
         const forceResult = await removeTheme(theme.id, true);
         if (forceResult.success) {
@@ -156,10 +147,8 @@ export default function DaisyThemeManager({ onClose }: DaisyThemeManagerProps) {
                       <ThemeListItem
                         key={theme.id}
                         theme={theme}
-                        isActive={activeTheme?.id === theme.id}
                         isSelected={selectedTheme?.id === theme.id}
                         onSelect={() => setSelectedThemeId(theme.id)}
-                        onActivate={() => handleActivate(theme.id)}
                         onEdit={() => { setEditingTheme(theme); setShowCreateModal(true); }}
                         onDuplicate={() => handleDuplicate(theme)}
                         onDelete={() => handleDelete(theme)}
@@ -175,10 +164,8 @@ export default function DaisyThemeManager({ onClose }: DaisyThemeManagerProps) {
                       <ThemeListItem
                         key={theme.id}
                         theme={theme}
-                        isActive={activeTheme?.id === theme.id}
                         isSelected={selectedTheme?.id === theme.id}
                         onSelect={() => setSelectedThemeId(theme.id)}
-                        onActivate={() => handleActivate(theme.id)}
                         onEdit={() => { setEditingTheme(theme); setShowCreateModal(true); }}
                         onDuplicate={() => handleDuplicate(theme)}
                         onDelete={() => handleDelete(theme)}
@@ -207,16 +194,10 @@ export default function DaisyThemeManager({ onClose }: DaisyThemeManagerProps) {
                     </div>
                     <div className="flex items-center gap-2">
                       {selectedTheme.source === 'daisyui' && <span className="badge badge-ghost">officiel</span>}
-                      {isThemeInUse(selectedTheme.id) && <span className="badge badge-primary">actif</span>}
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2 mt-4">
-                    {!isThemeInUse(selectedTheme.id) && (
-                      <button onClick={() => handleActivate(selectedTheme.id)} className="btn btn-primary btn-sm gap-2">
-                        <Check className="w-4 h-4" /> Activer
-                      </button>
-                    )}
                     <button onClick={() => handleDuplicate(selectedTheme)} className="btn btn-outline btn-sm gap-2">
                       <Copy className="w-4 h-4" /> Dupliquer
                     </button>
@@ -341,19 +322,15 @@ export default function DaisyThemeManager({ onClose }: DaisyThemeManagerProps) {
 
 function ThemeListItem({
   theme,
-  isActive,
   isSelected,
   onSelect,
-  onActivate,
   onEdit,
   onDuplicate,
   onDelete,
 }: {
   theme: DaisyTheme;
-  isActive: boolean;
   isSelected: boolean;
   onSelect: () => void;
-  onActivate: () => void;
   onEdit: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
@@ -363,9 +340,8 @@ function ThemeListItem({
   return (
     <div
       onClick={onSelect}
-      className={`rounded-xl p-3 border-2 cursor-pointer transition-colors ${
-        isSelected ? 'border-primary bg-primary/5' : 'border-base-300 bg-base-100 hover:border-base-content/20'
-      }`}
+      className={`rounded-xl p-3 border-2 cursor-pointer transition-colors ${isSelected ? 'border-primary bg-primary/5' : 'border-base-300 bg-base-100 hover:border-base-content/20'
+        }`}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
@@ -374,7 +350,6 @@ function ThemeListItem({
         </div>
         <div className="flex items-center gap-1">
           {theme.source === 'daisyui' && <span className="badge badge-ghost badge-xs">officiel</span>}
-          {isActive && <span className="badge badge-primary badge-xs">actif</span>}
         </div>
       </div>
 
@@ -389,17 +364,6 @@ function ThemeListItem({
       </div>
 
       <div className="flex items-center justify-end gap-1 mt-3">
-        {!isActive && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onActivate();
-            }}
-            className="btn btn-primary btn-xs"
-          >
-            <Check className="w-3 h-3" />
-          </button>
-        )}
         <button
           onClick={(e) => {
             e.stopPropagation();
