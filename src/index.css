@@ -40,6 +40,39 @@
     padding-left: var(--widget-btn-px, 1.1rem);
     padding-right: var(--widget-btn-px, 1.1rem);
   }
+
+  .widget-design-scope :is(h1, h2, h3, h4, h5, h6) {
+    color: var(--widget-heading-color, inherit) !important;
+  }
+
+  .widget-design-scope :is(p, li, small, label) {
+    color: var(--widget-text-color, inherit) !important;
+  }
+
+  .widget-design-scope a {
+    color: var(--widget-accent-color, var(--widget-text-color, inherit));
+  }
+
+  .widget-design-scope .btn {
+    background-color: var(--widget-btn-bg, initial) !important;
+    color: var(--widget-btn-text, inherit) !important;
+    border-color: color-mix(in oklab, var(--widget-btn-bg, #000) 75%, black) !important;
+  }
+
+  .widget-design-scope .btn:hover {
+    background-color: var(--widget-btn-bg-hover, var(--widget-btn-bg, initial)) !important;
+  }
+
+  .widget-design-scope .btn.btn-outline,
+  .widget-design-scope .btn.btn-ghost {
+    background-color: transparent !important;
+    color: var(--widget-btn-text, var(--widget-text-color, inherit)) !important;
+    border-color: color-mix(in oklab, var(--widget-btn-bg, #000) 40%, white) !important;
+  }
+
+  .widget-design-scope svg {
+    color: var(--widget-icon-color, inherit);
+  }
 }
 
 @layer utilities {

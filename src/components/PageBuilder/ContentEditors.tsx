@@ -240,6 +240,86 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
           placeholder="Lien du bouton"
         />
       </div>
+
+      <div>
+        <label className={labelClass}>Bouton secondaire</label>
+        <input
+          type="text"
+          value={section.content.secondaryCtaText || ''}
+          onChange={(e) => updateContent('secondaryCtaText', e.target.value)}
+          className={`${inputClass} mb-2`}
+          placeholder="Texte bouton secondaire"
+        />
+        <input
+          type="text"
+          value={section.content.secondaryCtaLink || ''}
+          onChange={(e) => updateContent('secondaryCtaLink', e.target.value)}
+          className={inputClass}
+          placeholder="Lien bouton secondaire"
+        />
+      </div>
+
+      <div>
+        <label className={labelClass}>Lien compte</label>
+        <input
+          type="text"
+          value={section.content.accountText || ''}
+          onChange={(e) => updateContent('accountText', e.target.value)}
+          className={`${inputClass} mb-2`}
+          placeholder="Texte compte (ex: Log in)"
+        />
+        <input
+          type="text"
+          value={section.content.accountLink || ''}
+          onChange={(e) => updateContent('accountLink', e.target.value)}
+          className={inputClass}
+          placeholder="Lien compte"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label className="flex items-center space-x-2 cursor-pointer text-sm font-medium text-gray-700">
+          <input
+            type="checkbox"
+            checked={section.content.showSearch !== false}
+            onChange={(e) => updateContent('showSearch', e.target.checked)}
+            className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black"
+          />
+          <span>Afficher recherche</span>
+        </label>
+        <label className="flex items-center space-x-2 cursor-pointer text-sm font-medium text-gray-700">
+          <input
+            type="checkbox"
+            checked={section.content.showCart === true}
+            onChange={(e) => updateContent('showCart', e.target.checked)}
+            className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black"
+          />
+          <span>Afficher panier</span>
+        </label>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className={labelClass}>Lien recherche</label>
+          <input
+            type="text"
+            value={section.content.searchLink || ''}
+            onChange={(e) => updateContent('searchLink', e.target.value)}
+            className={inputClass}
+            placeholder="Lien recherche"
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Lien panier</label>
+          <input
+            type="text"
+            value={section.content.cartLink || ''}
+            onChange={(e) => updateContent('cartLink', e.target.value)}
+            className={inputClass}
+            placeholder="Lien panier"
+          />
+        </div>
+      </div>
     </div>
   );
 }

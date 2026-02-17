@@ -59,6 +59,13 @@ import HeaderTopInfo from './Widgets/HeaderTopInfo';
 import HeaderWithIcons from './Widgets/HeaderWithIcons';
 import HeaderAccountBar from './Widgets/HeaderAccountBar';
 import HeaderFullContact from './Widgets/HeaderFullContact';
+import CreativeNetworkHeroWidget from './Widgets/CreativeNetworkHeroWidget';
+import ImmersiveSplitShowcaseWidget from './Widgets/ImmersiveSplitShowcaseWidget';
+import ProviderMasonryWidget from './Widgets/ProviderMasonryWidget';
+import ProcessStepsCardsWidget from './Widgets/ProcessStepsCardsWidget';
+import EditorialCardsRowWidget from './Widgets/EditorialCardsRowWidget';
+import MinimalFinalCTAWidget from './Widgets/MinimalFinalCTAWidget';
+import CinematicFooterWidget from './Widgets/CinematicFooterWidget';
 import DaisyThemeManager from '../DaisyThemeManager';
 import { getWidgetButtonRadius, getWidgetButtonSizeVars, getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
 
@@ -762,11 +769,19 @@ export default function PageBuilder({
                     case 'header-with-icons': return <HeaderWithIcons {...widgetProps} />;
                     case 'header-account-bar': return <HeaderAccountBar {...widgetProps} />;
                     case 'header-full-contact': return <HeaderFullContact {...widgetProps} />;
+                    case 'creative-network-hero': return <CreativeNetworkHeroWidget {...widgetProps} />;
+                    case 'immersive-split-showcase': return <ImmersiveSplitShowcaseWidget {...widgetProps} />;
+                    case 'provider-masonry': return <ProviderMasonryWidget {...widgetProps} />;
+                    case 'process-steps-cards': return <ProcessStepsCardsWidget {...widgetProps} />;
+                    case 'editorial-cards-row': return <EditorialCardsRowWidget {...widgetProps} />;
+                    case 'minimal-final-cta': return <MinimalFinalCTAWidget {...widgetProps} />;
+                    case 'cinematic-footer': return <CinematicFooterWidget {...widgetProps} />;
                     default: return null;
                   }
                 };
                 return (
                   <div
+                    className="widget-design-scope"
                     key={normalizedSection.id}
                     data-theme={widgetTheme.dataTheme}
                     style={{
@@ -778,6 +793,14 @@ export default function PageBuilder({
                       paddingBottom: normalizedSection.design.spacing.paddingBottom,
                       marginTop: normalizedSection.design.spacing.marginTop,
                       marginBottom: normalizedSection.design.spacing.marginBottom,
+                      '--widget-heading-color': normalizedSection.design.typography?.headingColor || '',
+                      '--widget-text-color': normalizedSection.design.typography?.textColor || '',
+                      '--widget-btn-bg': normalizedSection.design.colors?.buttonBackground || '',
+                      '--widget-btn-text': normalizedSection.design.colors?.buttonText || '',
+                      '--widget-btn-bg-hover': normalizedSection.design.colors?.buttonBackgroundHover || '',
+                      '--widget-accent-color': normalizedSection.design.colors?.accent || '',
+                      '--widget-icon-bg': normalizedSection.design.colors?.iconBackground || '',
+                      '--widget-icon-color': normalizedSection.design.colors?.iconColor || '',
                       '--widget-btn-radius': buttonRadius,
                       ...buttonSizeVars,
                       ...widgetTheme.customStyles,
