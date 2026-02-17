@@ -1,5 +1,5 @@
-import { PageBuilderSection } from './pageBuilderTypes';
-import { PageTemplate } from './supabase';
+import { PageBuilderSection } from "./pageBuilderTypes";
+import { PageTemplate } from "./supabase";
 
 export interface TemplateVariable {
   sectionId: string;
@@ -7,11 +7,38 @@ export interface TemplateVariable {
   sectionVariant: string;
   fieldPath: string;
   fieldLabel: string;
-  fieldType: 'text' | 'image' | 'array';
+  fieldType: "text" | "image" | "array";
   currentValue: any;
 }
 
-export function extractTemplateVariables(sections: PageBuilderSection[]): TemplateVariable[] {
+function normalizeSectionsData(raw: unknown): PageBuilderSection[] {
+  if (Array.isArray(raw)) {
+    return raw as PageBuilderSection[];
+  }
+
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      return normalizeSectionsData(parsed);
+    } catch {
+      return [];
+    }
+  }
+
+  if (raw && typeof raw === "object") {
+    const obj = raw as Record<string, unknown>;
+    if (Array.isArray(obj.sections))
+      return obj.sections as PageBuilderSection[];
+    if (Array.isArray(obj.sections_data))
+      return obj.sections_data as PageBuilderSection[];
+  }
+
+  return [];
+}
+
+export function extractTemplateVariables(
+  sections: PageBuilderSection[],
+): TemplateVariable[] {
   const variables: TemplateVariable[] = [];
 
   sections.forEach((section) => {
@@ -22,148 +49,148 @@ export function extractTemplateVariables(sections: PageBuilderSection[]): Templa
     };
 
     switch (section.type) {
-      case 'hero':
+      case "hero":
         variables.push(
           {
             ...baseInfo,
-            fieldPath: 'content.headline',
-            fieldLabel: 'Titre principal',
-            fieldType: 'text',
+            fieldPath: "content.headline",
+            fieldLabel: "Titre principal",
+            fieldType: "text",
             currentValue: section.content.headline,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.subheadline',
-            fieldLabel: 'Sous-titre',
-            fieldType: 'text',
+            fieldPath: "content.subheadline",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
             currentValue: section.content.subheadline,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.ctaText',
-            fieldLabel: 'Texte du bouton',
-            fieldType: 'text',
+            fieldPath: "content.ctaText",
+            fieldLabel: "Texte du bouton",
+            fieldType: "text",
             currentValue: section.content.ctaText,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.ctaLink',
-            fieldLabel: 'Lien du bouton',
-            fieldType: 'text',
+            fieldPath: "content.ctaLink",
+            fieldLabel: "Lien du bouton",
+            fieldType: "text",
             currentValue: section.content.ctaLink,
-          }
+          },
         );
         if (section.content.image) {
           variables.push({
             ...baseInfo,
-            fieldPath: 'content.image',
-            fieldLabel: 'Image',
-            fieldType: 'image',
+            fieldPath: "content.image",
+            fieldLabel: "Image",
+            fieldType: "image",
             currentValue: section.content.image,
           });
         }
         break;
 
-      case 'features':
+      case "features":
         variables.push(
           {
             ...baseInfo,
-            fieldPath: 'content.title',
-            fieldLabel: 'Titre de section',
-            fieldType: 'text',
+            fieldPath: "content.title",
+            fieldLabel: "Titre de section",
+            fieldType: "text",
             currentValue: section.content.title,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.subtitle',
-            fieldLabel: 'Sous-titre de section',
-            fieldType: 'text',
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre de section",
+            fieldType: "text",
             currentValue: section.content.subtitle,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.features',
-            fieldLabel: 'Liste des fonctionnalites',
-            fieldType: 'array',
+            fieldPath: "content.features",
+            fieldLabel: "Liste des fonctionnalites",
+            fieldType: "array",
             currentValue: section.content.features,
-          }
+          },
         );
         break;
 
-      case 'cta':
+      case "cta":
         variables.push(
           {
             ...baseInfo,
-            fieldPath: 'content.headline',
-            fieldLabel: 'Titre CTA',
-            fieldType: 'text',
+            fieldPath: "content.headline",
+            fieldLabel: "Titre CTA",
+            fieldType: "text",
             currentValue: section.content.headline,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.description',
-            fieldLabel: 'Description CTA',
-            fieldType: 'text',
+            fieldPath: "content.description",
+            fieldLabel: "Description CTA",
+            fieldType: "text",
             currentValue: section.content.description,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.primaryCta',
-            fieldLabel: 'Bouton principal',
-            fieldType: 'text',
+            fieldPath: "content.primaryCta",
+            fieldLabel: "Bouton principal",
+            fieldType: "text",
             currentValue: section.content.primaryCta,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.primaryLink',
-            fieldLabel: 'Lien bouton principal',
-            fieldType: 'text',
+            fieldPath: "content.primaryLink",
+            fieldLabel: "Lien bouton principal",
+            fieldType: "text",
             currentValue: section.content.primaryLink,
-          }
+          },
         );
         if (section.content.secondaryCta) {
           variables.push(
             {
               ...baseInfo,
-              fieldPath: 'content.secondaryCta',
-              fieldLabel: 'Bouton secondaire',
-              fieldType: 'text',
+              fieldPath: "content.secondaryCta",
+              fieldLabel: "Bouton secondaire",
+              fieldType: "text",
               currentValue: section.content.secondaryCta,
             },
             {
               ...baseInfo,
-              fieldPath: 'content.secondaryLink',
-              fieldLabel: 'Lien bouton secondaire',
-              fieldType: 'text',
+              fieldPath: "content.secondaryLink",
+              fieldLabel: "Lien bouton secondaire",
+              fieldType: "text",
               currentValue: section.content.secondaryLink,
-            }
+            },
           );
         }
         break;
 
-      case 'header':
+      case "header":
         variables.push(
           {
             ...baseInfo,
-            fieldPath: 'content.logoText',
-            fieldLabel: 'Nom de marque',
-            fieldType: 'text',
+            fieldPath: "content.logoText",
+            fieldLabel: "Nom de marque",
+            fieldType: "text",
             currentValue: section.content.logoText,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.navItems',
-            fieldLabel: 'Elements de navigation',
-            fieldType: 'array',
+            fieldPath: "content.navItems",
+            fieldLabel: "Elements de navigation",
+            fieldType: "array",
             currentValue: section.content.navItems,
-          }
+          },
         );
         if (section.content.logo) {
           variables.push({
             ...baseInfo,
-            fieldPath: 'content.logo',
-            fieldLabel: 'Logo',
-            fieldType: 'image',
+            fieldPath: "content.logo",
+            fieldLabel: "Logo",
+            fieldType: "image",
             currentValue: section.content.logo,
           });
         }
@@ -171,132 +198,132 @@ export function extractTemplateVariables(sections: PageBuilderSection[]): Templa
           variables.push(
             {
               ...baseInfo,
-              fieldPath: 'content.ctaText',
-              fieldLabel: 'Texte CTA',
-              fieldType: 'text',
+              fieldPath: "content.ctaText",
+              fieldLabel: "Texte CTA",
+              fieldType: "text",
               currentValue: section.content.ctaText,
             },
             {
               ...baseInfo,
-              fieldPath: 'content.ctaLink',
-              fieldLabel: 'Lien CTA',
-              fieldType: 'text',
+              fieldPath: "content.ctaLink",
+              fieldLabel: "Lien CTA",
+              fieldType: "text",
               currentValue: section.content.ctaLink,
-            }
+            },
           );
         }
         break;
 
-      case 'testimonials':
+      case "testimonials":
         variables.push(
           {
             ...baseInfo,
-            fieldPath: 'content.title',
-            fieldLabel: 'Titre',
-            fieldType: 'text',
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
             currentValue: section.content.title,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.subtitle',
-            fieldLabel: 'Sous-titre',
-            fieldType: 'text',
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
             currentValue: section.content.subtitle,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.testimonials',
-            fieldLabel: 'Temoignages',
-            fieldType: 'array',
+            fieldPath: "content.testimonials",
+            fieldLabel: "Temoignages",
+            fieldType: "array",
             currentValue: section.content.testimonials,
-          }
+          },
         );
         break;
 
-      case 'contact':
+      case "contact":
         variables.push(
           {
             ...baseInfo,
-            fieldPath: 'content.title',
-            fieldLabel: 'Titre',
-            fieldType: 'text',
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
             currentValue: section.content.title,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.subtitle',
-            fieldLabel: 'Sous-titre',
-            fieldType: 'text',
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
             currentValue: section.content.subtitle,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.email',
-            fieldLabel: 'Email',
-            fieldType: 'text',
+            fieldPath: "content.email",
+            fieldLabel: "Email",
+            fieldType: "text",
             currentValue: section.content.email,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.phone',
-            fieldLabel: 'Telephone',
-            fieldType: 'text',
+            fieldPath: "content.phone",
+            fieldLabel: "Telephone",
+            fieldType: "text",
             currentValue: section.content.phone,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.address',
-            fieldLabel: 'Adresse',
-            fieldType: 'text',
+            fieldPath: "content.address",
+            fieldLabel: "Adresse",
+            fieldType: "text",
             currentValue: section.content.address,
-          }
+          },
         );
         break;
 
-      case 'footer':
+      case "footer":
         variables.push(
           {
             ...baseInfo,
-            fieldPath: 'content.logoText',
-            fieldLabel: 'Nom de marque',
-            fieldType: 'text',
+            fieldPath: "content.logoText",
+            fieldLabel: "Nom de marque",
+            fieldType: "text",
             currentValue: section.content.logoText,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.description',
-            fieldLabel: 'Description',
-            fieldType: 'text',
+            fieldPath: "content.description",
+            fieldLabel: "Description",
+            fieldType: "text",
             currentValue: section.content.description,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.columns',
-            fieldLabel: 'Colonnes de liens',
-            fieldType: 'array',
+            fieldPath: "content.columns",
+            fieldLabel: "Colonnes de liens",
+            fieldType: "array",
             currentValue: section.content.columns,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.socialLinks',
-            fieldLabel: 'Liens sociaux',
-            fieldType: 'array',
+            fieldPath: "content.socialLinks",
+            fieldLabel: "Liens sociaux",
+            fieldType: "array",
             currentValue: section.content.socialLinks,
           },
           {
             ...baseInfo,
-            fieldPath: 'content.copyright',
-            fieldLabel: 'Copyright',
-            fieldType: 'text',
+            fieldPath: "content.copyright",
+            fieldLabel: "Copyright",
+            fieldType: "text",
             currentValue: section.content.copyright,
-          }
+          },
         );
         if (section.content.logo) {
           variables.push({
             ...baseInfo,
-            fieldPath: 'content.logo',
-            fieldLabel: 'Logo',
-            fieldType: 'image',
+            fieldPath: "content.logo",
+            fieldLabel: "Logo",
+            fieldType: "image",
             currentValue: section.content.logo,
           });
         }
@@ -308,17 +335,22 @@ export function extractTemplateVariables(sections: PageBuilderSection[]): Templa
 }
 
 export function exportTemplateAsJSON(template: PageTemplate): string {
-  const variables = extractTemplateVariables((template.sections_data || []) as PageBuilderSection[]);
+  const normalizedSections = normalizeSectionsData(template.sections_data);
+  const variables = extractTemplateVariables(normalizedSections);
 
   const exportData = {
     template: {
       id: template.id,
       name: template.name,
       description: template.description,
+      daisy_theme_slug: template.daisy_theme_slug || null,
+      is_public: template.is_public,
       created_at: template.created_at,
+      updated_at: template.updated_at,
+      exported_at: new Date().toISOString(),
     },
-    sections: template.sections_data,
-    variables: variables.map(v => ({
+    sections: normalizedSections,
+    variables: variables.map((v) => ({
       sectionId: v.sectionId,
       sectionType: v.sectionType,
       fieldPath: v.fieldPath,
@@ -332,30 +364,46 @@ export function exportTemplateAsJSON(template: PageTemplate): string {
 }
 
 export function exportTemplateAsCSV(template: PageTemplate): string {
-  const variables = extractTemplateVariables((template.sections_data || []) as PageBuilderSection[]);
+  const normalizedSections = normalizeSectionsData(template.sections_data);
+  const variables = extractTemplateVariables(normalizedSections);
 
-  const headers = ['Section ID', 'Section Type', 'Field Path', 'Field Label', 'Field Type', 'Current Value'];
-  const rows = variables.map(v => [
+  const headers = [
+    "Section ID",
+    "Section Type",
+    "Field Path",
+    "Field Label",
+    "Field Type",
+    "Current Value",
+  ];
+  const rows = variables.map((v) => [
     v.sectionId,
     v.sectionType,
     v.fieldPath,
     v.fieldLabel,
     v.fieldType,
-    typeof v.currentValue === 'object' ? JSON.stringify(v.currentValue) : String(v.currentValue || ''),
+    typeof v.currentValue === "object"
+      ? JSON.stringify(v.currentValue)
+      : String(v.currentValue || ""),
   ]);
 
   const csvContent = [
-    headers.join(','),
-    ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
-  ].join('\n');
+    headers.join(","),
+    ...rows.map((row) =>
+      row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","),
+    ),
+  ].join("\n");
 
   return csvContent;
 }
 
-export function downloadFile(content: string, filename: string, mimeType: string) {
+export function downloadFile(
+  content: string,
+  filename: string,
+  mimeType: string,
+) {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = url;
   link.download = filename;
   document.body.appendChild(link);
@@ -366,7 +414,7 @@ export function downloadFile(content: string, filename: string, mimeType: string
 
 export function applyDataToTemplate(
   sections: PageBuilderSection[],
-  data: Record<string, any>
+  data: Record<string, any>,
 ): PageBuilderSection[] {
   return sections.map((section) => {
     const updatedSection = { ...section };
@@ -376,9 +424,9 @@ export function applyDataToTemplate(
 
     Object.keys(sectionData).forEach((key) => {
       const value = sectionData[key];
-      const pathParts = key.split('.');
+      const pathParts = key.split(".");
 
-      if (pathParts[0] === 'content') {
+      if (pathParts[0] === "content") {
         updatedSection.content = {
           ...updatedSection.content,
           [pathParts[1]]: value,
@@ -390,17 +438,22 @@ export function applyDataToTemplate(
   });
 }
 
-export function parseCSVToData(csvContent: string): Record<string, Record<string, any>> {
-  const lines = csvContent.trim().split('\n');
+export function parseCSVToData(
+  csvContent: string,
+): Record<string, Record<string, any>> {
+  const lines = csvContent.trim().split("\n");
   if (lines.length < 2) return {};
 
-  const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
+  const headers = lines[0]
+    .split(",")
+    .map((h) => h.replace(/^"|"$/g, "").trim());
   const data: Record<string, Record<string, any>> = {};
 
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].match(/("(?:[^"]|"")*"|[^,]*)/g)?.map(v =>
-      v.replace(/^"|"$/g, '').replace(/""/g, '"').trim()
-    ) || [];
+    const values =
+      lines[i]
+        .match(/("(?:[^"]|"")*"|[^,]*)/g)
+        ?.map((v) => v.replace(/^"|"$/g, "").replace(/""/g, '"').trim()) || [];
 
     if (values.length < headers.length) continue;
 
@@ -413,9 +466,10 @@ export function parseCSVToData(csvContent: string): Record<string, Record<string
     }
 
     try {
-      data[sectionId][fieldPath] = value.startsWith('[') || value.startsWith('{')
-        ? JSON.parse(value)
-        : value;
+      data[sectionId][fieldPath] =
+        value.startsWith("[") || value.startsWith("{")
+          ? JSON.parse(value)
+          : value;
     } catch {
       data[sectionId][fieldPath] = value;
     }

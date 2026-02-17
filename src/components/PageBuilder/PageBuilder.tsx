@@ -72,6 +72,12 @@ interface PageBuilderProps {
 
 type BuilderView = 'list' | 'editor';
 
+function isMissingDaisyThemeSlugColumnError(error: unknown) {
+  if (!error || typeof error !== 'object') return false;
+  const e = error as { code?: string; message?: string };
+  return e.code === 'PGRST204' && (e.message || '').includes('daisy_theme_slug');
+}
+
 function normalizeSectionsData(raw: unknown): PageBuilderSection[] {
   if (Array.isArray(raw)) {
     return raw as PageBuilderSection[];
@@ -241,23 +247,48 @@ export default function PageBuilder({
         description: templateDescription || null,
         sections_data: sections,
         is_public: true,
+      };
+
+      const templateDataWithTheme: Record<string, any> = {
+        ...templateData,
         daisy_theme_slug: daisyThemeSlug,
       };
 
       if (editingTemplateId) {
         templateData.updated_at = new Date().toISOString();
-        const { error } = await supabase
+        templateDataWithTheme.updated_at = templateData.updated_at;
+
+        let { error } = await supabase
           .from('page_templates')
-          .update(templateData)
+          .update(templateDataWithTheme)
           .eq('id', editingTemplateId);
+
+        if (error && isMissingDaisyThemeSlugColumnError(error)) {
+          const retry = await supabase
+            .from('page_templates')
+            .update(templateData)
+            .eq('id', editingTemplateId);
+          error = retry.error;
+        }
+
         if (error) throw error;
       } else {
         if (profile?.id) {
           templateData.created_by = profile.id;
+          templateDataWithTheme.created_by = profile.id;
         }
-        const { error } = await supabase
+
+        let { error } = await supabase
           .from('page_templates')
-          .insert(templateData);
+          .insert(templateDataWithTheme);
+
+        if (error && isMissingDaisyThemeSlugColumnError(error)) {
+          const retry = await supabase
+            .from('page_templates')
+            .insert(templateData);
+          error = retry.error;
+        }
+
         if (error) throw error;
       }
 
@@ -358,125 +389,125 @@ export default function PageBuilder({
           </button>
         </div>
 
-          {loadingTemplates ? (
-            <div className="text-center py-12">
-              <div className="animate-spin w-10 h-10 border-4 border-gray-200 border-t-gray-900 rounded-full mx-auto"></div>
-              <p className="text-gray-500 mt-4 text-sm">Chargement...</p>
+        {loadingTemplates ? (
+          <div className="text-center py-12">
+            <div className="animate-spin w-10 h-10 border-4 border-gray-200 border-t-gray-900 rounded-full mx-auto"></div>
+            <p className="text-gray-500 mt-4 text-sm">Chargement...</p>
+          </div>
+        ) : templates.length === 0 ? (
+          <div className="bg-white rounded-3xl border border-gray-200 p-16 text-center">
+            <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <FolderOpen className="w-10 h-10 text-gray-400" />
             </div>
-          ) : templates.length === 0 ? (
-            <div className="bg-white rounded-3xl border border-gray-200 p-16 text-center">
-              <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <FolderOpen className="w-10 h-10 text-gray-400" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Aucun modele</h3>
-              <p className="text-gray-500 mb-8 max-w-md mx-auto">
-                Creez votre premier modele de page avec le builder visuel drag & drop
-              </p>
-              <button
-                onClick={startNewTemplate}
-                className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-xl font-medium transition-colors"
-              >
-                Creer un modele
-              </button>
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {templates.map((template) => {
-                const templateSections = normalizeSectionsData(template.sections_data);
-                const sectionCount = templateSections.length;
-                return (
-                  <div
-                    key={template.id}
-                    className="bg-white rounded-2xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer"
-                    onClick={() => setPreviewTemplate(template)}
-                  >
-                    <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-50 relative overflow-hidden rounded-t-2xl">
-                      <TemplateThumbnail sections={templateSections} />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
-                    </div>
-                    <div className="p-5">
-                      <h3 className="font-bold text-gray-900 mb-1">{template.name}</h3>
-                      {template.description && (
-                        <p className="text-sm text-gray-500 mb-3 line-clamp-2">{template.description}</p>
-                      )}
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-400">
-                          {sectionCount} section{sectionCount > 1 ? 's' : ''}
-                        </span>
-                        <div className="flex items-center space-x-1">
-                          <div className="relative group/export">
-                            <button
-                              onClick={(e) => e.stopPropagation()}
-                              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                              title="Exporter"
-                            >
-                              <Download className="w-4 h-4 text-gray-500" />
-                            </button>
-                            <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 opacity-0 invisible group-hover/export:opacity-100 group-hover/export:visible transition-all z-[100] w-40">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const json = exportTemplateAsJSON(template);
-                                  downloadFile(json, `${template.name.toLowerCase().replace(/\s+/g, '-')}.json`, 'application/json');
-                                }}
-                                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center space-x-2"
-                              >
-                                <FileJson className="w-4 h-4 text-blue-500" />
-                                <span>JSON</span>
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const csv = exportTemplateAsCSV(template);
-                                  downloadFile(csv, `${template.name.toLowerCase().replace(/\s+/g, '-')}.csv`, 'text/csv');
-                                }}
-                                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center space-x-2"
-                              >
-                                <FileSpreadsheet className="w-4 h-4 text-green-500" />
-                                <span>CSV</span>
-                              </button>
-                            </div>
-                          </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Aucun modele</h3>
+            <p className="text-gray-500 mb-8 max-w-md mx-auto">
+              Creez votre premier modele de page avec le builder visuel drag & drop
+            </p>
+            <button
+              onClick={startNewTemplate}
+              className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+            >
+              Creer un modele
+            </button>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {templates.map((template) => {
+              const templateSections = normalizeSectionsData(template.sections_data);
+              const sectionCount = templateSections.length;
+              return (
+                <div
+                  key={template.id}
+                  className="bg-white rounded-2xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all group cursor-pointer"
+                  onClick={() => setPreviewTemplate(template)}
+                >
+                  <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-50 relative overflow-hidden rounded-t-2xl">
+                    <TemplateThumbnail sections={templateSections} />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-bold text-gray-900 mb-1">{template.name}</h3>
+                    {template.description && (
+                      <p className="text-sm text-gray-500 mb-3 line-clamp-2">{template.description}</p>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-400">
+                        {sectionCount} section{sectionCount > 1 ? 's' : ''}
+                      </span>
+                      <div className="flex items-center space-x-1">
+                        <div className="relative group/export">
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setPreviewTemplate(template);
-                            }}
-                            className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-                            title="Previsualiser"
-                          >
-                            <Eye className="w-4 h-4 text-blue-500" />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              editTemplate(template);
-                            }}
+                            onClick={(e) => e.stopPropagation()}
                             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                            title="Modifier"
+                            title="Exporter"
                           >
-                            <Edit3 className="w-4 h-4 text-gray-500" />
+                            <Download className="w-4 h-4 text-gray-500" />
                           </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteTemplate(template.id);
-                            }}
-                            className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Supprimer"
-                          >
-                            <Trash2 className="w-4 h-4 text-red-400" />
-                          </button>
+                          <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 opacity-0 invisible group-hover/export:opacity-100 group-hover/export:visible transition-all z-[100] w-40">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const json = exportTemplateAsJSON(template);
+                                downloadFile(json, `${template.name.toLowerCase().replace(/\s+/g, '-')}.json`, 'application/json');
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center space-x-2"
+                            >
+                              <FileJson className="w-4 h-4 text-blue-500" />
+                              <span>JSON</span>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const csv = exportTemplateAsCSV(template);
+                                downloadFile(csv, `${template.name.toLowerCase().replace(/\s+/g, '-')}.csv`, 'text/csv');
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center space-x-2"
+                            >
+                              <FileSpreadsheet className="w-4 h-4 text-green-500" />
+                              <span>CSV</span>
+                            </button>
+                          </div>
                         </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPreviewTemplate(template);
+                          }}
+                          className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Previsualiser"
+                        >
+                          <Eye className="w-4 h-4 text-blue-500" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            editTemplate(template);
+                          }}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                          title="Modifier"
+                        >
+                          <Edit3 className="w-4 h-4 text-gray-500" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteTemplate(template.id);
+                          }}
+                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Supprimer"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-400" />
+                        </button>
                       </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
+    </div>
   );
 
   if (mode === 'template' && builderView === 'list') {
@@ -513,7 +544,7 @@ export default function PageBuilder({
                     created_at: previewTemplate.created_at,
                     updated_at: previewTemplate.updated_at,
                   } as SEOMetadata}
-                  onEdit={() => {}}
+                  onEdit={() => { }}
                   onBack={() => setPreviewTemplate(null)}
                   isPublic={true}
                 />
@@ -644,9 +675,8 @@ export default function PageBuilder({
 
           <button
             onClick={() => setShowPreview(!showPreview)}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm ${
-              showPreview ? 'bg-gray-900 text-white' : 'hover:bg-gray-100'
-            }`}
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm ${showPreview ? 'bg-gray-900 text-white' : 'hover:bg-gray-100'
+              }`}
           >
             <Eye className="w-4 h-4" />
             <span className="hidden md:inline">Apercu</span>
@@ -678,7 +708,7 @@ export default function PageBuilder({
                 const widgetTheme = getWidgetThemeProps(normalizedSection);
                 const buttonRadius = getWidgetButtonRadius(normalizedSection);
                 const buttonSizeVars = getWidgetButtonSizeVars(normalizedSection);
-                const noop = () => {};
+                const noop = () => { };
                 const widgetProps = { section: normalizedSection, onUpdate: noop };
                 const renderWidget = () => {
                   switch (normalizedSection.type) {
@@ -761,10 +791,10 @@ export default function PageBuilder({
           </div>
         </div>
       ) : (
-<div className="flex flex-1 overflow-hidden">
-  <div className="w-80 border-r border-gray-200 bg-white flex flex-col h-full">
-    <WidgetLibrary onAddSection={addSection} existingSections={sections} />
-  </div>
+        <div className="flex flex-1 overflow-hidden">
+          <div className="w-80 border-r border-gray-200 bg-white flex flex-col h-full">
+            <WidgetLibrary onAddSection={addSection} existingSections={sections} />
+          </div>
 
           <div className="flex-1 overflow-auto bg-gray-100 p-6 custom-scrollbar">
             <div
