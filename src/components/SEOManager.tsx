@@ -133,14 +133,18 @@ export default function SEOManager({ onNavigate }: SEOManagerProps) {
     setViewMode('view');
   };
 
+  const openPublicPage = (pageKey: string) => {
+    window.history.pushState({}, '', `/${pageKey}`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
   return (
     <div>
       {toastMessage && (
-        <div className={`fixed top-20 right-6 z-50 px-4 py-3 rounded-xl shadow-lg border text-sm font-medium ${
-          toastMessage.type === 'success'
+        <div className={`fixed top-20 right-6 z-50 px-4 py-3 rounded-xl shadow-lg border text-sm font-medium ${toastMessage.type === 'success'
             ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
             : 'bg-red-50 border-red-200 text-red-800'
-        }`}>
+          }`}>
           {toastMessage.text}
         </div>
       )}
@@ -330,10 +334,7 @@ export default function SEOManager({ onNavigate }: SEOManagerProps) {
                         </button>
                         {item.status === 'published' && (
                           <button
-                            onClick={() => {
-                              window.history.pushState({}, '', `/${item.page_key}`);
-                              window.location.reload();
-                            }}
+                            onClick={() => openPublicPage(item.page_key)}
                             className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
                             title={`Voir a /${item.page_key}`}
                           >
@@ -350,25 +351,22 @@ export default function SEOManager({ onNavigate }: SEOManagerProps) {
                         <div className="hidden sm:flex bg-gray-100 rounded-lg p-0.5 mx-1">
                           <button
                             onClick={() => handleStatusChange(item.id, 'draft')}
-                            className={`px-2 py-1 rounded text-[11px] font-medium transition-all ${
-                              item.status === 'draft' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
-                            }`}
+                            className={`px-2 py-1 rounded text-[11px] font-medium transition-all ${item.status === 'draft' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                              }`}
                           >
                             Brouillon
                           </button>
                           <button
                             onClick={() => handleStatusChange(item.id, 'published')}
-                            className={`px-2 py-1 rounded text-[11px] font-medium transition-all ${
-                              item.status === 'published' ? 'bg-white shadow-sm text-emerald-700' : 'text-gray-500 hover:text-gray-700'
-                            }`}
+                            className={`px-2 py-1 rounded text-[11px] font-medium transition-all ${item.status === 'published' ? 'bg-white shadow-sm text-emerald-700' : 'text-gray-500 hover:text-gray-700'
+                              }`}
                           >
                             Publie
                           </button>
                           <button
                             onClick={() => handleStatusChange(item.id, 'archived')}
-                            className={`px-2 py-1 rounded text-[11px] font-medium transition-all ${
-                              item.status === 'archived' ? 'bg-white shadow-sm text-orange-700' : 'text-gray-500 hover:text-gray-700'
-                            }`}
+                            className={`px-2 py-1 rounded text-[11px] font-medium transition-all ${item.status === 'archived' ? 'bg-white shadow-sm text-orange-700' : 'text-gray-500 hover:text-gray-700'
+                              }`}
                           >
                             Archive
                           </button>
@@ -387,10 +385,7 @@ export default function SEOManager({ onNavigate }: SEOManagerProps) {
                       <div className="flex items-center space-x-3">
                         {item.status === 'published' && (
                           <button
-                            onClick={() => {
-                              window.history.pushState({}, '', `/${item.page_key}`);
-                              window.location.reload();
-                            }}
+                            onClick={() => openPublicPage(item.page_key)}
                             className="text-blue-500 hover:text-blue-700 font-mono flex items-center space-x-1 hover:underline"
                           >
                             <ExternalLink className="w-3 h-3" />

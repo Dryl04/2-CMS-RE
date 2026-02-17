@@ -159,6 +159,15 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
     try {
       const pageKey = getPageKey();
       const keywordsArray = keywords.split(',').map(k => k.trim()).filter(k => k);
+      let sectionsToSave = sectionsData;
+
+      if (selectedTemplateId && (!Array.isArray(sectionsData) || sectionsData.length === 0)) {
+        const selectedTemplate = templates.find((template) => template.id === selectedTemplateId);
+        const templateSections = (selectedTemplate?.sections_data || []) as PageBuilderSection[];
+        if (templateSections.length > 0) {
+          sectionsToSave = templateSections;
+        }
+      }
 
       const data: Record<string, any> = {
         page_key: pageKey,
@@ -166,7 +175,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
         description: description || null,
         keywords: keywordsArray,
         content: content || null,
-        sections_data: sectionsData,
+        sections_data: sectionsToSave,
         template_id: selectedTemplateId || null,
         og_title: ogTitle || null,
         og_description: ogDescription || null,
@@ -334,9 +343,8 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
                       <button
                         key={template.id}
                         onClick={() => applyTemplate(template)}
-                        className={`p-4 bg-white border-2 rounded-xl text-left transition-all hover:shadow-sm ${
-                          isSelected ? 'border-teal-500 shadow-md' : 'border-teal-200 hover:border-teal-400'
-                        }`}
+                        className={`p-4 bg-white border-2 rounded-xl text-left transition-all hover:shadow-sm ${isSelected ? 'border-teal-500 shadow-md' : 'border-teal-200 hover:border-teal-400'
+                          }`}
                       >
                         <div className="flex gap-1 mb-3 h-6">
                           {tSections.slice(0, 4).map((s, i) => {
@@ -614,33 +622,30 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
           <div className="grid grid-cols-3 gap-3">
             <button
               onClick={() => setStatus('draft')}
-              className={`p-4 rounded-xl border-2 transition-all ${
-                status === 'draft'
+              className={`p-4 rounded-xl border-2 transition-all ${status === 'draft'
                   ? 'bg-white border-amber-500 shadow-md'
                   : 'bg-white border-gray-200 hover:border-amber-300'
-              }`}
+                }`}
             >
               <div className="font-semibold text-gray-900">Brouillon</div>
               <div className="text-xs text-gray-600 mt-1">Non publie</div>
             </button>
             <button
               onClick={() => setStatus('published')}
-              className={`p-4 rounded-xl border-2 transition-all ${
-                status === 'published'
+              className={`p-4 rounded-xl border-2 transition-all ${status === 'published'
                   ? 'bg-white border-emerald-500 shadow-md'
                   : 'bg-white border-gray-200 hover:border-emerald-300'
-              }`}
+                }`}
             >
               <div className="font-semibold text-gray-900">Publie</div>
               <div className="text-xs text-gray-600 mt-1">En ligne</div>
             </button>
             <button
               onClick={() => setStatus('archived')}
-              className={`p-4 rounded-xl border-2 transition-all ${
-                status === 'archived'
+              className={`p-4 rounded-xl border-2 transition-all ${status === 'archived'
                   ? 'bg-white border-gray-500 shadow-md'
                   : 'bg-white border-gray-200 hover:border-gray-300'
-              }`}
+                }`}
             >
               <div className="font-semibold text-gray-900">Archive</div>
               <div className="text-xs text-gray-600 mt-1">Retire</div>

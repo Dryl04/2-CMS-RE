@@ -25,12 +25,20 @@ function AppContent() {
   const [showDaisyThemeManager, setShowDaisyThemeManager] = useState(false);
 
   useEffect(() => {
-    const path = window.location.pathname;
+    const handlePathChange = () => {
+      const path = window.location.pathname;
+      if (path && path !== '/') {
+        const slug = path.replace(/^\//, '');
+        loadPublicSEOPage(slug);
+      }
+    };
 
-    if (path && path !== '/') {
-      const slug = path.replace(/^\//, '');
-      loadPublicSEOPage(slug);
-    }
+    handlePathChange();
+    window.addEventListener('popstate', handlePathChange);
+
+    return () => {
+      window.removeEventListener('popstate', handlePathChange);
+    };
   }, []);
 
   const loadPublicSEOPage = async (pageKey: string) => {
@@ -110,7 +118,7 @@ function AppContent() {
   const showFooter = currentView !== 'templates' && currentView !== 'visual-builder';
 
   return (
-   <div className={`bg-base-100 flex flex-col overflow-hidden ${currentView === 'templates' || currentView === 'visual-builder' ? 'h-screen' : 'min-h-screen'}`}>
+    <div className={`bg-base-100 flex flex-col overflow-hidden ${currentView === 'templates' || currentView === 'visual-builder' ? 'h-screen' : 'min-h-screen'}`}>
       {currentView !== 'visual-builder' && <Header onNavigate={handleNavigate} currentView={currentView} />}
 
       <div className={currentView === 'visual-builder' ? 'flex-1 flex flex-col overflow-hidden' : currentView === 'templates' ? 'pt-16 flex-1 flex flex-col overflow-hidden' : 'pt-16 flex-1'}>
