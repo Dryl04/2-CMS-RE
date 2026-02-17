@@ -483,11 +483,10 @@ export function TestimonialsContentEditor({ section, updateContent }: ContentEdi
                 className={inputClass}
                 placeholder="Titre / Poste"
               />
-              <input
-                type="text"
+              <ImageUploadField
+                label="Avatar"
                 value={t.avatar || ''}
-                onChange={(e) => updateTestimonial(index, 'avatar', e.target.value)}
-                className={inputClass}
+                onChange={(url) => updateTestimonial(index, 'avatar', url)}
                 placeholder="URL de l'avatar"
               />
               <div>

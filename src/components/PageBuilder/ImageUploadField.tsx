@@ -7,11 +7,28 @@ interface ImageUploadFieldProps {
   value: string;
   onChange: (url: string) => void;
   placeholder?: string;
+  mediaType?: 'image' | 'video' | 'auto';
 }
 
-export default function ImageUploadField({ label, value, onChange, placeholder }: ImageUploadFieldProps) {
+const isVideoUrl = (url: string) => /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(url);
+
+export default function ImageUploadField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  mediaType = 'image',
+}: ImageUploadFieldProps) {
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [inputMode, setInputMode] = useState<'url' | 'upload'>('url');
+
+  const resolvedMediaType = mediaType === 'auto' ? (isVideoUrl(value) ? 'video' : 'image') : mediaType;
+  const uploadLabel =
+    resolvedMediaType === 'video'
+      ? 'Choisir ou uploader une vidéo'
+      : mediaType === 'auto'
+      ? 'Choisir ou uploader un média'
+      : 'Choisir ou uploader une image';
 
   const handleSelectMedia = (url: string) => {
     onChange(url);
@@ -57,7 +74,7 @@ export default function ImageUploadField({ label, value, onChange, placeholder }
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={placeholder || 'https://...'}
+            placeholder={placeholder || (resolvedMediaType === 'video' ? 'https://.../video.mp4' : 'https://...')}
             className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
           />
           {value && (
@@ -77,17 +94,21 @@ export default function ImageUploadField({ label, value, onChange, placeholder }
           className="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-black hover:bg-gray-50 transition-colors text-sm text-gray-600 hover:text-gray-900 font-medium"
         >
           <Upload className="w-5 h-5 mx-auto mb-1" />
-          Choisir ou uploader une image
+          {uploadLabel}
         </button>
       )}
 
       {value && (
         <div className="mt-2 relative rounded-lg overflow-hidden border border-gray-200">
-          <img
-            src={value}
-            alt={label}
-            className="w-full h-32 object-cover"
-          />
+          {resolvedMediaType === 'video' || isVideoUrl(value) ? (
+            <video src={value} controls className="w-full h-40 object-cover bg-black" />
+          ) : (
+            <img
+              src={value}
+              alt={label}
+              className="w-full h-32 object-cover"
+            />
+          )}
         </div>
       )}
 

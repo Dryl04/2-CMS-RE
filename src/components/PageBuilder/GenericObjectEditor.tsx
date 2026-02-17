@@ -1,4 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react';
+import ImageUploadField from './ImageUploadField';
 
 type JsonPrimitive = string | number | boolean | null;
 type JsonValue = JsonPrimitive | JsonObject | JsonValue[];
@@ -42,6 +43,17 @@ const prettifyLabel = (label?: string) => {
     .replace(/[_-]/g, ' ')
     .replace(/^\w/, (c) => c.toUpperCase())
     .trim();
+};
+
+const isMediaField = (label?: string) => {
+  if (!label) return false;
+  const key = label.toLowerCase();
+  return /(image|logo|avatar|thumbnail|banner|cover|photo|media|video)/.test(key);
+};
+
+const isVideoField = (label?: string) => {
+  if (!label) return false;
+  return /video/.test(label.toLowerCase());
 };
 
 function GenericValueField({ value, onChange, label, depth = 0 }: GenericObjectEditorProps) {
@@ -143,6 +155,18 @@ function GenericValueField({ value, onChange, label, depth = 0 }: GenericObjectE
   }
 
   const textValue = value == null ? '' : String(value);
+
+  if (isMediaField(label)) {
+    return (
+      <ImageUploadField
+        label={displayLabel || 'Média'}
+        value={textValue}
+        onChange={(next) => onChange(next)}
+        mediaType={isVideoField(label) ? 'video' : 'auto'}
+      />
+    );
+  }
+
   const multiline = textValue.length > 100 || textValue.includes('\n');
 
   return (
