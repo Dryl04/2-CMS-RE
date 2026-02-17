@@ -1,3 +1,4 @@
+import React from 'react';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { PageBuilderSection } from '../../lib/pageBuilderTypes';
 import ImageUploadField from './ImageUploadField';
@@ -1053,6 +1054,732 @@ export function TextColumnsContentEditor({ section, updateContent }: ContentEdit
           rows={4}
           className={inputClass}
         />
+      </div>
+    </div>
+  );
+}
+
+export function ClickFunnelCenterCardContentEditor({ section, updateContent }: ContentEditorProps) {
+  const navItems = section.content.navItems || [];
+  const [selectedTabIndex, setSelectedTabIndex] = React.useState(0);
+
+  const updateNavItem = (index: number, field: string, value: any) => {
+    const updated = [...navItems];
+    updated[index] = { ...updated[index], [field]: value };
+    updateContent('navItems', updated);
+  };
+
+  const addNavItem = () => {
+    updateContent('navItems', [
+      ...navItems,
+      {
+        label: 'New Tab',
+        title: 'New Tab',
+        subtitle: 'Subtitle for new tab',
+        highlight: 'highlight text',
+        description: 'Description for this tab',
+        buttonText: 'Get Started',
+        mediaUrl: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg',
+        mediaType: 'image',
+      },
+    ]);
+  };
+
+  const removeNavItem = (index: number) => {
+    updateContent('navItems', navItems.filter((_: any, i: number) => i !== index));
+    if (selectedTabIndex >= navItems.length - 1) {
+      setSelectedTabIndex(Math.max(0, navItems.length - 2));
+    }
+  };
+
+  const selectedTab = navItems[selectedTabIndex] || {};
+
+  return (
+    <div className="space-y-4">
+      <div className="border-t pt-4">
+        <div className="flex items-center justify-between mb-3">
+          <label className="text-sm font-medium text-gray-700">Onglets de navigation</label>
+          <button
+            onClick={addNavItem}
+            className="p-1 text-gray-600 hover:text-black hover:bg-gray-100 rounded"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="flex gap-2 mb-4 flex-wrap">
+          {navItems.map((item: any, index: number) => (
+            <button
+              key={index}
+              onClick={() => setSelectedTabIndex(index)}
+              className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${
+                selectedTabIndex === index
+                  ? 'bg-black text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {item.label || `Tab ${index + 1}`}
+            </button>
+          ))}
+        </div>
+
+        {navItems.length > 0 && (
+          <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold text-gray-900">
+                Éditer: {selectedTab.label || `Tab ${selectedTabIndex + 1}`}
+              </h4>
+              <button
+                onClick={() => removeNavItem(selectedTabIndex)}
+                className="p-1 text-red-500 hover:bg-red-50 rounded"
+                title="Supprimer cet onglet"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <label className={labelClass}>Nom de l'onglet</label>
+              <input
+                type="text"
+                value={selectedTab.label || ''}
+                onChange={(e) => updateNavItem(selectedTabIndex, 'label', e.target.value)}
+                placeholder="Nom affiché dans la navigation"
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label className={labelClass}>Titre principal</label>
+              <input
+                type="text"
+                value={selectedTab.title || ''}
+                onChange={(e) => updateNavItem(selectedTabIndex, 'title', e.target.value)}
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label className={labelClass}>Sous-titre</label>
+              <input
+                type="text"
+                value={selectedTab.subtitle || ''}
+                onChange={(e) => updateNavItem(selectedTabIndex, 'subtitle', e.target.value)}
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label className={labelClass}>Texte en surbrillance</label>
+              <input
+                type="text"
+                value={selectedTab.highlight || ''}
+                onChange={(e) => updateNavItem(selectedTabIndex, 'highlight', e.target.value)}
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label className={labelClass}>Description</label>
+              <textarea
+                value={selectedTab.description || ''}
+                onChange={(e) => updateNavItem(selectedTabIndex, 'description', e.target.value)}
+                rows={3}
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label className={labelClass}>Texte du bouton</label>
+              <input
+                type="text"
+                value={selectedTab.buttonText || ''}
+                onChange={(e) => updateNavItem(selectedTabIndex, 'buttonText', e.target.value)}
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label className={labelClass}>Type de média</label>
+              <select
+                value={selectedTab.mediaType || 'image'}
+                onChange={(e) => updateNavItem(selectedTabIndex, 'mediaType', e.target.value)}
+                className={inputClass}
+              >
+                <option value="image">Image</option>
+                <option value="video">Vidéo</option>
+              </select>
+            </div>
+
+            <ImageUploadField
+              label={selectedTab.mediaType === 'video' ? 'URL de la vidéo' : 'Image'}
+              value={selectedTab.mediaUrl || ''}
+              onChange={(url) => updateNavItem(selectedTabIndex, 'mediaUrl', url)}
+              placeholder={selectedTab.mediaType === 'video' ? 'URL de la vidéo' : "URL de l'image"}
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="border-t pt-4">
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={section.content.showLeftDecor !== false}
+            onChange={(e) => updateContent('showLeftDecor', e.target.checked)}
+            className="rounded"
+          />
+          <span className="text-sm font-medium text-gray-700">Afficher décoration gauche</span>
+        </label>
+      </div>
+
+      <div>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={section.content.showRightDecor !== false}
+            onChange={(e) => updateContent('showRightDecor', e.target.checked)}
+            className="rounded"
+          />
+          <span className="text-sm font-medium text-gray-700">Afficher décoration droite</span>
+        </label>
+      </div>
+    </div>
+  );
+}
+
+export function ClickFunnelTestimonialsContentEditor({ section, updateContent }: ContentEditorProps) {
+  const logos = section.content.logos || [];
+  const testimonials = section.content.testimonials || [];
+
+  const addLogo = () => {
+    const newLogos = [...logos, { name: 'Nouveau logo', imageUrl: '' }];
+    updateContent('logos', newLogos);
+  };
+
+  const updateLogo = (index: number, field: string, value: string) => {
+    const newLogos = [...logos];
+    newLogos[index] = { ...newLogos[index], [field]: value };
+    updateContent('logos', newLogos);
+  };
+
+  const removeLogo = (index: number) => {
+    const newLogos = logos.filter((_: any, i: number) => i !== index);
+    updateContent('logos', newLogos);
+  };
+
+  const addTestimonial = () => {
+    const newTestimonials = [
+      ...testimonials,
+      {
+        quote: 'Nouveau témoignage',
+        name: 'Nom',
+        badge: 'Verified ClickFunnels User',
+        avatar: '',
+      },
+    ];
+    updateContent('testimonials', newTestimonials);
+  };
+
+  const updateTestimonial = (index: number, field: string, value: string) => {
+    const newTestimonials = [...testimonials];
+    newTestimonials[index] = { ...newTestimonials[index], [field]: value };
+    updateContent('testimonials', newTestimonials);
+  };
+
+  const removeTestimonial = (index: number) => {
+    const newTestimonials = testimonials.filter((_: any, i: number) => i !== index);
+    updateContent('testimonials', newTestimonials);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="border-b pb-4">
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={section.content.showLogos !== false}
+            onChange={(e) => updateContent('showLogos', e.target.checked)}
+            className="rounded"
+          />
+          <span className="text-sm font-medium text-gray-700">Afficher les logos</span>
+        </label>
+      </div>
+
+      {section.content.showLogos !== false && (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-sm font-medium text-gray-700">Logos de marques</label>
+            <button
+              type="button"
+              onClick={addLogo}
+              className="flex items-center gap-1 px-3 py-1 bg-black text-white rounded-lg text-sm hover:bg-gray-800"
+            >
+              <Plus className="w-4 h-4" />
+              Ajouter
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {logos.map((logo: any, index: number) => (
+              <div key={index} className="p-3 border border-gray-200 rounded-lg bg-gray-50">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">Logo {index + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeLogo(index)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={logo.name || ''}
+                    onChange={(e) => updateLogo(index, 'name', e.target.value)}
+                    placeholder="Nom de la marque"
+                    className={inputClass}
+                  />
+                  <ImageUploadField
+                    label=""
+                    value={logo.imageUrl || ''}
+                    onChange={(url) => updateLogo(index, 'imageUrl', url)}
+                    placeholder="URL du logo"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="border-t pt-4">
+        <label className="flex items-center gap-2 mb-4">
+          <input
+            type="checkbox"
+            checked={section.content.showStat !== false}
+            onChange={(e) => updateContent('showStat', e.target.checked)}
+            className="rounded"
+          />
+          <span className="text-sm font-medium text-gray-700">Afficher la carte statistique</span>
+        </label>
+
+        {section.content.showStat !== false && (
+          <div className="space-y-3 pl-6">
+            <div>
+              <label className={labelClass}>Nombre</label>
+              <input
+                type="text"
+                value={section.content.statNumber || ''}
+                onChange={(e) => updateContent('statNumber', e.target.value)}
+                placeholder="100K+"
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Label</label>
+              <input
+                type="text"
+                value={section.content.statLabel || ''}
+                onChange={(e) => updateContent('statLabel', e.target.value)}
+                placeholder="ClickFunnels Users"
+                className={inputClass}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="border-t pt-4">
+        <div className="flex items-center justify-between mb-3">
+          <label className="text-sm font-medium text-gray-700">Témoignages</label>
+          <button
+            type="button"
+            onClick={addTestimonial}
+            className="flex items-center gap-1 px-3 py-1 bg-black text-white rounded-lg text-sm hover:bg-gray-800"
+          >
+            <Plus className="w-4 h-4" />
+            Ajouter
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {testimonials.map((testimonial: any, index: number) => (
+            <div key={index} className="p-3 border border-gray-200 rounded-lg bg-gray-50">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">Témoignage {index + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => removeTestimonial(index)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                <div>
+                  <label className={labelClass}>Citation</label>
+                  <textarea
+                    value={testimonial.quote || ''}
+                    onChange={(e) => updateTestimonial(index, 'quote', e.target.value)}
+                    placeholder="Témoignage du client..."
+                    rows={3}
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Nom</label>
+                  <input
+                    type="text"
+                    value={testimonial.name || ''}
+                    onChange={(e) => updateTestimonial(index, 'name', e.target.value)}
+                    placeholder="John Doe"
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Badge</label>
+                  <input
+                    type="text"
+                    value={testimonial.badge || ''}
+                    onChange={(e) => updateTestimonial(index, 'badge', e.target.value)}
+                    placeholder="Verified ClickFunnels User"
+                    className={inputClass}
+                  />
+                </div>
+                <ImageUploadField
+                  label="Avatar"
+                  value={testimonial.avatar || ''}
+                  onChange={(url) => updateTestimonial(index, 'avatar', url)}
+                  placeholder="URL de l'avatar"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ClickFunnelFeaturesContentEditor({ section, updateContent }: ContentEditorProps) {
+  const features = section.content.features || [];
+
+  const addFeature = () => {
+    const newFeatures = [
+      ...features,
+      {
+        videoUrl: '',
+        thumbnailUrl: 'https://images.pexels.com/photos/5699479/pexels-photo-5699479.jpeg?auto=compress&cs=tinysrgb&w=600',
+        quote: 'Nouvelle citation',
+        author: 'Nom de l\'auteur',
+      },
+    ];
+    updateContent('features', newFeatures);
+  };
+
+  const updateFeature = (index: number, field: string, value: string) => {
+    const newFeatures = [...features];
+    newFeatures[index] = { ...newFeatures[index], [field]: value };
+    updateContent('features', newFeatures);
+  };
+
+  const removeFeature = (index: number) => {
+    const newFeatures = features.filter((_: any, i: number) => i !== index);
+    updateContent('features', newFeatures);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Titre</label>
+        <input
+          type="text"
+          value={section.content.title || ''}
+          onChange={(e) => updateContent('title', e.target.value)}
+          placeholder="Build a funnel-based business"
+          className={inputClass}
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Sous-titre</label>
+        <textarea
+          value={section.content.subtitle || ''}
+          onChange={(e) => updateContent('subtitle', e.target.value)}
+          placeholder="Description complète"
+          className={inputClass}
+          rows={3}
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <label className="text-sm font-medium text-gray-700">Témoignages vidéo</label>
+          <button
+            type="button"
+            onClick={addFeature}
+            className="flex items-center gap-1 px-3 py-1 bg-black text-white rounded-lg text-sm hover:bg-gray-800"
+          >
+            <Plus className="w-4 h-4" />
+            Ajouter
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {features.map((feature: any, index: number) => (
+            <div key={index} className="p-3 border border-gray-200 rounded-lg bg-gray-50">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">Témoignage {index + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => removeFeature(index)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                <ImageUploadField
+                  label="Vignette (thumbnail)"
+                  value={feature.thumbnailUrl || ''}
+                  onChange={(url) => updateFeature(index, 'thumbnailUrl', url)}
+                  placeholder="URL de la vignette"
+                />
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                    Vidéo (optionnel - remplace la vignette si fourni)
+                  </label>
+                  <ImageUploadField
+                    label=""
+                    value={feature.videoUrl || ''}
+                    onChange={(url) => updateFeature(index, 'videoUrl', url)}
+                    placeholder="URL de la vidéo MP4"
+                    accept="video/*"
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={feature.quote || ''}
+                  onChange={(e) => updateFeature(index, 'quote', e.target.value)}
+                  placeholder="Citation"
+                  className={inputClass}
+                />
+                <input
+                  type="text"
+                  value={feature.author || ''}
+                  onChange={(e) => updateFeature(index, 'author', e.target.value)}
+                  placeholder="Nom de l'auteur"
+                  className={inputClass}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t pt-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">Texte du bouton</label>
+        <input
+          type="text"
+          value={section.content.buttonText || ''}
+          onChange={(e) => updateContent('buttonText', e.target.value)}
+          placeholder="Try ClickFunnels For Free"
+          className={inputClass}
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Lien du bouton</label>
+        <input
+          type="text"
+          value={section.content.buttonUrl || ''}
+          onChange={(e) => updateContent('buttonUrl', e.target.value)}
+          placeholder="#"
+          className={inputClass}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function ClickFunnelFooterContentEditor({ section, updateContent }: ContentEditorProps) {
+  const columns = section.content.columns || [];
+
+  const addColumn = () => {
+    const newColumns = [
+      ...columns,
+      {
+        title: 'Nouvelle colonne',
+        links: [{ label: 'Lien 1', url: '#' }]
+      }
+    ];
+    updateContent('columns', newColumns);
+  };
+
+  const updateColumn = (columnIndex: number, field: string, value: any) => {
+    const newColumns = [...columns];
+    newColumns[columnIndex] = { ...newColumns[columnIndex], [field]: value };
+    updateContent('columns', newColumns);
+  };
+
+  const removeColumn = (columnIndex: number) => {
+    const newColumns = columns.filter((_: any, i: number) => i !== columnIndex);
+    updateContent('columns', newColumns);
+  };
+
+  const addLink = (columnIndex: number) => {
+    const newColumns = [...columns];
+    newColumns[columnIndex].links = [
+      ...newColumns[columnIndex].links,
+      { label: 'Nouveau lien', url: '#' }
+    ];
+    updateContent('columns', newColumns);
+  };
+
+  const updateLink = (columnIndex: number, linkIndex: number, field: string, value: string) => {
+    const newColumns = [...columns];
+    newColumns[columnIndex].links[linkIndex] = {
+      ...newColumns[columnIndex].links[linkIndex],
+      [field]: value
+    };
+    updateContent('columns', newColumns);
+  };
+
+  const removeLink = (columnIndex: number, linkIndex: number) => {
+    const newColumns = [...columns];
+    newColumns[columnIndex].links = newColumns[columnIndex].links.filter(
+      (_: any, i: number) => i !== linkIndex
+    );
+    updateContent('columns', newColumns);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Texte du logo</label>
+        <input
+          type="text"
+          value={section.content.logoText || ''}
+          onChange={(e) => updateContent('logoText', e.target.value)}
+          placeholder="ClickFunnels"
+          className={inputClass}
+        />
+      </div>
+
+      <ImageUploadField
+        label="Logo (optionnel)"
+        value={section.content.logo || ''}
+        onChange={(url) => updateContent('logo', url)}
+        placeholder="URL du logo"
+      />
+
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <label className="text-sm font-medium text-gray-700">Colonnes</label>
+          <button
+            type="button"
+            onClick={addColumn}
+            className="flex items-center gap-1 px-3 py-1 bg-black text-white rounded-lg text-sm hover:bg-gray-800"
+          >
+            <Plus className="w-4 h-4" />
+            Ajouter colonne
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          {columns.map((column: any, columnIndex: number) => (
+            <div key={columnIndex} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium text-gray-700">Colonne {columnIndex + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => removeColumn(columnIndex)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="mb-3">
+                <input
+                  type="text"
+                  value={column.title || ''}
+                  onChange={(e) => updateColumn(columnIndex, 'title', e.target.value)}
+                  placeholder="Titre de la colonne"
+                  className={inputClass}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-gray-600">Liens</label>
+                  <button
+                    type="button"
+                    onClick={() => addLink(columnIndex)}
+                    className="flex items-center gap-1 px-2 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Ajouter lien
+                  </button>
+                </div>
+
+                {column.links.map((link: any, linkIndex: number) => (
+                  <div key={linkIndex} className="flex gap-2 items-start p-2 bg-white rounded border border-gray-200">
+                    <div className="flex-1 space-y-1">
+                      <input
+                        type="text"
+                        value={link.label || ''}
+                        onChange={(e) => updateLink(columnIndex, linkIndex, 'label', e.target.value)}
+                        placeholder="Texte du lien"
+                        className={inputClass}
+                      />
+                      <input
+                        type="text"
+                        value={link.url || ''}
+                        onChange={(e) => updateLink(columnIndex, linkIndex, 'url', e.target.value)}
+                        placeholder="URL"
+                        className={inputClass}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeLink(columnIndex, linkIndex)}
+                      className="text-red-600 hover:text-red-800 mt-1"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t pt-4">
+        <label className="flex items-center gap-2 mb-3">
+          <input
+            type="checkbox"
+            checked={section.content.showPrivacyChoices !== false}
+            onChange={(e) => updateContent('showPrivacyChoices', e.target.checked)}
+            className="rounded"
+          />
+          <span className="text-sm font-medium text-gray-700">Afficher "Your Privacy Choices"</span>
+        </label>
+
+        {section.content.showPrivacyChoices !== false && (
+          <input
+            type="text"
+            value={section.content.privacyChoicesText || ''}
+            onChange={(e) => updateContent('privacyChoicesText', e.target.value)}
+            placeholder="Your Privacy Choices"
+            className={inputClass}
+          />
+        )}
       </div>
     </div>
   );

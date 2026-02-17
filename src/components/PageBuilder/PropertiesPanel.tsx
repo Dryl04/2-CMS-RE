@@ -15,6 +15,10 @@ import {
   ContentShowcaseContentEditor,
   CenteredContentContentEditor,
   TextColumnsContentEditor,
+  ClickFunnelCenterCardContentEditor,
+  ClickFunnelTestimonialsContentEditor,
+  ClickFunnelFeaturesContentEditor,
+  ClickFunnelFooterContentEditor,
 } from './ContentEditors';
 import { HeroAdvancedEditor } from './HeroAdvancedEditor';
 import GenericObjectEditor from './GenericObjectEditor';
@@ -90,6 +94,14 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
         return <CenteredContentContentEditor {...editorProps} />;
       case 'text-columns':
         return <TextColumnsContentEditor {...editorProps} />;
+      case 'clickfunnel-center-card':
+        return <ClickFunnelCenterCardContentEditor {...editorProps} />;
+      case 'click-funnel-testimonials':
+        return <ClickFunnelTestimonialsContentEditor {...editorProps} />;
+      case 'clickfunnel-features':
+        return <ClickFunnelFeaturesContentEditor {...editorProps} />;
+      case 'clickfunnel-footer':
+        return <ClickFunnelFooterContentEditor {...editorProps} />;
       default:
         return (
           <div className="space-y-4">

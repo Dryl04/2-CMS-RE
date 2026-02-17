@@ -6,6 +6,11 @@ import { PageBuilderSection } from '../../lib/pageBuilderTypes';
 import { getWidgetButtonRadius, getWidgetButtonSizeVars, getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
 import HeaderWidget from './Widgets/HeaderWidget';
 import HeroWidget from './Widgets/HeroWidget';
+import ClickFunnelsHero from './Widgets/ClickFunnelsHero';
+import ClickFunnelCenterCard from './Widgets/ClickFunnelCenterCard';
+import ClickFunnelTestimonials from './Widgets/ClickFunnelTestimonials';
+import ClickFunnelFeatures from './Widgets/ClickFunnelFeatures';
+import ClickFunnelFooter from './Widgets/ClickFunnelFooter';
 import FeaturesWidget from './Widgets/FeaturesWidget';
 import CTAWidget from './Widgets/CTAWidget';
 import TestimonialsWidget from './Widgets/TestimonialsWidget';
@@ -54,6 +59,7 @@ import HeaderTopInfo from './Widgets/HeaderTopInfo';
 import HeaderWithIcons from './Widgets/HeaderWithIcons';
 import HeaderAccountBar from './Widgets/HeaderAccountBar';
 import HeaderFullContact from './Widgets/HeaderFullContact';
+import HeaderClickFunnel from './Widgets/HeaderClickFunnel';
 import CreativeNetworkHeroWidget from './Widgets/CreativeNetworkHeroWidget';
 import ImmersiveSplitShowcaseWidget from './Widgets/ImmersiveSplitShowcaseWidget';
 import ProviderMasonryWidget from './Widgets/ProviderMasonryWidget';
@@ -107,6 +113,16 @@ export default function SectionRenderer({
         return <HeaderWidget {...props} />;
       case 'hero':
         return <HeroWidget {...props} />;
+      case 'clickfunnels-hero':
+        return <ClickFunnelsHero {...props} />;
+      case 'clickfunnel-center-card':
+        return <ClickFunnelCenterCard {...props} />;
+      case 'click-funnel-testimonials':
+        return <ClickFunnelTestimonials {...props} />;
+      case 'clickfunnel-features':
+        return <ClickFunnelFeatures {...props} />;
+      case 'clickfunnel-footer':
+        return <ClickFunnelFooter {...props} />;
       case 'features':
         return <FeaturesWidget {...props} />;
       case 'cta':
@@ -203,6 +219,8 @@ export default function SectionRenderer({
         return <HeaderAccountBar {...props} />;
       case 'header-full-contact':
         return <HeaderFullContact {...props} />;
+      case 'header-clickfunnel':
+        return <HeaderClickFunnel {...props} />;
       case 'creative-network-hero':
         return <CreativeNetworkHeroWidget {...props} />;
       case 'immersive-split-showcase':

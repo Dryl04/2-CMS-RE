@@ -53,6 +53,12 @@ import HeaderTopInfo from './PageBuilder/Widgets/HeaderTopInfo';
 import HeaderWithIcons from './PageBuilder/Widgets/HeaderWithIcons';
 import HeaderAccountBar from './PageBuilder/Widgets/HeaderAccountBar';
 import HeaderFullContact from './PageBuilder/Widgets/HeaderFullContact';
+import HeaderClickFunnel from './PageBuilder/Widgets/HeaderClickFunnel';
+import ClickFunnelsHero from './PageBuilder/Widgets/ClickFunnelsHero';
+import ClickFunnelCenterCard from './PageBuilder/Widgets/ClickFunnelCenterCard';
+import ClickFunnelTestimonials from './PageBuilder/Widgets/ClickFunnelTestimonials';
+import ClickFunnelFeatures from './PageBuilder/Widgets/ClickFunnelFeatures';
+import ClickFunnelFooter from './PageBuilder/Widgets/ClickFunnelFooter';
 import { getWidgetButtonRadius, getWidgetButtonSizeVars, getWidgetThemeProps, normalizeSectionForTheme } from '../lib/widgetThemeHelper';
 
 interface SEOPageViewerProps {
@@ -199,6 +205,18 @@ function SectionRenderer({ section }: { section: PageBuilderSection }) {
       return <HeaderAccountBar {...props} />;
     case 'header-full-contact':
       return <HeaderFullContact {...props} />;
+    case 'header-clickfunnel':
+      return <HeaderClickFunnel {...props} />;
+    case 'clickfunnels-hero':
+      return <ClickFunnelsHero {...props} />;
+    case 'clickfunnel-center-card':
+      return <ClickFunnelCenterCard {...props} />;
+    case 'click-funnel-testimonials':
+      return <ClickFunnelTestimonials {...props} />;
+    case 'clickfunnel-features':
+      return <ClickFunnelFeatures {...props} />;
+    case 'clickfunnel-footer':
+      return <ClickFunnelFooter {...props} />;
     default:
       return null;
   }
