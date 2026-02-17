@@ -7,7 +7,9 @@ interface HeroAdvancedEditorProps {
 
 export function HeroAdvancedEditor({ section, updateDesign }: HeroAdvancedEditorProps) {
   const overlayEnabled = section.design?.overlay?.enabled !== false;
-  const overlayColor = section.design?.overlay?.color || '#000000';
+  const overlayColor = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(section.design?.overlay?.color || '')
+    ? section.design?.overlay?.color
+    : '#000000';
   const overlayOpacity = section.design?.overlay?.opacity ?? 0.4;
   const overlayGradient = section.design?.overlay?.gradient || 'none';
   const overlayGradientDirection = section.design?.overlay?.gradientDirection || 'to bottom';
@@ -57,20 +59,12 @@ export function HeroAdvancedEditor({ section, updateDesign }: HeroAdvancedEditor
             <>
               <div>
                 <label className="block text-xs text-gray-600 mb-1">Couleur overlay</label>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="color"
-                    value={overlayColor}
-                    onChange={(e) => updateDesign('overlay', 'color', e.target.value)}
-                    className="w-12 h-10 rounded border border-gray-300"
-                  />
-                  <input
-                    type="text"
-                    value={overlayColor}
-                    onChange={(e) => updateDesign('overlay', 'color', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
+                <input
+                  type="color"
+                  value={overlayColor}
+                  onChange={(e) => updateDesign('overlay', 'color', e.target.value)}
+                  className="w-full h-10 rounded border border-gray-300"
+                />
               </div>
 
               <div>

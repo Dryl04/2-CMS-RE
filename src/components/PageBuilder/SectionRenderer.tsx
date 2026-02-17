@@ -54,6 +54,13 @@ import HeaderTopInfo from './Widgets/HeaderTopInfo';
 import HeaderWithIcons from './Widgets/HeaderWithIcons';
 import HeaderAccountBar from './Widgets/HeaderAccountBar';
 import HeaderFullContact from './Widgets/HeaderFullContact';
+import CreativeNetworkHeroWidget from './Widgets/CreativeNetworkHeroWidget';
+import ImmersiveSplitShowcaseWidget from './Widgets/ImmersiveSplitShowcaseWidget';
+import ProviderMasonryWidget from './Widgets/ProviderMasonryWidget';
+import ProcessStepsCardsWidget from './Widgets/ProcessStepsCardsWidget';
+import EditorialCardsRowWidget from './Widgets/EditorialCardsRowWidget';
+import MinimalFinalCTAWidget from './Widgets/MinimalFinalCTAWidget';
+import CinematicFooterWidget from './Widgets/CinematicFooterWidget';
 
 interface SectionRendererProps {
   section: PageBuilderSection;
@@ -69,9 +76,9 @@ export default function SectionRenderer({
   section,
   isSelected,
   onSelect,
-  onDelete = () => {},
-  onDuplicate = () => {},
-  onUpdate = () => {},
+  onDelete = () => { },
+  onDuplicate = () => { },
+  onUpdate = () => { },
   previewMode = false,
 }: SectionRendererProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -196,6 +203,20 @@ export default function SectionRenderer({
         return <HeaderAccountBar {...props} />;
       case 'header-full-contact':
         return <HeaderFullContact {...props} />;
+      case 'creative-network-hero':
+        return <CreativeNetworkHeroWidget {...props} />;
+      case 'immersive-split-showcase':
+        return <ImmersiveSplitShowcaseWidget {...props} />;
+      case 'provider-masonry':
+        return <ProviderMasonryWidget {...props} />;
+      case 'process-steps-cards':
+        return <ProcessStepsCardsWidget {...props} />;
+      case 'editorial-cards-row':
+        return <EditorialCardsRowWidget {...props} />;
+      case 'minimal-final-cta':
+        return <MinimalFinalCTAWidget {...props} />;
+      case 'cinematic-footer':
+        return <CinematicFooterWidget {...props} />;
       default:
         return (
           <div className="p-12 text-center text-gray-500">
@@ -269,16 +290,16 @@ export default function SectionRenderer({
       )}
 
       <div
-        className={`relative overflow-hidden transition-all ${
-          !previewMode && isSelected
+        className={`relative overflow-hidden transition-all ${!previewMode && isSelected
             ? 'ring-2 ring-black shadow-lg'
             : !previewMode && isHovered
-            ? 'ring-2 ring-gray-300'
-            : ''
-        }`}
+              ? 'ring-2 ring-gray-300'
+              : ''
+          }`}
       >
 
         <div
+          className="widget-design-scope"
           data-theme={widgetTheme.dataTheme}
           style={{
             backgroundColor:
@@ -289,6 +310,14 @@ export default function SectionRenderer({
             paddingBottom: normalizedSection.design.spacing.paddingBottom,
             marginTop: normalizedSection.design.spacing.marginTop,
             marginBottom: normalizedSection.design.spacing.marginBottom,
+            '--widget-heading-color': normalizedSection.design.typography?.headingColor || '',
+            '--widget-text-color': normalizedSection.design.typography?.textColor || '',
+            '--widget-btn-bg': normalizedSection.design.colors?.buttonBackground || '',
+            '--widget-btn-text': normalizedSection.design.colors?.buttonText || '',
+            '--widget-btn-bg-hover': normalizedSection.design.colors?.buttonBackgroundHover || '',
+            '--widget-accent-color': normalizedSection.design.colors?.accent || '',
+            '--widget-icon-bg': normalizedSection.design.colors?.iconBackground || '',
+            '--widget-icon-color': normalizedSection.design.colors?.iconColor || '',
             '--widget-btn-radius': buttonRadius,
             ...buttonSizeVars,
             ...widgetTheme.customStyles,

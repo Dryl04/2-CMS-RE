@@ -1,21 +1,6 @@
 import { PageBuilderSection } from './pageBuilderTypes';
 import { widgetLibrary } from './widgetLibrary';
 
-const LEGACY_THEME_BLOCKING_OVERRIDES = new Set([
-  '#f9fafb',
-  '#f3f4f6',
-  '#e5e7eb',
-  '#d1d5db',
-  '#9ca3af',
-  '#6b7280',
-  '#374151',
-  '#111827',
-  '#4b5563',
-  '#1f2937',
-  '#000000',
-  '#ffffff',
-]);
-
 const COLOR_OVERRIDE_KEYS = [
   'primary',
   'secondary',
@@ -42,8 +27,6 @@ function shouldDropColorOverride(value?: string, defaultValue?: string) {
 
   const normalizedDefault = normalizeColorValue(defaultValue);
   if (normalizedDefault && normalized === normalizedDefault) return true;
-
-  if (LEGACY_THEME_BLOCKING_OVERRIDES.has(normalized)) return true;
 
   return false;
 }

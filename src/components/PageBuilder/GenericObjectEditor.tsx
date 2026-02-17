@@ -10,6 +10,7 @@ interface GenericObjectEditorProps {
   onChange: (value: JsonValue) => void;
   depth?: number;
   label?: string;
+  path?: string;
 }
 
 const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent';
@@ -56,7 +57,27 @@ const isVideoField = (label?: string) => {
   return /video/.test(label.toLowerCase());
 };
 
-function GenericValueField({ value, onChange, label, depth = 0 }: GenericObjectEditorProps) {
+const isHexColor = (value: string) => /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value.trim());
+
+const normalizeColorForPicker = (value: string) => {
+  const trimmed = value.trim();
+  if (isHexColor(trimmed)) {
+    if (trimmed.length === 4) {
+      return `#${trimmed[1]}${trimmed[1]}${trimmed[2]}${trimmed[2]}${trimmed[3]}${trimmed[3]}`;
+    }
+    return trimmed;
+  }
+  return '#000000';
+};
+
+const isColorField = (label: string | undefined, path: string | undefined, value: string) => {
+  const source = `${(path || '').toLowerCase()} ${(label || '').toLowerCase()}`;
+  const semanticColorKey = /(color|headingcolor|textcolor|accent|primary|secondary|buttonbackground|buttontext|iconbackground|iconcolor|overlay\.color)/.test(source);
+  const backgroundColorValueKey = /background\.value/.test(source) && isHexColor(value);
+  return semanticColorKey || backgroundColorValueKey;
+};
+
+function GenericValueField({ value, onChange, label, depth = 0, path = '' }: GenericObjectEditorProps) {
   const displayLabel = prettifyLabel(label);
   const hasLabel = Boolean(label);
 
@@ -88,6 +109,7 @@ function GenericValueField({ value, onChange, label, depth = 0 }: GenericObjectE
                 onChange(updated);
               }}
               depth={depth + 1}
+              path={`${path}[${index}]`}
             />
           </div>
         ))}
@@ -119,6 +141,7 @@ function GenericValueField({ value, onChange, label, depth = 0 }: GenericObjectE
             label={key}
             value={childValue}
             depth={depth + 1}
+            path={path ? `${path}.${key}` : key}
             onChange={(next) => onChange({ ...value, [key]: next })}
           />
         ))}
@@ -167,6 +190,20 @@ function GenericValueField({ value, onChange, label, depth = 0 }: GenericObjectE
     );
   }
 
+  if (isColorField(label, path, textValue)) {
+    return (
+      <div>
+        {hasLabel && <label className="block text-sm font-medium text-gray-700 mb-1">{displayLabel}</label>}
+        <input
+          type="color"
+          value={normalizeColorForPicker(textValue)}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full h-10 rounded border border-gray-300"
+        />
+      </div>
+    );
+  }
+
   const multiline = textValue.length > 100 || textValue.includes('\n');
 
   return (
@@ -192,5 +229,5 @@ function GenericValueField({ value, onChange, label, depth = 0 }: GenericObjectE
 }
 
 export default function GenericObjectEditor({ value, onChange, label }: GenericObjectEditorProps) {
-  return <GenericValueField value={value} onChange={onChange} label={label} depth={0} />;
+  return <GenericValueField value={value} onChange={onChange} label={label} depth={0} path={label || ''} />;
 }

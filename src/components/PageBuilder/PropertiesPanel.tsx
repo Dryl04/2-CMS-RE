@@ -29,6 +29,11 @@ type TabType = 'content' | 'design' | 'advanced';
 export default function PropertiesPanel({ section, onUpdateSection }: PropertiesPanelProps) {
   const [activeTab, setActiveTab] = useState<TabType>('content');
 
+  const toPickerColor = (value: string | undefined, fallback: string) => {
+    if (!value) return fallback;
+    return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value) ? value : fallback;
+  };
+
   if (!section) {
     return (
       <div className="w-80 bg-white border-l border-gray-200 flex flex-col items-center justify-center p-8 text-center">
@@ -166,38 +171,22 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
         <div className="space-y-3">
           <div>
             <label className="block text-xs text-gray-600 mb-1">Couleur titre</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="color"
-                value={section.design.typography?.headingColor || '#111827'}
-                onChange={(e) => updateDesign('typography', 'headingColor', e.target.value)}
-                className="w-12 h-10 rounded border border-gray-300"
-              />
-              <input
-                type="text"
-                value={section.design.typography?.headingColor || '#111827'}
-                onChange={(e) => updateDesign('typography', 'headingColor', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-              />
-            </div>
+            <input
+              type="color"
+              value={toPickerColor(section.design.typography?.headingColor, '#111827')}
+              onChange={(e) => updateDesign('typography', 'headingColor', e.target.value)}
+              className="w-full h-10 rounded border border-gray-300"
+            />
           </div>
 
           <div>
             <label className="block text-xs text-gray-600 mb-1">Couleur texte</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="color"
-                value={section.design.typography?.textColor || '#4B5563'}
-                onChange={(e) => updateDesign('typography', 'textColor', e.target.value)}
-                className="w-12 h-10 rounded border border-gray-300"
-              />
-              <input
-                type="text"
-                value={section.design.typography?.textColor || '#4B5563'}
-                onChange={(e) => updateDesign('typography', 'textColor', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-              />
-            </div>
+            <input
+              type="color"
+              value={toPickerColor(section.design.typography?.textColor, '#4B5563')}
+              onChange={(e) => updateDesign('typography', 'textColor', e.target.value)}
+              className="w-full h-10 rounded border border-gray-300"
+            />
           </div>
         </div>
       </div>
@@ -207,56 +196,32 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
         <div className="space-y-3">
           <div>
             <label className="block text-xs text-gray-600 mb-1">Couleur bouton</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="color"
-                value={section.design.colors?.buttonBackground || '#000000'}
-                onChange={(e) => updateDesign('colors', 'buttonBackground', e.target.value)}
-                className="w-12 h-10 rounded border border-gray-300"
-              />
-              <input
-                type="text"
-                value={section.design.colors?.buttonBackground || '#000000'}
-                onChange={(e) => updateDesign('colors', 'buttonBackground', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-              />
-            </div>
+            <input
+              type="color"
+              value={toPickerColor(section.design.colors?.buttonBackground, '#000000')}
+              onChange={(e) => updateDesign('colors', 'buttonBackground', e.target.value)}
+              className="w-full h-10 rounded border border-gray-300"
+            />
           </div>
 
           <div>
             <label className="block text-xs text-gray-600 mb-1">Couleur texte bouton</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="color"
-                value={section.design.colors?.buttonText || '#ffffff'}
-                onChange={(e) => updateDesign('colors', 'buttonText', e.target.value)}
-                className="w-12 h-10 rounded border border-gray-300"
-              />
-              <input
-                type="text"
-                value={section.design.colors?.buttonText || '#ffffff'}
-                onChange={(e) => updateDesign('colors', 'buttonText', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-              />
-            </div>
+            <input
+              type="color"
+              value={toPickerColor(section.design.colors?.buttonText, '#ffffff')}
+              onChange={(e) => updateDesign('colors', 'buttonText', e.target.value)}
+              className="w-full h-10 rounded border border-gray-300"
+            />
           </div>
 
           <div>
             <label className="block text-xs text-gray-600 mb-1">Couleur bouton (hover)</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="color"
-                value={section.design.colors?.buttonBackgroundHover || '#1F2937'}
-                onChange={(e) => updateDesign('colors', 'buttonBackgroundHover', e.target.value)}
-                className="w-12 h-10 rounded border border-gray-300"
-              />
-              <input
-                type="text"
-                value={section.design.colors?.buttonBackgroundHover || '#1F2937'}
-                onChange={(e) => updateDesign('colors', 'buttonBackgroundHover', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-              />
-            </div>
+            <input
+              type="color"
+              value={toPickerColor(section.design.colors?.buttonBackgroundHover, '#1F2937')}
+              onChange={(e) => updateDesign('colors', 'buttonBackgroundHover', e.target.value)}
+              className="w-full h-10 rounded border border-gray-300"
+            />
           </div>
 
           <div>
@@ -300,20 +265,12 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
         <h3 className="text-sm font-semibold text-gray-900 mb-3">Arriere-plan</h3>
         <div>
           <label className="block text-xs text-gray-600 mb-1">Couleur</label>
-          <div className="flex items-center space-x-2">
-            <input
-              type="color"
-              value={section.design.background.value}
-              onChange={(e) => updateDesign('background', 'value', e.target.value)}
-              className="w-12 h-10 rounded border border-gray-300"
-            />
-            <input
-              type="text"
-              value={section.design.background.value}
-              onChange={(e) => updateDesign('background', 'value', e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-            />
-          </div>
+          <input
+            type="color"
+            value={toPickerColor(section.design.background.value, '#ffffff')}
+            onChange={(e) => updateDesign('background', 'value', e.target.value)}
+            className="w-full h-10 rounded border border-gray-300"
+          />
         </div>
       </div>
 

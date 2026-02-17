@@ -1,4 +1,4 @@
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Search, ShoppingBag, User } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 import { useState } from 'react';
 
@@ -9,7 +9,21 @@ interface HeaderWidgetProps {
 
 export default function HeaderWidget({ section }: HeaderWidgetProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { logo, logoText, navItems, ctaText, ctaLink } = section.content;
+  const {
+    logo,
+    logoText,
+    navItems,
+    ctaText,
+    ctaLink,
+    secondaryCtaText,
+    secondaryCtaLink,
+    accountText,
+    accountLink,
+    showSearch,
+    showCart,
+    searchLink,
+    cartLink,
+  } = section.content;
 
   const headingColor = section.design?.typography?.headingColor;
   const textColor = section.design?.typography?.textColor;
@@ -278,6 +292,102 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
     </header>
   );
 
+  const renderCreativePremium = () => (
+    <header className="bg-neutral text-neutral-content border-b border-neutral-content/10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center min-w-[120px]">
+            {logo ? (
+              <img src={logo} alt={logoText || 'Logo'} className="h-7 w-auto" />
+            ) : (
+              <span className="text-lg font-semibold tracking-wide" style={headingColor ? { color: headingColor } : undefined}>
+                {logoText || 'FLORA'}
+              </span>
+            )}
+          </div>
+
+          <nav className="hidden md:flex items-center space-x-6">
+            {(navItems || []).map((item: any, index: number) => (
+              <a
+                key={index}
+                href={item.link || '#'}
+                className="text-sm font-medium hover:opacity-80 transition-opacity"
+                style={textColor ? { color: textColor } : undefined}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="hidden md:flex items-center gap-2 min-w-[250px] justify-end">
+            {accountText && (
+              <a href={accountLink || '#'} className="btn btn-ghost btn-sm text-neutral-content">
+                <User className="w-4 h-4" />
+                <span>{accountText}</span>
+              </a>
+            )}
+            {showSearch && (
+              <a href={searchLink || '#'} className="btn btn-ghost btn-sm btn-square" aria-label="Rechercher">
+                <Search className="w-4 h-4" />
+              </a>
+            )}
+            {showCart && (
+              <a href={cartLink || '#'} className="btn btn-ghost btn-sm btn-square" aria-label="Panier">
+                <ShoppingBag className="w-4 h-4" />
+              </a>
+            )}
+            {secondaryCtaText && (
+              <a href={secondaryCtaLink || '#'} className="btn btn-outline btn-sm">
+                {secondaryCtaText}
+              </a>
+            )}
+            {ctaText && (
+              <a href={ctaLink || '#'} className="btn btn-primary btn-sm">
+                {ctaText}
+              </a>
+            )}
+          </div>
+
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 text-neutral-content"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+      </div>
+
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-neutral-content/10 bg-neutral">
+          <div className="px-4 py-4 space-y-3">
+            {(navItems || []).map((item: any, index: number) => (
+              <a
+                key={index}
+                href={item.link || '#'}
+                className="block text-sm font-medium py-1 text-neutral-content/90"
+              >
+                {item.label}
+              </a>
+            ))}
+
+            <div className="pt-2 flex flex-wrap gap-2">
+              {secondaryCtaText && (
+                <a href={secondaryCtaLink || '#'} className="btn btn-outline btn-sm">
+                  {secondaryCtaText}
+                </a>
+              )}
+              {ctaText && (
+                <a href={ctaLink || '#'} className="btn btn-primary btn-sm">
+                  {ctaText}
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+
   switch (section.variant) {
     case 'centered':
       return renderCentered();
@@ -285,6 +395,8 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
       return renderTransparent();
     case 'minimal':
       return renderMinimal();
+    case 'creative-premium':
+      return renderCreativePremium();
     default:
       return renderDefault();
   }
