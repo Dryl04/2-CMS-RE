@@ -17,6 +17,7 @@ import {
   TextColumnsContentEditor,
 } from './ContentEditors';
 import { HeroAdvancedEditor } from './HeroAdvancedEditor';
+import GenericObjectEditor from './GenericObjectEditor';
 
 interface PropertiesPanelProps {
   section: PageBuilderSection | null;
@@ -85,7 +86,17 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       case 'text-columns':
         return <TextColumnsContentEditor {...editorProps} />;
       default:
-        return <p className="text-gray-500">Pas de proprietes disponibles</p>;
+        return (
+          <div className="space-y-4">
+            <p className="text-xs text-gray-500">
+              Éditeur générique du contenu pour ce widget.
+            </p>
+            <GenericObjectEditor
+              value={section.content}
+              onChange={(nextContent) => onUpdateSection({ content: nextContent })}
+            />
+          </div>
+        );
     }
   };
 
@@ -96,6 +107,13 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           <WidgetThemeSelector section={section} onUpdateSection={onUpdateSection} />
           <div className="border-t border-gray-200 pt-4">
             <HeroAdvancedEditor section={section} updateDesign={updateDesign} />
+          </div>
+          <div className="border-t border-gray-200 pt-4 space-y-3">
+            <h3 className="text-sm font-semibold text-gray-900">Paramètres design complets</h3>
+            <GenericObjectEditor
+              value={section.design}
+              onChange={(nextDesign) => onUpdateSection({ design: nextDesign })}
+            />
           </div>
         </div>
       );
@@ -245,6 +263,14 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             />
           </div>
         </div>
+      </div>
+
+      <div className="border-t border-gray-200 pt-4 space-y-3">
+        <h3 className="text-sm font-semibold text-gray-900">Paramètres design complets</h3>
+        <GenericObjectEditor
+          value={section.design}
+          onChange={(nextDesign) => onUpdateSection({ design: nextDesign })}
+        />
       </div>
     </div>
     );
