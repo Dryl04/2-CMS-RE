@@ -31,6 +31,11 @@
   .no-transitions * {
     transition: none !important;
   }
+
+  /* Keep CTA buttons visually consistent across Daisy themes in page/template editors */
+  .page-themed .btn:not(.btn-circle):not(.btn-square) {
+    border-radius: var(--widget-btn-radius, 0.75rem);
+  }
 }
 
 @layer utilities {

@@ -30,8 +30,37 @@ import ImageTextSplitWidget from './Widgets/ImageTextSplitWidget';
 import ContentShowcaseWidget from './Widgets/ContentShowcaseWidget';
 import CenteredContentWidget from './Widgets/CenteredContentWidget';
 import TextColumnsWidget from './Widgets/TextColumnsWidget';
+import ServicesGridWidget from './Widgets/ServicesGridWidget';
+import ContactSplitWidget from './Widgets/ContactSplitWidget';
+import FeedbackContactWidget from './Widgets/FeedbackContactWidget';
+import ServicesCardsWidget from './Widgets/ServicesCardsWidget';
+import MembershipPricingWidget from './Widgets/MembershipPricingWidget';
+import FAQTwoColumnsWidget from './Widgets/FAQTwoColumnsWidget';
+import IntegrationsGridWidget from './Widgets/IntegrationsGridWidget';
+import HeroWithServicesWidget from './Widgets/HeroWithServicesWidget';
+import ImageStatsFAQWidget from './Widgets/ImageStatsFAQWidget';
+import TimelineGridWidget from './Widgets/TimelineGridWidget';
+import NewsletterSignupWidget from './Widgets/NewsletterSignupWidget';
+import SocialFollowWidget from './Widgets/SocialFollowWidget';
+import ServicesCarouselWidget from './Widgets/ServicesCarouselWidget';
+import BentoFeaturesWidget from './Widgets/BentoFeaturesWidget';
+import FeaturesCarouselWidget from './Widgets/FeaturesCarouselWidget';
+import ContentWithServicesWidget from './Widgets/ContentWithServicesWidget';
+import SplitContentWithChecklist from './Widgets/SplitContentWithChecklist';
+import DropCapWithServices from './Widgets/DropCapWithServices';
+import CenteredTestimonial from './Widgets/CenteredTestimonial';
+import ContentVideoServices from './Widgets/ContentVideoServices';
+import ProcessAlternating from './Widgets/ProcessAlternating';
+import HeroWithTestimonials from './Widgets/HeroWithTestimonials';
+import BrandIdentityHero from './Widgets/BrandIdentityHero';
+import SimpleCenteredHero from './Widgets/SimpleCenteredHero';
+import SimpleHeaderDivider from './Widgets/SimpleHeaderDivider';
+import HeaderTopInfo from './Widgets/HeaderTopInfo';
+import HeaderWithIcons from './Widgets/HeaderWithIcons';
+import HeaderAccountBar from './Widgets/HeaderAccountBar';
+import HeaderFullContact from './Widgets/HeaderFullContact';
 import DaisyThemeManager from '../DaisyThemeManager';
-import { getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
+import { getWidgetButtonRadius, getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
 
 interface PageBuilderProps {
   onNavigate?: (view: string) => void;
@@ -619,6 +648,7 @@ export default function PageBuilder({
               sections.map((section) => {
                 const normalizedSection = normalizeSectionForTheme(section);
                 const widgetTheme = getWidgetThemeProps(normalizedSection);
+                const buttonRadius = getWidgetButtonRadius(normalizedSection);
                 const noop = () => {};
                 const widgetProps = { section: normalizedSection, onUpdate: noop };
                 const renderWidget = () => {
@@ -644,6 +674,35 @@ export default function PageBuilder({
                     case 'content-showcase': return <ContentShowcaseWidget {...widgetProps} />;
                     case 'centered-content': return <CenteredContentWidget {...widgetProps} />;
                     case 'text-columns': return <TextColumnsWidget {...widgetProps} />;
+                    case 'services-grid': return <ServicesGridWidget {...widgetProps} />;
+                    case 'contact-split': return <ContactSplitWidget {...widgetProps} />;
+                    case 'feedback-contact': return <FeedbackContactWidget {...widgetProps} />;
+                    case 'services-cards': return <ServicesCardsWidget {...widgetProps} />;
+                    case 'membership-pricing': return <MembershipPricingWidget {...widgetProps} />;
+                    case 'faq-two-columns': return <FAQTwoColumnsWidget {...widgetProps} />;
+                    case 'integrations-grid': return <IntegrationsGridWidget {...widgetProps} />;
+                    case 'hero-with-services': return <HeroWithServicesWidget {...widgetProps} />;
+                    case 'image-stats-faq': return <ImageStatsFAQWidget {...widgetProps} />;
+                    case 'timeline-grid': return <TimelineGridWidget {...widgetProps} />;
+                    case 'newsletter-signup': return <NewsletterSignupWidget {...widgetProps} />;
+                    case 'social-follow': return <SocialFollowWidget {...widgetProps} />;
+                    case 'services-carousel': return <ServicesCarouselWidget {...widgetProps} />;
+                    case 'bento-features': return <BentoFeaturesWidget {...widgetProps} />;
+                    case 'features-carousel': return <FeaturesCarouselWidget {...widgetProps} />;
+                    case 'content-with-services': return <ContentWithServicesWidget {...widgetProps} />;
+                    case 'split-content-checklist': return <SplitContentWithChecklist {...widgetProps} />;
+                    case 'dropcap-services': return <DropCapWithServices {...widgetProps} />;
+                    case 'centered-testimonial': return <CenteredTestimonial {...widgetProps} />;
+                    case 'content-video-services': return <ContentVideoServices {...widgetProps} />;
+                    case 'process-alternating': return <ProcessAlternating {...widgetProps} />;
+                    case 'hero-with-testimonials': return <HeroWithTestimonials {...widgetProps} />;
+                    case 'brand-identity-hero': return <BrandIdentityHero {...widgetProps} />;
+                    case 'simple-centered-hero': return <SimpleCenteredHero {...widgetProps} />;
+                    case 'simple-header-divider': return <SimpleHeaderDivider {...widgetProps} />;
+                    case 'header-top-info': return <HeaderTopInfo {...widgetProps} />;
+                    case 'header-with-icons': return <HeaderWithIcons {...widgetProps} />;
+                    case 'header-account-bar': return <HeaderAccountBar {...widgetProps} />;
+                    case 'header-full-contact': return <HeaderFullContact {...widgetProps} />;
                     default: return null;
                   }
                 };
@@ -660,6 +719,7 @@ export default function PageBuilder({
                       paddingBottom: normalizedSection.design.spacing.paddingBottom,
                       marginTop: normalizedSection.design.spacing.marginTop,
                       marginBottom: normalizedSection.design.spacing.marginBottom,
+                      '--widget-btn-radius': buttonRadius,
                       ...widgetTheme.customStyles,
                     }}
                   >

@@ -106,6 +106,29 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
         <div className="space-y-6">
           <WidgetThemeSelector section={section} onUpdateSection={onUpdateSection} />
           <div className="border-t border-gray-200 pt-4">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Boutons</h3>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
+              <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                <input
+                  type="range"
+                  min="0"
+                  max="32"
+                  step="1"
+                  value={parseInt((section.design.colors?.buttonRadius || '12').replace('px', ''), 10) || 12}
+                  onChange={(e) => updateDesign('colors', 'buttonRadius', `${e.target.value}px`)}
+                  className="w-full"
+                />
+                <input
+                  type="text"
+                  value={section.design.colors?.buttonRadius || '12px'}
+                  onChange={(e) => updateDesign('colors', 'buttonRadius', e.target.value)}
+                  className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-gray-200 pt-4">
             <HeroAdvancedEditor section={section} updateDesign={updateDesign} />
           </div>
           <div className="border-t border-gray-200 pt-4 space-y-3">
@@ -212,6 +235,27 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                 value={section.design.colors?.buttonBackgroundHover || '#1F2937'}
                 onChange={(e) => updateDesign('colors', 'buttonBackgroundHover', e.target.value)}
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
+            <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+              <input
+                type="range"
+                min="0"
+                max="32"
+                step="1"
+                value={parseInt((section.design.colors?.buttonRadius || '12').replace('px', ''), 10) || 12}
+                onChange={(e) => updateDesign('colors', 'buttonRadius', `${e.target.value}px`)}
+                className="w-full"
+              />
+              <input
+                type="text"
+                value={section.design.colors?.buttonRadius || '12px'}
+                onChange={(e) => updateDesign('colors', 'buttonRadius', e.target.value)}
+                className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
               />
             </div>
           </div>

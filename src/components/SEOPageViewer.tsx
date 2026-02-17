@@ -20,7 +20,40 @@ import GalleryWidget from './PageBuilder/Widgets/GalleryWidget';
 import TimelineWidget from './PageBuilder/Widgets/TimelineWidget';
 import NewsletterWidget from './PageBuilder/Widgets/NewsletterWidget';
 import ProcessWidget from './PageBuilder/Widgets/ProcessWidget';
-import { getWidgetThemeProps, normalizeSectionForTheme } from '../lib/widgetThemeHelper';
+import ImageTextSplitWidget from './PageBuilder/Widgets/ImageTextSplitWidget';
+import ContentShowcaseWidget from './PageBuilder/Widgets/ContentShowcaseWidget';
+import CenteredContentWidget from './PageBuilder/Widgets/CenteredContentWidget';
+import TextColumnsWidget from './PageBuilder/Widgets/TextColumnsWidget';
+import ServicesGridWidget from './PageBuilder/Widgets/ServicesGridWidget';
+import ContactSplitWidget from './PageBuilder/Widgets/ContactSplitWidget';
+import FeedbackContactWidget from './PageBuilder/Widgets/FeedbackContactWidget';
+import ServicesCardsWidget from './PageBuilder/Widgets/ServicesCardsWidget';
+import MembershipPricingWidget from './PageBuilder/Widgets/MembershipPricingWidget';
+import FAQTwoColumnsWidget from './PageBuilder/Widgets/FAQTwoColumnsWidget';
+import IntegrationsGridWidget from './PageBuilder/Widgets/IntegrationsGridWidget';
+import HeroWithServicesWidget from './PageBuilder/Widgets/HeroWithServicesWidget';
+import ImageStatsFAQWidget from './PageBuilder/Widgets/ImageStatsFAQWidget';
+import TimelineGridWidget from './PageBuilder/Widgets/TimelineGridWidget';
+import NewsletterSignupWidget from './PageBuilder/Widgets/NewsletterSignupWidget';
+import SocialFollowWidget from './PageBuilder/Widgets/SocialFollowWidget';
+import ServicesCarouselWidget from './PageBuilder/Widgets/ServicesCarouselWidget';
+import BentoFeaturesWidget from './PageBuilder/Widgets/BentoFeaturesWidget';
+import FeaturesCarouselWidget from './PageBuilder/Widgets/FeaturesCarouselWidget';
+import ContentWithServicesWidget from './PageBuilder/Widgets/ContentWithServicesWidget';
+import SplitContentWithChecklist from './PageBuilder/Widgets/SplitContentWithChecklist';
+import DropCapWithServices from './PageBuilder/Widgets/DropCapWithServices';
+import CenteredTestimonial from './PageBuilder/Widgets/CenteredTestimonial';
+import ContentVideoServices from './PageBuilder/Widgets/ContentVideoServices';
+import ProcessAlternating from './PageBuilder/Widgets/ProcessAlternating';
+import HeroWithTestimonials from './PageBuilder/Widgets/HeroWithTestimonials';
+import BrandIdentityHero from './PageBuilder/Widgets/BrandIdentityHero';
+import SimpleCenteredHero from './PageBuilder/Widgets/SimpleCenteredHero';
+import SimpleHeaderDivider from './PageBuilder/Widgets/SimpleHeaderDivider';
+import HeaderTopInfo from './PageBuilder/Widgets/HeaderTopInfo';
+import HeaderWithIcons from './PageBuilder/Widgets/HeaderWithIcons';
+import HeaderAccountBar from './PageBuilder/Widgets/HeaderAccountBar';
+import HeaderFullContact from './PageBuilder/Widgets/HeaderFullContact';
+import { getWidgetButtonRadius, getWidgetThemeProps, normalizeSectionForTheme } from '../lib/widgetThemeHelper';
 
 interface SEOPageViewerProps {
   page: SEOMetadata;
@@ -73,6 +106,72 @@ function SectionRenderer({ section }: { section: PageBuilderSection }) {
       return <NewsletterWidget {...props} />;
     case 'process':
       return <ProcessWidget {...props} />;
+    case 'image-text-split':
+      return <ImageTextSplitWidget {...props} />;
+    case 'content-showcase':
+      return <ContentShowcaseWidget {...props} />;
+    case 'centered-content':
+      return <CenteredContentWidget {...props} />;
+    case 'text-columns':
+      return <TextColumnsWidget {...props} />;
+    case 'services-grid':
+      return <ServicesGridWidget {...props} />;
+    case 'contact-split':
+      return <ContactSplitWidget {...props} />;
+    case 'feedback-contact':
+      return <FeedbackContactWidget {...props} />;
+    case 'services-cards':
+      return <ServicesCardsWidget {...props} />;
+    case 'membership-pricing':
+      return <MembershipPricingWidget {...props} />;
+    case 'faq-two-columns':
+      return <FAQTwoColumnsWidget {...props} />;
+    case 'integrations-grid':
+      return <IntegrationsGridWidget {...props} />;
+    case 'hero-with-services':
+      return <HeroWithServicesWidget {...props} />;
+    case 'image-stats-faq':
+      return <ImageStatsFAQWidget {...props} />;
+    case 'timeline-grid':
+      return <TimelineGridWidget {...props} />;
+    case 'newsletter-signup':
+      return <NewsletterSignupWidget {...props} />;
+    case 'social-follow':
+      return <SocialFollowWidget {...props} />;
+    case 'services-carousel':
+      return <ServicesCarouselWidget {...props} />;
+    case 'bento-features':
+      return <BentoFeaturesWidget {...props} />;
+    case 'features-carousel':
+      return <FeaturesCarouselWidget {...props} />;
+    case 'content-with-services':
+      return <ContentWithServicesWidget {...props} />;
+    case 'split-content-checklist':
+      return <SplitContentWithChecklist {...props} />;
+    case 'dropcap-services':
+      return <DropCapWithServices {...props} />;
+    case 'centered-testimonial':
+      return <CenteredTestimonial {...props} />;
+    case 'content-video-services':
+      return <ContentVideoServices {...props} />;
+    case 'process-alternating':
+      return <ProcessAlternating {...props} />;
+    case 'hero-with-testimonials':
+      return <HeroWithTestimonials {...props} />;
+    case 'brand-identity-hero':
+      return <BrandIdentityHero {...props} />;
+    case 'simple-centered-hero':
+      return <SimpleCenteredHero {...props} />;
+    case 'simple-header-divider':
+      return <SimpleHeaderDivider {...props} />;
+    case 'header-top-info':
+      return <HeaderTopInfo {...props} />;
+    case 'header-with-icons':
+      return <HeaderWithIcons {...props} />;
+    case 'header-account-bar':
+      return <HeaderAccountBar {...props} />;
+    case 'header-full-contact':
+      return <HeaderFullContact {...props} />;
     default:
       return null;
   }
@@ -84,6 +183,7 @@ function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
       {sections.map((section) => {
         const normalizedSection = normalizeSectionForTheme(section);
         const widgetTheme = getWidgetThemeProps(normalizedSection);
+        const buttonRadius = getWidgetButtonRadius(normalizedSection);
 
         return (
           <div
@@ -98,6 +198,7 @@ function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
               paddingBottom: normalizedSection.design.spacing.paddingBottom,
               marginTop: normalizedSection.design.spacing.marginTop,
               marginBottom: normalizedSection.design.spacing.marginBottom,
+              '--widget-btn-radius': buttonRadius,
               ...widgetTheme.customStyles,
             }}
           >

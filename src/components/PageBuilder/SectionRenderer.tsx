@@ -3,7 +3,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Trash2, Copy, Edit3 } from 'lucide-react';
 import { PageBuilderSection } from '../../lib/pageBuilderTypes';
-import { getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
+import { getWidgetButtonRadius, getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
 import HeaderWidget from './Widgets/HeaderWidget';
 import HeroWidget from './Widgets/HeroWidget';
 import FeaturesWidget from './Widgets/FeaturesWidget';
@@ -86,6 +86,7 @@ export default function SectionRenderer({
 
   const normalizedSection = normalizeSectionForTheme(section);
   const widgetTheme = getWidgetThemeProps(normalizedSection);
+  const buttonRadius = getWidgetButtonRadius(normalizedSection);
 
   const renderWidget = () => {
     const props = {
@@ -287,6 +288,7 @@ export default function SectionRenderer({
             paddingBottom: normalizedSection.design.spacing.paddingBottom,
             marginTop: normalizedSection.design.spacing.marginTop,
             marginBottom: normalizedSection.design.spacing.marginBottom,
+            '--widget-btn-radius': buttonRadius,
             ...widgetTheme.customStyles,
           }}
         >

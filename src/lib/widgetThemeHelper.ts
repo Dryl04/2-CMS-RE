@@ -145,3 +145,17 @@ export function getOverrideStyle(section: PageBuilderSection) {
     accentColor,
   };
 }
+
+function normalizeRadius(value?: string) {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  if (/^\d+(\.\d+)?$/.test(trimmed)) {
+    return `${trimmed}px`;
+  }
+  return trimmed;
+}
+
+export function getWidgetButtonRadius(section: PageBuilderSection) {
+  return normalizeRadius(section.design?.colors?.buttonRadius);
+}
