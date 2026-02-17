@@ -14,18 +14,18 @@ const socialIconMap: { [key: string]: any } = {
 export default function HeaderWithIcons({ section }: HeaderWithIconsProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const topBg = design.colors?.topBarBg || undefined;
-  const textColor = design.typography?.textColor || undefined;
-  const headingColor = design.typography?.headingColor || undefined;
+  const topBg = design.colors?.topBarBg;
+  const textColor = design.typography?.textColor;
+  const headingColor = design.typography?.headingColor;
 
   return (
-    <header className="bg-base-100" style={{ backgroundColor: bg }}>
-      <div className="bg-base-200" style={{ backgroundColor: topBg }}>
+    <header className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
+      <div className="bg-base-200" style={topBg ? { backgroundColor: topBg } : undefined}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
               {content.showAccount && (
-                <button className="flex items-center space-x-1 text-sm font-semibold hover:opacity-70 transition text-base-content" style={{ color: headingColor }}>
+                <button className="btn btn-ghost btn-sm flex items-center space-x-1 text-sm font-semibold text-base-content" style={{ color: headingColor }}>
                   <span>ACCOUNT</span>
                   <ChevronDown className="w-4 h-4" />
                 </button>

@@ -9,9 +9,9 @@ interface TeamWidgetProps {
 export default function TeamWidget({ section }: TeamWidgetProps) {
   const { title, subtitle, members } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const accentColor = section.design?.colors?.accent || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
+  const accentColor = section.design?.colors?.accent;
 
   const headingStyle = headingColor ? { color: headingColor } : undefined;
   const textStyle = textColor ? { color: textColor } : undefined;
@@ -249,9 +249,9 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
                   isLarge ? 'h-96' : 'h-48'
                 } group-hover:scale-110 transition-transform`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6">
-                <h3 className="text-white text-xl font-bold mb-1">{member.name}</h3>
-                <p className="text-white/90 text-sm">{member.role}</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/40 to-transparent flex flex-col justify-end p-6">
+                <h3 className="text-neutral-content text-xl font-bold mb-1">{member.name}</h3>
+                <p className="text-neutral-content/90 text-sm">{member.role}</p>
               </div>
             </div>
           );

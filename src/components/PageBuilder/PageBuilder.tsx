@@ -30,7 +30,37 @@ import ImageTextSplitWidget from './Widgets/ImageTextSplitWidget';
 import ContentShowcaseWidget from './Widgets/ContentShowcaseWidget';
 import CenteredContentWidget from './Widgets/CenteredContentWidget';
 import TextColumnsWidget from './Widgets/TextColumnsWidget';
+import ServicesGridWidget from './Widgets/ServicesGridWidget';
+import ContactSplitWidget from './Widgets/ContactSplitWidget';
+import FeedbackContactWidget from './Widgets/FeedbackContactWidget';
+import ServicesCardsWidget from './Widgets/ServicesCardsWidget';
+import MembershipPricingWidget from './Widgets/MembershipPricingWidget';
+import FAQTwoColumnsWidget from './Widgets/FAQTwoColumnsWidget';
+import IntegrationsGridWidget from './Widgets/IntegrationsGridWidget';
+import HeroWithServicesWidget from './Widgets/HeroWithServicesWidget';
+import ImageStatsFAQWidget from './Widgets/ImageStatsFAQWidget';
+import TimelineGridWidget from './Widgets/TimelineGridWidget';
+import NewsletterSignupWidget from './Widgets/NewsletterSignupWidget';
+import SocialFollowWidget from './Widgets/SocialFollowWidget';
+import ServicesCarouselWidget from './Widgets/ServicesCarouselWidget';
+import BentoFeaturesWidget from './Widgets/BentoFeaturesWidget';
+import FeaturesCarouselWidget from './Widgets/FeaturesCarouselWidget';
+import ContentWithServicesWidget from './Widgets/ContentWithServicesWidget';
+import SplitContentWithChecklist from './Widgets/SplitContentWithChecklist';
+import DropCapWithServices from './Widgets/DropCapWithServices';
+import CenteredTestimonial from './Widgets/CenteredTestimonial';
+import ContentVideoServices from './Widgets/ContentVideoServices';
+import ProcessAlternating from './Widgets/ProcessAlternating';
+import HeroWithTestimonials from './Widgets/HeroWithTestimonials';
+import BrandIdentityHero from './Widgets/BrandIdentityHero';
+import SimpleCenteredHero from './Widgets/SimpleCenteredHero';
+import SimpleHeaderDivider from './Widgets/SimpleHeaderDivider';
+import HeaderTopInfo from './Widgets/HeaderTopInfo';
+import HeaderWithIcons from './Widgets/HeaderWithIcons';
+import HeaderAccountBar from './Widgets/HeaderAccountBar';
+import HeaderFullContact from './Widgets/HeaderFullContact';
 import DaisyThemeManager from '../DaisyThemeManager';
+import { getWidgetButtonRadius, getWidgetButtonSizeVars, getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
 
 interface PageBuilderProps {
   onNavigate?: (view: string) => void;
@@ -41,6 +71,33 @@ interface PageBuilderProps {
 }
 
 type BuilderView = 'list' | 'editor';
+
+function normalizeSectionsData(raw: unknown): PageBuilderSection[] {
+  if (Array.isArray(raw)) {
+    return raw as PageBuilderSection[];
+  }
+
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw);
+      return normalizeSectionsData(parsed);
+    } catch {
+      return [];
+    }
+  }
+
+  if (raw && typeof raw === 'object') {
+    const maybeRecord = raw as Record<string, unknown>;
+    if (Array.isArray(maybeRecord.sections)) {
+      return maybeRecord.sections as PageBuilderSection[];
+    }
+    if (Array.isArray(maybeRecord.sections_data)) {
+      return maybeRecord.sections_data as PageBuilderSection[];
+    }
+  }
+
+  return [];
+}
 
 export default function PageBuilder({
   onNavigate,
@@ -227,7 +284,7 @@ export default function PageBuilder({
     setTemplateName(template.name);
     setTemplateDescription(template.description || '');
     setDaisyThemeSlug(template.daisy_theme_slug || null);
-    const loadedSections = (template.sections_data || []) as PageBuilderSection[];
+    const loadedSections = normalizeSectionsData(template.sections_data);
     setSections(loadedSections);
     setHistory([loadedSections]);
     setHistoryIndex(0);
@@ -325,7 +382,8 @@ export default function PageBuilder({
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {templates.map((template) => {
-                const sectionCount = (template.sections_data || []).length;
+                const templateSections = normalizeSectionsData(template.sections_data);
+                const sectionCount = templateSections.length;
                 return (
                   <div
                     key={template.id}
@@ -333,7 +391,7 @@ export default function PageBuilder({
                     onClick={() => setPreviewTemplate(template)}
                   >
                     <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-50 relative overflow-hidden rounded-t-2xl">
-                      <TemplateThumbnail sections={(template.sections_data || []) as PageBuilderSection[]} />
+                      <TemplateThumbnail sections={templateSections} />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
                     </div>
                     <div className="p-5">
@@ -451,7 +509,7 @@ export default function PageBuilder({
                     title: previewTemplate.name,
                     description: previewTemplate.description,
                     status: 'published',
-                    sections_data: previewTemplate.sections_data,
+                    sections_data: normalizeSectionsData(previewTemplate.sections_data),
                     created_at: previewTemplate.created_at,
                     updated_at: previewTemplate.updated_at,
                   } as SEOMetadata}
@@ -608,7 +666,7 @@ export default function PageBuilder({
       {showPreview ? (
         <div className="flex-1 overflow-auto bg-gray-100 p-8">
           <div
-            className="mx-auto bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 page-themed"
+            className="mx-auto bg-base-100 rounded-lg shadow-lg overflow-hidden transition-all duration-300 page-themed"
             style={{ width: getDeviceWidth(), maxWidth: '100%' }}
             data-theme={daisyThemeSlug || undefined}
           >
@@ -616,10 +674,14 @@ export default function PageBuilder({
               <div className="p-12 text-center text-gray-500">Aucune section a previsualiser</div>
             ) : (
               sections.map((section) => {
+                const normalizedSection = normalizeSectionForTheme(section);
+                const widgetTheme = getWidgetThemeProps(normalizedSection);
+                const buttonRadius = getWidgetButtonRadius(normalizedSection);
+                const buttonSizeVars = getWidgetButtonSizeVars(normalizedSection);
                 const noop = () => {};
-                const widgetProps = { section, onUpdate: noop };
+                const widgetProps = { section: normalizedSection, onUpdate: noop };
                 const renderWidget = () => {
-                  switch (section.type) {
+                  switch (normalizedSection.type) {
                     case 'header': return <HeaderWidget {...widgetProps} />;
                     case 'hero': return <HeroWidget {...widgetProps} />;
                     case 'features': return <FeaturesWidget {...widgetProps} />;
@@ -641,16 +703,54 @@ export default function PageBuilder({
                     case 'content-showcase': return <ContentShowcaseWidget {...widgetProps} />;
                     case 'centered-content': return <CenteredContentWidget {...widgetProps} />;
                     case 'text-columns': return <TextColumnsWidget {...widgetProps} />;
+                    case 'services-grid': return <ServicesGridWidget {...widgetProps} />;
+                    case 'contact-split': return <ContactSplitWidget {...widgetProps} />;
+                    case 'feedback-contact': return <FeedbackContactWidget {...widgetProps} />;
+                    case 'services-cards': return <ServicesCardsWidget {...widgetProps} />;
+                    case 'membership-pricing': return <MembershipPricingWidget {...widgetProps} />;
+                    case 'faq-two-columns': return <FAQTwoColumnsWidget {...widgetProps} />;
+                    case 'integrations-grid': return <IntegrationsGridWidget {...widgetProps} />;
+                    case 'hero-with-services': return <HeroWithServicesWidget {...widgetProps} />;
+                    case 'image-stats-faq': return <ImageStatsFAQWidget {...widgetProps} />;
+                    case 'timeline-grid': return <TimelineGridWidget {...widgetProps} />;
+                    case 'newsletter-signup': return <NewsletterSignupWidget {...widgetProps} />;
+                    case 'social-follow': return <SocialFollowWidget {...widgetProps} />;
+                    case 'services-carousel': return <ServicesCarouselWidget {...widgetProps} />;
+                    case 'bento-features': return <BentoFeaturesWidget {...widgetProps} />;
+                    case 'features-carousel': return <FeaturesCarouselWidget {...widgetProps} />;
+                    case 'content-with-services': return <ContentWithServicesWidget {...widgetProps} />;
+                    case 'split-content-checklist': return <SplitContentWithChecklist {...widgetProps} />;
+                    case 'dropcap-services': return <DropCapWithServices {...widgetProps} />;
+                    case 'centered-testimonial': return <CenteredTestimonial {...widgetProps} />;
+                    case 'content-video-services': return <ContentVideoServices {...widgetProps} />;
+                    case 'process-alternating': return <ProcessAlternating {...widgetProps} />;
+                    case 'hero-with-testimonials': return <HeroWithTestimonials {...widgetProps} />;
+                    case 'brand-identity-hero': return <BrandIdentityHero {...widgetProps} />;
+                    case 'simple-centered-hero': return <SimpleCenteredHero {...widgetProps} />;
+                    case 'simple-header-divider': return <SimpleHeaderDivider {...widgetProps} />;
+                    case 'header-top-info': return <HeaderTopInfo {...widgetProps} />;
+                    case 'header-with-icons': return <HeaderWithIcons {...widgetProps} />;
+                    case 'header-account-bar': return <HeaderAccountBar {...widgetProps} />;
+                    case 'header-full-contact': return <HeaderFullContact {...widgetProps} />;
                     default: return null;
                   }
                 };
                 return (
                   <div
-                    key={section.id}
+                    key={normalizedSection.id}
+                    data-theme={widgetTheme.dataTheme}
                     style={{
-                      backgroundColor: section.design.background.type === 'color' ? section.design.background.value : undefined,
-                      paddingTop: section.design.spacing.paddingTop,
-                      paddingBottom: section.design.spacing.paddingBottom,
+                      backgroundColor:
+                        normalizedSection.design.background.type === 'color' && normalizedSection.design.background.value
+                          ? normalizedSection.design.background.value
+                          : undefined,
+                      paddingTop: normalizedSection.design.spacing.paddingTop,
+                      paddingBottom: normalizedSection.design.spacing.paddingBottom,
+                      marginTop: normalizedSection.design.spacing.marginTop,
+                      marginBottom: normalizedSection.design.spacing.marginBottom,
+                      '--widget-btn-radius': buttonRadius,
+                      ...buttonSizeVars,
+                      ...widgetTheme.customStyles,
                     }}
                   >
                     {renderWidget()}

@@ -9,9 +9,9 @@ interface StatsWidgetProps {
 export default function StatsWidget({ section }: StatsWidgetProps) {
   const { title, subtitle, stats } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const accentColor = section.design?.colors?.accent || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
+  const accentColor = section.design?.colors?.accent;
 
   const headingStyle = headingColor ? { color: headingColor } : undefined;
   const textStyle = textColor ? { color: textColor } : undefined;
@@ -93,16 +93,16 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         {(stats || defaultStats).map((stat: any, index: number) => {
-          const gradients = [
-            'from-blue-500 to-blue-600',
-            'from-purple-500 to-purple-600',
-            'from-pink-500 to-pink-600',
-            'from-orange-500 to-orange-600',
+          const variants = [
+            'bg-primary text-primary-content',
+            'bg-secondary text-secondary-content',
+            'bg-accent text-accent-content',
+            'bg-info text-info-content',
           ];
           return (
             <div
               key={index}
-              className={`bg-gradient-to-br ${gradients[index % 4]} rounded-2xl p-8 text-white shadow-xl hover:scale-105 transition-transform`}
+              className={`${variants[index % 4]} rounded-2xl p-8 shadow-xl hover:scale-105 transition-transform`}
             >
               <div className="flex items-center justify-between mb-4">
                 <TrendingUp className="w-8 h-8 opacity-80" />
@@ -190,7 +190,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
           )}
           <button
             className="btn btn-primary px-8 py-3 rounded-xl font-semibold transition-all hover:shadow-lg"
-            style={accentColor ? { backgroundColor: accentColor, color: '#ffffff' } : undefined}
+            style={accentColor ? { backgroundColor: accentColor } : undefined}
           >
             Learn More
           </button>

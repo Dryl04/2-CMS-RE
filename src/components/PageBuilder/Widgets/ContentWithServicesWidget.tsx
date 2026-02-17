@@ -16,14 +16,14 @@ const iconMap: { [key: string]: any } = {
 export default function ContentWithServicesWidget({ section }: ContentWithServicesWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
-  const servicesBg = design.colors?.servicesBackground || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
+  const servicesBg = design.colors?.servicesBackground;
 
   const gridCols = content.services?.length === 2 ? 'grid-cols-2' : 'grid-cols-2';
 
   return (
-    <div className="bg-base-200" style={{ backgroundColor: bg }}>
+    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
@@ -49,7 +49,7 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
               </p>
             )}
             {content.ctaText && (
-              <button className="bg-primary text-primary-content px-8 py-4 rounded-lg font-semibold hover:opacity-90 transition">
+              <button className="btn btn-primary px-8">
                 {content.ctaText}
               </button>
             )}
@@ -72,7 +72,7 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
               {content.services?.map((service: any, index: number) => {
                 const IconComponent = iconMap[service.icon] || Umbrella;
                 return (
-                  <div key={index} className="p-6 rounded-lg bg-base-200" style={{ backgroundColor: servicesBg }}>
+                  <div key={index} className="p-6 rounded-lg bg-base-200" style={servicesBg ? { backgroundColor: servicesBg } : undefined}>
                     <IconComponent className="w-12 h-12 mb-4 text-base-content" style={{ color: headingColor }} />
                     <h3 className="text-lg font-bold leading-tight text-base-content" style={{ color: headingColor }}>
                       {service.title}
@@ -92,9 +92,8 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
                 {[0, 1].map((dot, index) => (
                   <button
                     key={index}
-                    className={`w-2 h-2 rounded-full transition ${
-                      index === 0 ? 'bg-base-content' : 'bg-base-content/40'
-                    }`}
+                    className={`w-2 h-2 rounded-full transition ${index === 0 ? 'bg-base-content' : 'bg-base-content/40'
+                      }`}
                     aria-label={`Go to slide ${index + 1}`}
                   />
                 ))}

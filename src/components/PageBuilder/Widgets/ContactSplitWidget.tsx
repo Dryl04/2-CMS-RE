@@ -8,10 +8,10 @@ interface ContactSplitWidgetProps {
 export default function ContactSplitWidget({ section }: ContactSplitWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
-  const buttonBg = design.colors?.buttonBackground || undefined;
-  const buttonText = design.colors?.buttonText || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
+  const buttonBg = design.colors?.buttonBackground;
+  const buttonText = design.colors?.buttonText;
 
   return (
     <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
@@ -235,8 +235,8 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
 
               <button
                 type="submit"
-                className="w-full py-4 rounded-lg font-semibold text-lg transition hover:opacity-90 bg-primary text-primary-content"
-                style={{ backgroundColor: buttonBg, color: buttonText }}
+                className="btn btn-primary w-full h-auto py-4 text-lg"
+                style={buttonBg || buttonText ? { backgroundColor: buttonBg, color: buttonText } : undefined}
               >
                 {content.buttonText || 'Send Message'}
               </button>

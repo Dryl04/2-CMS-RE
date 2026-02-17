@@ -42,6 +42,7 @@ interface FontLibraryItem {
   id: string;
   font_name: string;
   font_family: string;
+  font_url: string;
 }
 
 export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEditorProps) {
@@ -77,15 +78,16 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
     try {
       const { data, error } = await supabase
         .from('fonts_library')
-        .select('id, font_name, font_family')
+        .select('id, font_name, font_family, font_url')
         .order('font_name');
 
       if (error) throw error;
       setAvailableFonts(data || []);
 
       (data || []).forEach(font => {
+        if (!font.font_url || font.font_url === 'about:blank') return;
         const link = document.createElement('link');
-        const fontUrl = `https://fonts.googleapis.com/css2?family=${font.font_name.replace(/\s+/g, '+')}:wght@300;400;500;600;700;800;900&display=swap`;
+        const fontUrl = font.font_url;
         link.href = fontUrl;
         link.rel = 'stylesheet';
         if (!document.querySelector(`link[href="${fontUrl}"]`)) {

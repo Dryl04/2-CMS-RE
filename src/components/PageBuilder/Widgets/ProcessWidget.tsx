@@ -9,9 +9,9 @@ interface ProcessWidgetProps {
 export default function ProcessWidget({ section }: ProcessWidgetProps) {
   const { title, subtitle, steps } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const accentColor = section.design?.colors?.accent || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
+  const accentColor = section.design?.colors?.accent;
 
   const defaultSteps = [
     {
@@ -232,7 +232,7 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
           <div
             key={index}
             className="relative p-8 rounded-2xl border-2 hover:shadow-lg transition-all border-primary/20"
-            style={accentColor ? { borderColor: `${accentColor}20` } : undefined}
+              style={accentColor ? { borderColor: `${accentColor}20` } : undefined}
           >
             <div className="flex items-start gap-6">
               <div

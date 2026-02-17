@@ -8,12 +8,12 @@ interface HeroWithTestimonialsProps {
 export default function HeroWithTestimonials({ section }: HeroWithTestimonialsProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
-  const cardBg = design.colors?.cardBackground || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
+  const cardBg = design.colors?.cardBackground;
 
   return (
-    <div className="bg-neutral relative" style={{ backgroundColor: bg }}>
+    <div className="bg-neutral relative" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: '200px',
@@ -32,7 +32,7 @@ export default function HeroWithTestimonials({ section }: HeroWithTestimonialsPr
           </p>
         )}
         {content.ctaText && (
-          <button className="bg-base-100 text-base-content px-10 py-4 rounded-full font-semibold hover:bg-base-200 transition text-lg">
+          <button className="btn px-10 rounded-full bg-base-100 text-base-content border-transparent hover:bg-base-200 text-lg">
             {content.ctaText}
           </button>
         )}
@@ -42,7 +42,7 @@ export default function HeroWithTestimonials({ section }: HeroWithTestimonialsPr
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" style={{ marginTop: '-150px' }}>
           <div className="grid md:grid-cols-3 gap-6">
             {content.testimonials.map((testimonial: any, index: number) => (
-              <div key={index} className="rounded-3xl p-8 shadow-xl bg-base-100" style={{ backgroundColor: cardBg }}>
+              <div key={index} className="rounded-3xl p-8 shadow-xl bg-base-100" style={cardBg ? { backgroundColor: cardBg } : undefined}>
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0">
                     {testimonial.avatar ? (

@@ -9,12 +9,6 @@ interface ContactWidgetProps {
 export default function ContactWidget({ section }: ContactWidgetProps) {
   const { title, subtitle, email, phone, address, showForm } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const buttonBg = section.design?.colors?.buttonBackground || undefined;
-  const buttonText = section.design?.colors?.buttonText || undefined;
-  const buttonHover = section.design?.colors?.buttonBackgroundHover || undefined;
-
   const renderDefault = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
@@ -92,7 +86,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
                 <input
                   type="text"
                   placeholder="Your name"
-                  className="w-full px-4 py-3 border border-base-content/20 rounded-xl focus:outline-none bg-base-100 text-base-content"
+                  className="input input-bordered w-full"
                 />
               </div>
               <div>
@@ -102,7 +96,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
                 <input
                   type="email"
                   placeholder="your@email.com"
-                  className="w-full px-4 py-3 border border-base-content/20 rounded-xl focus:outline-none bg-base-100 text-base-content"
+                  className="input input-bordered w-full"
                 />
               </div>
               <div>
@@ -112,15 +106,12 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
                 <textarea
                   rows={4}
                   placeholder="Your message"
-                  className="w-full px-4 py-3 border border-base-content/20 rounded-xl focus:outline-none bg-base-100 text-base-content"
+                  className="textarea textarea-bordered w-full"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full px-6 py-3 rounded-xl font-semibold transition-colors flex items-center justify-center space-x-2 bg-primary text-primary-content"
-                style={{ backgroundColor: buttonBg, color: buttonText }}
-                onMouseOver={(e) => { if (buttonHover) e.currentTarget.style.backgroundColor = buttonHover; }}
-                onMouseOut={(e) => { if (buttonBg) e.currentTarget.style.backgroundColor = buttonBg; }}
+                className="btn btn-primary w-full"
               >
                 <span>Send Message</span>
                 <Send className="w-4 h-4" />
@@ -176,24 +167,21 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
             <input
               type="text"
               placeholder="Your name"
-              className="w-full px-4 py-3 border border-base-content/20 rounded-xl focus:outline-none bg-base-100 text-base-content"
+              className="input input-bordered w-full"
             />
             <input
               type="email"
               placeholder="your@email.com"
-              className="w-full px-4 py-3 border border-base-content/20 rounded-xl focus:outline-none bg-base-100 text-base-content"
+              className="input input-bordered w-full"
             />
             <textarea
               rows={4}
               placeholder="Your message"
-              className="w-full px-4 py-3 border border-base-content/20 rounded-xl focus:outline-none bg-base-100 text-base-content"
+              className="textarea textarea-bordered w-full"
             />
             <button
               type="submit"
-              className="w-full px-6 py-3 rounded-xl font-semibold transition-colors bg-primary text-primary-content"
-              style={{ backgroundColor: buttonBg, color: buttonText }}
-              onMouseOver={(e) => { if (buttonHover) e.currentTarget.style.backgroundColor = buttonHover; }}
-              onMouseOut={(e) => { if (buttonBg) e.currentTarget.style.backgroundColor = buttonBg; }}
+              className="btn btn-primary w-full"
             >
               Send Message
             </button>

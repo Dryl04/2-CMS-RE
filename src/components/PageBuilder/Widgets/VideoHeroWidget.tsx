@@ -11,9 +11,9 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   const { title, subtitle, videoUrl, thumbnail, ctaText, ctaLink } = section.content;
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const accentColor = section.design?.colors?.accent || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
+  const accentColor = section.design?.colors?.accent;
 
   const getEmbedUrl = (url: string) => {
     if (!url) return '';
@@ -49,18 +49,18 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         )}
       </div>
 
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-neutral/50" />
 
       <div className="relative h-full flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1
-            className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 text-white"
+            className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 text-neutral-content"
             style={headingColor ? { color: headingColor } : undefined}
           >
             {title || 'Watch Our Story'}
           </h1>
           <p
-            className="text-lg sm:text-xl lg:text-2xl mb-8 text-white/90"
+            className="text-lg sm:text-xl lg:text-2xl mb-8 text-neutral-content/90"
             style={textColor ? { color: textColor } : undefined}
           >
             {subtitle || 'Discover what makes us different'}
@@ -114,7 +114,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
                 alt="Video thumbnail"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+              <div className="absolute inset-0 bg-neutral/30 group-hover:bg-neutral/40 transition-colors flex items-center justify-center">
                 <div
                   className="w-20 h-20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform bg-primary"
                   style={accentColor ? { backgroundColor: accentColor } : undefined}
@@ -132,7 +132,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
           <a
             href={ctaLink || '#'}
             className="inline-block px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-lg bg-primary text-primary-content"
-            style={accentColor ? { backgroundColor: accentColor, color: '#ffffff' } : undefined}
+            style={accentColor ? { backgroundColor: accentColor } : undefined}
           >
             {ctaText}
           </a>
@@ -161,7 +161,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
             <a
               href={ctaLink || '#'}
               className="inline-block px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-lg bg-primary text-primary-content"
-              style={accentColor ? { backgroundColor: accentColor, color: '#ffffff' } : undefined}
+              style={accentColor ? { backgroundColor: accentColor } : undefined}
             >
               {ctaText}
             </a>
@@ -185,7 +185,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
                   alt="Video thumbnail"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                <div className="absolute inset-0 bg-neutral/30 group-hover:bg-neutral/40 transition-colors flex items-center justify-center">
                   <div
                     className="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform bg-primary"
                     style={accentColor ? { backgroundColor: accentColor } : undefined}
@@ -224,7 +224,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
               alt="Video thumbnail"
               className="w-full max-w-4xl h-auto"
             />
-            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+            <div className="absolute inset-0 bg-neutral/30 group-hover:bg-neutral/40 transition-colors flex items-center justify-center">
               <div
                 className="w-24 h-24 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform bg-primary"
                 style={accentColor ? { backgroundColor: accentColor } : undefined}
@@ -237,12 +237,12 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
       </div>
 
       {isPlaying && (
-        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-neutral/95 flex items-center justify-center p-4">
           <button
             onClick={() => setIsPlaying(false)}
-            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-neutral-content/10 hover:bg-neutral-content/20 flex items-center justify-center transition-colors"
           >
-            <X className="w-6 h-6 text-white" />
+            <X className="w-6 h-6 text-neutral-content" />
           </button>
           <div className="w-full max-w-6xl aspect-video">
             <iframe

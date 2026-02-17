@@ -7,11 +7,11 @@ interface NewsletterSignupWidgetProps {
 export default function NewsletterSignupWidget({ section }: NewsletterSignupWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
 
   return (
-    <div className="bg-neutral" style={{ backgroundColor: bg }}>
+    <div className="bg-neutral" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,

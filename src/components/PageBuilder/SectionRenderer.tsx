@@ -3,7 +3,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Trash2, Copy, Edit3 } from 'lucide-react';
 import { PageBuilderSection } from '../../lib/pageBuilderTypes';
-import { getWidgetThemeProps } from '../../lib/widgetThemeHelper';
+import { getWidgetButtonRadius, getWidgetButtonSizeVars, getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
 import HeaderWidget from './Widgets/HeaderWidget';
 import HeroWidget from './Widgets/HeroWidget';
 import FeaturesWidget from './Widgets/FeaturesWidget';
@@ -59,18 +59,20 @@ interface SectionRendererProps {
   section: PageBuilderSection;
   isSelected: boolean;
   onSelect: () => void;
-  onDelete: () => void;
-  onDuplicate: () => void;
-  onUpdate: (updates: Partial<PageBuilderSection>) => void;
+  onDelete?: () => void;
+  onDuplicate?: () => void;
+  onUpdate?: (updates: Partial<PageBuilderSection>) => void;
+  previewMode?: boolean;
 }
 
 export default function SectionRenderer({
   section,
   isSelected,
   onSelect,
-  onDelete,
-  onDuplicate,
-  onUpdate,
+  onDelete = () => {},
+  onDuplicate = () => {},
+  onUpdate = () => {},
+  previewMode = false,
 }: SectionRendererProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
@@ -82,13 +84,18 @@ export default function SectionRenderer({
     transition,
   };
 
+  const normalizedSection = normalizeSectionForTheme(section);
+  const widgetTheme = getWidgetThemeProps(normalizedSection);
+  const buttonRadius = getWidgetButtonRadius(normalizedSection);
+  const buttonSizeVars = getWidgetButtonSizeVars(normalizedSection);
+
   const renderWidget = () => {
     const props = {
-      section,
+      section: normalizedSection,
       onUpdate,
     };
 
-    switch (section.type) {
+    switch (normalizedSection.type) {
       case 'header':
         return <HeaderWidget {...props} />;
       case 'hero':
@@ -202,12 +209,12 @@ export default function SectionRenderer({
     <div
       ref={setNodeRef}
       style={style}
-      className="relative group mb-4"
+      className={previewMode ? 'relative' : 'relative group'}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onSelect}
     >
-      {(isHovered || isSelected) && (
+      {!previewMode && (isHovered || isSelected) && (
         <div className="absolute -top-11 left-0 right-0 z-20 flex items-center justify-between bg-white rounded-t-lg shadow-lg border border-gray-200 px-3 py-2 mx-0.5">
           <div className="flex items-center space-x-2">
             {isSelected && (
@@ -262,24 +269,29 @@ export default function SectionRenderer({
       )}
 
       <div
-        className={`relative bg-white rounded-lg overflow-hidden transition-all ${
-          isSelected
+        className={`relative overflow-hidden transition-all ${
+          !previewMode && isSelected
             ? 'ring-2 ring-black shadow-lg'
-            : isHovered
+            : !previewMode && isHovered
             ? 'ring-2 ring-gray-300'
             : ''
         }`}
       >
 
         <div
-          data-theme={getWidgetThemeProps(section).dataTheme}
+          data-theme={widgetTheme.dataTheme}
           style={{
-            backgroundColor: section.design.background.type === 'color' ? section.design.background.value : undefined,
-            paddingTop: section.design.spacing.paddingTop,
-            paddingBottom: section.design.spacing.paddingBottom,
-            marginTop: section.design.spacing.marginTop,
-            marginBottom: section.design.spacing.marginBottom,
-            ...getWidgetThemeProps(section).customStyles,
+            backgroundColor:
+              normalizedSection.design.background.type === 'color' && normalizedSection.design.background.value
+                ? normalizedSection.design.background.value
+                : undefined,
+            paddingTop: normalizedSection.design.spacing.paddingTop,
+            paddingBottom: normalizedSection.design.spacing.paddingBottom,
+            marginTop: normalizedSection.design.spacing.marginTop,
+            marginBottom: normalizedSection.design.spacing.marginBottom,
+            '--widget-btn-radius': buttonRadius,
+            ...buttonSizeVars,
+            ...widgetTheme.customStyles,
           }}
         >
           {renderWidget()}

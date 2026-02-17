@@ -8,11 +8,11 @@ interface SplitContentWithChecklistProps {
 export default function SplitContentWithChecklist({ section }: SplitContentWithChecklistProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
 
   return (
-    <div className="bg-base-200" style={{ backgroundColor: bg }}>
+    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
@@ -20,11 +20,11 @@ export default function SplitContentWithChecklist({ section }: SplitContentWithC
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <div className="space-y-6">
-              <h2 className="text-4xl md:text-5xl font-bold leading-tight text-base-content" style={{ color: headingColor }}>
+              <h2 className="text-4xl md:text-5xl font-bold leading-tight text-base-content" style={headingColor ? { color: headingColor } : undefined}>
                 {content.title || 'Quis autem veleum repreh enderit.'}
               </h2>
               {content.description && (
-                <p className="text-lg leading-relaxed text-base-content/70" style={{ color: textColor }}>
+                <p className="text-lg leading-relaxed text-base-content/70" style={textColor ? { color: textColor } : undefined}>
                   {content.description}
                 </p>
               )}
@@ -38,8 +38,8 @@ export default function SplitContentWithChecklist({ section }: SplitContentWithC
               <div className="flex flex-wrap gap-x-8 gap-y-4">
                 {content.checklist.map((item: string, index: number) => (
                   <div key={index} className="flex items-center space-x-2">
-                    <Check className="w-5 h-5 text-base-content/70" style={{ color: textColor }} />
-                    <span className="text-base text-base-content/70" style={{ color: textColor }}>
+                    <Check className="w-5 h-5 text-base-content/70" style={textColor ? { color: textColor } : undefined} />
+                    <span className="text-base text-base-content/70" style={textColor ? { color: textColor } : undefined}>
                       {item}
                     </span>
                   </div>

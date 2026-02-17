@@ -14,8 +14,8 @@ const iconMap: { [key: string]: any } = {
 export default function ServicesGridWidget({ section }: ServicesGridWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
 
   return (
     <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
@@ -40,7 +40,7 @@ export default function ServicesGridWidget({ section }: ServicesGridWidgetProps)
         {content.description && (
           <p
             className="text-base md:text-lg mb-6 md:mb-8 lg:mb-12 text-base-content/70"
-            style={{ ...(textColor ? { color: textColor } : {}), maxWidth: '800px' }}
+            style={textColor ? { color: textColor, maxWidth: '800px' } : { maxWidth: '800px' }}
           >
             {content.description}
           </p>

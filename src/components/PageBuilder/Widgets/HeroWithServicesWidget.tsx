@@ -15,8 +15,8 @@ const iconMap: { [key: string]: any } = {
 export default function HeroWithServicesWidget({ section }: HeroWithServicesWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
 
   return (
     <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
@@ -51,7 +51,7 @@ export default function HeroWithServicesWidget({ section }: HeroWithServicesWidg
 
             <div className="flex items-center space-x-6">
               {content.ctaText && (
-                <button className="bg-primary text-primary-content px-8 py-4 rounded-lg font-semibold hover:opacity-90 transition">
+                <button className="btn btn-primary px-8">
                   {content.ctaText}
                 </button>
               )}

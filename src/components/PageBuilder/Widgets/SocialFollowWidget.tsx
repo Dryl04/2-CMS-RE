@@ -16,12 +16,12 @@ const socialIconMap: { [key: string]: any } = {
 export default function SocialFollowWidget({ section }: SocialFollowWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const buttonBg = design.colors?.buttonBackground || undefined;
-  const buttonText = design.colors?.buttonText || undefined;
+  const headingColor = design.typography?.headingColor;
+  const buttonBg = design.colors?.buttonBackground;
+  const buttonText = design.colors?.buttonText;
 
   return (
-    <div className="bg-neutral" style={{ backgroundColor: bg }}>
+    <div className="bg-neutral" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
@@ -51,7 +51,7 @@ export default function SocialFollowWidget({ section }: SocialFollowWidgetProps)
             {content.ctaText && (
               <button
                 className="px-8 py-3 rounded-full font-semibold transition hover:opacity-90 ml-8 bg-primary text-primary-content"
-                style={{ backgroundColor: buttonBg, color: buttonText }}
+                style={buttonBg || buttonText ? { backgroundColor: buttonBg, color: buttonText } : undefined}
               >
                 {content.ctaText}
               </button>

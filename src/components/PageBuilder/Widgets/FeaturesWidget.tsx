@@ -40,23 +40,21 @@ const gridColsClass: Record<number, string> = {
 export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
   const { title, subtitle, features } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const iconBg = section.design?.colors?.buttonBackground || undefined;
-  const iconColor = section.design?.colors?.buttonText || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
 
   const renderGrid = (columns: number) => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          {...(headingColor && { style: { color: headingColor } })}
         >
           {title || 'Amazing Features'}
         </h2>
         <h2
           className="text-lg sm:text-xl font-normal text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          {...(textColor && { style: { color: textColor } })}
         >
           {subtitle || 'Everything you need to succeed'}
         </h2>
@@ -69,22 +67,20 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
             <div key={index} className="text-center">
               <div
                 className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-primary"
-                style={iconBg ? { backgroundColor: iconBg } : undefined}
               >
                 <Icon
                   className="w-7 h-7 sm:w-8 sm:h-8 text-primary-content"
-                  style={iconColor ? { color: iconColor } : undefined}
                 />
               </div>
               <h3
                 className="text-lg sm:text-xl font-bold mb-2 text-base-content"
-                style={headingColor ? { color: headingColor } : undefined}
+                {...(headingColor && { style: { color: headingColor } })}
               >
                 {feature.title}
               </h3>
               <p
                 className="text-sm sm:text-base text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                {...(textColor && { style: { color: textColor } })}
               >
                 {feature.description}
               </p>
@@ -100,13 +96,13 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
       <div className="text-center mb-12 sm:mb-16">
         <h2
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          {...(headingColor && { style: { color: headingColor } })}
         >
           {title || 'Amazing Features'}
         </h2>
         <h2
           className="text-lg sm:text-xl font-normal text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          {...(textColor && { style: { color: textColor } })}
         >
           {subtitle || 'Everything you need to succeed'}
         </h2>
@@ -120,29 +116,26 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
           return (
             <div
               key={index}
-              className={`grid md:grid-cols-2 gap-8 sm:gap-12 items-center ${
-                isEven ? '' : 'md:grid-flow-dense'
-              }`}
+              className={`grid md:grid-cols-2 gap-8 sm:gap-12 items-center ${isEven ? '' : 'md:grid-flow-dense'
+                }`}
             >
               <div className={isEven ? '' : 'md:col-start-2'}>
                 <div
                   className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-6 bg-primary"
-                  style={iconBg ? { backgroundColor: iconBg } : undefined}
                 >
                   <Icon
                     className="w-7 h-7 sm:w-8 sm:h-8 text-primary-content"
-                    style={iconColor ? { color: iconColor } : undefined}
                   />
                 </div>
                 <h3
                   className="text-xl sm:text-2xl font-bold mb-4 text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  {...(headingColor && { style: { color: headingColor } })}
                 >
                   {feature.title}
                 </h3>
                 <p
                   className="text-base sm:text-lg text-base-content/70"
-                  style={textColor ? { color: textColor } : undefined}
+                  {...(textColor && { style: { color: textColor } })}
                 >
                   {feature.description}
                 </p>

@@ -12,8 +12,6 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
   const headingColor = section.design?.typography?.headingColor;
   const textColor = section.design?.typography?.textColor;
   const buttonBg = section.design?.colors?.buttonBackground;
-  const buttonText = section.design?.colors?.buttonText;
-  const buttonHover = section.design?.colors?.buttonBackgroundHover;
 
   const overlayEnabled = section.design?.overlay?.enabled !== false;
   const overlayColor = section.design?.overlay?.color || '#000000';
@@ -47,24 +45,9 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
     ? { color: textColor }
     : undefined;
 
-  const buttonStyle: React.CSSProperties | undefined =
-    buttonBg || buttonText
-      ? {
-          ...(buttonBg ? { backgroundColor: buttonBg } : {}),
-          ...(buttonText ? { color: buttonText } : {}),
-        }
-      : undefined;
-
-  const handleButtonHover = buttonBg && buttonHover
-    ? {
-        onMouseOver: (e: React.MouseEvent<HTMLAnchorElement>) => {
-          e.currentTarget.style.backgroundColor = buttonHover;
-        },
-        onMouseOut: (e: React.MouseEvent<HTMLAnchorElement>) => {
-          e.currentTarget.style.backgroundColor = buttonBg;
-        },
-      }
-    : {};
+  const buttonStyle: React.CSSProperties | undefined = buttonBg
+    ? { backgroundColor: buttonBg }
+    : undefined;
 
   const getOverlayStyle = () => {
     if (!overlayEnabled) return {};
@@ -121,6 +104,16 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
     return alignmentMap[contentAlignment] || 'items-start';
   };
 
+  const getContentPositionClass = () => {
+    const positionMap: { [key: string]: string } = {
+      left: 'justify-start',
+      center: 'justify-center',
+      right: 'justify-end',
+    };
+
+    return positionMap[contentPosition] || 'justify-start';
+  };
+
   const getMaxWidthClass = () => {
     const widthMap: { [key: string]: string } = {
       'sm': 'max-w-sm',
@@ -158,7 +151,6 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
             href={ctaLink || '#'}
             className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
             style={buttonStyle}
-            {...handleButtonHover}
           >
             {ctaText || 'Get Started'}
           </a>
@@ -199,7 +191,6 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
         href={ctaLink || '#'}
         className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
         style={buttonStyle}
-        {...handleButtonHover}
       >
         {ctaText || 'Get Started'}
       </a>
@@ -209,23 +200,22 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
   const renderSplit = () => (
     <div className="grid lg:grid-cols-2 h-full">
       <div
-        className={`bg-primary text-primary-content flex ${getContentAlignmentClass()} justify-center p-8 sm:p-12 ${getAnimationClass()}`}
-        style={buttonBg || buttonText ? { ...(buttonBg ? { backgroundColor: buttonBg } : {}), ...(buttonText ? { color: buttonText } : {}) } : undefined}
+        className={`bg-base-200 text-base-content flex ${getContentAlignmentClass()} justify-center p-8 sm:p-12 ${getAnimationClass()}`}
       >
         <div className="max-w-xl">
           <h1
-            className="text-primary-content text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight"
-            style={buttonText ? { color: buttonText } : undefined}
+            className="text-base-content text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight"
+            style={headingStyle}
           >
             {headline || 'Your Amazing Headline'}
           </h1>
-          <h2 className="text-lg sm:text-xl mb-8 font-normal" style={{ opacity: 0.9 }}>
+          <h2 className="text-base-content/70 text-lg sm:text-xl mb-8 font-normal" style={textStyle}>
             {subheadline || 'A compelling subheadline that explains your value proposition'}
           </h2>
           <a
             href={ctaLink || '#'}
-            className="btn inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105 bg-primary-content text-primary"
-            style={buttonBg && buttonText ? { backgroundColor: buttonText, color: buttonBg } : undefined}
+            className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
+            style={buttonStyle}
           >
             {ctaText || 'Get Started'}
           </a>
@@ -290,7 +280,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           style={getOverlayStyle()}
         />
       )}
-      <div className={`relative z-10 flex ${getContentAlignmentClass()} justify-${contentPosition} h-full`}>
+      <div className={`relative z-10 flex ${getContentAlignmentClass()} ${getContentPositionClass()} h-full`}>
         <div className={`${getMaxWidthClass()} mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 ${getAnimationClass()}`}>
           <div className={`max-w-2xl ${contentPosition === 'center' ? 'mx-auto text-center' : ''}`}>
             <h1
@@ -309,7 +299,6 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
               href={ctaLink || '#'}
               className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105"
               style={buttonStyle}
-              {...handleButtonHover}
             >
               {ctaText || 'Get Started'}
             </a>

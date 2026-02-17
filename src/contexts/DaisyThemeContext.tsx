@@ -11,7 +11,6 @@ import {
   deleteCustomThemeWithValidation,
   ThemeError,
   ThemeUsage,
-  NO_THEME_SLUG,
   generateCustomThemeCSS,
 } from '../lib/daisyThemes';
 import { useAuth } from './AuthContext';
@@ -34,13 +33,8 @@ const DaisyThemeContext = createContext<DaisyThemeContextType | undefined>(undef
 
 let customStyleEl: HTMLStyleElement | null = null;
 
-function applyThemeToDocument(slug: string) {
-  // If "No Theme" is selected, remove the data-theme attribute
-  if (slug === NO_THEME_SLUG) {
-    document.documentElement.removeAttribute('data-theme');
-  } else {
-    document.documentElement.setAttribute('data-theme', slug);
-  }
+function applyPlatformBaseTheme() {
+  document.documentElement.setAttribute('data-theme', 'light');
 }
 
 function injectCustomThemeCSS(themes: DaisyTheme[]) {
@@ -70,6 +64,10 @@ export function DaisyThemeProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    applyPlatformBaseTheme();
+  }, []);
+
   const refreshThemes = useCallback(async () => {
     try {
       setLoading(true);
@@ -81,8 +79,8 @@ export function DaisyThemeProvider({ children }: { children: ReactNode }) {
       const active = allThemes.find(t => t.is_active) || allThemes.find(t => t.slug === 'light') || allThemes[0];
       if (active) {
         setActiveThemeState(active);
-        applyThemeToDocument(active.slug);
       }
+      applyPlatformBaseTheme();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load themes');
     } finally {
@@ -107,7 +105,7 @@ export function DaisyThemeProvider({ children }: { children: ReactNode }) {
       const theme = themes.find(t => t.id === themeId);
       if (theme) {
         setActiveThemeState(theme);
-        applyThemeToDocument(theme.slug);
+        applyPlatformBaseTheme();
         setThemes(prev => prev.map(t => ({ ...t, is_active: t.id === themeId })));
       }
     } catch (err) {

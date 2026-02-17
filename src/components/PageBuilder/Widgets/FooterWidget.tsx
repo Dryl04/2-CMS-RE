@@ -17,10 +17,8 @@ const socialIconMap: Record<string, any> = {
 export default function FooterWidget({ section }: FooterWidgetProps) {
   const { logo, logoText, description, columns, socialLinks, copyright } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const iconBg = section.design?.colors?.buttonBackground || undefined;
-  const iconColor = section.design?.colors?.buttonText || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
 
   const renderDefault = () => (
     <footer className="bg-base-200 text-base-content">
@@ -97,7 +95,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-6 w-auto" />
             ) : (
-              <span className="text-lg font-semibold text-base-content" style={{ color: headingColor }}>
+              <span className="text-lg font-semibold text-base-content" style={headingColor ? { color: headingColor } : undefined}>
                 {logoText || 'Brand'}
               </span>
             )}
@@ -110,7 +108,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
                   key={index}
                   href={link.url || '#'}
                   className="text-sm hover:opacity-80 transition-opacity text-base-content/70"
-                  style={{ color: textColor }}
+                  style={textColor ? { color: textColor } : {}}
                 >
                   {link.label}
                 </a>
@@ -127,7 +125,6 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
                     key={index}
                     href={social.url || '#'}
                     className="hover:opacity-80 transition-opacity text-base-content/70"
-                    style={{ color: textColor }}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -140,7 +137,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
         </div>
 
         <div className="mt-4 text-center">
-          <p className="text-xs text-base-content/70" style={{ color: textColor }}>
+          <p className="text-xs text-base-content/70" style={textColor ? { color: textColor } : undefined}>
             {copyright || `\u00A9 ${new Date().getFullYear()} ${logoText || 'Brand'}. All rights reserved.`}
           </p>
         </div>
@@ -155,12 +152,12 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
           {logo ? (
             <img src={logo} alt={logoText || 'Logo'} className="h-10 w-auto mx-auto mb-4" />
           ) : (
-            <span className="text-2xl font-bold block mb-4 text-base-content" style={{ color: headingColor }}>
+            <span className="text-2xl font-bold block mb-4 text-base-content" style={headingColor ? { color: headingColor } : undefined}>
               {logoText || 'Brand'}
             </span>
           )}
           {description && (
-            <p className="max-w-md mx-auto mb-6 text-sm sm:text-base text-base-content/70" style={{ color: textColor }}>
+            <p className="max-w-md mx-auto mb-6 text-sm sm:text-base text-base-content/70" style={textColor ? { color: textColor } : undefined}>
               {description}
             </p>
           )}
@@ -177,7 +174,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-base-content/70" style={{ color: textColor }} />
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-base-content/70" />
                   </a>
                 );
               })}
@@ -188,7 +185,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8 text-center">
           {(columns || []).map((column: any, index: number) => (
             <div key={index}>
-              <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base text-base-content" style={{ color: headingColor }}>
+              <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base text-base-content" style={headingColor ? { color: headingColor } : undefined}>
                 {column.title}
               </h3>
               <ul className="space-y-2">
@@ -197,7 +194,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
                     <a
                       href={link.url || '#'}
                       className="text-sm hover:opacity-80 transition-opacity text-base-content/70"
-                      style={{ color: textColor }}
+                      style={textColor ? { color: textColor } : {}}
                     >
                       {link.label}
                     </a>
@@ -209,7 +206,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
         </div>
 
         <div className="border-t border-base-content/20 pt-8">
-          <p className="text-xs sm:text-sm text-center text-base-content/70" style={{ color: textColor }}>
+          <p className="text-xs sm:text-sm text-center text-base-content/70" style={textColor ? { color: textColor } : undefined}>
             {copyright || `\u00A9 ${new Date().getFullYear()} ${logoText || 'Brand'}. All rights reserved.`}
           </p>
         </div>

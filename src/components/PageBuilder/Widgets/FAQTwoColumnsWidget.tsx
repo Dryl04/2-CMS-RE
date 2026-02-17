@@ -7,8 +7,8 @@ interface FAQTwoColumnsWidgetProps {
 export default function FAQTwoColumnsWidget({ section }: FAQTwoColumnsWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
 
   const faqs = content.faqs || [];
   const leftColumn = faqs.filter((_: any, index: number) => index % 2 === 0);

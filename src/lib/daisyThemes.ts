@@ -343,10 +343,15 @@ export function generateGoogleFontsImport(fonts: string[], weights: string[] = D
 }
 
 export function slugify(name: string): string {
-  return name
+  const normalized = name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-{2,}/g, '-')
     .replace(/^-|-$/g, '');
+
+  return normalized || 'theme';
 }
 
 export interface ThemeUsage {

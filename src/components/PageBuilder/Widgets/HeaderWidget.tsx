@@ -11,11 +11,8 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { logo, logoText, navItems, ctaText, ctaLink } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const buttonBg = section.design?.colors?.buttonBackground || undefined;
-  const buttonText = section.design?.colors?.buttonText || undefined;
-  const buttonHover = section.design?.colors?.buttonBackgroundHover || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
 
   const renderDefault = () => (
     <header className="bg-base-100 border-b border-base-content/10">
@@ -25,7 +22,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-8 w-auto" />
             ) : (
-              <span className="text-xl font-bold text-base-content" style={{ color: headingColor }}>
+              <span className="text-xl font-bold text-base-content" style={headingColor ? { color: headingColor } : undefined}>
                 {logoText || 'Brand'}
               </span>
             )}
@@ -37,7 +34,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="font-medium transition-colors hover:opacity-80 text-base-content/70"
-                style={{ color: textColor }}
+                style={textColor ? { color: textColor } : undefined}
               >
                 {item.label}
               </a>
@@ -48,10 +45,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {ctaText && (
               <a
                 href={ctaLink || '#'}
-                className="px-6 py-2 rounded-lg font-medium transition-colors bg-primary text-primary-content"
-                style={{ backgroundColor: buttonBg, color: buttonText }}
-                onMouseOver={(e) => { if (buttonHover) e.currentTarget.style.backgroundColor = buttonHover; }}
-                onMouseOut={(e) => { if (buttonBg) e.currentTarget.style.backgroundColor = buttonBg; }}
+                className="btn btn-primary btn-sm"
               >
                 {ctaText}
               </a>
@@ -61,7 +55,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-base-content"
-            style={{ color: headingColor }}
+            style={headingColor ? { color: headingColor } : undefined}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -76,7 +70,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="block font-medium py-2 hover:opacity-80 text-base-content/70"
-                style={{ color: textColor }}
+                style={textColor ? { color: textColor } : undefined}
               >
                 {item.label}
               </a>
@@ -84,8 +78,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {ctaText && (
               <a
                 href={ctaLink || '#'}
-                className="block text-center px-6 py-2 rounded-lg font-medium mt-4 bg-primary text-primary-content"
-                style={{ backgroundColor: buttonBg, color: buttonText }}
+                className="btn btn-primary btn-sm w-full"
               >
                 {ctaText}
               </a>
@@ -104,7 +97,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-10 w-auto" />
             ) : (
-              <span className="text-2xl font-bold text-base-content" style={{ color: headingColor }}>
+              <span className="text-2xl font-bold text-base-content" style={headingColor ? { color: headingColor } : undefined}>
                 {logoText || 'Brand'}
               </span>
             )}
@@ -116,7 +109,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="font-medium transition-colors hover:opacity-80 text-base-content/70"
-                style={{ color: textColor }}
+                style={textColor ? { color: textColor } : undefined}
               >
                 {item.label}
               </a>
@@ -124,10 +117,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {ctaText && (
               <a
                 href={ctaLink || '#'}
-                className="px-6 py-2 rounded-lg font-medium transition-colors bg-primary text-primary-content"
-                style={{ backgroundColor: buttonBg, color: buttonText }}
-                onMouseOver={(e) => { if (buttonHover) e.currentTarget.style.backgroundColor = buttonHover; }}
-                onMouseOut={(e) => { if (buttonBg) e.currentTarget.style.backgroundColor = buttonBg; }}
+                className="btn btn-primary btn-sm"
               >
                 {ctaText}
               </a>
@@ -137,7 +127,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-base-content"
-            style={{ color: headingColor }}
+            style={headingColor ? { color: headingColor } : undefined}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -152,7 +142,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="block font-medium py-2 text-center hover:opacity-80 text-base-content/70"
-                style={{ color: textColor }}
+                style={textColor ? { color: textColor } : undefined}
               >
                 {item.label}
               </a>
@@ -160,8 +150,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {ctaText && (
               <a
                 href={ctaLink || '#'}
-                className="block text-center px-6 py-2 rounded-lg font-medium mt-4 bg-primary text-primary-content"
-                style={{ backgroundColor: buttonBg, color: buttonText }}
+                className="btn btn-primary btn-sm w-full"
               >
                 {ctaText}
               </a>
@@ -173,16 +162,16 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
   );
 
   const renderTransparent = () => (
-    <header className="absolute top-0 left-0 right-0 z-50">
+    <header className="absolute top-0 left-0 right-0 z-50 bg-base-100/75 backdrop-blur-md border-b border-base-content/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-8 w-auto drop-shadow-md" />
             ) : (
-              <span 
-                className="text-xl font-bold drop-shadow-md"
-                style={headingStyle}
+              <span
+                className="text-xl font-bold text-base-content"
+                style={headingColor ? { color: headingColor } : undefined}
               >
                 {logoText || 'Brand'}
               </span>
@@ -194,8 +183,8 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               <a
                 key={index}
                 href={item.link || '#'}
-                className="hover:opacity-80 font-medium transition-opacity drop-shadow-md"
-                style={textStyle}
+                className="text-base-content/70 hover:text-base-content font-medium transition-colors"
+                style={textColor ? { color: textColor } : undefined}
               >
                 {item.label}
               </a>
@@ -206,7 +195,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {ctaText && (
               <a
                 href={ctaLink || '#'}
-                className="bg-primary hover:bg-primary/90 text-primary-content px-6 py-2 rounded-lg font-medium transition-colors shadow-lg"
+                className="btn btn-primary btn-sm"
               >
                 {ctaText}
               </a>
@@ -215,8 +204,8 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 drop-shadow-md"
-            style={textStyle}
+            className="md:hidden p-2 text-base-content"
+            style={textColor ? { color: textColor } : undefined}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -238,7 +227,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {ctaText && (
               <a
                 href={ctaLink || '#'}
-                className="block text-center px-6 py-2 rounded-lg font-medium mt-4 bg-primary text-primary-content"
+                className="btn btn-primary btn-sm w-full"
               >
                 {ctaText}
               </a>
@@ -257,7 +246,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-6 w-auto" />
             ) : (
-              <span className="text-lg font-semibold text-base-content" style={{ color: headingColor }}>
+              <span className="text-lg font-semibold text-base-content" style={headingColor ? { color: headingColor } : undefined}>
                 {logoText || 'Brand'}
               </span>
             )}
@@ -269,7 +258,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="text-sm transition-colors hover:opacity-80 text-base-content/70"
-                style={{ color: textColor }}
+                style={textColor ? { color: textColor } : undefined}
               >
                 {item.label}
               </a>
@@ -278,7 +267,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               <a
                 href={ctaLink || '#'}
                 className="text-sm hover:underline font-medium text-base-content"
-                style={{ color: headingColor }}
+                style={headingColor ? { color: headingColor } : undefined}
               >
                 {ctaText} →
               </a>

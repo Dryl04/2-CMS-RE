@@ -8,30 +8,11 @@ interface CTAWidgetProps {
 export default function CTAWidget({ section }: CTAWidgetProps) {
   const { headline, description, primaryCta, primaryLink, secondaryCta, secondaryLink } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const buttonBg = section.design?.colors?.buttonBackground || undefined;
-  const buttonText = section.design?.colors?.buttonText || undefined;
-  const buttonHover = section.design?.colors?.buttonBackgroundHover || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
 
   const headingStyle = headingColor ? { color: headingColor } : undefined;
   const textStyle = textColor ? { color: textColor } : undefined;
-  const primaryButtonStyle =
-    buttonBg || buttonText
-      ? { backgroundColor: buttonBg, color: buttonText }
-      : undefined;
-
-  const handlePrimaryMouseOver = buttonHover
-    ? (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.currentTarget.style.backgroundColor = buttonHover;
-      }
-    : undefined;
-
-  const handlePrimaryMouseOut = buttonBg
-    ? (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.currentTarget.style.backgroundColor = buttonBg;
-      }
-    : undefined;
 
   const renderBanner = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,9 +35,6 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
           <a
             href={primaryLink || '#'}
             className="btn btn-primary px-6 sm:px-8 rounded-xl font-semibold whitespace-nowrap"
-            style={primaryButtonStyle}
-            onMouseOver={handlePrimaryMouseOver}
-            onMouseOut={handlePrimaryMouseOut}
           >
             {primaryCta || 'Start Free Trial'}
           </a>
@@ -92,17 +70,13 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
         <a
           href={primaryLink || '#'}
           className="btn btn-primary px-6 sm:px-8 sm:py-4 rounded-xl font-semibold"
-          style={primaryButtonStyle}
-          onMouseOver={handlePrimaryMouseOver}
-          onMouseOut={handlePrimaryMouseOut}
         >
           {primaryCta || 'Start Free Trial'}
         </a>
         {secondaryCta && (
           <a
             href={secondaryLink || '#'}
-            className="btn btn-outline border-2 px-6 sm:px-8 sm:py-4 rounded-xl font-semibold text-base-content border-base-content"
-            style={headingColor ? { borderColor: headingColor, color: headingColor } : undefined}
+            className="btn btn-outline px-6 sm:px-8 sm:py-4 rounded-xl font-semibold"
           >
             {secondaryCta}
           </a>
@@ -130,9 +104,6 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
           <a
             href={primaryLink || '#'}
             className="btn btn-primary px-6 sm:px-8 sm:py-4 rounded-xl font-semibold"
-            style={primaryButtonStyle}
-            onMouseOver={handlePrimaryMouseOver}
-            onMouseOut={handlePrimaryMouseOut}
           >
             {primaryCta || 'Start Free Trial'}
           </a>

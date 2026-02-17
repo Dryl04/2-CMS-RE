@@ -16,11 +16,11 @@ const iconMap: { [key: string]: any } = {
 export default function FeaturesCarouselWidget({ section }: FeaturesCarouselWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor || undefined;
-  const textColor = design.typography?.textColor || undefined;
+  const headingColor = design.typography?.headingColor;
+  const textColor = design.typography?.textColor;
 
   return (
-    <div className="bg-base-200" style={{ backgroundColor: bg }}>
+    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
@@ -37,21 +37,21 @@ export default function FeaturesCarouselWidget({ section }: FeaturesCarouselWidg
                 className={`bg-base-100 rounded-2xl p-8 text-center space-y-6 transition-all hover:shadow-lg ${borderClass}`}
               >
                 <div className="flex justify-center">
-                  <IconComponent className="w-16 h-16 text-base-content" style={{ color: headingColor }} />
+                  <IconComponent className="w-16 h-16 text-base-content" style={headingColor ? { color: headingColor } : undefined} />
                 </div>
 
-                <h3 className="text-2xl font-bold text-base-content" style={{ color: headingColor }}>
+                <h3 className="text-2xl font-bold text-base-content" style={headingColor ? { color: headingColor } : undefined}>
                   {feature.title}
                 </h3>
 
                 {feature.description && (
-                  <p className="text-base leading-relaxed text-base-content/70" style={{ color: textColor }}>
+                  <p className="text-base leading-relaxed text-base-content/70" style={textColor ? { color: textColor } : undefined}>
                     {feature.description}
                   </p>
                 )}
 
                 {feature.ctaText && (
-                  <button className="bg-primary text-primary-content px-8 py-3 rounded-full font-semibold hover:opacity-90 transition">
+                  <button className="btn btn-primary px-8 rounded-full">
                     {feature.ctaText}
                   </button>
                 )}
@@ -65,9 +65,8 @@ export default function FeaturesCarouselWidget({ section }: FeaturesCarouselWidg
             {[0, 1, 2, 3].map((dot, index) => (
               <button
                 key={index}
-                className={`w-2 h-2 rounded-full transition ${
-                  index === 0 ? 'bg-base-content' : 'bg-base-content/40'
-                }`}
+                className={`w-2 h-2 rounded-full transition ${index === 0 ? 'bg-base-content' : 'bg-base-content/40'
+                  }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
             ))}

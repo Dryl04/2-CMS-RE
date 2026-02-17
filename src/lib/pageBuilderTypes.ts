@@ -29,6 +29,8 @@ export interface PageBuilderSection {
       buttonBackground?: string;
       buttonText?: string;
       buttonBackgroundHover?: string;
+      buttonRadius?: string;
+      buttonSize?: 'sm' | 'md' | 'lg' | 'xl';
       iconBackground?: string;
       iconColor?: string;
     };

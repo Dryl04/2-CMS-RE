@@ -15,12 +15,12 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
     image
   } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor || undefined;
-  const textColor = section.design?.typography?.textColor || undefined;
-  const subtitleColor = section.design?.typography?.subtitleColor || undefined;
-  const buttonBg = section.design?.colors?.buttonBackground || undefined;
-  const buttonText = section.design?.colors?.buttonText || undefined;
-  const buttonBorder = section.design?.colors?.buttonBorder || undefined;
+  const headingColor = section.design?.typography?.headingColor;
+  const textColor = section.design?.typography?.textColor;
+  const subtitleColor = section.design?.typography?.subtitleColor;
+  const buttonBg = section.design?.colors?.buttonBackground;
+  const buttonText = section.design?.colors?.buttonText;
+  const buttonBorder = section.design?.colors?.buttonBorder;
 
   const buttonStyle =
     buttonBg || buttonText || buttonBorder
