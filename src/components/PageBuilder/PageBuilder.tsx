@@ -200,10 +200,12 @@ export default function PageBuilder({
 
     setSaving(true);
     try {
+      const normalizedSections = sections.map((section) => normalizeSectionForTheme(section));
+
       const templateData: Record<string, any> = {
         name: templateName,
         description: templateDescription || null,
-        sections_data: sections,
+        sections_data: normalizedSections,
         is_public: true,
       };
 
@@ -264,7 +266,7 @@ export default function PageBuilder({
 
   const savePageSections = () => {
     if (onSavePageSections) {
-      onSavePageSections(sections);
+      onSavePageSections(sections.map((section) => normalizeSectionForTheme(section)));
     }
   };
 
@@ -325,6 +327,7 @@ export default function PageBuilder({
   };
 
   const buildPreviewPayload = useCallback(() => {
+    const normalizedSections = sections.map((section) => normalizeSectionForTheme(section));
     const customThemesCSS = daisyThemes
       .filter(t => t.source === 'custom')
       .map(t => generateCustomThemeCSS(t.slug, t.tokens, t.font_config))
@@ -332,7 +335,7 @@ export default function PageBuilder({
     const themeTokens = daisyThemeSlug
       ? daisyThemes.find(t => t.slug === daisyThemeSlug)?.tokens
       : undefined;
-    return { sections, daisyThemeSlug, customThemesCSS, themeTokens };
+    return { sections: normalizedSections, daisyThemeSlug, customThemesCSS, themeTokens };
   }, [sections, daisyThemeSlug, daisyThemes]);
 
   useEffect(() => {

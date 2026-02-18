@@ -93,7 +93,7 @@ function loadPreviewData(): BuilderPreviewData | null {
 }
 
 function renderWidget(section: PageBuilderSection) {
-  const noop = () => {};
+  const noop = () => { };
   const props = { section, onUpdate: noop };
   switch (section.type) {
     case 'header': return <HeaderWidget {...props} />;
@@ -203,7 +203,7 @@ export default function BuilderPreviewPage() {
   return (
     <div
       className="min-h-screen bg-base-100 text-base-content page-themed"
-      data-theme={data.daisyThemeSlug || undefined}
+      data-theme={data.daisyThemeSlug || 'light'}
       style={themeVars}
     >
       {data.sections.map((section, index) => {
@@ -212,7 +212,7 @@ export default function BuilderPreviewPage() {
           <div
             key={normalizedSection.id || `section-${index}`}
             className={className}
-            data-theme={dataTheme || data.daisyThemeSlug || undefined}
+            data-theme={dataTheme || data.daisyThemeSlug || 'light'}
             style={style as React.CSSProperties}
           >
             {renderWidget(normalizedSection)}

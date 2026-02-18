@@ -1,5 +1,6 @@
 import { PageBuilderSection } from "./pageBuilderTypes";
 import { PageTemplate } from "./supabase";
+import { normalizeSectionForTheme } from "./widgetThemeHelper";
 
 export interface TemplateVariable {
   sectionId: string;
@@ -544,7 +545,9 @@ export function extractTemplateVariables(
 }
 
 export function exportTemplateAsJSON(template: PageTemplate): string {
-  const normalizedSections = normalizeSectionsData(template.sections_data);
+  const normalizedSections = normalizeSectionsData(template.sections_data).map((section) =>
+    normalizeSectionForTheme(section),
+  );
   const variables = extractTemplateVariables(normalizedSections);
 
   const exportData = {
@@ -573,7 +576,9 @@ export function exportTemplateAsJSON(template: PageTemplate): string {
 }
 
 export function exportTemplateAsCSV(template: PageTemplate): string {
-  const normalizedSections = normalizeSectionsData(template.sections_data);
+  const normalizedSections = normalizeSectionsData(template.sections_data).map((section) =>
+    normalizeSectionForTheme(section),
+  );
   const variables = extractTemplateVariables(normalizedSections);
 
   const headers = [

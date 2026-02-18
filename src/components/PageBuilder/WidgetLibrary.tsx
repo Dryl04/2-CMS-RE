@@ -80,19 +80,9 @@ export default function WidgetLibrary({ onAddSection, existingSections }: Widget
       design: {
         ...widget.defaultDesign,
         typography: {
-          fontFamily: 'inherit',
-          fontSize: '1rem',
-          lineHeight: '1.5',
-          headingColor: '#111827',
-          textColor: '#4B5563',
           ...(widget.defaultDesign.typography || {}),
         },
         colors: {
-          primary: '#000000',
-          secondary: '#ffffff',
-          buttonBackground: '#000000',
-          buttonText: '#ffffff',
-          buttonBackgroundHover: '#1F2937',
           ...(widget.defaultDesign.colors || {}),
         },
       },
@@ -127,7 +117,7 @@ export default function WidgetLibrary({ onAddSection, existingSections }: Widget
         </div>
       </div>
 
-     <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4">
         <div className="space-y-2">
           {filteredWidgets.map((widget) => {
             const Icon = iconMap[widget.icon];
@@ -139,9 +129,8 @@ export default function WidgetLibrary({ onAddSection, existingSections }: Widget
                 <button
                   onClick={() => !isDisabled && setExpandedWidget(isExpanded ? null : widget.type)}
                   disabled={isDisabled}
-                  className={`w-full flex items-start space-x-3 p-3 transition-colors text-left ${
-                    isDisabled ? 'cursor-not-allowed' : 'hover:bg-gray-50'
-                  }`}
+                  className={`w-full flex items-start space-x-3 p-3 transition-colors text-left ${isDisabled ? 'cursor-not-allowed' : 'hover:bg-gray-50'
+                    }`}
                 >
                   <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Icon className="w-5 h-5 text-gray-700" />

@@ -390,7 +390,7 @@ export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThem
   return (
     <div
       className="min-h-screen bg-base-100 text-base-content page-themed"
-      data-theme={daisyThemeSlug}
+      data-theme={daisyThemeSlug || 'light'}
     >
       <PageThemeInjector themeId={pageThemeId} />
       {/* Bouton flottant admin - uniquement visible quand l'utilisateur est connecté */}

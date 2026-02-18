@@ -36,11 +36,6 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 
-  const buttonBg = design.colors?.buttonBackground;
-  const buttonStyle: React.CSSProperties | undefined = buttonBg
-    ? { backgroundColor: buttonBg }
-    : undefined;
-
   const overlayEnabled = design.overlay?.enabled !== false;
   const overlayColor = design.overlay?.color || '#000000';
   const overlayOpacity = design.overlay?.opacity ?? 0.4;
@@ -165,7 +160,6 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           <a
             href={ctaLink || '#'}
             className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
-            style={buttonStyle}
           >
             {ctaText || 'Get Started'}
           </a>
@@ -205,7 +199,6 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
       <a
         href={ctaLink || '#'}
         className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
-        style={buttonStyle}
       >
         {ctaText || 'Get Started'}
       </a>
@@ -230,7 +223,6 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           <a
             href={ctaLink || '#'}
             className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
-            style={buttonStyle}
           >
             {ctaText || 'Get Started'}
           </a>
@@ -313,7 +305,6 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
             <a
               href={ctaLink || '#'}
               className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105"
-              style={buttonStyle}
             >
               {ctaText || 'Get Started'}
             </a>

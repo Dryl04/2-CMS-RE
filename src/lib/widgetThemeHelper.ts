@@ -7,7 +7,7 @@ function hexToLinear(c: number): number {
 }
 
 function hexToOklchValue(hex: string): string {
-  const clean = hex.replace('#', '');
+  const clean = hex.replace("#", "");
   if (clean.length !== 6) return hex;
   const r = hexToLinear(parseInt(clean.slice(0, 2), 16));
   const g = hexToLinear(parseInt(clean.slice(2, 4), 16));
@@ -18,9 +18,9 @@ function hexToOklchValue(hex: string): string {
   const l_ = Math.cbrt(l);
   const m_ = Math.cbrt(m);
   const s_ = Math.cbrt(s);
-  const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
-  const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
-  const bVal = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+  const L = 0.2104542553 * l_ + 0.793617785 * m_ - 0.0040720468 * s_;
+  const a = 1.9779984951 * l_ - 2.428592205 * m_ + 0.4505937099 * s_;
+  const bVal = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.808675766 * s_;
   const C = Math.sqrt(a * a + bVal * bVal);
   let H = (Math.atan2(bVal, a) * 180) / Math.PI;
   if (H < 0) H += 360;
@@ -30,7 +30,7 @@ function hexToOklchValue(hex: string): string {
 function toOklchToken(value: string): string {
   if (!value) return value;
   const trimmed = value.trim();
-  return trimmed.startsWith('#') ? hexToOklchValue(trimmed) : trimmed;
+  return trimmed.startsWith("#") ? hexToOklchValue(trimmed) : trimmed;
 }
 
 const COLOR_OVERRIDE_KEYS = [
@@ -44,7 +44,12 @@ const COLOR_OVERRIDE_KEYS = [
   "iconColor",
 ] as const;
 
-const TYPOGRAPHY_COLOR_KEYS = ["headingColor", "h1Color", "h2Color", "textColor"] as const;
+const TYPOGRAPHY_COLOR_KEYS = [
+  "headingColor",
+  "h1Color",
+  "h2Color",
+  "textColor",
+] as const;
 
 function normalizeColorValue(value?: string) {
   return value?.trim().toLowerCase();
@@ -63,6 +68,70 @@ function shouldDropColorOverride(value?: string, defaultValue?: string) {
 function getWidgetDefaultDesign(section: PageBuilderSection) {
   return widgetLibrary.find((widget) => widget.type === section.type)
     ?.defaultDesign;
+}
+
+function isLegacyDefaultTypography(typography: Record<string, unknown>) {
+  const allowedKeys = new Set([
+    "fontFamily",
+    "fontSize",
+    "lineHeight",
+    "headingColor",
+    "textColor",
+    "h1Color",
+    "h2Color",
+    "subtitleColor",
+    "linkColor",
+    "headingFontFamily",
+    "headingFontWeight",
+    "headingFontSize",
+    "h1FontFamily",
+    "h1FontWeight",
+    "h1FontSize",
+    "h2FontFamily",
+    "h2FontWeight",
+    "h2FontSize",
+    "textFontSize",
+  ]);
+
+  const keys = Object.keys(typography);
+  if (keys.length === 0) return false;
+  if (keys.some((key) => !allowedKeys.has(key))) return false;
+
+  return (
+    normalizeColorValue(String(typography.fontFamily ?? "")) === "inherit" &&
+    normalizeColorValue(String(typography.fontSize ?? "")) === "1rem" &&
+    normalizeColorValue(String(typography.lineHeight ?? "")) === "1.5" &&
+    normalizeColorValue(String(typography.headingColor ?? "")) === "#111827" &&
+    normalizeColorValue(String(typography.textColor ?? "")) === "#4b5563"
+  );
+}
+
+function isLegacyDefaultColors(colors: Record<string, unknown>) {
+  const allowedKeys = new Set([
+    "primary",
+    "secondary",
+    "buttonBackground",
+    "buttonText",
+    "buttonBackgroundHover",
+    "buttonRadius",
+    "buttonSize",
+    "accent",
+    "iconBackground",
+    "iconColor",
+  ]);
+
+  const keys = Object.keys(colors);
+  if (keys.length === 0) return false;
+  if (keys.some((key) => !allowedKeys.has(key))) return false;
+
+  return (
+    normalizeColorValue(String(colors.primary ?? "")) === "#000000" &&
+    normalizeColorValue(String(colors.secondary ?? "")) === "#ffffff" &&
+    normalizeColorValue(String(colors.buttonBackground ?? "")) === "#000000" &&
+    normalizeColorValue(String(colors.buttonText ?? "")) === "#ffffff" &&
+    normalizeColorValue(String(colors.buttonBackgroundHover ?? "")) ===
+      "#1f2937"
+  );
 }
 
 export function normalizeSectionForTheme(
@@ -104,6 +173,14 @@ export function normalizeSectionForTheme(
   const sourceColors = section.design?.colors ?? defaultDesign?.colors ?? {};
 
   const typography = { ...sourceTypography };
+  if (isLegacyDefaultTypography(sourceTypography as Record<string, unknown>)) {
+    delete typography.fontFamily;
+    delete typography.fontSize;
+    delete typography.lineHeight;
+    delete typography.headingColor;
+    delete typography.textColor;
+  }
+
   for (const key of TYPOGRAPHY_COLOR_KEYS) {
     const value = sourceTypography[key];
     const defaultValue = defaultDesign?.typography?.[key];
@@ -113,6 +190,14 @@ export function normalizeSectionForTheme(
   }
 
   const colors = { ...sourceColors };
+  if (isLegacyDefaultColors(sourceColors as Record<string, unknown>)) {
+    delete colors.primary;
+    delete colors.secondary;
+    delete colors.buttonBackground;
+    delete colors.buttonText;
+    delete colors.buttonBackgroundHover;
+  }
+
   for (const key of COLOR_OVERRIDE_KEYS) {
     const value = sourceColors[key];
     const defaultValue = defaultDesign?.colors?.[key];
@@ -153,17 +238,22 @@ export function getWidgetThemeProps(section: PageBuilderSection) {
   if (themeConfig?.themeMode === "custom" && themeConfig.customTokens) {
     const t = themeConfig.customTokens;
     if (t["primary"]) customStyles["--p"] = toOklchToken(t["primary"]);
-    if (t["primary-content"]) customStyles["--pc"] = toOklchToken(t["primary-content"]);
+    if (t["primary-content"])
+      customStyles["--pc"] = toOklchToken(t["primary-content"]);
     if (t["secondary"]) customStyles["--s"] = toOklchToken(t["secondary"]);
-    if (t["secondary-content"]) customStyles["--sc"] = toOklchToken(t["secondary-content"]);
+    if (t["secondary-content"])
+      customStyles["--sc"] = toOklchToken(t["secondary-content"]);
     if (t["accent"]) customStyles["--a"] = toOklchToken(t["accent"]);
-    if (t["accent-content"]) customStyles["--ac"] = toOklchToken(t["accent-content"]);
+    if (t["accent-content"])
+      customStyles["--ac"] = toOklchToken(t["accent-content"]);
     if (t["neutral"]) customStyles["--n"] = toOklchToken(t["neutral"]);
-    if (t["neutral-content"]) customStyles["--nc"] = toOklchToken(t["neutral-content"]);
+    if (t["neutral-content"])
+      customStyles["--nc"] = toOklchToken(t["neutral-content"]);
     if (t["base-100"]) customStyles["--b1"] = toOklchToken(t["base-100"]);
     if (t["base-200"]) customStyles["--b2"] = toOklchToken(t["base-200"]);
     if (t["base-300"]) customStyles["--b3"] = toOklchToken(t["base-300"]);
-    if (t["base-content"]) customStyles["--bc"] = toOklchToken(t["base-content"]);
+    if (t["base-content"])
+      customStyles["--bc"] = toOklchToken(t["base-content"]);
     if (t["info"]) customStyles["--in"] = toOklchToken(t["info"]);
     if (t["success"]) customStyles["--su"] = toOklchToken(t["success"]);
     if (t["warning"]) customStyles["--wa"] = toOklchToken(t["warning"]);
@@ -190,39 +280,52 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
   const hasBtnBg = !!colors.buttonBackground;
 
   const className = [
-    'widget-design-scope',
-    'text-base-content',
-    'bg-base-100',
-    hasHeadingColor ? 'wds-heading-color' : '',
-    hasH1Color ? 'wds-h1-color' : '',
-    hasH2Color ? 'wds-h2-color' : '',
-    hasTextColor ? 'wds-text-color' : '',
-    hasLinkColor ? 'wds-link-color' : '',
-    hasBtnBg ? 'wds-btn-bg' : '',
-  ].filter(Boolean).join(' ');
+    "widget-design-scope",
+    "text-base-content",
+    "bg-base-100",
+    hasHeadingColor ? "wds-heading-color" : "",
+    hasH1Color ? "wds-h1-color" : "",
+    hasH2Color ? "wds-h2-color" : "",
+    hasTextColor ? "wds-text-color" : "",
+    hasLinkColor ? "wds-link-color" : "",
+    hasBtnBg ? "wds-btn-bg" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const style: Record<string, string | undefined> = {
     backgroundColor:
-      normalizedSection.design.background.type === 'color' && normalizedSection.design.background.value
+      normalizedSection.design.background.type === "color" &&
+      normalizedSection.design.background.value
         ? normalizedSection.design.background.value
         : undefined,
     paddingTop: normalizedSection.design.spacing.paddingTop,
     paddingBottom: normalizedSection.design.spacing.paddingBottom,
     marginTop: normalizedSection.design.spacing.marginTop,
     marginBottom: normalizedSection.design.spacing.marginBottom,
-    ...(typo.headingColor ? { '--widget-heading-color': typo.headingColor } : {}),
-    ...(typo.h1Color ? { '--widget-h1-color': typo.h1Color } : {}),
-    ...(typo.h2Color ? { '--widget-h2-color': typo.h2Color } : {}),
-    ...(typo.subtitleColor ? { '--widget-subtitle-color': typo.subtitleColor } : {}),
-    ...(typo.textColor ? { '--widget-text-color': typo.textColor } : {}),
-    ...(typo.linkColor ? { '--widget-link-color': typo.linkColor } : {}),
-    ...(colors.buttonBackground ? { '--widget-btn-bg': colors.buttonBackground } : {}),
-    ...(colors.buttonText ? { '--widget-btn-text': colors.buttonText } : {}),
-    ...(colors.buttonBackgroundHover ? { '--widget-btn-bg-hover': colors.buttonBackgroundHover } : {}),
-    ...(colors.accent ? { '--widget-accent-color': colors.accent } : {}),
-    ...(colors.iconBackground ? { '--widget-icon-bg': colors.iconBackground } : {}),
-    ...(colors.iconColor ? { '--widget-icon-color': colors.iconColor } : {}),
-    '--widget-btn-radius': buttonRadius,
+    ...(typo.headingColor
+      ? { "--widget-heading-color": typo.headingColor }
+      : {}),
+    ...(typo.h1Color ? { "--widget-h1-color": typo.h1Color } : {}),
+    ...(typo.h2Color ? { "--widget-h2-color": typo.h2Color } : {}),
+    ...(typo.subtitleColor
+      ? { "--widget-subtitle-color": typo.subtitleColor }
+      : {}),
+    ...(typo.textColor ? { "--widget-text-color": typo.textColor } : {}),
+    ...(typo.linkColor ? { "--widget-link-color": typo.linkColor } : {}),
+    ...(colors.buttonBackground
+      ? { "--widget-btn-bg": colors.buttonBackground }
+      : {}),
+    ...(colors.buttonText ? { "--widget-btn-text": colors.buttonText } : {}),
+    ...(colors.buttonBackgroundHover
+      ? { "--widget-btn-bg-hover": colors.buttonBackgroundHover }
+      : {}),
+    ...(colors.accent ? { "--widget-accent-color": colors.accent } : {}),
+    ...(colors.iconBackground
+      ? { "--widget-icon-bg": colors.iconBackground }
+      : {}),
+    ...(colors.iconColor ? { "--widget-icon-color": colors.iconColor } : {}),
+    "--widget-btn-radius": buttonRadius,
     ...buttonSizeVars,
     ...widgetTheme.customStyles,
   };
