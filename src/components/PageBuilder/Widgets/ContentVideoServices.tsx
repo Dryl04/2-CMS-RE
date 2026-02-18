@@ -1,4 +1,5 @@
-import { Play, Umbrella, Layers, PaintBucket } from 'lucide-react';
+import { useState } from 'react';
+import { Play, Pause, Umbrella, Layers, PaintBucket } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
 interface ContentVideoServicesProps {
@@ -13,8 +14,10 @@ const iconMap: { [key: string]: any } = {
 
 export default function ContentVideoServices({ section }: ContentVideoServicesProps) {
   const { content, design } = section;
+  const [isPlaying, setIsPlaying] = useState(false);
   const bg = design.background.type === 'color' ? design.background.value : undefined;
   const typo = design.typography || {};
+  const accentColor = design.colors?.accent || design.colors?.buttonBackground;
   const headingStyle: React.CSSProperties = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
@@ -31,12 +34,26 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 
+  const getEmbedUrl = (url?: string) => {
+    if (!url) return '';
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
+      return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+    if (url.includes('vimeo.com')) {
+      const videoId = url.split('/').pop();
+      return `https://player.vimeo.com/video/${videoId}?autoplay=1`;
+    }
+    return url;
+  };
+
+  const videoPoster =
+    content.thumbnail ||
+    'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1920';
+
   return (
     <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
-        paddingTop: design.spacing.paddingTop,
-        paddingBottom: design.spacing.paddingBottom,
-      }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 items-center">
           <div className="lg:col-span-3 bg-base-100 rounded-2xl p-6 sm:p-8 shadow-lg">
             {content.subtitle && (
@@ -65,19 +82,48 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
           </div>
 
           <div className="lg:col-span-6">
-            <div className="relative bg-base-300 rounded-2xl h-56 sm:h-72 lg:h-[450px]">
-              {content.videoUrl ? (
-                <div className="w-full h-full flex items-center justify-center">
-                  <button className="btn btn-circle btn-outline w-14 h-14 sm:w-20 sm:h-20 border-4 border-base-100 hover:scale-110 transition">
-                    <Play className="w-6 h-6 sm:w-10 sm:h-10 text-base-100 fill-base-100" />
-                  </button>
-                </div>
+            <div className="relative rounded-2xl overflow-hidden min-h-[260px] sm:min-h-[360px] lg:min-h-[450px] bg-black shadow-xl">
+              {content.videoUrl && isPlaying ? (
+                <iframe
+                  src={getEmbedUrl(content.videoUrl)}
+                  className="absolute inset-0 w-full h-full bg-black"
+                  frameBorder="0"
+                  allow="autoplay; fullscreen"
+                  allowFullScreen
+                />
               ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <button className="btn btn-circle btn-outline w-14 h-14 sm:w-20 sm:h-20 border-4 border-base-100 hover:scale-110 transition">
-                    <Play className="w-6 h-6 sm:w-10 sm:h-10 text-base-100 fill-base-100" />
-                  </button>
+                <div className="absolute inset-0">
+                  <img
+                    src={videoPoster}
+                    alt="Video thumbnail"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                    <button
+                      onClick={() => setIsPlaying((prev) => !prev)}
+                      className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full text-white shadow-2xl transition-transform hover:scale-105"
+                      style={accentColor ? { backgroundColor: accentColor } : undefined}
+                      aria-label={isPlaying ? 'Pause video' : 'Play video'}
+                    >
+                      {isPlaying ? (
+                        <Pause className="w-6 h-6 sm:w-9 sm:h-9" />
+                      ) : (
+                        <Play className="w-6 h-6 sm:w-9 sm:h-9 ml-0.5" fill="currentColor" />
+                      )}
+                    </button>
+                  </div>
                 </div>
+              )}
+
+              {content.videoUrl && isPlaying && (
+                <button
+                  onClick={() => setIsPlaying(false)}
+                  className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-white shadow-lg"
+                  style={accentColor ? { backgroundColor: accentColor } : undefined}
+                  aria-label="Pause video"
+                >
+                  <Pause className="w-4 h-4" />
+                </button>
               )}
             </div>
           </div>

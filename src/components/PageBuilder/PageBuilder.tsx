@@ -71,7 +71,7 @@ export default function PageBuilder({
   onSavePageSections,
 }: PageBuilderProps) {
   const { profile } = useAuth();
-  const { themes: daisyThemes, activeTheme } = useDaisyTheme();
+  const { themes: daisyThemes } = useDaisyTheme();
   const [builderView, setBuilderView] = useState<BuilderView>(editingPageId ? 'editor' : 'list');
   const [templates, setTemplates] = useState<PageTemplate[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState(true);
@@ -320,11 +320,7 @@ export default function PageBuilder({
   const previewContainerRef = useRef<HTMLDivElement>(null);
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const previewIframeRef = useRef<HTMLIFrameElement>(null);
-
-  const getDeviceWidth = () => {
-    const w = DEVICE_VIEWPORT_WIDTHS[device];
-    return w ? `${w}px` : '100%';
-  };
+  const editorResponsiveIframeRef = useRef<HTMLIFrameElement>(null);
 
   const buildPreviewPayload = useCallback(() => {
     const normalizedSections = sections.map((section) => normalizeSectionForTheme(section));
@@ -338,17 +334,35 @@ export default function PageBuilder({
     return { sections: normalizedSections, daisyThemeSlug, customThemesCSS, themeTokens };
   }, [sections, daisyThemeSlug, daisyThemes]);
 
+  const postPreviewPayload = useCallback((targetWindow: Window | null, payload: ReturnType<typeof buildPreviewPayload>) => {
+    if (!targetWindow) return;
+    const delays = [0, 80, 220, 500];
+    delays.forEach((delay) => {
+      window.setTimeout(() => {
+        targetWindow.postMessage(
+          { type: 'BUILDER_PREVIEW_UPDATE', payload },
+          '*'
+        );
+      }, delay);
+    });
+  }, []);
+
   useEffect(() => {
-    if (!showPreview) return;
+    const shouldSyncPreview = showPreview;
+    const shouldSyncEditorResponsive = !showPreview && device !== 'desktop';
+    if (!shouldSyncPreview && !shouldSyncEditorResponsive) return;
+
     const payload = buildPreviewPayload();
     savePreviewData(payload);
-    if (previewIframeRef.current?.contentWindow) {
-      previewIframeRef.current.contentWindow.postMessage(
-        { type: 'BUILDER_PREVIEW_UPDATE', payload },
-        '*'
-      );
+
+    if (shouldSyncPreview && previewIframeRef.current?.contentWindow) {
+      postPreviewPayload(previewIframeRef.current.contentWindow, payload);
     }
-  }, [showPreview, buildPreviewPayload]);
+
+    if (shouldSyncEditorResponsive && editorResponsiveIframeRef.current?.contentWindow) {
+      postPreviewPayload(editorResponsiveIframeRef.current.contentWindow, payload);
+    }
+  }, [showPreview, device, buildPreviewPayload, postPreviewPayload]);
 
   const renderTemplateListView = () => (
     <div className="flex flex-col flex-1">
@@ -710,10 +724,7 @@ export default function PageBuilder({
                 onLoad={() => {
                   const payload = buildPreviewPayload();
                   if (previewIframeRef.current?.contentWindow) {
-                    previewIframeRef.current.contentWindow.postMessage(
-                      { type: 'BUILDER_PREVIEW_UPDATE', payload },
-                      '*'
-                    );
+                    postPreviewPayload(previewIframeRef.current.contentWindow, payload);
                   }
                 }}
               />
@@ -727,22 +738,56 @@ export default function PageBuilder({
           </div>
 
           <div ref={editorContainerRef} className="flex-1 overflow-auto bg-gray-100 p-6 custom-scrollbar">
-            <CanvasWrapper
-              device={device}
-              daisyThemeSlug={daisyThemeSlug}
-              themeTokens={daisyThemes.find(t => t.slug === daisyThemeSlug)?.tokens}
-            >
-              <Canvas
-                sections={sections}
-                selectedSectionId={selectedSectionId}
-                onSelectSection={setSelectedSectionId}
-                onUpdateSection={updateSection}
-                onDeleteSection={deleteSection}
-                onDuplicateSection={duplicateSection}
-                onReorder={reorderSections}
-                canvasThemeSlug={daisyThemeSlug}
-              />
-            </CanvasWrapper>
+            {device === 'desktop' ? (
+              <CanvasWrapper
+                device={device}
+                daisyThemeSlug={daisyThemeSlug}
+                themeTokens={daisyThemes.find(t => t.slug === daisyThemeSlug)?.tokens}
+              >
+                <Canvas
+                  sections={sections}
+                  selectedSectionId={selectedSectionId}
+                  onSelectSection={setSelectedSectionId}
+                  onUpdateSection={updateSection}
+                  onDeleteSection={deleteSection}
+                  onDuplicateSection={duplicateSection}
+                  onReorder={reorderSections}
+                  canvasThemeSlug={daisyThemeSlug}
+                />
+              </CanvasWrapper>
+            ) : (
+              <div className="h-full flex flex-col items-center">
+                <div className="flex items-center gap-2 mb-3 text-xs text-gray-500 font-medium">
+                  {device === 'mobile' && <Smartphone className="w-3.5 h-3.5" />}
+                  {device === 'tablet' && <Tablet className="w-3.5 h-3.5" />}
+                  <span>{DEVICE_VIEWPORT_WIDTHS[device]}px • rendu responsive live</span>
+                </div>
+                <div
+                  className="w-full flex-1"
+                  style={{ maxWidth: DEVICE_VIEWPORT_WIDTHS[device] ? `${DEVICE_VIEWPORT_WIDTHS[device]}px` : '100%' }}
+                >
+                  <iframe
+                    key={`editor-responsive-${device}`}
+                    ref={editorResponsiveIframeRef}
+                    src="/__preview"
+                    title="Rendu responsive éditeur"
+                    className="w-full bg-white rounded-lg shadow-xl border border-gray-300"
+                    style={{
+                      height: '100%',
+                      minHeight: '600px',
+                      display: 'block',
+                    }}
+                    onLoad={() => {
+                      const payload = buildPreviewPayload();
+                      savePreviewData(payload);
+                      if (editorResponsiveIframeRef.current?.contentWindow) {
+                        postPreviewPayload(editorResponsiveIframeRef.current.contentWindow, payload);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="w-80 border-l border-gray-200 bg-white flex flex-col overflow-hidden">

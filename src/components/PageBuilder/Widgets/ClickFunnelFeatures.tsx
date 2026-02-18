@@ -83,9 +83,9 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
   const buttonTextColor = section.design?.colors?.buttonText;
 
   return (
-    <section className="py-20 px-4" style={{ backgroundColor: bgColor }}>
+    <section className="py-0 px-4" style={{ backgroundColor: bgColor }}>
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-12">
           <h2
             className="text-4xl md:text-5xl font-bold mb-6"
             style={headingStyle}
@@ -100,7 +100,7 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
           </p>
         </div>
 
-        <div className={`grid ${getGridCols()} gap-6 mb-12`}>
+        <div className={`grid ${getGridCols()} gap-6 mb-8 md:mb-10`}>
           {features.map((feature, index) => (
             <div key={index} className="flex flex-col">
               <div className="relative group cursor-pointer rounded-2xl overflow-hidden mb-4 aspect-[4/5]">

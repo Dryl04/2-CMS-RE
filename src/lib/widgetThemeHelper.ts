@@ -51,6 +51,22 @@ const TYPOGRAPHY_COLOR_KEYS = [
   "textColor",
 ] as const;
 
+const INTERNAL_VERTICAL_SPACING_WIDGET_TYPES = new Set<string>([
+  "videohero",
+  "content-video-services",
+  "clickfunnel-features",
+  "click-funnel-testimonials",
+  "clickfunnels-hero",
+  "clickfunnel-center-card",
+  "header",
+  "header-top-info",
+  "header-with-icons",
+  "header-account-bar",
+  "header-full-contact",
+  "header-clickfunnel",
+  "footer",
+]);
+
 function normalizeColorValue(value?: string) {
   return value?.trim().toLowerCase();
 }
@@ -281,6 +297,10 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
   const hasLinkColor = !!(typo.linkColor || colors.accent);
   const hasBtnBg = !!colors.buttonBackground;
 
+  const usesInternalVerticalSpacing = INTERNAL_VERTICAL_SPACING_WIDGET_TYPES.has(
+    normalizedSection.type,
+  );
+
   const className = [
     "widget-design-scope",
     "text-base-content",
@@ -301,8 +321,12 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
       normalizedSection.design.background.value
         ? normalizedSection.design.background.value
         : undefined,
-    paddingTop: normalizedSection.design.spacing.paddingTop,
-    paddingBottom: normalizedSection.design.spacing.paddingBottom,
+    paddingTop: usesInternalVerticalSpacing
+      ? "0px"
+      : normalizedSection.design.spacing.paddingTop,
+    paddingBottom: usesInternalVerticalSpacing
+      ? "0px"
+      : normalizedSection.design.spacing.paddingBottom,
     marginTop: normalizedSection.design.spacing.marginTop,
     marginBottom: normalizedSection.design.spacing.marginBottom,
     ...(typo.headingColor

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { Play, X } from 'lucide-react';
+import { Play, Pause, X } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
 interface VideoHeroWidgetProps {
@@ -41,6 +41,10 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
 
   const accentColor = design.colors?.accent;
 
+  const playPauseButtonStyle: React.CSSProperties = accentColor
+    ? { backgroundColor: accentColor }
+    : {};
+
   const getEmbedUrl = (url: string) => {
     if (!url) return '';
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
@@ -55,12 +59,12 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   };
 
   const renderBackground = () => (
-    <div className="relative h-screen min-h-[600px] overflow-hidden">
+    <div className="relative w-full min-h-[360px] sm:min-h-[500px] lg:min-h-[640px] overflow-hidden bg-black">
       <div className="absolute inset-0">
         {isPlaying ? (
           <iframe
             src={getEmbedUrl(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
-            className="w-full h-full"
+            className="w-full h-full bg-black"
             frameBorder="0"
             allow="autoplay; fullscreen"
             allowFullScreen
@@ -92,17 +96,31 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
             {subtitle || 'Discover what makes us different'}
           </h2>
           <button
-            onClick={() => setIsPlaying(true)}
-            className="inline-flex items-center justify-center w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-base-100 hover:scale-110 transition-transform shadow-2xl"
+            onClick={() => setIsPlaying((prev) => !prev)}
+            className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full text-white hover:scale-105 transition-transform shadow-2xl"
+            style={playPauseButtonStyle}
+            aria-label={isPlaying ? 'Pause video' : 'Play video'}
           >
-            <Play
-              className="w-7 h-7 sm:w-10 sm:h-10 ml-1 text-primary-content"
-              style={accentColor ? { color: accentColor } : undefined}
-              fill="currentColor"
-            />
+            {isPlaying ? (
+              <Pause className="w-7 h-7 sm:w-9 sm:h-9" />
+            ) : (
+              <Play className="w-7 h-7 sm:w-9 sm:h-9 ml-0.5" fill="currentColor" />
+            )}
           </button>
         </div>
       </div>
+
+      {isPlaying && (
+        <button
+          onClick={() => setIsPlaying(false)}
+          className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-lg"
+          style={playPauseButtonStyle}
+          aria-label="Pause video"
+        >
+          <Pause className="w-4 h-4" />
+          Pause
+        </button>
+      )}
     </div>
   );
 
@@ -123,12 +141,12 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         </h2>
       </div>
 
-      <div className="relative rounded-3xl overflow-hidden shadow-2xl">
+      <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-black">
         <div className="aspect-video">
           {isPlaying ? (
             <iframe
               src={getEmbedUrl(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
-              className="w-full h-full"
+              className="w-full h-full bg-black"
               frameBorder="0"
               allow="autoplay; fullscreen"
               allowFullScreen
@@ -141,16 +159,23 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-neutral/30 group-hover:bg-neutral/40 transition-colors flex items-center justify-center">
-                <div
-                  className="w-20 h-20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform bg-primary"
-                  style={accentColor ? { backgroundColor: accentColor } : undefined}
-                >
+                <div className="w-20 h-20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style={playPauseButtonStyle}>
                   <Play className="w-8 h-8 text-primary-content ml-1" fill="currentColor" />
                 </div>
               </div>
             </div>
           )}
         </div>
+        {isPlaying && (
+          <button
+            onClick={() => setIsPlaying(false)}
+            className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-white shadow-lg"
+            style={playPauseButtonStyle}
+            aria-label="Pause video"
+          >
+            <Pause className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {ctaText && (
@@ -194,12 +219,12 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
           )}
         </div>
 
-        <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-black">
           <div className="aspect-video">
             {isPlaying ? (
               <iframe
                 src={getEmbedUrl(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
-                className="w-full h-full"
+                className="w-full h-full bg-black"
                 frameBorder="0"
                 allow="autoplay; fullscreen"
                 allowFullScreen
@@ -212,16 +237,23 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-neutral/30 group-hover:bg-neutral/40 transition-colors flex items-center justify-center">
-                  <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform bg-primary"
-                    style={accentColor ? { backgroundColor: accentColor } : undefined}
-                  >
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style={playPauseButtonStyle}>
                     <Play className="w-7 h-7 text-primary-content ml-1" fill="currentColor" />
                   </div>
                 </div>
               </div>
             )}
           </div>
+          {isPlaying && (
+            <button
+              onClick={() => setIsPlaying(false)}
+              className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-white shadow-lg"
+              style={playPauseButtonStyle}
+              aria-label="Pause video"
+            >
+              <Pause className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>
