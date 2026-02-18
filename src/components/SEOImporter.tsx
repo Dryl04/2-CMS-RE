@@ -5,6 +5,7 @@ import {
   X, Layers
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { normalizeSectionForTheme } from '../lib/widgetThemeHelper';
 
 interface ImportedPage {
   page_key: string;
@@ -21,7 +22,18 @@ interface ImportedPage {
   seo_h1?: string;
   seo_h2?: string;
   template_id?: string;
+  daisy_theme_slug?: string | null;
   sections_data?: any[];
+}
+
+interface CombinedImportPayload {
+  template?: {
+    id?: string;
+    daisy_theme_slug?: string | null;
+  };
+  sections?: any[];
+  sections_data?: any[];
+  pages?: ImportedPage[];
 }
 
 interface ValidationError {
@@ -108,22 +120,43 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
     return errors;
   };
 
+  const normalizeSectionsForImport = (sections: any[] = []) =>
+    sections.map((section) => normalizeSectionForTheme(section));
+
   const parseInput = (raw: string): ImportedPage[] => {
     const parsed = JSON.parse(raw);
-
-    if (parsed.pages && Array.isArray(parsed.pages)) {
-      return parsed.pages;
-    }
 
     if (Array.isArray(parsed)) {
       return parsed;
     }
 
-    if (parsed.page_key) {
-      return [parsed];
+    if (parsed?.page_key) {
+      return [parsed as ImportedPage];
     }
 
-    throw new Error('Format non reconnu. Attendu : { "pages": [...] } ou un tableau de pages.');
+    if (parsed && typeof parsed === 'object') {
+      const payload = parsed as CombinedImportPayload;
+      const baseSections = Array.isArray(payload.sections)
+        ? payload.sections
+        : Array.isArray(payload.sections_data)
+          ? payload.sections_data
+          : [];
+      const baseTemplateId = payload.template?.id;
+      const baseThemeSlug = payload.template?.daisy_theme_slug ?? null;
+
+      if (Array.isArray(payload.pages)) {
+        return payload.pages.map((page) => ({
+          ...page,
+          template_id: page.template_id || baseTemplateId,
+          daisy_theme_slug: page.daisy_theme_slug ?? baseThemeSlug,
+          sections_data: Array.isArray(page.sections_data) && page.sections_data.length > 0
+            ? normalizeSectionsForImport(page.sections_data)
+            : normalizeSectionsForImport(baseSections),
+        }));
+      }
+    }
+
+    throw new Error('Format non reconnu. Attendu : { "pages": [...] }, un tableau de pages, ou un objet combine avec template/sections/pages.');
   };
 
   const handleValidate = () => {
@@ -139,6 +172,10 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
         keywords: typeof page.keywords === 'string'
           ? page.keywords.split(',').map(k => k.trim())
           : page.keywords || [],
+        daisy_theme_slug: page.daisy_theme_slug ?? null,
+        sections_data: Array.isArray(page.sections_data)
+          ? normalizeSectionsForImport(page.sections_data)
+          : [],
         status: autoPublish ? 'published' as const : (page.status || 'draft' as const),
       }));
 
@@ -179,6 +216,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
           seo_h1: page.seo_h1 || null,
           seo_h2: page.seo_h2 || null,
           template_id: page.template_id || null,
+          daisy_theme_slug: page.daisy_theme_slug ?? null,
           sections_data: page.sections_data || [],
           imported_at: new Date().toISOString(),
         };
@@ -258,22 +296,20 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={() => setImportMode('template')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-            importMode === 'template'
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${importMode === 'template'
               ? 'bg-gray-900 text-white shadow-sm'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+            }`}
         >
           <Layers className="w-4 h-4" />
           <span>Pages avec modele</span>
         </button>
         <button
           onClick={() => setImportMode('simple')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-            importMode === 'simple'
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${importMode === 'simple'
               ? 'bg-gray-900 text-white shadow-sm'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+            }`}
         >
           <FileJson className="w-4 h-4" />
           <span>SEO simple</span>
@@ -291,7 +327,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
               <ol className="list-decimal list-inside space-y-1.5 text-gray-600">
                 <li>Exportez un modele depuis l'onglet <strong>Modeles</strong> (bouton JSON)</li>
                 <li>Envoyez le JSON du modele + la documentation a votre IA ou redacteur</li>
-                <li>Recevez le JSON de retour au format <code className="px-1 py-0.5 bg-gray-200 rounded text-xs">{"{ \"pages\": [...] }"}</code></li>
+                <li>Recevez le JSON de retour au format <code className="px-1 py-0.5 bg-gray-200 rounded text-xs">{"{ \"pages\": [...] }"}</code> (ou objet combine avec <code className="px-1 py-0.5 bg-gray-200 rounded text-xs">template + sections + pages</code>)</li>
                 <li>Collez-le ci-dessous ou importez le fichier</li>
               </ol>
             </div>
@@ -341,7 +377,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
         value={inputData}
         onChange={(e) => setInputData(e.target.value)}
         placeholder={importMode === 'template'
-          ? '{\n  "pages": [\n    {\n      "page_key": "ma-page",\n      "title": "Titre SEO",\n      "description": "...",\n      "status": "published",\n      "template_id": "...",\n      "sections_data": [...]\n    }\n  ]\n}'
+          ? '{\n  "template": { "id": "...", "daisy_theme_slug": "light" },\n  "sections": [...],\n  "pages": [\n    {\n      "page_key": "ma-page",\n      "title": "Titre SEO",\n      "description": "...",\n      "status": "published",\n      "template_id": "...",\n      "sections_data": [...]\n    }\n  ]\n}'
           : '[{"page_key": "home", "title": "Titre SEO", "description": "Description"}]'
         }
         className="w-full h-72 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 font-mono text-sm bg-gray-50 resize-none transition-colors"
@@ -351,14 +387,12 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
         <label className="flex items-center gap-2 cursor-pointer group">
           <div
             onClick={() => setAutoPublish(!autoPublish)}
-            className={`w-10 h-6 rounded-full transition-colors relative ${
-              autoPublish ? 'bg-emerald-500' : 'bg-gray-300'
-            }`}
+            className={`w-10 h-6 rounded-full transition-colors relative ${autoPublish ? 'bg-emerald-500' : 'bg-gray-300'
+              }`}
           >
             <div
-              className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                autoPublish ? 'translate-x-[18px]' : 'translate-x-0.5'
-              }`}
+              className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${autoPublish ? 'translate-x-[18px]' : 'translate-x-0.5'
+                }`}
             />
           </div>
           <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
@@ -429,11 +463,10 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-gray-900 truncate">{page.page_key}</span>
-                        <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
-                          page.status === 'published'
+                        <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${page.status === 'published'
                             ? 'bg-emerald-100 text-emerald-700'
                             : 'bg-gray-100 text-gray-600'
-                        }`}>
+                          }`}>
                           {page.status === 'published' ? 'Publication auto' : 'Brouillon'}
                         </span>
                       </div>
