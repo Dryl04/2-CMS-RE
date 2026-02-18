@@ -30,8 +30,8 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
 
-  const buttonBg = design?.colors?.buttonBg || '#F59E0B';
-  const buttonText = design?.colors?.buttonText || '#000000';
+  const buttonBg = design?.colors?.buttonBackground || design?.colors?.buttonBg;
+  const buttonText = design?.colors?.buttonText;
 
   return (
     <header style={{ backgroundColor: bgColor }}>
@@ -80,11 +80,11 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
             {content.ctaText && (
               <a
                 href={content.ctaLink || '#'}
-                className="inline-flex items-center px-5 py-2.5 rounded-md text-sm font-semibold transition-all hover:opacity-90 shadow-lg"
-                style={{
-                  backgroundColor: buttonBg,
-                  color: buttonText,
-                }}
+                className="btn btn-primary inline-flex items-center px-5 py-2.5 rounded-md text-sm font-semibold transition-all hover:opacity-90 shadow-lg"
+                style={buttonBg || buttonText ? {
+                  ...(buttonBg ? { backgroundColor: buttonBg } : {}),
+                  ...(buttonText ? { color: buttonText } : {}),
+                } : undefined}
               >
                 {content.ctaText}
                 {content.showCtaArrow !== false && (
@@ -120,11 +120,11 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
             {content.ctaText && (
               <a
                 href={content.ctaLink || '#'}
-                className="inline-flex items-center justify-center w-full px-5 py-2.5 rounded-md text-sm font-semibold mt-4"
-                style={{
-                  backgroundColor: buttonBg,
-                  color: buttonText,
-                }}
+                className="btn btn-primary inline-flex items-center justify-center w-full px-5 py-2.5 rounded-md text-sm font-semibold mt-4"
+                style={buttonBg || buttonText ? {
+                  ...(buttonBg ? { backgroundColor: buttonBg } : {}),
+                  ...(buttonText ? { color: buttonText } : {}),
+                } : undefined}
               >
                 {content.ctaText}
                 {content.showCtaArrow !== false && (

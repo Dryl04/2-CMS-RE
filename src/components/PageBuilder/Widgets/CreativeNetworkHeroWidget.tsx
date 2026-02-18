@@ -7,6 +7,18 @@ interface CreativeNetworkHeroWidgetProps {
 export default function CreativeNetworkHeroWidget({ section }: CreativeNetworkHeroWidgetProps) {
   const { content, design } = section;
   const typo = design.typography || {};
+  const h1Style = {
+    ...(typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h1FontWeight || typo.headingFontWeight ? { fontWeight: typo.h1FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h1FontSize || typo.headingFontSize ? { fontSize: typo.h1FontSize || typo.headingFontSize } : {}),
+    ...(typo.h1Color || typo.headingColor ? { color: typo.h1Color || typo.headingColor } : {}),
+  };
+  const h2Style = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.subtitleColor || typo.headingColor ? { color: typo.h2Color || typo.subtitleColor || typo.headingColor } : {}),
+  };
   const headingStyle = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
@@ -64,12 +76,12 @@ export default function CreativeNetworkHeroWidget({ section }: CreativeNetworkHe
             <p className="text-xs uppercase tracking-widest mb-3 opacity-70" style={subtitleStyle}>
               {content.eyebrow || 'New'}
             </p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight" style={headingStyle}>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight" style={h1Style}>
               {content.title || 'Your creative environment.'}
             </h1>
-            <p className="mt-4 text-sm sm:text-base opacity-80" style={textStyle}>
+            <h2 className="mt-4 text-sm sm:text-base opacity-80" style={h2Style}>
               {content.subtitle || 'Bring your ideas to life faster than ever before.'}
-            </p>
+            </h2>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <a href={content.primaryLink || '#'} className="btn btn-primary btn-sm" style={linkStyle}>{content.primaryText || 'Contact sales'}</a>
               <a href={content.secondaryLink || '#'} className="btn btn-outline btn-sm" style={linkStyle}>{content.secondaryText || 'Try for free'}</a>

@@ -15,7 +15,7 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
   const topBg = design.colors?.topBarBg;
-  const buttonBg = design.colors?.buttonBg;
+  const buttonBg = design.colors?.buttonBackground || design.colors?.buttonBg;
   const buttonText = design.colors?.buttonText;
 
   const typo = design.typography || {};

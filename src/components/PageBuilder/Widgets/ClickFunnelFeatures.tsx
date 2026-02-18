@@ -79,8 +79,8 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
 
-  const buttonBg = section.design?.colors?.buttonBackground || '#ffa500';
-  const buttonTextColor = section.design?.colors?.buttonText || '#FFFFFF';
+  const buttonBg = section.design?.colors?.buttonBackground;
+  const buttonTextColor = section.design?.colors?.buttonText;
 
   return (
     <section className="py-20 px-4" style={{ backgroundColor: bgColor }}>
@@ -119,12 +119,12 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
                     />
                     <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                       <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center transform transition-transform duration-300 group-hover:scale-110"
-                        style={{ backgroundColor: buttonBg }}
+                        className="w-12 h-12 rounded-full flex items-center justify-center transform transition-transform duration-300 group-hover:scale-110 bg-primary"
+                        style={buttonBg ? { backgroundColor: buttonBg } : undefined}
                       >
                         <Play
                           className="w-6 h-6 fill-current ml-0.5"
-                          style={{ color: buttonTextColor }}
+                          style={buttonTextColor ? { color: buttonTextColor } : undefined}
                         />
                       </div>
                     </div>
@@ -152,11 +152,11 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
         <div className="text-center">
           <a
             href={buttonUrl}
-            className="inline-block font-bold px-8 py-4 rounded-lg transition-opacity duration-300 hover:opacity-90 text-lg"
-            style={{
-              backgroundColor: buttonBg,
-              color: buttonTextColor
-            }}
+            className="inline-block font-bold px-8 py-4 rounded-lg transition-opacity duration-300 hover:opacity-90 text-lg bg-primary text-primary-content"
+            style={buttonBg || buttonTextColor ? {
+              ...(buttonBg ? { backgroundColor: buttonBg } : {}),
+              ...(buttonTextColor ? { color: buttonTextColor } : {}),
+            } : undefined}
           >
             {buttonText}
           </a>

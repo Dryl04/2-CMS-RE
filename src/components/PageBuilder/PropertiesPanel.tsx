@@ -58,6 +58,17 @@ interface PropertiesPanelProps {
 
 type TabType = 'content' | 'design' | 'advanced';
 
+const HERO_SEO_WIDGET_TYPES = new Set([
+  'hero',
+  'clickfunnels-hero',
+  'videohero',
+  'hero-with-services',
+  'hero-with-testimonials',
+  'brand-identity-hero',
+  'simple-centered-hero',
+  'creative-network-hero',
+]);
+
 function ColorOverrideField({
   label,
   value,
@@ -259,7 +270,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
   };
 
   const renderDesignTab = () => {
-    if (section.type === 'hero') {
+    if (HERO_SEO_WIDGET_TYPES.has(section.type)) {
       return (
         <div className="space-y-6">
           <WidgetThemeSelector section={section} onUpdateSection={onUpdateSection} />
@@ -362,6 +373,23 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                   <option value="2rem">Énorme (2rem)</option>
                 </select>
               </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Graisse H2 / sous-titre</label>
+                <select
+                  value={section.design.typography?.h2FontWeight || ''}
+                  onChange={(e) => updateDesign('typography', 'h2FontWeight', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+                >
+                  <option value="">Par défaut</option>
+                  <option value="300">Léger (300)</option>
+                  <option value="400">Normal (400)</option>
+                  <option value="500">Medium (500)</option>
+                  <option value="600">Semi-gras (600)</option>
+                  <option value="700">Gras (700)</option>
+                  <option value="800">Extra-gras (800)</option>
+                  <option value="900">Noir (900)</option>
+                </select>
+              </div>
               <ColorOverrideField
                 label="Couleur H2 / sous-titre"
                 value={section.design.typography?.h2Color}
@@ -409,9 +437,11 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               </div>
             </div>
           </div>
-          <div className="border-t border-gray-200 pt-4">
-            <HeroAdvancedEditor section={section} updateDesign={updateDesign} />
-          </div>
+          {section.type === 'hero' && (
+            <div className="border-t border-gray-200 pt-4">
+              <HeroAdvancedEditor section={section} updateDesign={updateDesign} />
+            </div>
+          )}
           <div className="border-t border-gray-200 pt-4 space-y-3">
             <h3 className="text-sm font-semibold text-gray-900">Paramètres design complets</h3>
             <GenericObjectEditor
@@ -459,244 +489,244 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
     };
 
     return (
-    <div className="space-y-6">
-      <WidgetThemeSelector section={section} onUpdateSection={onUpdateSection} />
+      <div className="space-y-6">
+        <WidgetThemeSelector section={section} onUpdateSection={onUpdateSection} />
 
-      {hasAnyColorOverride && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start justify-between gap-2">
-          <p className="text-xs text-amber-700 leading-relaxed">
-            Des couleurs personnalisées remplacent le thème sur ce widget.
-          </p>
-          <button
-            onClick={resetAllColors}
-            className="flex-shrink-0 text-xs text-amber-700 font-medium hover:text-amber-900 underline whitespace-nowrap"
-          >
-            Tout réinitialiser
-          </button>
+        {hasAnyColorOverride && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start justify-between gap-2">
+            <p className="text-xs text-amber-700 leading-relaxed">
+              Des couleurs personnalisées remplacent le thème sur ce widget.
+            </p>
+            <button
+              onClick={resetAllColors}
+              className="flex-shrink-0 text-xs text-amber-700 font-medium hover:text-amber-900 underline whitespace-nowrap"
+            >
+              Tout réinitialiser
+            </button>
+          </div>
+        )}
+
+        <div className="border-t border-gray-200 pt-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">Typographie</h3>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Police globale</label>
+              <select
+                value={section.design.typography?.fontFamily || ''}
+                onChange={(e) => updateDesign('typography', 'fontFamily', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              >
+                <option value="">Heritee du theme</option>
+                <option value="Inter, sans-serif">Inter</option>
+                <option value="'Geist', sans-serif">Geist</option>
+                <option value="'DM Sans', sans-serif">DM Sans</option>
+                <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Playfair Display', serif">Playfair Display</option>
+                <option value="'Merriweather', serif">Merriweather</option>
+                <option value="'Lora', serif">Lora</option>
+                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+                <option value="monospace">Monospace</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Police des titres</label>
+              <select
+                value={section.design.typography?.headingFontFamily || ''}
+                onChange={(e) => updateDesign('typography', 'headingFontFamily', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              >
+                <option value="">Meme que la police globale</option>
+                <option value="Inter, sans-serif">Inter</option>
+                <option value="'Geist', sans-serif">Geist</option>
+                <option value="'DM Sans', sans-serif">DM Sans</option>
+                <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Playfair Display', serif">Playfair Display</option>
+                <option value="'Merriweather', serif">Merriweather</option>
+                <option value="'Lora', serif">Lora</option>
+                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+              </select>
+            </div>
+
+            <ColorOverrideField
+              label="Couleur titres (tous)"
+              value={section.design.typography?.headingColor}
+              fallback="#111827"
+              onChange={(v) => updateDesign('typography', 'headingColor', v)}
+              onClear={() => clearDesign('typography', 'headingColor')}
+            />
+
+            <ColorOverrideField
+              label="Couleur H1 (spécifique)"
+              value={section.design.typography?.h1Color}
+              fallback="#111827"
+              onChange={(v) => updateDesign('typography', 'h1Color', v)}
+              onClear={() => clearDesign('typography', 'h1Color')}
+            />
+
+            <ColorOverrideField
+              label="Couleur H2 (spécifique)"
+              value={section.design.typography?.h2Color}
+              fallback="#1F2937"
+              onChange={(v) => updateDesign('typography', 'h2Color', v)}
+              onClear={() => clearDesign('typography', 'h2Color')}
+            />
+
+            <ColorOverrideField
+              label="Couleur sous-titre"
+              value={section.design.typography?.subtitleColor}
+              fallback="#6B7280"
+              onChange={(v) => updateDesign('typography', 'subtitleColor', v)}
+              onClear={() => clearDesign('typography', 'subtitleColor')}
+            />
+
+            <ColorOverrideField
+              label="Couleur texte corps"
+              value={section.design.typography?.textColor}
+              fallback="#4B5563"
+              onChange={(v) => updateDesign('typography', 'textColor', v)}
+              onClear={() => clearDesign('typography', 'textColor')}
+            />
+
+            <ColorOverrideField
+              label="Couleur liens"
+              value={section.design.typography?.linkColor}
+              fallback="#111827"
+              onChange={(v) => updateDesign('typography', 'linkColor', v)}
+              onClear={() => clearDesign('typography', 'linkColor')}
+            />
+
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Graisse des titres</label>
+              <select
+                value={section.design.typography?.headingFontWeight || ''}
+                onChange={(e) => updateDesign('typography', 'headingFontWeight', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              >
+                <option value="">Par defaut</option>
+                <option value="300">Leger (300)</option>
+                <option value="400">Normal (400)</option>
+                <option value="500">Medium (500)</option>
+                <option value="600">Semi-gras (600)</option>
+                <option value="700">Gras (700)</option>
+                <option value="800">Extra-gras (800)</option>
+                <option value="900">Noir (900)</option>
+              </select>
+            </div>
+          </div>
         </div>
-      )}
 
-      <div className="border-t border-gray-200 pt-4">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Typographie</h3>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-xs text-gray-600 mb-1">Police globale</label>
-            <select
-              value={section.design.typography?.fontFamily || ''}
-              onChange={(e) => updateDesign('typography', 'fontFamily', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-            >
-              <option value="">Heritee du theme</option>
-              <option value="Inter, sans-serif">Inter</option>
-              <option value="'Geist', sans-serif">Geist</option>
-              <option value="'DM Sans', sans-serif">DM Sans</option>
-              <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
-              <option value="Georgia, serif">Georgia</option>
-              <option value="'Playfair Display', serif">Playfair Display</option>
-              <option value="'Merriweather', serif">Merriweather</option>
-              <option value="'Lora', serif">Lora</option>
-              <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-              <option value="monospace">Monospace</option>
-            </select>
-          </div>
+        <div className="border-t border-gray-200 pt-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">Boutons</h3>
+          <div className="space-y-3">
+            <ColorOverrideField
+              label="Couleur bouton"
+              value={section.design.colors?.buttonBackground}
+              fallback="#000000"
+              onChange={(v) => updateDesign('colors', 'buttonBackground', v)}
+              onClear={() => clearDesign('colors', 'buttonBackground')}
+            />
 
-          <div>
-            <label className="block text-xs text-gray-600 mb-1">Police des titres</label>
-            <select
-              value={section.design.typography?.headingFontFamily || ''}
-              onChange={(e) => updateDesign('typography', 'headingFontFamily', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-            >
-              <option value="">Meme que la police globale</option>
-              <option value="Inter, sans-serif">Inter</option>
-              <option value="'Geist', sans-serif">Geist</option>
-              <option value="'DM Sans', sans-serif">DM Sans</option>
-              <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
-              <option value="Georgia, serif">Georgia</option>
-              <option value="'Playfair Display', serif">Playfair Display</option>
-              <option value="'Merriweather', serif">Merriweather</option>
-              <option value="'Lora', serif">Lora</option>
-              <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-            </select>
-          </div>
+            <ColorOverrideField
+              label="Couleur texte bouton"
+              value={section.design.colors?.buttonText}
+              fallback="#ffffff"
+              onChange={(v) => updateDesign('colors', 'buttonText', v)}
+              onClear={() => clearDesign('colors', 'buttonText')}
+            />
 
-          <ColorOverrideField
-            label="Couleur titres (tous)"
-            value={section.design.typography?.headingColor}
-            fallback="#111827"
-            onChange={(v) => updateDesign('typography', 'headingColor', v)}
-            onClear={() => clearDesign('typography', 'headingColor')}
-          />
+            <ColorOverrideField
+              label="Couleur bouton (hover)"
+              value={section.design.colors?.buttonBackgroundHover}
+              fallback="#1F2937"
+              onChange={(v) => updateDesign('colors', 'buttonBackgroundHover', v)}
+              onClear={() => clearDesign('colors', 'buttonBackgroundHover')}
+            />
 
-          <ColorOverrideField
-            label="Couleur H1 (spécifique)"
-            value={section.design.typography?.h1Color}
-            fallback="#111827"
-            onChange={(v) => updateDesign('typography', 'h1Color', v)}
-            onClear={() => clearDesign('typography', 'h1Color')}
-          />
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Taille des boutons</label>
+              <select
+                value={section.design.colors?.buttonSize || 'md'}
+                onChange={(e) => updateDesign('colors', 'buttonSize', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              >
+                <option value="sm">Petit</option>
+                <option value="md">Moyen</option>
+                <option value="lg">Grand</option>
+                <option value="xl">Très grand</option>
+              </select>
+            </div>
 
-          <ColorOverrideField
-            label="Couleur H2 (spécifique)"
-            value={section.design.typography?.h2Color}
-            fallback="#1F2937"
-            onChange={(v) => updateDesign('typography', 'h2Color', v)}
-            onClear={() => clearDesign('typography', 'h2Color')}
-          />
-
-          <ColorOverrideField
-            label="Couleur sous-titre"
-            value={section.design.typography?.subtitleColor}
-            fallback="#6B7280"
-            onChange={(v) => updateDesign('typography', 'subtitleColor', v)}
-            onClear={() => clearDesign('typography', 'subtitleColor')}
-          />
-
-          <ColorOverrideField
-            label="Couleur texte corps"
-            value={section.design.typography?.textColor}
-            fallback="#4B5563"
-            onChange={(v) => updateDesign('typography', 'textColor', v)}
-            onClear={() => clearDesign('typography', 'textColor')}
-          />
-
-          <ColorOverrideField
-            label="Couleur liens"
-            value={section.design.typography?.linkColor}
-            fallback="#111827"
-            onChange={(v) => updateDesign('typography', 'linkColor', v)}
-            onClear={() => clearDesign('typography', 'linkColor')}
-          />
-
-          <div>
-            <label className="block text-xs text-gray-600 mb-1">Graisse des titres</label>
-            <select
-              value={section.design.typography?.headingFontWeight || ''}
-              onChange={(e) => updateDesign('typography', 'headingFontWeight', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-            >
-              <option value="">Par defaut</option>
-              <option value="300">Leger (300)</option>
-              <option value="400">Normal (400)</option>
-              <option value="500">Medium (500)</option>
-              <option value="600">Semi-gras (600)</option>
-              <option value="700">Gras (700)</option>
-              <option value="800">Extra-gras (800)</option>
-              <option value="900">Noir (900)</option>
-            </select>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
+              <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                <input
+                  type="range"
+                  min="0"
+                  max="32"
+                  step="1"
+                  value={parseInt((section.design.colors?.buttonRadius || '12').replace('px', ''), 10) || 12}
+                  onChange={(e) => updateDesign('colors', 'buttonRadius', `${e.target.value}px`)}
+                  className="w-full"
+                />
+                <input
+                  type="text"
+                  value={section.design.colors?.buttonRadius || '12px'}
+                  onChange={(e) => updateDesign('colors', 'buttonRadius', e.target.value)}
+                  className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="border-t border-gray-200 pt-4">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Boutons</h3>
-        <div className="space-y-3">
+        <div>
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">Arriere-plan</h3>
           <ColorOverrideField
-            label="Couleur bouton"
-            value={section.design.colors?.buttonBackground}
-            fallback="#000000"
-            onChange={(v) => updateDesign('colors', 'buttonBackground', v)}
-            onClear={() => clearDesign('colors', 'buttonBackground')}
-          />
-
-          <ColorOverrideField
-            label="Couleur texte bouton"
-            value={section.design.colors?.buttonText}
+            label="Couleur de fond"
+            value={section.design.background?.value || undefined}
             fallback="#ffffff"
-            onChange={(v) => updateDesign('colors', 'buttonText', v)}
-            onClear={() => clearDesign('colors', 'buttonText')}
+            onChange={(v) => updateDesign('background', 'value', v)}
+            onClear={() => updateDesign('background', 'value', '')}
           />
+        </div>
 
-          <ColorOverrideField
-            label="Couleur bouton (hover)"
-            value={section.design.colors?.buttonBackgroundHover}
-            fallback="#1F2937"
-            onChange={(v) => updateDesign('colors', 'buttonBackgroundHover', v)}
-            onClear={() => clearDesign('colors', 'buttonBackgroundHover')}
-          />
-
-          <div>
-            <label className="block text-xs text-gray-600 mb-1">Taille des boutons</label>
-            <select
-              value={section.design.colors?.buttonSize || 'md'}
-              onChange={(e) => updateDesign('colors', 'buttonSize', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-            >
-              <option value="sm">Petit</option>
-              <option value="md">Moyen</option>
-              <option value="lg">Grand</option>
-              <option value="xl">Très grand</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
-            <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
-              <input
-                type="range"
-                min="0"
-                max="32"
-                step="1"
-                value={parseInt((section.design.colors?.buttonRadius || '12').replace('px', ''), 10) || 12}
-                onChange={(e) => updateDesign('colors', 'buttonRadius', `${e.target.value}px`)}
-                className="w-full"
-              />
+        <div>
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">Espacement</h3>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Padding haut</label>
               <input
                 type="text"
-                value={section.design.colors?.buttonRadius || '12px'}
-                onChange={(e) => updateDesign('colors', 'buttonRadius', e.target.value)}
-                className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                value={section.design.spacing.paddingTop}
+                onChange={(e) => updateDesign('spacing', 'paddingTop', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+                placeholder="ex: 80px"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Padding bas</label>
+              <input
+                type="text"
+                value={section.design.spacing.paddingBottom}
+                onChange={(e) => updateDesign('spacing', 'paddingBottom', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+                placeholder="ex: 80px"
               />
             </div>
           </div>
         </div>
-      </div>
 
-      <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Arriere-plan</h3>
-        <ColorOverrideField
-          label="Couleur de fond"
-          value={section.design.background?.value || undefined}
-          fallback="#ffffff"
-          onChange={(v) => updateDesign('background', 'value', v)}
-          onClear={() => updateDesign('background', 'value', '')}
-        />
-      </div>
-
-      <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Espacement</h3>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-xs text-gray-600 mb-1">Padding haut</label>
-            <input
-              type="text"
-              value={section.design.spacing.paddingTop}
-              onChange={(e) => updateDesign('spacing', 'paddingTop', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="ex: 80px"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-600 mb-1">Padding bas</label>
-            <input
-              type="text"
-              value={section.design.spacing.paddingBottom}
-              onChange={(e) => updateDesign('spacing', 'paddingBottom', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="ex: 80px"
-            />
-          </div>
+        <div className="border-t border-gray-200 pt-4 space-y-3">
+          <h3 className="text-sm font-semibold text-gray-900">Paramètres design complets</h3>
+          <GenericObjectEditor
+            value={section.design}
+            onChange={(nextDesign) => onUpdateSection({ design: nextDesign })}
+          />
         </div>
       </div>
-
-      <div className="border-t border-gray-200 pt-4 space-y-3">
-        <h3 className="text-sm font-semibold text-gray-900">Paramètres design complets</h3>
-        <GenericObjectEditor
-          value={section.design}
-          onChange={(nextDesign) => onUpdateSection({ design: nextDesign })}
-        />
-      </div>
-    </div>
     );
   };
 
@@ -798,33 +828,30 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
         <div className="flex">
           <button
             onClick={() => setActiveTab('content')}
-            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'content'
+            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'content'
                 ? 'border-black text-black'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             <Settings className="w-4 h-4" />
             <span>Contenu</span>
           </button>
           <button
             onClick={() => setActiveTab('design')}
-            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'design'
+            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'design'
                 ? 'border-black text-black'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             <Palette className="w-4 h-4" />
             <span>Design</span>
           </button>
           <button
             onClick={() => setActiveTab('advanced')}
-            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'advanced'
+            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'advanced'
                 ? 'border-black text-black'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             <Code className="w-4 h-4" />
             <span>Avance</span>

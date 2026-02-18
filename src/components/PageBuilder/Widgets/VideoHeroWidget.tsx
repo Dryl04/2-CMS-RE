@@ -14,6 +14,18 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
 
   const design = section.design || {};
   const typo = design.typography || {};
+  const h1Style: React.CSSProperties = {
+    ...(typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h1FontWeight || typo.headingFontWeight ? { fontWeight: typo.h1FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h1FontSize || typo.headingFontSize ? { fontSize: typo.h1FontSize || typo.headingFontSize } : {}),
+    ...(typo.h1Color || typo.headingColor ? { color: typo.h1Color || typo.headingColor } : {}),
+  };
+  const h2Style: React.CSSProperties = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.subtitleColor || typo.headingColor ? { color: typo.h2Color || typo.subtitleColor || typo.headingColor } : {}),
+  };
   const headingStyle: React.CSSProperties = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
@@ -69,16 +81,16 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1
             className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-neutral-content"
-            style={headingStyle}
+            style={h1Style}
           >
             {title || 'Watch Our Story'}
           </h1>
-          <p
+          <h2
             className="text-lg sm:text-xl lg:text-2xl mb-8 text-neutral-content/90"
-            style={subtitleStyle}
+            style={h2Style}
           >
             {subtitle || 'Discover what makes us different'}
-          </p>
+          </h2>
           <button
             onClick={() => setIsPlaying(true)}
             className="inline-flex items-center justify-center w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-base-100 hover:scale-110 transition-transform shadow-2xl"
@@ -97,18 +109,18 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   const renderEmbedded = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-8">
-        <h2
+        <h1
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingStyle}
+          style={h1Style}
         >
           {title || 'See It In Action'}
-        </h2>
-        <p
+        </h1>
+        <h2
           className="text-lg sm:text-xl max-w-3xl mx-auto text-base-content/70"
-          style={subtitleStyle}
+          style={h2Style}
         >
           {subtitle || 'Watch how our product can transform your workflow'}
-        </p>
+        </h2>
       </div>
 
       <div className="relative rounded-3xl overflow-hidden shadow-2xl">
@@ -159,18 +171,18 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid lg:grid-cols-2 gap-12 items-center">
         <div>
-          <h2
+          <h1
             className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-base-content"
-            style={headingStyle}
+            style={h1Style}
           >
             {title || 'Experience the Difference'}
-          </h2>
-          <p
+          </h1>
+          <h2
             className="text-lg sm:text-xl mb-8 text-base-content/70"
-            style={textStyle}
+            style={h2Style}
           >
             {subtitle || 'See why thousands of customers trust us with their business'}
-          </p>
+          </h2>
           {ctaText && (
             <a
               href={ctaLink || '#'}
@@ -219,18 +231,18 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
     <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2
+          <h1
             className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-base-content"
-            style={headingStyle}
+            style={h1Style}
           >
             {title || 'See How It Works'}
-          </h2>
-          <p
+          </h1>
+          <h2
             className="text-lg sm:text-xl mb-8 max-w-3xl mx-auto text-base-content/70"
-            style={subtitleStyle}
+            style={h2Style}
           >
             {subtitle || 'Watch our product demo and discover all the features'}
-          </p>
+          </h2>
 
           <div className="relative inline-block rounded-3xl overflow-hidden shadow-2xl cursor-pointer group" onClick={() => setIsPlaying(true)}>
             <img

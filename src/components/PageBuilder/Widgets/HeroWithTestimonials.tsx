@@ -9,6 +9,18 @@ export default function HeroWithTestimonials({ section }: HeroWithTestimonialsPr
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
   const typo = design.typography || {};
+  const h1Style = {
+    ...(typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h1FontWeight || typo.headingFontWeight ? { fontWeight: typo.h1FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h1FontSize || typo.headingFontSize ? { fontSize: typo.h1FontSize || typo.headingFontSize } : {}),
+    ...(typo.h1Color || typo.headingColor ? { color: typo.h1Color || typo.headingColor } : {}),
+  };
+  const h2Style = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.subtitleColor || typo.headingColor ? { color: typo.h2Color || typo.subtitleColor || typo.headingColor } : {}),
+  };
   const headingStyle = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
@@ -32,12 +44,10 @@ export default function HeroWithTestimonials({ section }: HeroWithTestimonialsPr
         paddingTop: design.spacing.paddingTop,
         paddingBottom: content.testimonials?.length ? '180px' : design.spacing.paddingBottom,
       }}>
-        {content.subtitle && (
-          <p className="text-sm font-medium tracking-wider uppercase mb-4 sm:mb-6 text-neutral-content/70" style={subtitleStyle}>
-            {content.subtitle}
-          </p>
-        )}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 sm:mb-8 leading-tight text-neutral-content" style={headingStyle}>
+        <h2 className="text-sm font-medium tracking-wider uppercase mb-4 sm:mb-6 text-neutral-content/70" style={h2Style}>
+          {content.subtitle || 'Trusted by teams that value measurable outcomes'}
+        </h2>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 sm:mb-8 leading-tight text-neutral-content" style={h1Style}>
           {content.title || 'Corporate Branding Design Services'}
         </h1>
         {content.description && (

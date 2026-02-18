@@ -23,14 +23,16 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
     ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
     ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
   };
-  const headingStyle = h1Style;
   const textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
   const subtitleStyle: React.CSSProperties = {
+    ...(typo.h2Color || typo.subtitleColor || typo.headingColor ? { color: typo.h2Color || typo.subtitleColor || typo.headingColor } : {}),
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
     ...(typo.subtitleColor ? { color: typo.subtitleColor } : {}),
-    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
   const linkStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
@@ -147,16 +149,16 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
         <div>
           <h1
             className="text-base-content text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 lg:mb-6 leading-tight"
-            style={headingStyle}
+            style={h1Style}
           >
             {headline || 'Your Amazing Headline'}
           </h1>
-          <p
+          <h2
             className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal"
             style={subtitleStyle}
           >
             {subheadline || 'A compelling subheadline that explains your value proposition'}
-          </p>
+          </h2>
           <a
             href={ctaLink || '#'}
             className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -186,16 +188,16 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
     <div className={`max-w-4xl mx-auto px-4 sm:px-6 text-center ${getAnimationClass()}`}>
       <h1
         className="text-base-content text-3xl sm:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6 leading-tight"
-        style={headingStyle}
+        style={h1Style}
       >
         {headline || 'Your Amazing Headline'}
       </h1>
-      <p
+      <h2
         className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal"
         style={subtitleStyle}
       >
         {subheadline || 'A compelling subheadline that explains your value proposition'}
-      </p>
+      </h2>
       <a
         href={ctaLink || '#'}
         className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -213,13 +215,13 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
         <div className="max-w-xl">
           <h1
             className="text-base-content text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight"
-            style={headingStyle}
+            style={h1Style}
           >
             {headline || 'Your Amazing Headline'}
           </h1>
-          <p className="text-base-content/70 text-lg sm:text-xl mb-8 font-normal" style={subtitleStyle}>
+          <h2 className="text-base-content/70 text-lg sm:text-xl mb-8 font-normal" style={subtitleStyle}>
             {subheadline || 'A compelling subheadline that explains your value proposition'}
-          </p>
+          </h2>
           <a
             href={ctaLink || '#'}
             className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -251,16 +253,16 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
     <div className={`max-w-3xl mx-auto px-4 ${getAnimationClass()}`}>
       <h1
         className="text-base-content text-3xl sm:text-4xl font-bold mb-4"
-        style={headingStyle}
+        style={h1Style}
       >
         {headline || 'Your Amazing Headline'}
       </h1>
-      <p
+      <h2
         className="text-base-content/70 text-base sm:text-lg mb-6 font-normal"
         style={subtitleStyle}
       >
         {subheadline || 'A compelling subheadline that explains your value proposition'}
-      </p>
+      </h2>
       <a
         href={ctaLink || '#'}
         className="text-base-content font-semibold hover:underline transition-all"
@@ -292,16 +294,16 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           <div className={`max-w-2xl ${contentPosition === 'center' ? 'mx-auto text-center' : ''}`}>
             <h1
               className="text-base-content text-3xl sm:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6 leading-tight drop-shadow-lg"
-              style={headingStyle}
+              style={h1Style}
             >
               {headline || 'Your Amazing Headline'}
             </h1>
-            <p
+            <h2
               className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal drop-shadow-md"
               style={subtitleStyle}
             >
               {subheadline || 'A compelling subheadline that explains your value proposition'}
-            </p>
+            </h2>
             <a
               href={ctaLink || '#'}
               className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105"

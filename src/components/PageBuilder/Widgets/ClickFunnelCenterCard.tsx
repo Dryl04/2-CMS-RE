@@ -30,8 +30,8 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
     ...(fontFamily ? { fontFamily } : {}),
   };
 
-  const buttonBg = design?.colors?.buttonBg || '#F59E0B';
-  const buttonText = design?.colors?.buttonText || '#000000';
+  const buttonBg = design?.colors?.buttonBackground || design?.colors?.buttonBg;
+  const buttonText = design?.colors?.buttonText;
   const cardBg = design?.colors?.cardBg || '#FFFFFF';
   const mediaBg = design?.colors?.mediaBg || '#E5E7EB';
   const navBg = design?.colors?.navBg || '#93C5FD';
@@ -190,11 +190,11 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
               </p>
               <div className="mt-6 sm:mt-8">
                 <button
-                  className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all hover:scale-105 hover:shadow-lg"
-                  style={{
-                    backgroundColor: buttonBg,
-                    color: buttonText,
-                  }}
+                  className="btn btn-primary inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all hover:scale-105 hover:shadow-lg"
+                  style={buttonBg || buttonText ? {
+                    ...(buttonBg ? { backgroundColor: buttonBg } : {}),
+                    ...(buttonText ? { color: buttonText } : {}),
+                  } : undefined}
                 >
                   {activeTab.buttonText || 'Try for Free'}
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />

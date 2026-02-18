@@ -15,13 +15,17 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
   const bgColor = design?.background?.type === 'color' ? design.background.value : '#1B2A4E';
   const fontFamily = typo.headingFontFamily || typo.fontFamily || undefined;
 
-  const headingStyle: React.CSSProperties = {
-    ...(fontFamily ? { fontFamily } : {}),
-    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
-    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  const h1Style: React.CSSProperties = {
+    ...(typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h1FontWeight || typo.headingFontWeight ? { fontWeight: typo.h1FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h1FontSize || typo.headingFontSize ? { fontSize: typo.h1FontSize || typo.headingFontSize } : {}),
+    ...(typo.h1Color || typo.headingColor ? { color: typo.h1Color || typo.headingColor } : {}),
   };
-  const subtitleTextStyle: React.CSSProperties = {
-    ...(fontFamily ? { fontFamily } : {}),
+  const h2Style: React.CSSProperties = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.subtitleColor || typo.headingColor ? { color: typo.h2Color || typo.subtitleColor || typo.headingColor } : {}),
   };
   const bodyTextStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
@@ -31,8 +35,8 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 
-  const buttonBg = design?.colors?.buttonBg || '#F59E0B';
-  const buttonText = design?.colors?.buttonText || '#000000';
+  const buttonBg = design?.colors?.buttonBackground || design?.colors?.buttonBg;
+  const buttonText = design?.colors?.buttonText;
   const inputBg = design?.colors?.inputBg || '#FFFFFF';
   const inputText = design?.colors?.inputText || '#374151';
   const decorLeftColor = design?.colors?.decorLeftColor || '#DC2626';
@@ -90,17 +94,17 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 text-center">
         <h1
           className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 leading-tight"
-          style={headingStyle}
+          style={h1Style}
         >
           {content.title || "You're one funnel away from"}
         </h1>
 
-        <p
+        <h2
           className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-8 sm:mb-12 leading-tight"
-          style={subtitleTextStyle}
+          style={h2Style}
         >
           {content.subtitle || 'building recurring revenue'}
-        </p>
+        </h2>
 
         {content.tagline && (
           <p
@@ -132,11 +136,11 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
               }}
             />
             <button
-              className="inline-flex items-center justify-center px-8 py-4 rounded-md text-base font-bold transition-all hover:opacity-90 shadow-lg whitespace-nowrap"
-              style={{
-                backgroundColor: buttonBg,
-                color: buttonText,
-              }}
+              className="btn btn-primary inline-flex items-center justify-center px-8 py-4 rounded-md text-base font-bold transition-all hover:opacity-90 shadow-lg whitespace-nowrap"
+              style={buttonBg || buttonText ? {
+                ...(buttonBg ? { backgroundColor: buttonBg } : {}),
+                ...(buttonText ? { color: buttonText } : {}),
+              } : undefined}
             >
               {content.buttonText || 'Get Started'}
               {content.showButtonArrow !== false && (

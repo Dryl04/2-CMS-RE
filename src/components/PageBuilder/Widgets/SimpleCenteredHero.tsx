@@ -8,6 +8,18 @@ export default function SimpleCenteredHero({ section }: SimpleCenteredHeroProps)
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
   const typo = design.typography || {};
+  const h1Style = {
+    ...(typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h1FontWeight || typo.headingFontWeight ? { fontWeight: typo.h1FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h1FontSize || typo.headingFontSize ? { fontSize: typo.h1FontSize || typo.headingFontSize } : {}),
+    ...(typo.h1Color || typo.headingColor ? { color: typo.h1Color || typo.headingColor } : {}),
+  };
+  const h2Style = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.subtitleColor || typo.headingColor ? { color: typo.h2Color || typo.subtitleColor || typo.headingColor } : {}),
+  };
   const headingStyle = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
@@ -32,14 +44,12 @@ export default function SimpleCenteredHero({ section }: SimpleCenteredHeroProps)
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
       }}>
-        {content.subtitle && (
-          <div className="inline-block mb-8">
-            <span className="px-6 py-2 rounded-full text-sm font-medium bg-primary text-primary-content" style={badgeBg || badgeText ? { backgroundColor: badgeBg, color: badgeText, ...subtitleStyle } : subtitleStyle}>
-              {content.subtitle}
-            </span>
-          </div>
-        )}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-base-content" style={headingStyle}>
+        <div className="inline-block mb-8">
+          <h2 className="px-6 py-2 rounded-full text-sm font-medium bg-primary text-primary-content" style={badgeBg || badgeText ? { backgroundColor: badgeBg, color: badgeText, ...h2Style } : h2Style}>
+            {content.subtitle || 'Crafted for high-converting landing pages'}
+          </h2>
+        </div>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-base-content" style={h1Style}>
           {content.title || 'Quis autem veleum iure repreh enderit.'}
         </h1>
       </div>

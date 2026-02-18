@@ -16,6 +16,18 @@ export default function HeroWithServicesWidget({ section }: HeroWithServicesWidg
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
   const typo = design.typography || {};
+  const h1Style = {
+    ...(typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h1FontWeight || typo.headingFontWeight ? { fontWeight: typo.h1FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h1FontSize || typo.headingFontSize ? { fontSize: typo.h1FontSize || typo.headingFontSize } : {}),
+    ...(typo.h1Color || typo.headingColor ? { color: typo.h1Color || typo.headingColor } : {}),
+  };
+  const h2Style = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.subtitleColor || typo.headingColor ? { color: typo.h2Color || typo.subtitleColor || typo.headingColor } : {}),
+  };
   const headingStyle = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
@@ -40,17 +52,15 @@ export default function HeroWithServicesWidget({ section }: HeroWithServicesWidg
       }}>
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           <div className="space-y-6 sm:space-y-8">
-            {content.subtitle && (
-              <p
-                className="text-sm font-medium tracking-wider uppercase text-base-content/70"
-                style={subtitleStyle}
-              >
-                {content.subtitle}
-              </p>
-            )}
+            <h2
+              className="text-sm font-medium tracking-wider uppercase text-base-content/70"
+              style={h2Style}
+            >
+              {content.subtitle || 'Service excellence for growth-focused teams'}
+            </h2>
             <h1
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-base-content"
-              style={headingStyle}
+              style={h1Style}
             >
               {content.title || 'Website Performance and Speed Optimization Techniques'}
             </h1>
