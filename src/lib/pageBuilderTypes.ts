@@ -20,6 +20,8 @@ export interface PageBuilderSection {
       headingFontFamily?: string;
       fontSize?: string;
       lineHeight?: string;
+      buttonFontFamily?: string;
+      buttonFontSize?: string;
       headingColor?: string;
       headingFontSize?: string;
       headingFontWeight?: string;

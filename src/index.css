@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,15 +6,20 @@
 
 @layer base {
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   .font-serif {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: "Playfair Display", Georgia, serif;
   }
-  
+
   /* Smooth theme transitions - only for common themeable elements */
   [data-theme],
   .btn,
@@ -26,7 +31,7 @@
     transition-duration: 200ms;
     transition-timing-function: ease-in-out;
   }
-  
+
   /* Prevent transitions on page load */
   .no-transitions * {
     transition: none !important;
@@ -36,6 +41,7 @@
   .page-themed .btn:not(.btn-circle):not(.btn-square) {
     border-radius: var(--widget-btn-radius, 0.75rem);
     font-size: var(--widget-btn-font-size, 0.9rem);
+    font-family: var(--widget-btn-font-family, inherit);
     min-height: var(--widget-btn-min-height, 2.6rem);
     padding-left: var(--widget-btn-px, 1.1rem);
     padding-right: var(--widget-btn-px, 1.1rem);
@@ -73,18 +79,29 @@
   .widget-design-scope.wds-btn-bg .btn {
     background-color: var(--widget-btn-bg) !important;
     color: var(--widget-btn-text, inherit) !important;
-    border-color: color-mix(in oklab, var(--widget-btn-bg) 75%, black) !important;
+    border-color: color-mix(
+      in oklab,
+      var(--widget-btn-bg) 75%,
+      black
+    ) !important;
   }
 
   .widget-design-scope.wds-btn-bg .btn:hover {
-    background-color: var(--widget-btn-bg-hover, var(--widget-btn-bg)) !important;
+    background-color: var(
+      --widget-btn-bg-hover,
+      var(--widget-btn-bg)
+    ) !important;
   }
 
   .widget-design-scope.wds-btn-bg .btn.btn-outline,
   .widget-design-scope.wds-btn-bg .btn.btn-ghost {
     background-color: transparent !important;
     color: var(--widget-btn-text, inherit) !important;
-    border-color: color-mix(in oklab, var(--widget-btn-bg) 40%, white) !important;
+    border-color: color-mix(
+      in oklab,
+      var(--widget-btn-bg) 40%,
+      white
+    ) !important;
   }
 
   .widget-design-scope svg {
@@ -122,74 +139,131 @@
   [data-canvas-device="mobile"] .sm\:text-4xl,
   [data-canvas-device="mobile"] .md\:text-4xl,
   [data-canvas-device="mobile"] .lg\:text-4xl,
-  [data-canvas-device="mobile"] .xl\:text-4xl { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+  [data-canvas-device="mobile"] .xl\:text-4xl {
+    font-size: 2.25rem !important;
+    line-height: 2.5rem !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:text-5xl,
   [data-canvas-device="mobile"] .md\:text-5xl,
   [data-canvas-device="mobile"] .lg\:text-5xl,
-  [data-canvas-device="mobile"] .xl\:text-5xl { font-size: 3rem !important; line-height: 1 !important; }
+  [data-canvas-device="mobile"] .xl\:text-5xl {
+    font-size: 3rem !important;
+    line-height: 1 !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:text-6xl,
   [data-canvas-device="mobile"] .md\:text-6xl,
   [data-canvas-device="mobile"] .lg\:text-6xl,
-  [data-canvas-device="mobile"] .xl\:text-6xl { font-size: 3.75rem !important; line-height: 1 !important; }
+  [data-canvas-device="mobile"] .xl\:text-6xl {
+    font-size: 3.75rem !important;
+    line-height: 1 !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:text-xl,
   [data-canvas-device="mobile"] .md\:text-xl,
-  [data-canvas-device="mobile"] .lg\:text-xl { font-size: 1.25rem !important; line-height: 1.75rem !important; }
+  [data-canvas-device="mobile"] .lg\:text-xl {
+    font-size: 1.25rem !important;
+    line-height: 1.75rem !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:text-2xl,
   [data-canvas-device="mobile"] .md\:text-2xl,
-  [data-canvas-device="mobile"] .lg\:text-2xl { font-size: 1.5rem !important; line-height: 2rem !important; }
+  [data-canvas-device="mobile"] .lg\:text-2xl {
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:text-3xl,
   [data-canvas-device="mobile"] .md\:text-3xl,
-  [data-canvas-device="mobile"] .lg\:text-3xl { font-size: 1.875rem !important; line-height: 2.25rem !important; }
+  [data-canvas-device="mobile"] .lg\:text-3xl {
+    font-size: 1.875rem !important;
+    line-height: 2.25rem !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:px-6,
   [data-canvas-device="mobile"] .md\:px-6,
-  [data-canvas-device="mobile"] .lg\:px-8 { padding-left: 1rem !important; padding-right: 1rem !important; }
+  [data-canvas-device="mobile"] .lg\:px-8 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:py-4,
   [data-canvas-device="mobile"] .md\:py-8,
-  [data-canvas-device="mobile"] .lg\:py-12 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+  [data-canvas-device="mobile"] .lg\:py-12 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:p-8,
   [data-canvas-device="mobile"] .md\:p-12,
-  [data-canvas-device="mobile"] .lg\:p-16 { padding: 1.5rem !important; }
+  [data-canvas-device="mobile"] .lg\:p-16 {
+    padding: 1.5rem !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:gap-8,
   [data-canvas-device="mobile"] .md\:gap-8,
-  [data-canvas-device="mobile"] .lg\:gap-12 { gap: 1rem !important; }
+  [data-canvas-device="mobile"] .lg\:gap-12 {
+    gap: 1rem !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:h-80,
   [data-canvas-device="mobile"] .md\:h-80,
-  [data-canvas-device="mobile"] .lg\:h-96 { height: 12rem !important; }
+  [data-canvas-device="mobile"] .lg\:h-96 {
+    height: 12rem !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:items-center,
-  [data-canvas-device="mobile"] .md\:items-center { align-items: flex-start !important; }
+  [data-canvas-device="mobile"] .md\:items-center {
+    align-items: flex-start !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:justify-center,
-  [data-canvas-device="mobile"] .md\:justify-center { justify-content: flex-start !important; }
+  [data-canvas-device="mobile"] .md\:justify-center {
+    justify-content: flex-start !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:text-center,
   [data-canvas-device="mobile"] .md\:text-center,
-  [data-canvas-device="mobile"] .lg\:text-center { text-align: left !important; }
+  [data-canvas-device="mobile"] .lg\:text-center {
+    text-align: left !important;
+  }
 
   [data-canvas-device="mobile"] .sm\:text-left,
-  [data-canvas-device="mobile"] .md\:text-left { text-align: left !important; }
+  [data-canvas-device="mobile"] .md\:text-left {
+    text-align: left !important;
+  }
 
-  [data-canvas-device="mobile"] .lg\:col-span-2 { grid-column: span 1 / span 1 !important; }
-  [data-canvas-device="mobile"] .lg\:col-span-3 { grid-column: span 1 / span 1 !important; }
+  [data-canvas-device="mobile"] .lg\:col-span-2 {
+    grid-column: span 1 / span 1 !important;
+  }
+  [data-canvas-device="mobile"] .lg\:col-span-3 {
+    grid-column: span 1 / span 1 !important;
+  }
 
   [data-canvas-device="mobile"] .md\:hidden,
-  [data-canvas-device="mobile"] .lg\:hidden { display: none !important; }
-
+  [data-canvas-device="mobile"] .lg\:hidden,
   [data-canvas-device="mobile"] .md\:block,
-  [data-canvas-device="mobile"] .lg\:block { display: none !important; }
-
+  [data-canvas-device="mobile"] .lg\:block,
+  [data-canvas-device="mobile"] .md\:inline,
+  [data-canvas-device="mobile"] .lg\:inline,
+  [data-canvas-device="mobile"] .md\:inline-block,
+  [data-canvas-device="mobile"] .lg\:inline-block,
+  [data-canvas-device="mobile"] .md\:inline-flex,
+  [data-canvas-device="mobile"] .lg\:inline-flex,
   [data-canvas-device="mobile"] .md\:flex,
-  [data-canvas-device="mobile"] .lg\:flex { display: none !important; }
+  [data-canvas-device="mobile"] .lg\:flex,
+  [data-canvas-device="mobile"] .md\:grid,
+  [data-canvas-device="mobile"] .lg\:grid {
+    display: revert !important;
+  }
+
+  [data-canvas-device="mobile"] .widget-design-scope {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: clamp(0px, 3vw, 28px) !important;
+    padding-bottom: clamp(0px, 3vw, 28px) !important;
+  }
 
   /* === TABLET (768px) — only collapse lg/xl overrides, keep sm/md === */
   [data-canvas-device="tablet"] .lg\:grid-cols-2,
@@ -207,15 +281,50 @@
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
-  [data-canvas-device="tablet"] .lg\:flex-row { flex-direction: row !important; }
+  [data-canvas-device="tablet"] .lg\:flex-row {
+    flex-direction: row !important;
+  }
 
   [data-canvas-device="tablet"] .lg\:text-5xl,
-  [data-canvas-device="tablet"] .xl\:text-5xl { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+  [data-canvas-device="tablet"] .xl\:text-5xl {
+    font-size: 2.25rem !important;
+    line-height: 2.5rem !important;
+  }
 
   [data-canvas-device="tablet"] .lg\:text-6xl,
-  [data-canvas-device="tablet"] .xl\:text-6xl { font-size: 3rem !important; line-height: 1 !important; }
+  [data-canvas-device="tablet"] .xl\:text-6xl {
+    font-size: 3rem !important;
+    line-height: 1 !important;
+  }
 
-  [data-canvas-device="tablet"] .lg\:px-8 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+  [data-canvas-device="tablet"] .lg\:px-8 {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  [data-canvas-device="tablet"] .lg\:hidden,
+  [data-canvas-device="tablet"] .xl\:hidden,
+  [data-canvas-device="tablet"] .lg\:block,
+  [data-canvas-device="tablet"] .xl\:block,
+  [data-canvas-device="tablet"] .lg\:inline,
+  [data-canvas-device="tablet"] .xl\:inline,
+  [data-canvas-device="tablet"] .lg\:inline-block,
+  [data-canvas-device="tablet"] .xl\:inline-block,
+  [data-canvas-device="tablet"] .lg\:inline-flex,
+  [data-canvas-device="tablet"] .xl\:inline-flex,
+  [data-canvas-device="tablet"] .lg\:flex,
+  [data-canvas-device="tablet"] .xl\:flex,
+  [data-canvas-device="tablet"] .lg\:grid,
+  [data-canvas-device="tablet"] .xl\:grid {
+    display: revert !important;
+  }
+
+  [data-canvas-device="tablet"] .widget-design-scope {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: clamp(0px, 3.5vw, 42px) !important;
+    padding-bottom: clamp(0px, 3.5vw, 42px) !important;
+  }
 
   @keyframes fadeIn {
     from {

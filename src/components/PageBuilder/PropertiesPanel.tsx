@@ -58,6 +58,29 @@ interface PropertiesPanelProps {
 
 type TabType = 'content' | 'design' | 'advanced';
 
+const FONT_FAMILY_OPTIONS = [
+  { value: '', label: 'Héritée du thème' },
+  { value: 'Inter, sans-serif', label: 'Inter' },
+  { value: "'Geist', sans-serif", label: 'Geist' },
+  { value: "'DM Sans', sans-serif", label: 'DM Sans' },
+  { value: "'Plus Jakarta Sans', sans-serif", label: 'Plus Jakarta Sans' },
+  { value: 'Georgia, serif', label: 'Georgia' },
+  { value: "'Playfair Display', serif", label: 'Playfair Display' },
+  { value: "'Merriweather', serif", label: 'Merriweather' },
+  { value: "'Lora', serif", label: 'Lora' },
+  { value: "'Space Grotesk', sans-serif", label: 'Space Grotesk' },
+  { value: 'monospace', label: 'Monospace' },
+];
+
+const BUTTON_FONT_SIZE_OPTIONS = [
+  { value: '', label: 'Automatique (selon taille du bouton)' },
+  { value: '0.75rem', label: 'Très petit (0.75rem)' },
+  { value: '0.875rem', label: 'Petit (0.875rem)' },
+  { value: '1rem', label: 'Normal (1rem)' },
+  { value: '1.125rem', label: 'Grand (1.125rem)' },
+  { value: '1.25rem', label: 'Très grand (1.25rem)' },
+];
+
 const HERO_SEO_WIDGET_TYPES = new Set([
   'hero',
   'clickfunnels-hero',
@@ -416,6 +439,34 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                 </select>
               </div>
               <div>
+                <label className="block text-xs text-gray-600 mb-1">Taille du texte du bouton</label>
+                <select
+                  value={section.design.typography?.buttonFontSize || ''}
+                  onChange={(e) => updateDesign('typography', 'buttonFontSize', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+                >
+                  {BUTTON_FONT_SIZE_OPTIONS.map(option => (
+                    <option key={option.value || 'auto'} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Police du texte du bouton</label>
+                <select
+                  value={section.design.typography?.buttonFontFamily || ''}
+                  onChange={(e) => updateDesign('typography', 'buttonFontFamily', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+                >
+                  {FONT_FAMILY_OPTIONS.map(option => (
+                    <option key={option.value || 'inherit'} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
                 <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
                 <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
                   <input
@@ -442,13 +493,6 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               <HeroAdvancedEditor section={section} updateDesign={updateDesign} />
             </div>
           )}
-          <div className="border-t border-gray-200 pt-4 space-y-3">
-            <h3 className="text-sm font-semibold text-gray-900">Paramètres design complets</h3>
-            <GenericObjectEditor
-              value={section.design}
-              onChange={(nextDesign) => onUpdateSection({ design: nextDesign })}
-            />
-          </div>
         </div>
       );
     }
@@ -516,17 +560,11 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                 onChange={(e) => updateDesign('typography', 'fontFamily', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
               >
-                <option value="">Heritee du theme</option>
-                <option value="Inter, sans-serif">Inter</option>
-                <option value="'Geist', sans-serif">Geist</option>
-                <option value="'DM Sans', sans-serif">DM Sans</option>
-                <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
-                <option value="Georgia, serif">Georgia</option>
-                <option value="'Playfair Display', serif">Playfair Display</option>
-                <option value="'Merriweather', serif">Merriweather</option>
-                <option value="'Lora', serif">Lora</option>
-                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-                <option value="monospace">Monospace</option>
+                {FONT_FAMILY_OPTIONS.map(option => (
+                  <option key={option.value || 'inherit'} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -537,16 +575,11 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                 onChange={(e) => updateDesign('typography', 'headingFontFamily', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
               >
-                <option value="">Meme que la police globale</option>
-                <option value="Inter, sans-serif">Inter</option>
-                <option value="'Geist', sans-serif">Geist</option>
-                <option value="'DM Sans', sans-serif">DM Sans</option>
-                <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
-                <option value="Georgia, serif">Georgia</option>
-                <option value="'Playfair Display', serif">Playfair Display</option>
-                <option value="'Merriweather', serif">Merriweather</option>
-                <option value="'Lora', serif">Lora</option>
-                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+                {FONT_FAMILY_OPTIONS.map(option => (
+                  <option key={option.value || 'inherit'} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -660,6 +693,36 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             </div>
 
             <div>
+              <label className="block text-xs text-gray-600 mb-1">Taille du texte du bouton</label>
+              <select
+                value={section.design.typography?.buttonFontSize || ''}
+                onChange={(e) => updateDesign('typography', 'buttonFontSize', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              >
+                {BUTTON_FONT_SIZE_OPTIONS.map(option => (
+                  <option key={option.value || 'auto'} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Police du texte du bouton</label>
+              <select
+                value={section.design.typography?.buttonFontFamily || ''}
+                onChange={(e) => updateDesign('typography', 'buttonFontFamily', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              >
+                {FONT_FAMILY_OPTIONS.map(option => (
+                  <option key={option.value || 'inherit'} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
               <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
               <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
                 <input
@@ -719,13 +782,6 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           </div>
         </div>
 
-        <div className="border-t border-gray-200 pt-4 space-y-3">
-          <h3 className="text-sm font-semibold text-gray-900">Paramètres design complets</h3>
-          <GenericObjectEditor
-            value={section.design}
-            onChange={(nextDesign) => onUpdateSection({ design: nextDesign })}
-          />
-        </div>
       </div>
     );
   };
@@ -829,8 +885,8 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           <button
             onClick={() => setActiveTab('content')}
             className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'content'
-                ? 'border-black text-black'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+              ? 'border-black text-black'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
           >
             <Settings className="w-4 h-4" />
@@ -839,8 +895,8 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           <button
             onClick={() => setActiveTab('design')}
             className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'design'
-                ? 'border-black text-black'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+              ? 'border-black text-black'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
           >
             <Palette className="w-4 h-4" />
@@ -849,8 +905,8 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           <button
             onClick={() => setActiveTab('advanced')}
             className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'advanced'
-                ? 'border-black text-black'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+              ? 'border-black text-black'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
           >
             <Code className="w-4 h-4" />

@@ -75,6 +75,8 @@ function isLegacyDefaultTypography(typography: Record<string, unknown>) {
     "fontFamily",
     "fontSize",
     "lineHeight",
+    "buttonFontFamily",
+    "buttonFontSize",
     "headingColor",
     "textColor",
     "h1Color",
@@ -327,6 +329,12 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
     ...(colors.iconColor ? { "--widget-icon-color": colors.iconColor } : {}),
     "--widget-btn-radius": buttonRadius,
     ...buttonSizeVars,
+    ...(typo.buttonFontSize
+      ? { "--widget-btn-font-size": typo.buttonFontSize }
+      : {}),
+    ...(typo.buttonFontFamily
+      ? { "--widget-btn-font-family": typo.buttonFontFamily }
+      : {}),
     ...widgetTheme.customStyles,
   };
 
