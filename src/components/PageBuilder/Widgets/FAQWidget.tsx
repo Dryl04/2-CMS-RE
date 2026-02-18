@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { ChevronDown, Plus, Minus } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
@@ -11,9 +12,22 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
   const { title, subtitle, faqs } = section.content;
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const accentColor = section.design?.colors?.accent;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
+  const accentColor = design.colors?.accent;
 
   const defaultFaqs = [
     {
@@ -47,13 +61,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          {...(headingColor && { style: { color: headingColor } })}
+          style={headingStyle}
         >
           {title || 'Frequently Asked Questions'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          {...(textColor && { style: { color: textColor } })}
+          style={subtitleStyle}
         >
           {subtitle || 'Find answers to common questions'}
         </p>
@@ -72,21 +86,21 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
                 className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-base-200 transition-colors"
               >
                 <span
-                  className="text-lg font-semibold pr-8 text-base-content"
-                  {...(headingColor && { style: { color: headingColor } })}
+                  className="text-base sm:text-lg font-semibold pr-4 sm:pr-8 text-base-content"
+                  style={headingStyle}
                 >
                   {faq.question}
                 </span>
                 <ChevronDown
                   className={`w-5 h-5 flex-shrink-0 transition-transform text-primary ${isOpen ? 'rotate-180' : ''}`}
-                  {...(accentColor && { style: { color: accentColor } })}
+                  style={accentColor ? { color: accentColor } : undefined}
                 />
               </button>
               {isOpen && (
                 <div className="px-6 pb-5 pt-0">
                   <p
                     className="text-base leading-relaxed text-base-content/70"
-                    {...(textColor && { style: { color: textColor } })}
+                    style={textStyle}
                   >
                     {faq.answer}
                   </p>
@@ -104,13 +118,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          {...(headingColor && { style: { color: headingColor } })}
+          style={headingStyle}
         >
           {title || 'FAQ'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          {...(textColor && { style: { color: textColor } })}
+          style={subtitleStyle}
         >
           {subtitle || 'Everything you need to know'}
         </p>
@@ -130,20 +144,20 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
               >
                 <span
                   className="text-base font-semibold pr-4 text-base-content"
-                  {...(headingColor && { style: { color: headingColor } })}
+                  style={headingStyle}
                 >
                   {faq.question}
                 </span>
                 <ChevronDown
                   className={`w-5 h-5 flex-shrink-0 transition-transform mt-0.5 text-primary ${isOpen ? 'rotate-180' : ''}`}
-                  {...(accentColor && { style: { color: accentColor } })}
+                  style={accentColor ? { color: accentColor } : undefined}
                 />
               </button>
               {isOpen && (
                 <div className="px-6 pb-4">
                   <p
                     className="text-sm leading-relaxed text-base-content/70"
-                    {...(textColor && { style: { color: textColor } })}
+                    style={textStyle}
                   >
                     {faq.answer}
                   </p>
@@ -161,13 +175,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          {...(headingColor && { style: { color: headingColor } })}
+          style={headingStyle}
         >
           {title || 'Common Questions'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          {...(textColor && { style: { color: textColor } })}
+          style={subtitleStyle}
         >
           {subtitle || 'Quick answers to questions you may have'}
         </p>
@@ -181,24 +195,24 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-primary/10"
-              {...(accentColor && { style: { backgroundColor: `${accentColor}15` } })}
+              style={accentColor ? { backgroundColor: `${accentColor}15` } : undefined}
             >
               <span
                 className="text-xl font-bold text-primary"
-                {...(accentColor && { style: { color: accentColor } })}
+                style={accentColor ? { color: accentColor } : undefined}
               >
                 Q
               </span>
             </div>
             <h3
               className="text-lg font-bold mb-3 text-base-content"
-              {...(headingColor && { style: { color: headingColor } })}
+              style={headingStyle}
             >
               {faq.question}
             </h3>
             <p
               className="text-sm leading-relaxed text-base-content/70"
-              {...(textColor && { style: { color: textColor } })}
+              style={textStyle}
             >
               {faq.answer}
             </p>
@@ -213,13 +227,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          {...(headingColor && { style: { color: headingColor } })}
+          style={headingStyle}
         >
           {title || 'Got Questions?'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          {...(textColor && { style: { color: textColor } })}
+          style={subtitleStyle}
         >
           {subtitle || 'We have answers'}
         </p>

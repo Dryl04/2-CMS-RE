@@ -14,8 +14,22 @@ const socialIconMap: { [key: string]: any } = {
 export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+  const typo = design.typography || {};
+  const headingStyle = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
   const circleBg = design.colors?.circleBg;
   const circleText = design.colors?.circleText;
 
@@ -28,7 +42,7 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
         <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-8 mb-8 md:mb-16">
           <div className="space-y-2 sm:space-y-4">
             {content.badge1 && (
-              <p className="text-sm sm:text-base md:text-lg font-bold text-base-content" style={{ color: headingColor }}>
+              <p className="text-sm sm:text-base md:text-lg font-bold text-base-content" style={textStyle}>
                 {content.badge1}
               </p>
             )}
@@ -44,7 +58,7 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
 
           {content.badge2 && (
             <div className="space-y-2 sm:space-y-4">
-              <p className="text-sm sm:text-base md:text-lg font-bold text-base-content" style={{ color: headingColor }}>
+              <p className="text-sm sm:text-base md:text-lg font-bold text-base-content" style={textStyle}>
                 {content.badge2}
               </p>
             </div>
@@ -52,10 +66,10 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
         </div>
 
         <div className="text-center mb-8 md:mb-16">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-light leading-tight mb-2 sm:mb-4 text-base-content" style={{ color: headingColor }}>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-light leading-tight mb-2 sm:mb-4 text-base-content" style={headingStyle}>
             {content.title1 || 'CORPORATE BRAND'}
           </h1>
-          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-bold leading-tight text-base-content" style={{ color: headingColor }}>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-bold leading-tight text-base-content" style={headingStyle}>
             {content.title2 && content.accent && (
               <span>{content.accent} </span>
             )}
@@ -70,7 +84,7 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
                 key={index}
                 href={link.url || '#'}
                 className={`text-sm sm:text-base font-semibold text-base-content ${index === 1 ? 'border-2 border-base-content px-6 py-3 rounded' : ''}`}
-                style={{ color: headingColor }}
+                style={linkStyle}
               >
                 {link.text}
               </a>
@@ -82,8 +96,8 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
               {content.socialLinks.map((social: any, index: number) => {
                 const IconComponent = socialIconMap[social.icon] || Facebook;
                 return (
-                  <a key={index} href={social.url || '#'} className="hover:opacity-70 transition">
-                    <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-base-content" style={{ color: headingColor }} />
+                  <a key={index} href={social.url || '#'} className="hover:opacity-70 transition" style={linkStyle}>
+                    <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-base-content" style={headingStyle} />
                   </a>
                 );
               })}

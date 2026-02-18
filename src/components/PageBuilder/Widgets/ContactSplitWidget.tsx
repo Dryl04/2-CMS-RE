@@ -8,10 +8,22 @@ interface ContactSplitWidgetProps {
 export default function ContactSplitWidget({ section }: ContactSplitWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
   const buttonBg = design.colors?.buttonBackground;
   const buttonText = design.colors?.buttonText;
+
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
@@ -24,21 +36,21 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
             {content.subtitle && (
               <p
                 className="text-sm font-medium tracking-wider uppercase text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={subtitleStyle}
               >
                 {content.subtitle}
               </p>
             )}
             <h2
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-base-content"
-              style={headingColor ? { color: headingColor } : undefined}
+              style={headingStyle}
             >
               {content.title || "Let's talk design and innovation."}
             </h2>
             {content.description && (
               <p
                 className="text-base md:text-lg text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {content.description}
               </p>
@@ -50,19 +62,19 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                   <div className="flex-shrink-0">
                     <Phone
                       className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-base-content"
-                      style={headingColor ? { color: headingColor } : undefined}
+                      style={headingStyle}
                     />
                   </div>
                   <div>
                     <p
                       className="font-bold text-lg text-base-content"
-                      style={headingColor ? { color: headingColor } : undefined}
+                      style={headingStyle}
                     >
                       Phone
                     </p>
                     <p
                       className="text-base-content/70"
-                      style={textColor ? { color: textColor } : undefined}
+                      style={textStyle}
                     >
                       {content.phone}
                     </p>
@@ -75,19 +87,19 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                   <div className="flex-shrink-0">
                     <MapPin
                       className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-base-content"
-                      style={headingColor ? { color: headingColor } : undefined}
+                      style={headingStyle}
                     />
                   </div>
                   <div>
                     <p
                       className="font-bold text-base md:text-lg text-base-content"
-                      style={headingColor ? { color: headingColor } : undefined}
+                      style={headingStyle}
                     >
                       Address
                     </p>
                     <p
                       className="text-sm md:text-base text-base-content/70"
-                      style={textColor ? { color: textColor } : undefined}
+                      style={textStyle}
                     >
                       {content.address}
                     </p>
@@ -100,19 +112,19 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                   <div className="flex-shrink-0">
                     <AtSign
                       className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-base-content"
-                      style={headingColor ? { color: headingColor } : undefined}
+                      style={headingStyle}
                     />
                   </div>
                   <div>
                     <p
                       className="font-bold text-base md:text-lg text-base-content"
-                      style={headingColor ? { color: headingColor } : undefined}
+                      style={headingStyle}
                     >
                       Email
                     </p>
                     <p
                       className="text-sm md:text-base text-base-content/70"
-                      style={textColor ? { color: textColor } : undefined}
+                      style={textStyle}
                     >
                       {content.email}
                     </p>
@@ -125,14 +137,14 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
           <div className="bg-base-100 rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-base-content/10">
             <h3
               className="text-xl sm:text-2xl font-bold mb-4 md:mb-6 text-base-content"
-              style={headingColor ? { color: headingColor } : undefined}
+              style={headingStyle}
             >
               {content.formTitle || 'Ask Us Anything'}
             </h3>
             {content.formDescription && (
               <p
                 className="text-sm md:text-base mb-4 md:mb-6 text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {content.formDescription}
               </p>
@@ -143,7 +155,7 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                 <div>
                   <label
                     className="block text-sm font-medium mb-2 text-base-content/70"
-                    style={textColor ? { color: textColor } : undefined}
+                    style={textStyle}
                   >
                     Name Surname
                   </label>
@@ -155,7 +167,7 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                 <div>
                   <label
                     className="block text-sm font-medium mb-2 text-base-content/70"
-                    style={textColor ? { color: textColor } : undefined}
+                    style={textStyle}
                   >
                     Email
                   </label>
@@ -170,7 +182,7 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                 <div>
                   <label
                     className="block text-sm font-medium mb-2 text-base-content/70"
-                    style={textColor ? { color: textColor } : undefined}
+                    style={textStyle}
                   >
                     Select Service
                   </label>
@@ -183,7 +195,7 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                 <div>
                   <label
                     className="block text-sm font-medium mb-2 text-base-content/70"
-                    style={textColor ? { color: textColor } : undefined}
+                    style={textStyle}
                   >
                     Your Phone
                   </label>
@@ -198,7 +210,7 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                 <div>
                   <label
                     className="block text-sm font-medium mb-2 text-base-content/70"
-                    style={textColor ? { color: textColor } : undefined}
+                    style={textStyle}
                   >
                     Subject
                   </label>
@@ -210,7 +222,7 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                 <div>
                   <label
                     className="block text-sm font-medium mb-2 text-base-content/70"
-                    style={textColor ? { color: textColor } : undefined}
+                    style={textStyle}
                   >
                     Date
                   </label>
@@ -222,7 +234,7 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                 <div>
                   <label
                     className="block text-sm font-medium mb-2 text-base-content/70"
-                    style={textColor ? { color: textColor } : undefined}
+                    style={textStyle}
                   >
                     Time
                   </label>

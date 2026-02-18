@@ -14,8 +14,22 @@ const iconMap: { [key: string]: any } = {
 export default function ContentVideoServices({ section }: ContentVideoServicesProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
@@ -23,64 +37,64 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
       }}>
-        <div className="grid lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-3 bg-base-100 rounded-2xl p-8 shadow-lg">
+        <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 items-center">
+          <div className="lg:col-span-3 bg-base-100 rounded-2xl p-6 sm:p-8 shadow-lg">
             {content.subtitle && (
-              <p className="text-sm font-medium tracking-wider uppercase mb-4 text-base-content/70" style={{ color: textColor }}>
+              <p className="text-sm font-medium tracking-wider uppercase mb-3 sm:mb-4 text-base-content/70" style={subtitleStyle}>
                 {content.subtitle}
               </p>
             )}
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight text-base-content" style={{ color: headingColor }}>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 leading-tight text-base-content" style={headingStyle}>
               {content.title || 'Digital Marketing and Strategy.'}
             </h2>
             {content.description && (
-              <p className="text-base leading-relaxed mb-4 text-base-content/70" style={{ color: textColor }}>
+              <p className="text-sm sm:text-base leading-relaxed mb-4 text-base-content/70" style={textStyle}>
                 {content.description}
               </p>
             )}
             {content.additionalText && (
-              <p className="text-base leading-relaxed mb-8 text-base-content/70" style={{ color: textColor }}>
+              <p className="text-sm sm:text-base leading-relaxed mb-6 sm:mb-8 text-base-content/70" style={textStyle}>
                 {content.additionalText}
               </p>
             )}
             {content.ctaText && (
-              <button className="btn btn-primary px-8">
+              <button className="btn btn-primary px-6 sm:px-8">
                 {content.ctaText}
               </button>
             )}
           </div>
 
           <div className="lg:col-span-6">
-            <div className="relative bg-base-300 rounded-2xl" style={{ height: '450px' }}>
+            <div className="relative bg-base-300 rounded-2xl h-56 sm:h-72 lg:h-[450px]">
               {content.videoUrl ? (
                 <div className="w-full h-full flex items-center justify-center">
-                  <button className="btn btn-circle btn-outline w-20 h-20 border-4 border-base-100 hover:scale-110 transition">
-                    <Play className="w-10 h-10 text-base-100 fill-base-100" />
+                  <button className="btn btn-circle btn-outline w-14 h-14 sm:w-20 sm:h-20 border-4 border-base-100 hover:scale-110 transition">
+                    <Play className="w-6 h-6 sm:w-10 sm:h-10 text-base-100 fill-base-100" />
                   </button>
                 </div>
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <button className="btn btn-circle btn-outline w-20 h-20 border-4 border-base-100 hover:scale-110 transition">
-                    <Play className="w-10 h-10 text-base-100 fill-base-100" />
+                  <button className="btn btn-circle btn-outline w-14 h-14 sm:w-20 sm:h-20 border-4 border-base-100 hover:scale-110 transition">
+                    <Play className="w-6 h-6 sm:w-10 sm:h-10 text-base-100 fill-base-100" />
                   </button>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="lg:col-span-3 space-y-8">
+          <div className="lg:col-span-3 grid sm:grid-cols-3 lg:grid-cols-1 gap-6 sm:gap-4 lg:gap-8">
             {content.services?.map((service: any, index: number) => {
               const IconComponent = iconMap[service.icon] || Umbrella;
               return (
-                <div key={index} className="text-center space-y-3">
+                <div key={index} className="text-center space-y-2 sm:space-y-3">
                   <div className="flex justify-center">
-                    <IconComponent className="w-12 h-12 text-base-content" style={{ color: headingColor }} />
+                    <IconComponent className="w-10 h-10 sm:w-12 sm:h-12 text-base-content" style={headingStyle} />
                   </div>
-                  <h3 className="text-lg font-bold leading-tight text-base-content" style={{ color: headingColor }}>
+                  <h3 className="text-base sm:text-lg font-bold leading-tight text-base-content" style={headingStyle}>
                     {service.title}
                   </h3>
                   {service.description && (
-                    <p className="text-sm text-base-content/70" style={{ color: textColor }}>
+                    <p className="text-xs sm:text-sm text-base-content/70" style={textStyle}>
                       {service.description}
                     </p>
                   )}

@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Zap, Shield, Heart, Star, Globe, Lock, Clock, Layers,
   Users, Code, Eye, Award, Target, Settings, TrendingUp,
@@ -40,24 +41,36 @@ const gridColsClass: Record<number, string> = {
 export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
   const { title, subtitle, features } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   const renderGrid = (columns: number) => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
-          {...(headingColor && { style: { color: headingColor } })}
+          style={headingStyle}
         >
           {title || 'Amazing Features'}
         </h2>
-        <h2
+        <p
           className="text-lg sm:text-xl font-normal text-base-content/70"
-          {...(textColor && { style: { color: textColor } })}
+          style={subtitleStyle}
         >
           {subtitle || 'Everything you need to succeed'}
-        </h2>
+        </p>
       </div>
 
       <div className={`grid ${gridColsClass[columns] || gridColsClass[3]} gap-6 sm:gap-8`}>
@@ -74,13 +87,13 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
               </div>
               <h3
                 className="text-lg sm:text-xl font-bold mb-2 text-base-content"
-                {...(headingColor && { style: { color: headingColor } })}
+                style={headingStyle}
               >
                 {feature.title}
               </h3>
               <p
                 className="text-sm sm:text-base text-base-content/70"
-                {...(textColor && { style: { color: textColor } })}
+                style={textStyle}
               >
                 {feature.description}
               </p>
@@ -96,16 +109,16 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
       <div className="text-center mb-12 sm:mb-16">
         <h2
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
-          {...(headingColor && { style: { color: headingColor } })}
+          style={headingStyle}
         >
           {title || 'Amazing Features'}
         </h2>
-        <h2
+        <p
           className="text-lg sm:text-xl font-normal text-base-content/70"
-          {...(textColor && { style: { color: textColor } })}
+          style={subtitleStyle}
         >
           {subtitle || 'Everything you need to succeed'}
-        </h2>
+        </p>
       </div>
 
       <div className="space-y-12 sm:space-y-16">
@@ -129,13 +142,13 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
                 </div>
                 <h3
                   className="text-xl sm:text-2xl font-bold mb-4 text-base-content"
-                  {...(headingColor && { style: { color: headingColor } })}
+                  style={headingStyle}
                 >
                   {feature.title}
                 </h3>
                 <p
                   className="text-base sm:text-lg text-base-content/70"
-                  {...(textColor && { style: { color: textColor } })}
+                  style={textStyle}
                 >
                   {feature.description}
                 </p>

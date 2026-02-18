@@ -1,3 +1,4 @@
+import React from 'react';
 import { Linkedin, Twitter, Mail } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
@@ -9,13 +10,23 @@ interface TeamWidgetProps {
 export default function TeamWidget({ section }: TeamWidgetProps) {
   const { title, subtitle, members } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const accentColor = section.design?.colors?.accent;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
-  const headingStyle = headingColor ? { color: headingColor } : undefined;
-  const textStyle = textColor ? { color: textColor } : undefined;
-  const accentStyle = accentColor ? { color: accentColor } : undefined;
+  const accentColor = design.colors?.accent;
+  const accentStyle: React.CSSProperties = accentColor ? { color: accentColor } : {};
 
   const defaultMembers = [
     {
@@ -59,7 +70,7 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
         </h2>
         <p
           className="text-lg sm:text-xl max-w-3xl mx-auto text-base-content/70"
-          style={textStyle}
+          style={subtitleStyle}
         >
           {subtitle || 'Talented individuals working together to create something amazing'}
         </p>
@@ -147,7 +158,7 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textStyle}
+          style={subtitleStyle}
         >
           {subtitle || 'The people behind our success'}
         </p>
@@ -226,7 +237,7 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textStyle}
+          style={subtitleStyle}
         >
           {subtitle || 'Meet the people making it happen'}
         </p>
@@ -271,7 +282,7 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
         </h2>
         <p
           className="text-lg text-base-content/70"
-          style={textStyle}
+          style={subtitleStyle}
         >
           {subtitle || 'The people behind our work'}
         </p>

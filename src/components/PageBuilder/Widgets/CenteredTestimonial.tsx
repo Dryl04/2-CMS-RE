@@ -7,8 +7,22 @@ interface CenteredTestimonialProps {
 export default function CenteredTestimonial({ section }: CenteredTestimonialProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
@@ -17,18 +31,18 @@ export default function CenteredTestimonial({ section }: CenteredTestimonialProp
         paddingBottom: design.spacing.paddingBottom,
       }}>
         {content.subtitle && (
-          <p className="text-sm font-medium tracking-wider uppercase mb-6 text-base-content/70" style={{ color: textColor }}>
+          <p className="text-sm font-medium tracking-wider uppercase mb-6 text-base-content/70" style={subtitleStyle}>
             {content.subtitle}
           </p>
         )}
 
-        <h2 className="text-5xl md:text-6xl font-bold mb-12 leading-tight text-base-content" style={{ color: headingColor }}>
+        <h2 className="text-5xl md:text-6xl font-bold mb-12 leading-tight text-base-content" style={headingStyle}>
           {content.title || 'Why Choose Us'}
         </h2>
 
         <div className="grid md:grid-cols-2 gap-12 text-left mb-12">
           {content.textBlocks?.map((block: string, index: number) => (
-            <p key={index} className="text-lg leading-relaxed text-base-content/70" style={{ color: textColor }}>
+            <p key={index} className="text-lg leading-relaxed text-base-content/70" style={textStyle}>
               {block}
             </p>
           ))}

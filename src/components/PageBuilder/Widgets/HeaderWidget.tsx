@@ -1,3 +1,4 @@
+import React from 'react';
 import { Menu, X, Search, ShoppingBag, User } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 import { useState } from 'react';
@@ -25,8 +26,23 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
     cartLink,
   } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   const renderDefault = () => (
     <header className="bg-base-100 border-b border-base-content/10">
@@ -36,7 +52,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-8 w-auto" />
             ) : (
-              <span className="text-xl font-bold text-base-content" style={headingColor ? { color: headingColor } : undefined}>
+              <span className="text-xl font-bold text-base-content" style={headingStyle}>
                 {logoText || 'Brand'}
               </span>
             )}
@@ -48,7 +64,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="font-medium transition-colors hover:opacity-80 text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {item.label}
               </a>
@@ -69,7 +85,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-base-content"
-            style={headingColor ? { color: headingColor } : undefined}
+            style={headingStyle}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -84,7 +100,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="block font-medium py-2 hover:opacity-80 text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {item.label}
               </a>
@@ -111,7 +127,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-10 w-auto" />
             ) : (
-              <span className="text-2xl font-bold text-base-content" style={headingColor ? { color: headingColor } : undefined}>
+              <span className="text-2xl font-bold text-base-content" style={headingStyle}>
                 {logoText || 'Brand'}
               </span>
             )}
@@ -123,7 +139,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="font-medium transition-colors hover:opacity-80 text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {item.label}
               </a>
@@ -141,7 +157,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-base-content"
-            style={headingColor ? { color: headingColor } : undefined}
+            style={headingStyle}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -156,7 +172,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="block font-medium py-2 text-center hover:opacity-80 text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {item.label}
               </a>
@@ -185,7 +201,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             ) : (
               <span
                 className="text-xl font-bold text-base-content"
-                style={headingColor ? { color: headingColor } : undefined}
+                style={headingStyle}
               >
                 {logoText || 'Brand'}
               </span>
@@ -198,7 +214,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="text-base-content/70 hover:text-base-content font-medium transition-colors"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {item.label}
               </a>
@@ -219,7 +235,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-base-content"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -260,7 +276,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-6 w-auto" />
             ) : (
-              <span className="text-lg font-semibold text-base-content" style={headingColor ? { color: headingColor } : undefined}>
+              <span className="text-lg font-semibold text-base-content" style={headingStyle}>
                 {logoText || 'Brand'}
               </span>
             )}
@@ -272,7 +288,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="text-sm transition-colors hover:opacity-80 text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {item.label}
               </a>
@@ -281,7 +297,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               <a
                 href={ctaLink || '#'}
                 className="text-sm hover:underline font-medium text-base-content"
-                style={headingColor ? { color: headingColor } : undefined}
+                style={headingStyle}
               >
                 {ctaText} →
               </a>
@@ -300,7 +316,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-7 w-auto" />
             ) : (
-              <span className="text-lg font-semibold tracking-wide" style={headingColor ? { color: headingColor } : undefined}>
+              <span className="text-lg font-semibold tracking-wide" style={headingStyle}>
                 {logoText || 'FLORA'}
               </span>
             )}
@@ -312,7 +328,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 key={index}
                 href={item.link || '#'}
                 className="text-sm font-medium hover:opacity-80 transition-opacity"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {item.label}
               </a>

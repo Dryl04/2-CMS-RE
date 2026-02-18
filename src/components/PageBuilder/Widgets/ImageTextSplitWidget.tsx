@@ -1,3 +1,4 @@
+import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
 interface ImageTextSplitWidgetProps {
@@ -17,11 +18,23 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
     image
   } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const subtitleColor = section.design?.typography?.subtitleColor;
-  const linkColor = section.design?.typography?.linkColor;
-  const bgColor = section.design?.background?.value;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   const renderDefault = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,7 +49,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
       <div className="space-y-4 md:space-y-6">
         <h2
           className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione serui nesciunt est dolorem ipsum dolor sit amet consec tetur adipisci velit sed non numsuam modi.'}
         </h2>
@@ -44,14 +57,14 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
         <div className="space-y-3 md:space-y-4">
           <p
             className="text-sm lg:text-base leading-relaxed text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {paragraph1 || 'Welcome to our digital sanctuary, an immersive space where the symphony of innovation and creativity harmoniously reverberates. As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary and delves deep into the extraordinary.'}
           </p>
 
           <p
             className="text-sm lg:text-base leading-relaxed text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {paragraph2 || 'As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary and delves deep into the extraordinary. Here at our digital abode, we don\'t just design websites we orchestrate experiences, sculpting each pixel with intentionality and crafting narratives that leave an indelible mark.'}
           </p>
@@ -59,7 +72,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
           {paragraph3 && (
             <p
               className="text-sm lg:text-base leading-relaxed text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={textStyle}
             >
               {paragraph3}
             </p>
@@ -69,7 +82,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
         <a
           href={ctaLink || '#'}
           className="inline-block font-semibold text-xs sm:text-sm tracking-wider uppercase border-b-2 pb-1 transition-colors hover:opacity-70 text-base-content border-base-content"
-          style={linkColor ? { color: linkColor, borderColor: linkColor } : undefined}
+          style={Object.keys(linkStyle).length ? { ...linkStyle, borderColor: typo.linkColor } : undefined}
         >
           {ctaText || 'LEARN MORE'}
         </a>
@@ -84,7 +97,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
       <div className="space-y-4 md:space-y-6 order-2 md:order-1">
         <h2
           className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione serui nesciunt est dolorem ipsum dolor sit amet consec tetur adipisci velit sed non numsuam modi.'}
         </h2>
@@ -92,14 +105,14 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
         <div className="space-y-3 md:space-y-4">
           <p
             className="text-sm lg:text-base leading-relaxed text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {paragraph1 || 'Welcome to our digital sanctuary, an immersive space where the symphony of innovation and creativity harmoniously reverberates.'}
           </p>
 
           <p
             className="text-sm lg:text-base leading-relaxed text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {paragraph2 || 'As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary and delves deep into the extraordinary.'}
           </p>
@@ -107,7 +120,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
           {paragraph3 && (
             <p
               className="text-sm lg:text-base leading-relaxed text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={textStyle}
             >
               {paragraph3}
             </p>
@@ -117,7 +130,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
         <a
           href={ctaLink || '#'}
           className="inline-block font-semibold text-xs sm:text-sm tracking-wider uppercase border-b-2 pb-1 transition-colors hover:opacity-70 text-base-content border-base-content"
-          style={linkColor ? { color: linkColor, borderColor: linkColor } : undefined}
+          style={Object.keys(linkStyle).length ? { ...linkStyle, borderColor: typo.linkColor } : undefined}
         >
           {ctaText || 'LEARN MORE'}
         </a>
@@ -146,7 +159,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
       <div className="space-y-4 md:space-y-6">
         <h2
           className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione'}
         </h2>
@@ -154,14 +167,14 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
         <div className="space-y-3 md:space-y-4">
           <p
             className="text-sm md:text-base leading-relaxed text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {paragraph1 || 'Welcome to our digital sanctuary, an immersive space where the symphony of innovation and creativity harmoniously reverberates.'}
           </p>
 
           <p
             className="text-sm md:text-base leading-relaxed text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {paragraph2 || 'As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary.'}
           </p>
@@ -170,7 +183,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
         <a
           href={ctaLink || '#'}
           className="inline-block font-semibold text-xs sm:text-sm tracking-wider uppercase border-b-2 pb-1 transition-colors hover:opacity-70 text-base-content border-base-content"
-          style={linkColor ? { color: linkColor, borderColor: linkColor } : undefined}
+          style={Object.keys(linkStyle).length ? { ...linkStyle, borderColor: typo.linkColor } : undefined}
         >
           {ctaText || 'LEARN MORE'}
         </a>

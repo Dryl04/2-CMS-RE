@@ -1,3 +1,4 @@
+import React from 'react';
 import { Check } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
@@ -9,20 +10,33 @@ interface PricingWidgetProps {
 export default function PricingWidget({ section }: PricingWidgetProps) {
   const { title, subtitle, plans } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const accentColor = section.design?.colors?.accent;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
+  const accentColor = design.colors?.accent;
 
   const renderCards = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Simple, Transparent Pricing'}
         </h2>
-        <p className="text-lg sm:text-xl text-base-content/70" style={textColor ? { color: textColor } : undefined}>
+        <p className="text-lg sm:text-xl text-base-content/70" style={subtitleStyle}>
           {subtitle || 'Choose the perfect plan for your needs'}
         </p>
       </div>
@@ -48,7 +62,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
               </div>
             )}
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold mb-2 text-base-content" style={{ color: headingColor }}>
+              <h3 className="text-2xl font-bold mb-2 text-base-content" style={headingStyle}>
                 {plan.name}
               </h3>
               <div className="flex items-baseline justify-center">
@@ -62,7 +76,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
               {plan.features.map((feature: string, idx: number) => (
                 <li key={idx} className="flex items-start">
                   <Check className="w-5 h-5 mr-3 flex-shrink-0 text-primary" style={accentColor ? { color: accentColor } : undefined} />
-                  <span className="text-base-content/70" style={{ color: textColor }}>{feature}</span>
+                  <span className="text-base-content/70" style={textStyle}>{feature}</span>
                 </li>
               ))}
             </ul>
@@ -88,11 +102,11 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Compare Plans'}
         </h2>
-        <p className="text-lg sm:text-xl text-base-content/70" style={textColor ? { color: textColor } : undefined}>
+        <p className="text-lg sm:text-xl text-base-content/70" style={subtitleStyle}>
           {subtitle || 'Find the perfect fit for your business'}
         </p>
       </div>
@@ -116,7 +130,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           <tbody className="divide-y divide-base-content/10">
             {['Projects', 'Storage', 'Support', 'Analytics', 'Custom Domain'].map((feature, idx) => (
               <tr key={idx}>
-                <td className="px-6 py-4 font-medium text-base-content" style={headingColor ? { color: headingColor } : undefined}>
+                <td className="px-6 py-4 font-medium text-base-content" style={headingStyle}>
                   {feature}
                 </td>
                 <td className="px-6 py-4 text-center">
@@ -141,11 +155,11 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
       <div className="text-center mb-8">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Flexible Pricing'}
         </h2>
-        <p className="text-lg sm:text-xl mb-6 text-base-content/70" style={textColor ? { color: textColor } : undefined}>
+        <p className="text-lg sm:text-xl mb-6 text-base-content/70" style={subtitleStyle}>
           {subtitle || 'Save 20% with annual billing'}
         </p>
         <div className="inline-flex items-center bg-base-200 rounded-full p-1">
@@ -164,7 +178,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           { name: 'Enterprise', price: '$199', features: ['Everything in Pro', '24/7 Support', 'Custom Solutions'] },
         ]).slice(0, 2).map((plan: any, index: number) => (
           <div key={index} className="bg-base-100 rounded-2xl shadow-xl p-8 border-2 border-base-content/5 hover:border-base-content/20 transition-all">
-            <h3 className="text-2xl font-bold mb-2 text-base-content" style={headingColor ? { color: headingColor } : undefined}>
+            <h3 className="text-2xl font-bold mb-2 text-base-content" style={headingStyle}>
               {plan.name}
             </h3>
             <div className="flex items-baseline mb-6">
@@ -177,7 +191,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
               {plan.features.map((feature: string, idx: number) => (
                 <li key={idx} className="flex items-center">
                   <Check className="w-5 h-5 mr-3 text-primary" style={accentColor ? { color: accentColor } : undefined} />
-                  <span className="text-base-content/70" style={{ color: textColor }}>{feature}</span>
+                  <span className="text-base-content/70" style={textStyle}>{feature}</span>
                 </li>
               ))}
             </ul>
@@ -198,19 +212,19 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
-          style={{ color: headingColor }}
+          style={headingStyle}
         >
           {title || 'One Simple Price'}
         </h2>
-        <p className="text-lg text-base-content/70" style={{ color: textColor }}>
-          {subtitle || 'Everything you need, nothing you don\'t'}
+        <p className="text-lg text-base-content/70" style={subtitleStyle}>
+          {subtitle || "Everything you need, nothing you don't"}
         </p>
       </div>
 
       <div className="bg-base-100 rounded-2xl border border-base-content/10 p-12 text-center">
         <div className="mb-8">
           <div className="flex items-baseline justify-center">
-            <span className="text-6xl font-bold text-primary" style={{ color: accentColor }}>
+            <span className="text-6xl font-bold text-primary" style={accentColor ? { color: accentColor } : undefined}>
               $99
             </span>
             <span className="text-base-content/50 ml-2 text-xl">/month</span>
@@ -228,15 +242,15 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
             'Team Collaboration',
           ].map((feature, idx) => (
             <div key={idx} className="flex items-center">
-              <Check className="w-5 h-5 mr-3 text-primary" style={{ color: accentColor }} />
-              <span className="text-base-content/70" style={{ color: textColor }}>{feature}</span>
+              <Check className="w-5 h-5 mr-3 text-primary" style={accentColor ? { color: accentColor } : undefined} />
+              <span className="text-base-content/70" style={textStyle}>{feature}</span>
             </div>
           ))}
         </div>
 
         <button
           className="px-12 py-4 rounded-xl font-semibold text-lg transition-all hover:shadow-xl bg-primary text-primary-content"
-          style={{ backgroundColor: accentColor }}
+          style={accentColor ? { backgroundColor: accentColor } : undefined}
         >
           Get Started Now
         </button>

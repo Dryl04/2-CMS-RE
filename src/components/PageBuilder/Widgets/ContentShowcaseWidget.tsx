@@ -1,3 +1,4 @@
+import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
 interface ContentShowcaseWidgetProps {
@@ -6,9 +7,24 @@ interface ContentShowcaseWidgetProps {
 
 export default function ContentShowcaseWidget({ section }: ContentShowcaseWidgetProps) {
   const { content, design } = section;
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
 
   const subtitle = content.subtitle || '';
   const headline = content.headline || content.title || 'Quis autem veleum iure repreh enderit.';
@@ -23,7 +39,7 @@ export default function ContentShowcaseWidget({ section }: ContentShowcaseWidget
         <p
           key={index}
           className="text-base leading-relaxed text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={textStyle}
         >
           {text}
         </p>
@@ -32,7 +48,7 @@ export default function ContentShowcaseWidget({ section }: ContentShowcaseWidget
   );
 
   const renderImageLeft = () => (
-    <div className="grid lg:grid-cols-2 gap-12 items-start">
+    <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
       {image && (
         <img
           src={image}
@@ -48,7 +64,7 @@ export default function ContentShowcaseWidget({ section }: ContentShowcaseWidget
   );
 
   const renderImageRight = () => (
-    <div className="grid lg:grid-cols-2 gap-12 items-start">
+    <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
       <div className="space-y-6 order-2 lg:order-1">
         {renderTextBlock()}
       </div>
@@ -70,7 +86,7 @@ export default function ContentShowcaseWidget({ section }: ContentShowcaseWidget
           <p
             key={index}
             className="text-base leading-relaxed text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {text}
           </p>
@@ -89,14 +105,14 @@ export default function ContentShowcaseWidget({ section }: ContentShowcaseWidget
           {subtitle && (
             <p
               className="text-sm font-medium tracking-wider uppercase text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={subtitleStyle}
             >
               {subtitle}
             </p>
           )}
           <h2
-            className="text-4xl md:text-5xl font-bold leading-tight text-base-content"
-            style={headingColor ? { color: headingColor } : undefined}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-base-content"
+            style={headingStyle}
           >
             {headline}
           </h2>

@@ -15,8 +15,22 @@ const iconMap: { [key: string]: any } = {
 export default function ServicesCarouselWidget({ section }: ServicesCarouselWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
@@ -33,15 +47,15 @@ export default function ServicesCarouselWidget({ section }: ServicesCarouselWidg
                 className="bg-base-100 rounded-2xl p-8 shadow-md hover:shadow-xl transition-all border border-base-content/10"
               >
                 <div className="mb-6">
-                  <IconComponent className="w-12 h-12 text-base-content" style={{ color: headingColor }} />
+                  <IconComponent className="w-12 h-12 text-base-content" style={headingStyle} />
                 </div>
 
-                <h3 className="text-xl font-bold mb-4 text-base-content" style={{ color: headingColor }}>
+                <h3 className="text-xl font-bold mb-4 text-base-content" style={headingStyle}>
                   {service.title}
                 </h3>
 
                 {service.description && (
-                  <p className="text-sm mb-6 text-base-content/70" style={{ color: textColor }}>
+                  <p className="text-sm mb-6 text-base-content/70" style={textStyle}>
                     {service.description}
                   </p>
                 )}
@@ -49,7 +63,7 @@ export default function ServicesCarouselWidget({ section }: ServicesCarouselWidg
                 <a
                   href={service.link || '#'}
                   className="inline-flex items-center space-x-2 text-sm font-semibold hover:underline text-base-content"
-                  style={{ color: headingColor }}
+                  style={linkStyle}
                 >
                   <ArrowRight className="w-4 h-4" />
                 </a>

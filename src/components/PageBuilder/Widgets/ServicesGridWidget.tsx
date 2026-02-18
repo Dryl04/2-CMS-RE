@@ -1,3 +1,4 @@
+import React from 'react';
 import { Monitor, Shield, Lock, ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
@@ -13,9 +14,24 @@ const iconMap: { [key: string]: any } = {
 
 export default function ServicesGridWidget({ section }: ServicesGridWidgetProps) {
   const { content, design } = section;
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
 
   return (
     <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
@@ -26,21 +42,21 @@ export default function ServicesGridWidget({ section }: ServicesGridWidgetProps)
         {content.subtitle && (
           <p
             className="text-xs sm:text-sm font-medium tracking-wider uppercase mb-3 md:mb-4 text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={subtitleStyle}
           >
             {content.subtitle}
           </p>
         )}
         <h2
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {content.title}
         </h2>
         {content.description && (
           <p
             className="text-base md:text-lg mb-6 md:mb-8 lg:mb-12 text-base-content/70"
-            style={textColor ? { color: textColor, maxWidth: '800px' } : { maxWidth: '800px' }}
+            style={{ maxWidth: '800px', ...textStyle }}
           >
             {content.description}
           </p>
@@ -53,20 +69,20 @@ export default function ServicesGridWidget({ section }: ServicesGridWidgetProps)
               <div key={index} className="space-y-3 md:space-y-4">
                 <h3
                   className="text-xl sm:text-2xl font-bold text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  style={headingStyle}
                 >
                   {service.title}
                 </h3>
                 <p
                   className="text-sm sm:text-base leading-relaxed text-base-content/70"
-                  style={textColor ? { color: textColor } : undefined}
+                  style={textStyle}
                 >
                   {service.description}
                 </p>
                 <a
                   href={service.link || '#'}
                   className="inline-flex items-center space-x-2 text-sm sm:text-base font-semibold hover:underline transition text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  style={linkStyle}
                 >
                   <span>{service.linkText || 'Learn More'}</span>
                   <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />

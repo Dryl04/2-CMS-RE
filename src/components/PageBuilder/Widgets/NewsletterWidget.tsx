@@ -1,3 +1,4 @@
+import React from 'react';
 import { Mail, Send } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
@@ -9,12 +10,21 @@ interface NewsletterWidgetProps {
 export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
   const { title, subtitle, placeholder, buttonText, privacyNote, image } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const accentColor = section.design?.colors?.accent;
-
-  const headingStyle = headingColor ? { color: headingColor } : undefined;
-  const textStyle = textColor ? { color: textColor } : undefined;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const accentColor = design.colors?.accent;
 
   const renderCentered = () => (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,7 +40,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
         </h2>
         <p
           className="text-lg sm:text-xl mb-8 text-base-content/70"
-          style={textStyle}
+          style={subtitleStyle}
         >
           {subtitle || 'Subscribe to our newsletter for the latest updates and exclusive content'}
         </p>
@@ -74,7 +84,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
           </h2>
           <p
             className="text-lg sm:text-xl mb-8 text-base-content/70"
-            style={textStyle}
+            style={subtitleStyle}
           >
             {subtitle || 'Join our newsletter and be the first to know about new features, tips, and special offers'}
           </p>
@@ -123,15 +133,15 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
       >
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
           <div className="flex-1 text-center lg:text-left">
-            <h3
+            <h2
               className="text-2xl sm:text-3xl font-bold mb-2 text-base-content"
               style={headingStyle}
             >
               {title || 'Newsletter'}
-            </h3>
+            </h2>
             <p
               className="text-base sm:text-lg text-base-content/70"
-              style={textStyle}
+              style={subtitleStyle}
             >
               {subtitle || 'Get the latest news delivered to your inbox'}
             </p>
@@ -174,7 +184,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
           </h2>
           <p
             className="text-base sm:text-lg text-base-content/70"
-            style={textStyle}
+            style={subtitleStyle}
           >
             {subtitle || 'Subscribe to receive exclusive content and updates'}
           </p>

@@ -41,41 +41,182 @@
     padding-right: var(--widget-btn-px, 1.1rem);
   }
 
-  .widget-design-scope :is(h1, h2, h3, h4, h5, h6) {
-    color: var(--widget-heading-color, inherit) !important;
+  /* Base: widget scope inherits DaisyUI theme colors from data-theme parent */
+  /* The data-theme attribute on the wrapper sets up all DaisyUI CSS variables */
+}
+
+@layer utilities {
+  /* Widget custom color overrides — only active when custom colors are explicitly configured */
+  /* Using conditional classes (wds-*) set by SectionRenderer ensures DaisyUI theme colors
+     are never overridden unless the user has explicitly set a custom color */
+
+  .widget-design-scope.wds-heading-color :is(h1, h2, h3, h4, h5, h6) {
+    color: var(--widget-heading-color) !important;
   }
 
-  .widget-design-scope :is(p, li, small, label) {
-    color: var(--widget-text-color, inherit) !important;
+  .widget-design-scope.wds-h1-color h1 {
+    color: var(--widget-h1-color) !important;
   }
 
-  .widget-design-scope a {
-    color: var(--widget-accent-color, var(--widget-text-color, inherit));
+  .widget-design-scope.wds-h2-color h2 {
+    color: var(--widget-h2-color) !important;
   }
 
-  .widget-design-scope .btn {
-    background-color: var(--widget-btn-bg, initial) !important;
+  .widget-design-scope.wds-text-color :is(p, li, small, label) {
+    color: var(--widget-text-color) !important;
+  }
+
+  .widget-design-scope.wds-link-color a:not(.btn) {
+    color: var(--widget-link-color, var(--widget-accent-color)) !important;
+  }
+
+  .widget-design-scope.wds-btn-bg .btn {
+    background-color: var(--widget-btn-bg) !important;
     color: var(--widget-btn-text, inherit) !important;
-    border-color: color-mix(in oklab, var(--widget-btn-bg, #000) 75%, black) !important;
+    border-color: color-mix(in oklab, var(--widget-btn-bg) 75%, black) !important;
   }
 
-  .widget-design-scope .btn:hover {
-    background-color: var(--widget-btn-bg-hover, var(--widget-btn-bg, initial)) !important;
+  .widget-design-scope.wds-btn-bg .btn:hover {
+    background-color: var(--widget-btn-bg-hover, var(--widget-btn-bg)) !important;
   }
 
-  .widget-design-scope .btn.btn-outline,
-  .widget-design-scope .btn.btn-ghost {
+  .widget-design-scope.wds-btn-bg .btn.btn-outline,
+  .widget-design-scope.wds-btn-bg .btn.btn-ghost {
     background-color: transparent !important;
-    color: var(--widget-btn-text, var(--widget-text-color, inherit)) !important;
-    border-color: color-mix(in oklab, var(--widget-btn-bg, #000) 40%, white) !important;
+    color: var(--widget-btn-text, inherit) !important;
+    border-color: color-mix(in oklab, var(--widget-btn-bg) 40%, white) !important;
   }
 
   .widget-design-scope svg {
     color: var(--widget-icon-color, inherit);
   }
-}
 
-@layer utilities {
+  /* ─── Canvas device simulation ────────────────────────────────────────────
+   * When the editor canvas has data-canvas-device="mobile" or "tablet",
+   * override Tailwind responsive variants so the layout matches the
+   * actual device viewport.
+   * ─────────────────────────────────────────────────────────────────────── */
+
+  /* === MOBILE (375px) — collapse all sm/md/lg responsive overrides === */
+  [data-canvas-device="mobile"] .sm\:grid-cols-2,
+  [data-canvas-device="mobile"] .md\:grid-cols-2,
+  [data-canvas-device="mobile"] .lg\:grid-cols-2,
+  [data-canvas-device="mobile"] .sm\:grid-cols-3,
+  [data-canvas-device="mobile"] .md\:grid-cols-3,
+  [data-canvas-device="mobile"] .lg\:grid-cols-3,
+  [data-canvas-device="mobile"] .sm\:grid-cols-4,
+  [data-canvas-device="mobile"] .md\:grid-cols-4,
+  [data-canvas-device="mobile"] .lg\:grid-cols-4,
+  [data-canvas-device="mobile"] .xl\:grid-cols-2,
+  [data-canvas-device="mobile"] .xl\:grid-cols-3,
+  [data-canvas-device="mobile"] .xl\:grid-cols-4 {
+    grid-template-columns: 1fr !important;
+  }
+
+  [data-canvas-device="mobile"] .sm\:flex-row,
+  [data-canvas-device="mobile"] .md\:flex-row,
+  [data-canvas-device="mobile"] .lg\:flex-row {
+    flex-direction: column !important;
+  }
+
+  [data-canvas-device="mobile"] .sm\:text-4xl,
+  [data-canvas-device="mobile"] .md\:text-4xl,
+  [data-canvas-device="mobile"] .lg\:text-4xl,
+  [data-canvas-device="mobile"] .xl\:text-4xl { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+
+  [data-canvas-device="mobile"] .sm\:text-5xl,
+  [data-canvas-device="mobile"] .md\:text-5xl,
+  [data-canvas-device="mobile"] .lg\:text-5xl,
+  [data-canvas-device="mobile"] .xl\:text-5xl { font-size: 3rem !important; line-height: 1 !important; }
+
+  [data-canvas-device="mobile"] .sm\:text-6xl,
+  [data-canvas-device="mobile"] .md\:text-6xl,
+  [data-canvas-device="mobile"] .lg\:text-6xl,
+  [data-canvas-device="mobile"] .xl\:text-6xl { font-size: 3.75rem !important; line-height: 1 !important; }
+
+  [data-canvas-device="mobile"] .sm\:text-xl,
+  [data-canvas-device="mobile"] .md\:text-xl,
+  [data-canvas-device="mobile"] .lg\:text-xl { font-size: 1.25rem !important; line-height: 1.75rem !important; }
+
+  [data-canvas-device="mobile"] .sm\:text-2xl,
+  [data-canvas-device="mobile"] .md\:text-2xl,
+  [data-canvas-device="mobile"] .lg\:text-2xl { font-size: 1.5rem !important; line-height: 2rem !important; }
+
+  [data-canvas-device="mobile"] .sm\:text-3xl,
+  [data-canvas-device="mobile"] .md\:text-3xl,
+  [data-canvas-device="mobile"] .lg\:text-3xl { font-size: 1.875rem !important; line-height: 2.25rem !important; }
+
+  [data-canvas-device="mobile"] .sm\:px-6,
+  [data-canvas-device="mobile"] .md\:px-6,
+  [data-canvas-device="mobile"] .lg\:px-8 { padding-left: 1rem !important; padding-right: 1rem !important; }
+
+  [data-canvas-device="mobile"] .sm\:py-4,
+  [data-canvas-device="mobile"] .md\:py-8,
+  [data-canvas-device="mobile"] .lg\:py-12 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+
+  [data-canvas-device="mobile"] .sm\:p-8,
+  [data-canvas-device="mobile"] .md\:p-12,
+  [data-canvas-device="mobile"] .lg\:p-16 { padding: 1.5rem !important; }
+
+  [data-canvas-device="mobile"] .sm\:gap-8,
+  [data-canvas-device="mobile"] .md\:gap-8,
+  [data-canvas-device="mobile"] .lg\:gap-12 { gap: 1rem !important; }
+
+  [data-canvas-device="mobile"] .sm\:h-80,
+  [data-canvas-device="mobile"] .md\:h-80,
+  [data-canvas-device="mobile"] .lg\:h-96 { height: 12rem !important; }
+
+  [data-canvas-device="mobile"] .sm\:items-center,
+  [data-canvas-device="mobile"] .md\:items-center { align-items: flex-start !important; }
+
+  [data-canvas-device="mobile"] .sm\:justify-center,
+  [data-canvas-device="mobile"] .md\:justify-center { justify-content: flex-start !important; }
+
+  [data-canvas-device="mobile"] .sm\:text-center,
+  [data-canvas-device="mobile"] .md\:text-center,
+  [data-canvas-device="mobile"] .lg\:text-center { text-align: left !important; }
+
+  [data-canvas-device="mobile"] .sm\:text-left,
+  [data-canvas-device="mobile"] .md\:text-left { text-align: left !important; }
+
+  [data-canvas-device="mobile"] .lg\:col-span-2 { grid-column: span 1 / span 1 !important; }
+  [data-canvas-device="mobile"] .lg\:col-span-3 { grid-column: span 1 / span 1 !important; }
+
+  [data-canvas-device="mobile"] .md\:hidden,
+  [data-canvas-device="mobile"] .lg\:hidden { display: none !important; }
+
+  [data-canvas-device="mobile"] .md\:block,
+  [data-canvas-device="mobile"] .lg\:block { display: none !important; }
+
+  [data-canvas-device="mobile"] .md\:flex,
+  [data-canvas-device="mobile"] .lg\:flex { display: none !important; }
+
+  /* === TABLET (768px) — only collapse lg/xl overrides, keep sm/md === */
+  [data-canvas-device="tablet"] .lg\:grid-cols-2,
+  [data-canvas-device="tablet"] .xl\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  [data-canvas-device="tablet"] .lg\:grid-cols-3,
+  [data-canvas-device="tablet"] .xl\:grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  [data-canvas-device="tablet"] .lg\:grid-cols-4,
+  [data-canvas-device="tablet"] .xl\:grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  [data-canvas-device="tablet"] .lg\:flex-row { flex-direction: row !important; }
+
+  [data-canvas-device="tablet"] .lg\:text-5xl,
+  [data-canvas-device="tablet"] .xl\:text-5xl { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+
+  [data-canvas-device="tablet"] .lg\:text-6xl,
+  [data-canvas-device="tablet"] .xl\:text-6xl { font-size: 3rem !important; line-height: 1 !important; }
+
+  [data-canvas-device="tablet"] .lg\:px-8 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+
   @keyframes fadeIn {
     from {
       opacity: 0;

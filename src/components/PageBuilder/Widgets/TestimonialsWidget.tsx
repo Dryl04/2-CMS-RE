@@ -1,3 +1,4 @@
+import React from 'react';
 import { Star } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
@@ -9,11 +10,20 @@ interface TestimonialsWidgetProps {
 export default function TestimonialsWidget({ section }: TestimonialsWidgetProps) {
   const { title, subtitle, testimonials } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-
-  const headingStyle = headingColor ? { color: headingColor } : undefined;
-  const textStyle = textColor ? { color: textColor } : undefined;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   const renderStars = (rating: number) => (
     <div className="flex items-center space-x-1">
@@ -37,12 +47,12 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
           {title || 'What Our Customers Say'}
         </h2>
         {subtitle && (
-          <h2
+          <p
             className="text-lg sm:text-xl font-normal text-base-content/70"
-            style={textStyle}
+            style={subtitleStyle}
           >
             {subtitle}
-          </h2>
+          </p>
         )}
       </div>
 
@@ -143,12 +153,12 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
           {title || 'What Our Customers Say'}
         </h2>
         {subtitle && (
-          <h2
+          <p
             className="text-base sm:text-lg font-normal text-base-content/70"
-            style={textStyle}
+            style={subtitleStyle}
           >
             {subtitle}
-          </h2>
+          </p>
         )}
       </div>
 
@@ -157,7 +167,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
           <div
             key={index}
             className="border-l-4 border-primary pl-4 sm:pl-6 py-2"
-            style={headingColor ? { borderColor: headingColor } : undefined}
+            style={typo.headingColor ? { borderColor: typo.headingColor } : undefined}
           >
             <p
               className="mb-3 italic text-sm sm:text-base text-base-content/70"

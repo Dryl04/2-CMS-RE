@@ -7,8 +7,22 @@ interface NewsletterSignupWidgetProps {
 export default function NewsletterSignupWidget({ section }: NewsletterSignupWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <div className="bg-neutral" style={bg ? { backgroundColor: bg } : undefined}>
@@ -17,17 +31,17 @@ export default function NewsletterSignupWidget({ section }: NewsletterSignupWidg
         paddingBottom: design.spacing.paddingBottom,
       }}>
         {content.subtitle && (
-          <p className="text-sm font-medium tracking-wider uppercase mb-6 text-neutral-content/70" style={{ color: textColor }}>
+          <p className="text-sm font-medium tracking-wider uppercase mb-6 text-neutral-content/70" style={subtitleStyle}>
             {content.subtitle}
           </p>
         )}
 
-        <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight text-neutral-content" style={{ color: headingColor }}>
+        <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight text-neutral-content" style={headingStyle}>
           {content.title || 'Sign up now for exclusive contents.'}
         </h2>
 
         {content.description && (
-          <p className="text-lg mb-12 max-w-3xl mx-auto text-neutral-content/70" style={{ color: textColor }}>
+          <p className="text-lg mb-12 max-w-3xl mx-auto text-neutral-content/70" style={textStyle}>
             {content.description}
           </p>
         )}
@@ -49,7 +63,7 @@ export default function NewsletterSignupWidget({ section }: NewsletterSignupWidg
         </form>
 
         {content.note && (
-          <p className="text-sm mt-6 text-neutral-content/70" style={{ color: textColor }}>
+          <p className="text-sm mt-6 text-neutral-content/70" style={textStyle}>
             {content.note}
           </p>
         )}

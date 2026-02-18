@@ -328,6 +328,215 @@ export function extractTemplateVariables(
           });
         }
         break;
+
+      case "pricing":
+      case "membership-pricing":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.plans", fieldLabel: "Plans tarifaires", fieldType: "array", currentValue: section.content.plans },
+        );
+        break;
+
+      case "stats":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.stats", fieldLabel: "Statistiques", fieldType: "array", currentValue: section.content.stats },
+        );
+        break;
+
+      case "team":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.members", fieldLabel: "Membres de l equipe", fieldType: "array", currentValue: section.content.members },
+        );
+        break;
+
+      case "faq":
+      case "faq-two-columns":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.faqs", fieldLabel: "Questions / Reponses", fieldType: "array", currentValue: section.content.faqs },
+        );
+        break;
+
+      case "logocloud":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.logos", fieldLabel: "Logos partenaires", fieldType: "array", currentValue: section.content.logos },
+        );
+        break;
+
+      case "videohero":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.videoUrl", fieldLabel: "URL de la video", fieldType: "text", currentValue: section.content.videoUrl },
+          { ...baseInfo, fieldPath: "content.thumbnail", fieldLabel: "Vignette", fieldType: "image", currentValue: section.content.thumbnail },
+          { ...baseInfo, fieldPath: "content.ctaText", fieldLabel: "Texte bouton", fieldType: "text", currentValue: section.content.ctaText },
+          { ...baseInfo, fieldPath: "content.ctaLink", fieldLabel: "Lien bouton", fieldType: "text", currentValue: section.content.ctaLink },
+        );
+        break;
+
+      case "gallery":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.items", fieldLabel: "Images", fieldType: "array", currentValue: section.content.items },
+        );
+        break;
+
+      case "timeline":
+      case "timeline-grid":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.events", fieldLabel: "Evenements", fieldType: "array", currentValue: section.content.events },
+        );
+        break;
+
+      case "newsletter":
+      case "newsletter-signup":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.placeholder", fieldLabel: "Placeholder email", fieldType: "text", currentValue: section.content.placeholder },
+          { ...baseInfo, fieldPath: "content.buttonText", fieldLabel: "Texte du bouton", fieldType: "text", currentValue: section.content.buttonText },
+          { ...baseInfo, fieldPath: "content.privacyNote", fieldLabel: "Note confidentialite", fieldType: "text", currentValue: section.content.privacyNote },
+        );
+        break;
+
+      case "process":
+      case "process-steps-cards":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.steps", fieldLabel: "Etapes", fieldType: "array", currentValue: section.content.steps },
+        );
+        break;
+
+      case "services-grid":
+      case "services-cards":
+      case "services-carousel":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.description", fieldLabel: "Description", fieldType: "text", currentValue: section.content.description },
+          { ...baseInfo, fieldPath: "content.services", fieldLabel: "Services", fieldType: "array", currentValue: section.content.services },
+        );
+        break;
+
+      case "contact-split":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.description", fieldLabel: "Description", fieldType: "text", currentValue: section.content.description },
+          { ...baseInfo, fieldPath: "content.phone", fieldLabel: "Telephone", fieldType: "text", currentValue: section.content.phone },
+          { ...baseInfo, fieldPath: "content.address", fieldLabel: "Adresse", fieldType: "text", currentValue: section.content.address },
+          { ...baseInfo, fieldPath: "content.email", fieldLabel: "Email", fieldType: "text", currentValue: section.content.email },
+          { ...baseInfo, fieldPath: "content.formTitle", fieldLabel: "Titre du formulaire", fieldType: "text", currentValue: section.content.formTitle },
+          { ...baseInfo, fieldPath: "content.buttonText", fieldLabel: "Texte du bouton", fieldType: "text", currentValue: section.content.buttonText },
+        );
+        break;
+
+      case "feedback-contact":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.description", fieldLabel: "Description", fieldType: "text", currentValue: section.content.description },
+          { ...baseInfo, fieldPath: "content.formTitle", fieldLabel: "Titre du formulaire", fieldType: "text", currentValue: section.content.formTitle },
+          { ...baseInfo, fieldPath: "content.buttonText", fieldLabel: "Texte du bouton", fieldType: "text", currentValue: section.content.buttonText },
+        );
+        break;
+
+      case "editorial-cards-row":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.ctaText", fieldLabel: "Texte voir tout", fieldType: "text", currentValue: section.content.ctaText },
+          { ...baseInfo, fieldPath: "content.ctaLink", fieldLabel: "Lien voir tout", fieldType: "text", currentValue: section.content.ctaLink },
+          { ...baseInfo, fieldPath: "content.cards", fieldLabel: "Cartes editoriales", fieldType: "array", currentValue: section.content.cards },
+        );
+        break;
+
+      case "minimal-final-cta":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.primaryText", fieldLabel: "Texte bouton principal", fieldType: "text", currentValue: section.content.primaryText },
+          { ...baseInfo, fieldPath: "content.primaryLink", fieldLabel: "Lien bouton principal", fieldType: "text", currentValue: section.content.primaryLink },
+          { ...baseInfo, fieldPath: "content.secondaryText", fieldLabel: "Texte bouton secondaire", fieldType: "text", currentValue: section.content.secondaryText },
+          { ...baseInfo, fieldPath: "content.secondaryLink", fieldLabel: "Lien bouton secondaire", fieldType: "text", currentValue: section.content.secondaryLink },
+        );
+        break;
+
+      case "cinematic-footer":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.brand", fieldLabel: "Nom de marque", fieldType: "text", currentValue: section.content.brand },
+          { ...baseInfo, fieldPath: "content.copyright", fieldLabel: "Copyright", fieldType: "text", currentValue: section.content.copyright },
+          { ...baseInfo, fieldPath: "content.socials", fieldLabel: "Reseaux sociaux", fieldType: "array", currentValue: section.content.socials },
+          { ...baseInfo, fieldPath: "content.columns", fieldLabel: "Colonnes de liens", fieldType: "array", currentValue: section.content.columns },
+        );
+        break;
+
+      case "simple-centered-hero":
+      case "brand-identity-hero":
+      case "hero-with-services":
+      case "hero-with-testimonials":
+      case "creative-network-hero":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre principal", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.description", fieldLabel: "Description", fieldType: "text", currentValue: section.content.description },
+          { ...baseInfo, fieldPath: "content.ctaText", fieldLabel: "Texte bouton", fieldType: "text", currentValue: section.content.ctaText },
+          { ...baseInfo, fieldPath: "content.ctaLink", fieldLabel: "Lien bouton", fieldType: "text", currentValue: section.content.ctaLink },
+        );
+        break;
+
+      case "clickfunnels-hero":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre ligne 1", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Titre ligne 2", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.tagline", fieldLabel: "Tagline", fieldType: "text", currentValue: section.content.tagline },
+          { ...baseInfo, fieldPath: "content.buttonText", fieldLabel: "Texte du bouton", fieldType: "text", currentValue: section.content.buttonText },
+          { ...baseInfo, fieldPath: "content.inputPlaceholder", fieldLabel: "Placeholder email", fieldType: "text", currentValue: section.content.inputPlaceholder },
+        );
+        break;
+
+      case "bento-features":
+      case "features-carousel":
+        variables.push(
+          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
+          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
+          { ...baseInfo, fieldPath: "content.features", fieldLabel: "Fonctionnalites", fieldType: "array", currentValue: section.content.features },
+        );
+        break;
+
+      default:
+        Object.keys(section.content).forEach((key) => {
+          const value = section.content[key];
+          if (typeof value === "string") {
+            variables.push({
+              ...baseInfo,
+              fieldPath: `content.${key}`,
+              fieldLabel: key,
+              fieldType: "text",
+              currentValue: value,
+            });
+          } else if (Array.isArray(value)) {
+            variables.push({
+              ...baseInfo,
+              fieldPath: `content.${key}`,
+              fieldLabel: key,
+              fieldType: "array",
+              currentValue: value,
+            });
+          }
+        });
+        break;
     }
   });
 
@@ -426,10 +635,28 @@ export function applyDataToTemplate(
       const value = sectionData[key];
       const pathParts = key.split(".");
 
-      if (pathParts[0] === "content") {
-        updatedSection.content = {
-          ...updatedSection.content,
-          [pathParts[1]]: value,
+      if (pathParts[0] === "content" && pathParts.length >= 2) {
+        if (pathParts.length === 2) {
+          updatedSection.content = {
+            ...updatedSection.content,
+            [pathParts[1]]: value,
+          };
+        } else if (pathParts.length === 3) {
+          updatedSection.content = {
+            ...updatedSection.content,
+            [pathParts[1]]: {
+              ...(updatedSection.content[pathParts[1]] || {}),
+              [pathParts[2]]: value,
+            },
+          };
+        }
+      } else if (pathParts[0] === "design" && pathParts.length === 3) {
+        updatedSection.design = {
+          ...updatedSection.design,
+          [pathParts[1]]: {
+            ...(updatedSection.design[pathParts[1] as keyof typeof updatedSection.design] as Record<string, any> || {}),
+            [pathParts[2]]: value,
+          },
         };
       }
     });

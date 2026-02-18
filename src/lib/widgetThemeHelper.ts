@@ -1,6 +1,38 @@
 import { PageBuilderSection } from "./pageBuilderTypes";
 import { widgetLibrary } from "./widgetLibrary";
 
+function hexToLinear(c: number): number {
+  const v = c / 255;
+  return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+}
+
+function hexToOklchValue(hex: string): string {
+  const clean = hex.replace('#', '');
+  if (clean.length !== 6) return hex;
+  const r = hexToLinear(parseInt(clean.slice(0, 2), 16));
+  const g = hexToLinear(parseInt(clean.slice(2, 4), 16));
+  const b = hexToLinear(parseInt(clean.slice(4, 6), 16));
+  const l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+  const m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+  const s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+  const l_ = Math.cbrt(l);
+  const m_ = Math.cbrt(m);
+  const s_ = Math.cbrt(s);
+  const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+  const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+  const bVal = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+  const C = Math.sqrt(a * a + bVal * bVal);
+  let H = (Math.atan2(bVal, a) * 180) / Math.PI;
+  if (H < 0) H += 360;
+  return `${Math.round(L * 10000) / 100}% ${Math.round(C * 10000) / 10000} ${Math.round(H * 100) / 100}`;
+}
+
+function toOklchToken(value: string): string {
+  if (!value) return value;
+  const trimmed = value.trim();
+  return trimmed.startsWith('#') ? hexToOklchValue(trimmed) : trimmed;
+}
+
 const COLOR_OVERRIDE_KEYS = [
   "primary",
   "secondary",
@@ -12,7 +44,7 @@ const COLOR_OVERRIDE_KEYS = [
   "iconColor",
 ] as const;
 
-const TYPOGRAPHY_COLOR_KEYS = ["headingColor", "textColor"] as const;
+const TYPOGRAPHY_COLOR_KEYS = ["headingColor", "h1Color", "h2Color", "textColor"] as const;
 
 function normalizeColorValue(value?: string) {
   return value?.trim().toLowerCase();
@@ -120,25 +152,87 @@ export function getWidgetThemeProps(section: PageBuilderSection) {
   const customStyles: Record<string, string> = {};
   if (themeConfig?.themeMode === "custom" && themeConfig.customTokens) {
     const t = themeConfig.customTokens;
-    if (t["primary"]) customStyles["--p"] = t["primary"];
-    if (t["primary-content"]) customStyles["--pc"] = t["primary-content"];
-    if (t["secondary"]) customStyles["--s"] = t["secondary"];
-    if (t["secondary-content"]) customStyles["--sc"] = t["secondary-content"];
-    if (t["accent"]) customStyles["--a"] = t["accent"];
-    if (t["accent-content"]) customStyles["--ac"] = t["accent-content"];
-    if (t["neutral"]) customStyles["--n"] = t["neutral"];
-    if (t["neutral-content"]) customStyles["--nc"] = t["neutral-content"];
-    if (t["base-100"]) customStyles["--b1"] = t["base-100"];
-    if (t["base-200"]) customStyles["--b2"] = t["base-200"];
-    if (t["base-300"]) customStyles["--b3"] = t["base-300"];
-    if (t["base-content"]) customStyles["--bc"] = t["base-content"];
-    if (t["info"]) customStyles["--in"] = t["info"];
-    if (t["success"]) customStyles["--su"] = t["success"];
-    if (t["warning"]) customStyles["--wa"] = t["warning"];
-    if (t["error"]) customStyles["--er"] = t["error"];
+    if (t["primary"]) customStyles["--p"] = toOklchToken(t["primary"]);
+    if (t["primary-content"]) customStyles["--pc"] = toOklchToken(t["primary-content"]);
+    if (t["secondary"]) customStyles["--s"] = toOklchToken(t["secondary"]);
+    if (t["secondary-content"]) customStyles["--sc"] = toOklchToken(t["secondary-content"]);
+    if (t["accent"]) customStyles["--a"] = toOklchToken(t["accent"]);
+    if (t["accent-content"]) customStyles["--ac"] = toOklchToken(t["accent-content"]);
+    if (t["neutral"]) customStyles["--n"] = toOklchToken(t["neutral"]);
+    if (t["neutral-content"]) customStyles["--nc"] = toOklchToken(t["neutral-content"]);
+    if (t["base-100"]) customStyles["--b1"] = toOklchToken(t["base-100"]);
+    if (t["base-200"]) customStyles["--b2"] = toOklchToken(t["base-200"]);
+    if (t["base-300"]) customStyles["--b3"] = toOklchToken(t["base-300"]);
+    if (t["base-content"]) customStyles["--bc"] = toOklchToken(t["base-content"]);
+    if (t["info"]) customStyles["--in"] = toOklchToken(t["info"]);
+    if (t["success"]) customStyles["--su"] = toOklchToken(t["success"]);
+    if (t["warning"]) customStyles["--wa"] = toOklchToken(t["warning"]);
+    if (t["error"]) customStyles["--er"] = toOklchToken(t["error"]);
   }
 
   return { dataTheme, customStyles };
+}
+
+export function getWidgetWrapperProps(section: PageBuilderSection) {
+  const normalizedSection = normalizeSectionForTheme(section);
+  const widgetTheme = getWidgetThemeProps(normalizedSection);
+  const buttonRadius = getWidgetButtonRadius(normalizedSection);
+  const buttonSizeVars = getWidgetButtonSizeVars(normalizedSection);
+
+  const typo = normalizedSection.design?.typography || {};
+  const colors = normalizedSection.design?.colors || {};
+
+  const hasHeadingColor = !!typo.headingColor;
+  const hasH1Color = !!typo.h1Color;
+  const hasH2Color = !!typo.h2Color;
+  const hasTextColor = !!typo.textColor;
+  const hasLinkColor = !!(typo.linkColor || colors.accent);
+  const hasBtnBg = !!colors.buttonBackground;
+
+  const className = [
+    'widget-design-scope',
+    'text-base-content',
+    'bg-base-100',
+    hasHeadingColor ? 'wds-heading-color' : '',
+    hasH1Color ? 'wds-h1-color' : '',
+    hasH2Color ? 'wds-h2-color' : '',
+    hasTextColor ? 'wds-text-color' : '',
+    hasLinkColor ? 'wds-link-color' : '',
+    hasBtnBg ? 'wds-btn-bg' : '',
+  ].filter(Boolean).join(' ');
+
+  const style: Record<string, string | undefined> = {
+    backgroundColor:
+      normalizedSection.design.background.type === 'color' && normalizedSection.design.background.value
+        ? normalizedSection.design.background.value
+        : undefined,
+    paddingTop: normalizedSection.design.spacing.paddingTop,
+    paddingBottom: normalizedSection.design.spacing.paddingBottom,
+    marginTop: normalizedSection.design.spacing.marginTop,
+    marginBottom: normalizedSection.design.spacing.marginBottom,
+    ...(typo.headingColor ? { '--widget-heading-color': typo.headingColor } : {}),
+    ...(typo.h1Color ? { '--widget-h1-color': typo.h1Color } : {}),
+    ...(typo.h2Color ? { '--widget-h2-color': typo.h2Color } : {}),
+    ...(typo.subtitleColor ? { '--widget-subtitle-color': typo.subtitleColor } : {}),
+    ...(typo.textColor ? { '--widget-text-color': typo.textColor } : {}),
+    ...(typo.linkColor ? { '--widget-link-color': typo.linkColor } : {}),
+    ...(colors.buttonBackground ? { '--widget-btn-bg': colors.buttonBackground } : {}),
+    ...(colors.buttonText ? { '--widget-btn-text': colors.buttonText } : {}),
+    ...(colors.buttonBackgroundHover ? { '--widget-btn-bg-hover': colors.buttonBackgroundHover } : {}),
+    ...(colors.accent ? { '--widget-accent-color': colors.accent } : {}),
+    ...(colors.iconBackground ? { '--widget-icon-bg': colors.iconBackground } : {}),
+    ...(colors.iconColor ? { '--widget-icon-color': colors.iconColor } : {}),
+    '--widget-btn-radius': buttonRadius,
+    ...buttonSizeVars,
+    ...widgetTheme.customStyles,
+  };
+
+  return {
+    normalizedSection,
+    className,
+    dataTheme: widgetTheme.dataTheme,
+    style,
+  };
 }
 
 export function getOverrideStyle(section: PageBuilderSection) {

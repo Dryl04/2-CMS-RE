@@ -14,8 +14,23 @@ const iconMap: { [key: string]: any } = {
 export default function ServicesCardsWidget({ section }: ServicesCardsWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
@@ -27,21 +42,21 @@ export default function ServicesCardsWidget({ section }: ServicesCardsWidgetProp
           {content.subtitle && (
             <p
               className="text-sm font-medium tracking-wider uppercase mb-4 text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={subtitleStyle}
             >
               {content.subtitle}
             </p>
           )}
           <h2
             className="text-4xl md:text-5xl font-bold mb-6 text-base-content"
-            style={headingColor ? { color: headingColor } : undefined}
+            style={headingStyle}
           >
             {content.title || 'Registration and Management Assistance'}
           </h2>
           {content.description && (
             <p
               className="text-lg max-w-3xl mx-auto text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={textStyle}
             >
               {content.description}
             </p>
@@ -79,20 +94,20 @@ export default function ServicesCardsWidget({ section }: ServicesCardsWidgetProp
                 <div className="p-8 pt-12 text-center">
                   <h3
                     className="text-2xl font-bold mb-4 text-base-content"
-                    style={headingColor ? { color: headingColor } : undefined}
+                    style={headingStyle}
                   >
                     {service.title}
                   </h3>
                   <p
                     className="text-base leading-relaxed mb-6 text-base-content/70"
-                    style={textColor ? { color: textColor } : undefined}
+                    style={textStyle}
                   >
                     {service.description}
                   </p>
                   <a
                     href={service.link || '#'}
                     className="inline-flex items-center space-x-2 font-bold uppercase tracking-wider hover:underline transition text-sm text-base-content"
-                    style={headingColor ? { color: headingColor } : undefined}
+                    style={{ ...headingStyle, ...linkStyle }}
                   >
                     <span>{service.linkText || 'LEARN MORE'}</span>
                   </a>

@@ -15,8 +15,22 @@ const iconMap: { [key: string]: any } = {
 export default function HeroWithServicesWidget({ section }: HeroWithServicesWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+  const typo = design.typography || {};
+  const headingStyle = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
@@ -24,41 +38,41 @@ export default function HeroWithServicesWidget({ section }: HeroWithServicesWidg
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
       }}>
-        <div className="grid lg:grid-cols-2 gap-12">
-          <div className="space-y-8">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+          <div className="space-y-6 sm:space-y-8">
             {content.subtitle && (
               <p
                 className="text-sm font-medium tracking-wider uppercase text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={subtitleStyle}
               >
                 {content.subtitle}
               </p>
             )}
             <h1
-              className="text-5xl md:text-6xl font-bold leading-tight text-base-content"
-              style={headingColor ? { color: headingColor } : undefined}
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-base-content"
+              style={headingStyle}
             >
               {content.title || 'Website Performance and Speed Optimization Techniques'}
             </h1>
             {content.description && (
               <p
-                className="text-lg leading-relaxed text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                className="text-base sm:text-lg leading-relaxed text-base-content/70"
+                style={textStyle}
               >
                 {content.description}
               </p>
             )}
 
-            <div className="flex items-center space-x-6">
+            <div className="flex flex-wrap items-center gap-4">
               {content.ctaText && (
-                <button className="btn btn-primary px-8">
+                <button className="btn btn-primary px-6 sm:px-8">
                   {content.ctaText}
                 </button>
               )}
               {content.phone && (
                 <span
-                  className="text-2xl font-bold text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  className="text-lg sm:text-2xl font-bold text-base-content"
+                  style={headingStyle}
                 >
                   {content.phone}
                 </span>
@@ -67,25 +81,25 @@ export default function HeroWithServicesWidget({ section }: HeroWithServicesWidg
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-16 pt-16 border-t border-base-content/10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mt-12 sm:mt-16 pt-12 sm:pt-16 border-t border-base-content/10">
           {content.services?.map((service: any, index: number) => {
             const IconComponent = iconMap[service.icon] || Layers;
             return (
-              <div key={index} className="space-y-4">
+              <div key={index} className="space-y-3 sm:space-y-4">
                 <IconComponent
-                  className="w-12 h-12 text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  className="w-10 h-10 sm:w-12 sm:h-12 text-base-content"
+                  style={headingStyle}
                 />
                 <h3
-                  className="text-xl font-bold text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  className="text-lg sm:text-xl font-bold text-base-content"
+                  style={headingStyle}
                 >
                   {service.title}
                 </h3>
                 {service.description && (
                   <p
                     className="text-sm text-base-content/70"
-                    style={textColor ? { color: textColor } : undefined}
+                    style={textStyle}
                   >
                     {service.description}
                   </p>

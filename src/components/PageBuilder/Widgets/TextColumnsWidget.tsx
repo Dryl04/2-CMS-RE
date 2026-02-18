@@ -1,3 +1,4 @@
+import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
 interface TextColumnsWidgetProps {
@@ -6,9 +7,21 @@ interface TextColumnsWidgetProps {
 
 export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
   const { content, design } = section;
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
 
   const intro = content.introduction || content.title || 'Maximize your website\'s impact with premium content sections.';
   const ctaText = content.ctaText || 'Learn More';
@@ -40,11 +53,11 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
       <div className="md:col-span-1 space-y-6">
         <h2
           className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {intro}
         </h2>
-        <a href={ctaLink} className="btn btn-primary btn-sm rounded-full">
+        <a href={ctaLink} className="btn btn-primary btn-sm rounded-full" style={linkStyle}>
           {ctaText}
         </a>
       </div>
@@ -54,7 +67,7 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
           <p
             key={index}
             className="text-sm sm:text-base leading-relaxed text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {column}
           </p>
@@ -68,7 +81,7 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
       <div className="max-w-4xl">
         <h2
           className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {intro}
         </h2>
@@ -79,14 +92,14 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
           <p
             key={index}
             className="text-sm sm:text-base leading-relaxed text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {column}
           </p>
         ))}
       </div>
 
-      <a href={ctaLink} className="btn btn-primary btn-sm rounded-full">
+      <a href={ctaLink} className="btn btn-primary btn-sm rounded-full" style={linkStyle}>
         {ctaText}
       </a>
     </div>
@@ -96,7 +109,7 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
     <div className="max-w-5xl mx-auto text-center space-y-8">
       <h2
         className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-base-content"
-        style={headingColor ? { color: headingColor } : undefined}
+        style={headingStyle}
       >
         {intro}
       </h2>
@@ -106,14 +119,14 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
           <p
             key={index}
             className="text-sm sm:text-base leading-relaxed text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {column}
           </p>
         ))}
       </div>
 
-      <a href={ctaLink} className="btn btn-primary btn-sm rounded-full">
+      <a href={ctaLink} className="btn btn-primary btn-sm rounded-full" style={linkStyle}>
         {ctaText}
       </a>
     </div>

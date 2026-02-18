@@ -1,3 +1,4 @@
+import React from 'react';
 import { Calendar, CheckCircle } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
@@ -9,9 +10,22 @@ interface TimelineWidgetProps {
 export default function TimelineWidget({ section }: TimelineWidgetProps) {
   const { title, subtitle, events } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const accentColor = section.design?.colors?.accent;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
+  const accentColor = design.colors?.accent;
 
   const defaultEvents = [
     {
@@ -51,13 +65,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Our Journey'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Milestones that shaped our story'}
         </p>
@@ -65,7 +79,7 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
 
       <div className="relative">
         <div
-          className="absolute left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-primary/20"
+          className="absolute left-6 sm:left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-primary/20"
           style={accentColor ? { backgroundColor: `${accentColor}40` } : undefined}
         />
 
@@ -77,7 +91,7 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
                 index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
               }`}
             >
-              <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'} pl-20 md:pl-0`}>
+              <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'} pl-14 sm:pl-20 md:pl-0`}>
                 <div
                   className="inline-block px-4 py-1 rounded-full text-sm font-bold mb-2 bg-primary/20 text-primary"
                   style={accentColor ? { backgroundColor: `${accentColor}20`, color: accentColor } : undefined}
@@ -86,19 +100,19 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
                 </div>
                 <h3
                   className="text-2xl font-bold mb-2 text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  style={headingStyle}
                 >
                   {event.title}
                 </h3>
                 <p
                   className="text-base-content/70"
-                  style={textColor ? { color: textColor } : undefined}
+                  style={textStyle}
                 >
                   {event.description}
                 </p>
               </div>
 
-              <div className="absolute left-8 md:left-1/2 transform md:-translate-x-1/2">
+              <div className="absolute left-6 sm:left-8 md:left-1/2 transform md:-translate-x-1/2">
                 <div
                   className="w-4 h-4 rounded-full border-4 border-base-100 bg-primary"
                   style={accentColor ? { backgroundColor: accentColor } : undefined}
@@ -126,13 +140,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
       <div className="text-center mb-6 md:mb-8 lg:mb-12">
         <h2
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Timeline'}
         </h2>
         <p
           className="text-base sm:text-lg md:text-xl text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Our story over the years'}
         </p>
@@ -162,13 +176,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
                 </div>
                 <h3
                   className="text-lg sm:text-xl font-bold mb-1.5 sm:mb-2 text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  style={headingStyle}
                 >
                   {event.title}
                 </h3>
                 <p
                   className="text-xs sm:text-sm text-base-content/70"
-                  style={textColor ? { color: textColor } : undefined}
+                  style={textStyle}
                 >
                   {event.description}
                 </p>
@@ -185,13 +199,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Our Evolution'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Key moments in our history'}
         </p>
@@ -225,13 +239,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
               </div>
               <h3
                 className="text-xl font-bold mb-2 text-base-content"
-                style={headingColor ? { color: headingColor } : undefined}
+                style={headingStyle}
               >
                 {event.title}
               </h3>
               <p
                 className="text-sm text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {event.description}
               </p>
@@ -247,13 +261,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'History'}
         </h2>
         <p
           className="text-lg text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Our journey so far'}
         </p>
@@ -281,13 +295,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
               </div>
               <h3
                 className="text-2xl font-bold mb-2 text-base-content"
-                style={headingColor ? { color: headingColor } : undefined}
+                style={headingStyle}
               >
                 {event.title}
               </h3>
               <p
                 className="text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {event.description}
               </p>

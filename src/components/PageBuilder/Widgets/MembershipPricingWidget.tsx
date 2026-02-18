@@ -14,8 +14,20 @@ const iconMap: { [key: string]: any } = {
 export default function MembershipPricingWidget({ section }: MembershipPricingWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
@@ -27,28 +39,28 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
           {content.subtitle && (
             <p
               className="text-sm font-medium tracking-wider uppercase mb-4 text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={subtitleStyle}
             >
               {content.subtitle}
             </p>
           )}
           <h2
-            className="text-4xl md:text-5xl font-bold mb-6 text-base-content"
-            style={headingColor ? { color: headingColor } : undefined}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-base-content"
+            style={headingStyle}
           >
             {content.title}
           </h2>
           {content.description && (
             <p
               className="text-lg max-w-3xl mx-auto text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={textStyle}
             >
               {content.description}
             </p>
           )}
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
           {content.plans?.map((plan: any, index: number) => {
             const IconComponent = iconMap[plan.icon] || Layers;
             const isFeatured = plan.featured || false;
@@ -56,7 +68,7 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
             return (
               <div
                 key={index}
-                className={`rounded-2xl p-8 shadow-lg transition-transform hover:scale-105 ${
+                className={`rounded-2xl p-6 sm:p-8 shadow-lg transition-transform hover:scale-105 ${
                   isFeatured ? 'bg-neutral text-neutral-content' : 'bg-base-100'
                 }`}
               >
@@ -68,13 +80,13 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                   </div>
                   <h3
                     className={`text-2xl font-bold mb-2 text-center ${isFeatured ? '' : 'text-base-content'}`}
-                    style={!isFeatured && headingColor ? { color: headingColor } : undefined}
+                    style={!isFeatured ? headingStyle : undefined}
                   >
                     {plan.name}
                   </h3>
                   <p
                     className={`text-sm text-center ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`}
-                    style={!isFeatured && textColor ? { color: textColor } : undefined}
+                    style={!isFeatured ? subtitleStyle : undefined}
                   >
                     {plan.subtitle || 'Suitable for Beginners'}
                   </p>
@@ -89,16 +101,16 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                       <div key={fIndex} className="flex items-center space-x-3">
                         {isIncluded ? (
                           <Check className={`w-5 h-5 flex-shrink-0 ${isFeatured ? '' : 'text-base-content'}`}
-                            style={!isFeatured && headingColor ? { color: headingColor } : undefined}
+                            style={!isFeatured ? headingStyle : undefined}
                           />
                         ) : (
                           <Minus className={`w-5 h-5 flex-shrink-0 ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`}
-                            style={!isFeatured && textColor ? { color: textColor } : undefined}
+                            style={!isFeatured ? textStyle : undefined}
                           />
                         )}
                         <span
                           className={`text-sm ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`}
-                          style={!isFeatured && textColor ? { color: textColor } : undefined}
+                          style={!isFeatured ? textStyle : undefined}
                         >
                           {typeof feature === 'string' ? feature : feature.text}
                         </span>
@@ -111,13 +123,13 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                   <div className="flex items-baseline justify-center">
                     <span
                       className={`text-5xl font-bold ${isFeatured ? '' : 'text-base-content'}`}
-                      style={!isFeatured && headingColor ? { color: headingColor } : undefined}
+                      style={!isFeatured ? headingStyle : undefined}
                     >
                       {plan.price}
                     </span>
                     <span
                       className={`text-sm ml-2 ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`}
-                      style={!isFeatured && textColor ? { color: textColor } : undefined}
+                      style={!isFeatured ? textStyle : undefined}
                     >
                       {plan.period || '/PER MONTH'}
                     </span>
@@ -136,7 +148,7 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
 
                 {plan.guarantee && (
                   <p className={`text-xs text-center mt-4 ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`}
-                    style={!isFeatured && textColor ? { color: textColor } : undefined}
+                    style={!isFeatured ? textStyle : undefined}
                   >
                     {plan.guarantee}
                   </p>

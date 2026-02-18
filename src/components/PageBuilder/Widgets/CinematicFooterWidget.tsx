@@ -34,6 +34,20 @@ export default function CinematicFooterWidget({ section }: CinematicFooterWidget
   const columns = (content.columns || []) as FooterColumn[];
   const socials = (content.socials || []) as SocialItem[];
 
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
   return (
     <footer className="relative bg-base-300 text-base-content overflow-hidden">
       {content.backgroundImage && (
@@ -47,15 +61,15 @@ export default function CinematicFooterWidget({ section }: CinematicFooterWidget
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
-            <p className="text-xl font-semibold text-neutral-content">{content.brand || 'FLORA'}</p>
-            <p className="text-xs text-neutral-content/80 mt-1">{content.copyright || 'Copyright © 2026'}</p>
+            <p className="text-xl font-semibold text-neutral-content" style={headingStyle}>{content.brand || 'FLORA'}</p>
+            <p className="text-xs text-neutral-content/80 mt-1" style={textStyle}>{content.copyright || 'Copyright © 2026'}</p>
           </div>
           <div className="flex items-center gap-3">
             {socials.map((social: SocialItem, index: number) => {
               const platformKey = social.platform || 'facebook';
               const Icon = socialIconMap[platformKey] || Facebook;
               return (
-                <a key={index} href={social.url || '#'} className="text-neutral-content/80 hover:text-neutral-content transition-colors">
+                <a key={index} href={social.url || '#'} className="text-neutral-content/80 hover:text-neutral-content transition-colors" style={linkStyle}>
                   <Icon className="w-4 h-4" />
                 </a>
               );
@@ -66,11 +80,11 @@ export default function CinematicFooterWidget({ section }: CinematicFooterWidget
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {columns.map((column: FooterColumn, index: number) => (
             <div key={index}>
-              <h3 className="font-semibold text-neutral-content mb-3">{column.title}</h3>
+              <h3 className="font-semibold text-neutral-content mb-3" style={headingStyle}>{column.title}</h3>
               <ul className="space-y-2 text-sm">
                 {(column.links || []).map((link: FooterLink, linkIndex: number) => (
                   <li key={linkIndex}>
-                    <a href={link.url || '#'} className="text-neutral-content/80 hover:text-neutral-content transition-colors">
+                    <a href={link.url || '#'} className="text-neutral-content/80 hover:text-neutral-content transition-colors" style={linkStyle}>
                       {link.label}
                     </a>
                   </li>

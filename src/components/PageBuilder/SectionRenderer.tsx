@@ -3,7 +3,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Trash2, Copy, Edit3 } from 'lucide-react';
 import { PageBuilderSection } from '../../lib/pageBuilderTypes';
-import { getWidgetButtonRadius, getWidgetButtonSizeVars, getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
+import { getWidgetWrapperProps } from '../../lib/widgetThemeHelper';
 import HeaderWidget from './Widgets/HeaderWidget';
 import HeroWidget from './Widgets/HeroWidget';
 import ClickFunnelsHero from './Widgets/ClickFunnelsHero';
@@ -76,6 +76,7 @@ interface SectionRendererProps {
   onDuplicate?: () => void;
   onUpdate?: (updates: Partial<PageBuilderSection>) => void;
   previewMode?: boolean;
+  canvasThemeSlug?: string | null;
 }
 
 export default function SectionRenderer({
@@ -86,6 +87,7 @@ export default function SectionRenderer({
   onDuplicate = () => { },
   onUpdate = () => { },
   previewMode = false,
+  canvasThemeSlug,
 }: SectionRendererProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
@@ -97,10 +99,7 @@ export default function SectionRenderer({
     transition,
   };
 
-  const normalizedSection = normalizeSectionForTheme(section);
-  const widgetTheme = getWidgetThemeProps(normalizedSection);
-  const buttonRadius = getWidgetButtonRadius(normalizedSection);
-  const buttonSizeVars = getWidgetButtonSizeVars(normalizedSection);
+  const { normalizedSection, className: wrapperClassName, dataTheme, style: wrapperStyle } = getWidgetWrapperProps(section);
 
   const renderWidget = () => {
     const props = {
@@ -317,29 +316,9 @@ export default function SectionRenderer({
       >
 
         <div
-          className="widget-design-scope"
-          data-theme={widgetTheme.dataTheme}
-          style={{
-            backgroundColor:
-              normalizedSection.design.background.type === 'color' && normalizedSection.design.background.value
-                ? normalizedSection.design.background.value
-                : undefined,
-            paddingTop: normalizedSection.design.spacing.paddingTop,
-            paddingBottom: normalizedSection.design.spacing.paddingBottom,
-            marginTop: normalizedSection.design.spacing.marginTop,
-            marginBottom: normalizedSection.design.spacing.marginBottom,
-            '--widget-heading-color': normalizedSection.design.typography?.headingColor || '',
-            '--widget-text-color': normalizedSection.design.typography?.textColor || '',
-            '--widget-btn-bg': normalizedSection.design.colors?.buttonBackground || '',
-            '--widget-btn-text': normalizedSection.design.colors?.buttonText || '',
-            '--widget-btn-bg-hover': normalizedSection.design.colors?.buttonBackgroundHover || '',
-            '--widget-accent-color': normalizedSection.design.colors?.accent || '',
-            '--widget-icon-bg': normalizedSection.design.colors?.iconBackground || '',
-            '--widget-icon-color': normalizedSection.design.colors?.iconColor || '',
-            '--widget-btn-radius': buttonRadius,
-            ...buttonSizeVars,
-            ...widgetTheme.customStyles,
-          }}
+          className={wrapperClassName}
+          data-theme={dataTheme || canvasThemeSlug || undefined}
+          style={wrapperStyle as React.CSSProperties}
         >
           {renderWidget()}
         </div>

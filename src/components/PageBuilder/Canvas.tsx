@@ -23,6 +23,7 @@ interface CanvasProps {
   onDeleteSection: (id: string) => void;
   onDuplicateSection: (id: string) => void;
   onReorder: (oldIndex: number, newIndex: number) => void;
+  canvasThemeSlug?: string | null;
 }
 
 export default function Canvas({
@@ -33,6 +34,7 @@ export default function Canvas({
   onDeleteSection,
   onDuplicateSection,
   onReorder,
+  canvasThemeSlug,
 }: CanvasProps) {
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -100,6 +102,7 @@ export default function Canvas({
               onDelete={() => onDeleteSection(section.id)}
               onDuplicate={() => onDuplicateSection(section.id)}
               onUpdate={(updates) => onUpdateSection(section.id, updates)}
+              canvasThemeSlug={canvasThemeSlug}
             />
           ))}
         </div>

@@ -8,8 +8,20 @@ interface ImageStatsFAQWidgetProps {
 export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
@@ -17,7 +29,7 @@ export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProp
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
       }}>
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div className="relative">
             <div className="relative">
               {content.image && (
@@ -37,7 +49,7 @@ export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProp
                         d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
                         fill="none"
                       />
-                      <text className="text-xs font-medium fill-base-content" style={headingColor ? { fill: headingColor } : undefined}>
+                      <text className="text-xs font-medium fill-base-content">
                         <textPath href="#circlePath" startOffset="0%">
                           {content.badge}
                         </textPath>
@@ -51,16 +63,16 @@ export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProp
               )}
 
               {content.stats && content.stats.length > 0 && (
-                <div className="absolute -bottom-8 left-0 right-0 flex justify-center space-x-4">
+                <div className="relative sm:absolute sm:-bottom-8 left-0 right-0 flex flex-wrap justify-center gap-3 sm:gap-4 mt-4 sm:mt-0">
                   {content.stats.map((stat: any, index: number) => (
                     <div
                       key={index}
-                      className="bg-neutral text-neutral-content p-6 rounded-lg min-w-[200px]"
+                      className="bg-neutral text-neutral-content p-4 sm:p-6 rounded-lg flex-1 min-w-[140px] sm:min-w-[180px] max-w-[220px]"
                     >
-                      <p className="text-sm font-medium mb-2">{stat.label}</p>
-                      <p className="text-4xl font-bold">{stat.value}</p>
+                      <p className="text-xs sm:text-sm font-medium mb-1 sm:mb-2">{stat.label}</p>
+                      <p className="text-2xl sm:text-4xl font-bold">{stat.value}</p>
                       {stat.subtitle && (
-                        <p className="text-xs mt-2 uppercase tracking-wider">{stat.subtitle}</p>
+                        <p className="text-xs mt-1 sm:mt-2 uppercase tracking-wider">{stat.subtitle}</p>
                       )}
                     </div>
                   ))}
@@ -73,14 +85,14 @@ export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProp
             {content.subtitle && (
               <p
                 className="text-sm font-medium tracking-wider uppercase text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={subtitleStyle}
               >
                 {content.subtitle}
               </p>
             )}
             <h2
-              className="text-4xl md:text-5xl font-bold leading-tight text-base-content"
-              style={headingColor ? { color: headingColor } : undefined}
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-base-content"
+              style={headingStyle}
             >
               {content.title || 'Unique sites give users smooth journeys.'}
             </h2>
@@ -92,7 +104,7 @@ export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProp
                     <div className="flex-1">
                       <h3
                         className="text-lg font-bold mb-2 flex items-start text-base-content"
-                        style={headingColor ? { color: headingColor } : undefined}
+                        style={headingStyle}
                       >
                         <span className="mr-2">{faq.prefix || '\u2014'}</span>
                         <span>{faq.question}</span>
@@ -100,7 +112,7 @@ export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProp
                       {faq.answer && (
                         <p
                           className="text-base ml-6 text-base-content/70"
-                          style={textColor ? { color: textColor } : undefined}
+                          style={textStyle}
                         >
                           {faq.answer}
                         </p>
@@ -109,7 +121,7 @@ export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProp
                     {faq.expandable !== false && (
                       <button
                         className="ml-4 w-6 h-6 flex items-center justify-center text-base-content"
-                        style={headingColor ? { color: headingColor } : undefined}
+                        style={headingStyle}
                       >
                         <Plus className="w-5 h-5" />
                       </button>

@@ -1,5 +1,47 @@
 import { supabase } from './supabase';
 
+function hexToLinear(c: number): number {
+  const v = c / 255;
+  return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+}
+
+function hexToOklch(hex: string): string {
+  const clean = hex.replace('#', '');
+  if (clean.length !== 6) return hex;
+  const r = hexToLinear(parseInt(clean.slice(0, 2), 16));
+  const g = hexToLinear(parseInt(clean.slice(2, 4), 16));
+  const b = hexToLinear(parseInt(clean.slice(4, 6), 16));
+
+  const l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+  const m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+  const s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+
+  const l_ = Math.cbrt(l);
+  const m_ = Math.cbrt(m);
+  const s_ = Math.cbrt(s);
+
+  const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+  const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+  const bVal = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+  const C = Math.sqrt(a * a + bVal * bVal);
+  let H = (Math.atan2(bVal, a) * 180) / Math.PI;
+  if (H < 0) H += 360;
+
+  const Lpct = Math.round(L * 10000) / 100;
+  const Cfixed = Math.round(C * 10000) / 10000;
+  const Hfixed = Math.round(H * 100) / 100;
+
+  return `${Lpct}% ${Cfixed} ${Hfixed}`;
+}
+
+function toOklchValue(value: string): string {
+  if (!value) return value;
+  const trimmed = value.trim();
+  if (trimmed.startsWith('#')) return hexToOklch(trimmed);
+  return trimmed;
+}
+
 export interface DaisyThemeTokens {
   'primary': string;
   'primary-content': string;
@@ -226,6 +268,31 @@ export async function deleteCustomTheme(id: string): Promise<void> {
   if (error) throw error;
 }
 
+export function getThemeInlineVars(tokens: DaisyThemeTokens): Record<string, string> {
+  return {
+    '--p': toOklchValue(tokens.primary),
+    '--pc': toOklchValue(tokens['primary-content']),
+    '--s': toOklchValue(tokens.secondary),
+    '--sc': toOklchValue(tokens['secondary-content']),
+    '--a': toOklchValue(tokens.accent),
+    '--ac': toOklchValue(tokens['accent-content']),
+    '--n': toOklchValue(tokens.neutral),
+    '--nc': toOklchValue(tokens['neutral-content']),
+    '--b1': toOklchValue(tokens['base-100']),
+    '--b2': toOklchValue(tokens['base-200']),
+    '--b3': toOklchValue(tokens['base-300']),
+    '--bc': toOklchValue(tokens['base-content']),
+    '--in': toOklchValue(tokens.info),
+    '--inc': toOklchValue(tokens['info-content']),
+    '--su': toOklchValue(tokens.success),
+    '--suc': toOklchValue(tokens['success-content']),
+    '--wa': toOklchValue(tokens.warning),
+    '--wac': toOklchValue(tokens['warning-content']),
+    '--er': toOklchValue(tokens.error),
+    '--erc': toOklchValue(tokens['error-content']),
+  };
+}
+
 export function generateCustomThemeCSS(slug: string, tokens: DaisyThemeTokens, fontConfig?: DaisyFontConfig | null): string {
   let css = '';
   
@@ -235,27 +302,48 @@ export function generateCustomThemeCSS(slug: string, tokens: DaisyThemeTokens, f
     css += generateGoogleFontsImport(googleFonts, DEFAULT_FONT_WEIGHTS) + '\n\n';
   }
   
+  const hex = (v: string) => v.trim().startsWith('#') ? v.trim() : v.trim();
   css += `[data-theme="${slug}"] {
-  --p: ${tokens.primary};
-  --pc: ${tokens['primary-content']};
-  --s: ${tokens.secondary};
-  --sc: ${tokens['secondary-content']};
-  --a: ${tokens.accent};
-  --ac: ${tokens['accent-content']};
-  --n: ${tokens.neutral};
-  --nc: ${tokens['neutral-content']};
-  --b1: ${tokens['base-100']};
-  --b2: ${tokens['base-200']};
-  --b3: ${tokens['base-300']};
-  --bc: ${tokens['base-content']};
-  --in: ${tokens.info};
-  --inc: ${tokens['info-content']};
-  --su: ${tokens.success};
-  --suc: ${tokens['success-content']};
-  --wa: ${tokens.warning};
-  --wac: ${tokens['warning-content']};
-  --er: ${tokens.error};
-  --erc: ${tokens['error-content']};`;
+  --p: ${toOklchValue(tokens.primary)};
+  --fallback-p: ${hex(tokens.primary)};
+  --pc: ${toOklchValue(tokens['primary-content'])};
+  --fallback-pc: ${hex(tokens['primary-content'])};
+  --s: ${toOklchValue(tokens.secondary)};
+  --fallback-s: ${hex(tokens.secondary)};
+  --sc: ${toOklchValue(tokens['secondary-content'])};
+  --fallback-sc: ${hex(tokens['secondary-content'])};
+  --a: ${toOklchValue(tokens.accent)};
+  --fallback-a: ${hex(tokens.accent)};
+  --ac: ${toOklchValue(tokens['accent-content'])};
+  --fallback-ac: ${hex(tokens['accent-content'])};
+  --n: ${toOklchValue(tokens.neutral)};
+  --fallback-n: ${hex(tokens.neutral)};
+  --nc: ${toOklchValue(tokens['neutral-content'])};
+  --fallback-nc: ${hex(tokens['neutral-content'])};
+  --b1: ${toOklchValue(tokens['base-100'])};
+  --fallback-b1: ${hex(tokens['base-100'])};
+  --b2: ${toOklchValue(tokens['base-200'])};
+  --fallback-b2: ${hex(tokens['base-200'])};
+  --b3: ${toOklchValue(tokens['base-300'])};
+  --fallback-b3: ${hex(tokens['base-300'])};
+  --bc: ${toOklchValue(tokens['base-content'])};
+  --fallback-bc: ${hex(tokens['base-content'])};
+  --in: ${toOklchValue(tokens.info)};
+  --fallback-in: ${hex(tokens.info)};
+  --inc: ${toOklchValue(tokens['info-content'])};
+  --fallback-inc: ${hex(tokens['info-content'])};
+  --su: ${toOklchValue(tokens.success)};
+  --fallback-su: ${hex(tokens.success)};
+  --suc: ${toOklchValue(tokens['success-content'])};
+  --fallback-suc: ${hex(tokens['success-content'])};
+  --wa: ${toOklchValue(tokens.warning)};
+  --fallback-wa: ${hex(tokens.warning)};
+  --wac: ${toOklchValue(tokens['warning-content'])};
+  --fallback-wac: ${hex(tokens['warning-content'])};
+  --er: ${toOklchValue(tokens.error)};
+  --fallback-er: ${hex(tokens.error)};
+  --erc: ${toOklchValue(tokens['error-content'])};
+  --fallback-erc: ${hex(tokens['error-content'])};`;
 
   if (fontConfig?.bodyFont) {
     css += `\n  font-family: ${fontConfig.bodyFont};`;

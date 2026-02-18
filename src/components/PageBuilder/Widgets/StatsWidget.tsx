@@ -1,3 +1,4 @@
+import React from 'react';
 import { TrendingUp } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
@@ -9,13 +10,23 @@ interface StatsWidgetProps {
 export default function StatsWidget({ section }: StatsWidgetProps) {
   const { title, subtitle, stats } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const accentColor = section.design?.colors?.accent;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
-  const headingStyle = headingColor ? { color: headingColor } : undefined;
-  const textStyle = textColor ? { color: textColor } : undefined;
-  const accentStyle = accentColor ? { color: accentColor } : undefined;
+  const accentColor = design.colors?.accent;
+  const accentStyle: React.CSSProperties = accentColor ? { color: accentColor } : {};
 
   const defaultStats = [
     { number: '10K+', label: 'Active Users', suffix: '+', icon: 'users' },
@@ -39,7 +50,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
           {subtitle && (
             <p
               className="text-lg sm:text-xl text-base-content/70"
-              style={textStyle}
+              style={subtitleStyle}
             >
               {subtitle}
             </p>
@@ -83,7 +94,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
           {subtitle && (
             <p
               className="text-lg sm:text-xl text-base-content/70"
-              style={textStyle}
+              style={subtitleStyle}
             >
               {subtitle}
             </p>
@@ -135,7 +146,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
           {subtitle && (
             <p
               className="text-lg text-base-content/70"
-              style={textStyle}
+              style={subtitleStyle}
             >
               {subtitle}
             </p>
@@ -183,7 +194,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
           {subtitle && (
             <p
               className="text-lg sm:text-xl mb-8 text-base-content/70"
-              style={textStyle}
+              style={subtitleStyle}
             >
               {subtitle}
             </p>

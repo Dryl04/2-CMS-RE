@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
@@ -9,11 +10,27 @@ interface ClickFunnelsHeroProps {
 export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
   const { content, design } = section;
 
+  const typo = design?.typography || {};
+
   const bgColor = design?.background?.type === 'color' ? design.background.value : '#1B2A4E';
-  const titleColor = design?.typography?.headingColor || '#FFFFFF';
-  const subtitleColor = design?.typography?.subtitleColor || '#93C5FD';
-  const textColor = design?.typography?.textColor || '#FFFFFF';
-  const linkColor = design?.typography?.linkColor || '#9CA3AF';
+  const fontFamily = typo.headingFontFamily || typo.fontFamily || undefined;
+
+  const headingStyle: React.CSSProperties = {
+    ...(fontFamily ? { fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const subtitleTextStyle: React.CSSProperties = {
+    ...(fontFamily ? { fontFamily } : {}),
+  };
+  const bodyTextStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
   const buttonBg = design?.colors?.buttonBg || '#F59E0B';
   const buttonText = design?.colors?.buttonText || '#000000';
   const inputBg = design?.colors?.inputBg || '#FFFFFF';
@@ -70,25 +87,25 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
         </>
       )}
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 text-center">
         <h1
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight"
-          style={{ color: titleColor }}
+          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 leading-tight"
+          style={headingStyle}
         >
           {content.title || "You're one funnel away from"}
         </h1>
 
-        <h2
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-12 leading-tight"
-          style={{ color: subtitleColor }}
+        <p
+          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-8 sm:mb-12 leading-tight"
+          style={subtitleTextStyle}
         >
           {content.subtitle || 'building recurring revenue'}
-        </h2>
+        </p>
 
         {content.tagline && (
           <p
             className="text-xl md:text-2xl mb-8 font-medium"
-            style={{ color: textColor }}
+            style={bodyTextStyle}
           >
             {content.tagline}
           </p>
@@ -130,13 +147,13 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
 
           {content.showSecondaryLink !== false && (
             <div className="text-sm md:text-base">
-              <span style={{ color: textColor }}>
+              <span style={bodyTextStyle}>
                 {content.secondaryLinkPrefix || 'Not ready to get started?'}
               </span>{' '}
               <a
                 href={content.secondaryLink || '#'}
                 className="underline hover:no-underline transition-all"
-                style={{ color: linkColor }}
+                style={linkStyle}
               >
                 {content.secondaryLinkText || 'Learn More'}
               </a>
@@ -147,7 +164,7 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
         {content.showTrustBadges && content.trustBadges && content.trustBadges.length > 0 && (
           <div className="mt-12 flex flex-wrap items-center justify-center gap-8 opacity-70">
             {content.trustBadges.map((badge: any, index: number) => (
-              <div key={index} className="text-sm" style={{ color: textColor }}>
+              <div key={index} className="text-sm" style={bodyTextStyle}>
                 {badge.text}
               </div>
             ))}

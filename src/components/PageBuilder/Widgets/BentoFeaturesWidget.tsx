@@ -7,9 +7,21 @@ interface BentoFeaturesWidgetProps {
 export default function BentoFeaturesWidget({ section }: BentoFeaturesWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
   const cardBg = design.colors?.cardBackground;
+
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
@@ -20,11 +32,11 @@ export default function BentoFeaturesWidget({ section }: BentoFeaturesWidgetProp
         <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
           <div>
             {content.subtitle && (
-              <p className="text-xs sm:text-sm font-medium tracking-wider uppercase mb-3 sm:mb-4 text-base-content/70" style={{ color: textColor }}>
+              <p className="text-xs sm:text-sm font-medium tracking-wider uppercase mb-3 sm:mb-4 text-base-content/70" style={subtitleStyle}>
                 {content.subtitle}
               </p>
             )}
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-base-content" style={{ color: headingColor }}>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-base-content" style={headingStyle}>
               {content.title || 'Discover the benefits of unique features.'}
             </h2>
           </div>
@@ -47,15 +59,15 @@ export default function BentoFeaturesWidget({ section }: BentoFeaturesWidgetProp
                 style={cardBg ? { backgroundColor: cardBg } : undefined}
               >
                 {feature.label && (
-                  <p className="text-xs font-medium tracking-wider uppercase mb-2 sm:mb-3 text-neutral-content/80">
+                  <p className="text-xs font-medium tracking-wider uppercase mb-2 sm:mb-3 text-neutral-content/80" style={subtitleStyle}>
                     {feature.label}
                   </p>
                 )}
-                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-neutral-content">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-neutral-content" style={headingStyle}>
                   {feature.title}
                 </h3>
                 {feature.description && (
-                  <p className="text-xs sm:text-sm text-neutral-content/80 mt-1 sm:mt-2">
+                  <p className="text-xs sm:text-sm text-neutral-content/80 mt-1 sm:mt-2" style={textStyle}>
                     {feature.description}
                   </p>
                 )}

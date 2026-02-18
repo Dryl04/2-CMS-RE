@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { Play, X } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
@@ -11,9 +12,22 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   const { title, subtitle, videoUrl, thumbnail, ctaText, ctaLink } = section.content;
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const accentColor = section.design?.colors?.accent;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
+  const accentColor = design.colors?.accent;
 
   const getEmbedUrl = (url: string) => {
     if (!url) return '';
@@ -54,23 +68,23 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
       <div className="relative h-full flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1
-            className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 text-neutral-content"
-            style={headingColor ? { color: headingColor } : undefined}
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-neutral-content"
+            style={headingStyle}
           >
             {title || 'Watch Our Story'}
           </h1>
           <p
             className="text-lg sm:text-xl lg:text-2xl mb-8 text-neutral-content/90"
-            style={textColor ? { color: textColor } : undefined}
+            style={subtitleStyle}
           >
             {subtitle || 'Discover what makes us different'}
           </p>
           <button
             onClick={() => setIsPlaying(true)}
-            className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-base-100 hover:scale-110 transition-transform shadow-2xl"
+            className="inline-flex items-center justify-center w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-base-100 hover:scale-110 transition-transform shadow-2xl"
           >
             <Play
-              className="w-10 h-10 ml-1 text-primary-content"
+              className="w-7 h-7 sm:w-10 sm:h-10 ml-1 text-primary-content"
               style={accentColor ? { color: accentColor } : undefined}
               fill="currentColor"
             />
@@ -85,13 +99,13 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
       <div className="text-center mb-8">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'See It In Action'}
         </h2>
         <p
           className="text-lg sm:text-xl max-w-3xl mx-auto text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Watch how our product can transform your workflow'}
         </p>
@@ -147,13 +161,13 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         <div>
           <h2
             className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-base-content"
-            style={headingColor ? { color: headingColor } : undefined}
+            style={headingStyle}
           >
             {title || 'Experience the Difference'}
           </h2>
           <p
             className="text-lg sm:text-xl mb-8 text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={textStyle}
           >
             {subtitle || 'See why thousands of customers trust us with their business'}
           </p>
@@ -207,13 +221,13 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         <div className="text-center">
           <h2
             className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-base-content"
-            style={headingColor ? { color: headingColor } : undefined}
+            style={headingStyle}
           >
             {title || 'See How It Works'}
           </h2>
           <p
             className="text-lg sm:text-xl mb-8 max-w-3xl mx-auto text-base-content/70"
-            style={textColor ? { color: textColor } : undefined}
+            style={subtitleStyle}
           >
             {subtitle || 'Watch our product demo and discover all the features'}
           </p>

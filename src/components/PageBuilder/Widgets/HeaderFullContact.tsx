@@ -15,10 +15,22 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
   const topBg = design.colors?.topBarBg;
-  const textColor = design.typography?.textColor;
-  const headingColor = design.typography?.headingColor;
   const buttonBg = design.colors?.buttonBg;
   const buttonText = design.colors?.buttonText;
+
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <header className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
@@ -28,20 +40,20 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
             <div className="flex items-center space-x-6 text-sm">
               {content.openHours && (
                 <div className="flex items-center space-x-2">
-                  <Clock className="w-4 h-4 text-base-content" style={{ color: headingColor }} />
-                  <span className="text-base-content/70" style={{ color: textColor }}>{content.openHours}</span>
+                  <Clock className="w-4 h-4 text-base-content" style={headingStyle} />
+                  <span className="text-base-content/70" style={textStyle}>{content.openHours}</span>
                 </div>
               )}
               {content.email && (
                 <div className="flex items-center space-x-2">
-                  <Mail className="w-4 h-4 text-base-content" style={{ color: headingColor }} />
-                  <span className="text-base-content/70" style={{ color: textColor }}>{content.email}</span>
+                  <Mail className="w-4 h-4 text-base-content" style={headingStyle} />
+                  <span className="text-base-content/70" style={textStyle}>{content.email}</span>
                 </div>
               )}
               {content.address && (
                 <div className="flex items-center space-x-2">
-                  <MapPin className="w-4 h-4 text-base-content" style={{ color: headingColor }} />
-                  <span className="text-base-content/70" style={{ color: textColor }}>{content.address}</span>
+                  <MapPin className="w-4 h-4 text-base-content" style={headingStyle} />
+                  <span className="text-base-content/70" style={textStyle}>{content.address}</span>
                 </div>
               )}
             </div>
@@ -51,8 +63,8 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
                 {content.socialLinks.map((social: any, index: number) => {
                   const IconComponent = socialIconMap[social.icon] || Facebook;
                   return (
-                    <a key={index} href={social.url || '#'} className="hover:opacity-70 transition">
-                      <IconComponent className="w-4 h-4 text-base-content" style={{ color: headingColor }} />
+                    <a key={index} href={social.url || '#'} className="hover:opacity-70 transition" style={linkStyle}>
+                      <IconComponent className="w-4 h-4 text-base-content" style={headingStyle} />
                     </a>
                   );
                 })}
@@ -65,13 +77,13 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
       <div className="border-b border-base-content/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className="text-3xl md:text-4xl font-bold text-base-content" style={{ color: headingColor }}>
+            <div className="text-3xl md:text-4xl font-bold text-base-content" style={headingStyle}>
               {content.logo || 'KING'}
             </div>
 
             <nav className="hidden lg:flex items-center space-x-8">
               {content.menuItems?.map((item: string, index: number) => (
-                <a key={index} href="#" className="text-sm font-semibold hover:opacity-70 transition text-base-content" style={{ color: headingColor }}>
+                <a key={index} href="#" className="text-sm font-semibold hover:opacity-70 transition text-base-content" style={{ ...headingStyle, ...linkStyle }}>
                   {item}
                 </a>
               ))}
@@ -80,10 +92,10 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
             <div className="flex items-center space-x-6">
               {content.phone && (
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary" style={headingColor ? { backgroundColor: headingColor } : undefined}>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary" style={typo.headingColor ? { backgroundColor: typo.headingColor } : undefined}>
                     <Phone className="w-5 h-5 text-primary-content" />
                   </div>
-                  <span className="text-lg font-bold text-base-content" style={{ color: headingColor }}>
+                  <span className="text-lg font-bold text-base-content" style={headingStyle}>
                     {content.phone}
                   </span>
                 </div>

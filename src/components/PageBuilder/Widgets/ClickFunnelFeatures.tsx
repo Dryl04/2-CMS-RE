@@ -1,3 +1,4 @@
+import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 import { Play } from 'lucide-react';
 
@@ -64,8 +65,20 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
     ? section.design.background.value
     : '#0a1628';
 
-  const headingColor = section.design?.typography?.headingColor || '#FFFFFF';
-  const textColor = section.design?.typography?.textColor || '#D1D5DB';
+  const typo = section.design?.typography || {};
+  const fontFamily = typo.fontFamily || undefined;
+  const headingFontFamily = typo.headingFontFamily || fontFamily || undefined;
+
+  const headingStyle: React.CSSProperties = {
+    ...(headingFontFamily ? { fontFamily: headingFontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const bodyTextStyle: React.CSSProperties = {
+    ...(fontFamily ? { fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+
   const buttonBg = section.design?.colors?.buttonBackground || '#ffa500';
   const buttonTextColor = section.design?.colors?.buttonText || '#FFFFFF';
 
@@ -75,13 +88,13 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
         <div className="text-center mb-16">
           <h2
             className="text-4xl md:text-5xl font-bold mb-6"
-            style={{ color: headingColor }}
+            style={headingStyle}
           >
             {title}
           </h2>
           <p
             className="text-lg md:text-xl max-w-4xl mx-auto leading-relaxed"
-            style={{ color: textColor }}
+            style={bodyTextStyle}
           >
             {subtitle}
           </p>
@@ -121,13 +134,13 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
               <div className="text-center">
                 <p
                   className="text-lg font-semibold mb-2 leading-tight"
-                  style={{ color: headingColor }}
+                  style={headingStyle}
                 >
                   {feature.quote}
                 </p>
                 <p
                   className="text-sm"
-                  style={{ color: textColor }}
+                  style={bodyTextStyle}
                 >
                   {feature.author}
                 </p>

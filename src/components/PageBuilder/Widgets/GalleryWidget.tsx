@@ -1,3 +1,4 @@
+import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
 interface GalleryWidgetProps {
@@ -8,9 +9,21 @@ interface GalleryWidgetProps {
 export default function GalleryWidget({ section }: GalleryWidgetProps) {
   const { title, subtitle, items } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const accentColor = section.design?.colors?.accent;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const accentColor = design.colors?.accent;
 
   const defaultItems = [
     {
@@ -56,13 +69,13 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Our Work'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'A showcase of our latest projects'}
         </p>
@@ -103,13 +116,13 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Portfolio'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Explore our creative work'}
         </p>
@@ -147,13 +160,13 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Featured Projects'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Our best work'}
         </p>
@@ -222,13 +235,13 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Latest Work'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Swipe to explore'}
         </p>

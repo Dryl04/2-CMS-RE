@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
@@ -9,9 +10,22 @@ interface ProcessWidgetProps {
 export default function ProcessWidget({ section }: ProcessWidgetProps) {
   const { title, subtitle, steps } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const accentColor = section.design?.colors?.accent;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
+  const accentColor = design.colors?.accent;
 
   const defaultSteps = [
     {
@@ -45,13 +59,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
       <div className="text-center mb-6 md:mb-8 lg:mb-12">
         <h2
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'How It Works'}
         </h2>
         <p
           className="text-base sm:text-lg md:text-xl text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Get started in four simple steps'}
         </p>
@@ -74,13 +88,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
               </div>
               <h3
                 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 md:mb-3 text-base-content"
-                style={headingColor ? { color: headingColor } : undefined}
+                style={headingStyle}
               >
                 {step.title}
               </h3>
               <p
                 className="text-sm md:text-base text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {step.description}
               </p>
@@ -96,13 +110,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Our Process'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Follow these steps to success'}
         </p>
@@ -134,13 +148,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
               </div>
               <h3
                 className="text-2xl font-bold mb-3 text-base-content"
-                style={headingColor ? { color: headingColor } : undefined}
+                style={headingStyle}
               >
                 {step.title}
               </h3>
               <p
                 className="text-base text-base-content/70"
-                style={textColor ? { color: textColor } : undefined}
+                style={textStyle}
               >
                 {step.description}
               </p>
@@ -162,13 +176,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Step by Step'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Your journey to success'}
         </p>
@@ -176,29 +190,29 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
 
       <div className="relative">
         <div
-          className="absolute left-8 top-0 bottom-0 w-1 bg-primary/20"
+          className="absolute left-6 sm:left-8 top-0 bottom-0 w-0.5 sm:w-1 bg-primary/20"
           style={accentColor ? { backgroundColor: `${accentColor}20` } : undefined}
         />
 
-        <div className="space-y-12">
+        <div className="space-y-8 sm:space-y-12">
           {(steps || defaultSteps).map((step: any, index: number) => (
-            <div key={index} className="relative pl-20">
+            <div key={index} className="relative pl-16 sm:pl-20">
               <div
-                className="absolute left-0 w-16 h-16 rounded-full flex items-center justify-center bg-primary"
+                className="absolute left-0 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-primary"
                 style={accentColor ? { backgroundColor: accentColor } : undefined}
               >
-                <span className="text-2xl font-bold text-primary-content">{step.number}</span>
+                <span className="text-lg sm:text-2xl font-bold text-primary-content">{step.number}</span>
               </div>
               <div>
                 <h3
-                  className="text-2xl font-bold mb-2 text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  className="text-xl sm:text-2xl font-bold mb-2 text-base-content"
+                  style={headingStyle}
                 >
                   {step.title}
                 </h3>
                 <p
-                  className="text-lg text-base-content/70"
-                  style={textColor ? { color: textColor } : undefined}
+                  className="text-base sm:text-lg text-base-content/70"
+                  style={textStyle}
                 >
                   {step.description}
                 </p>
@@ -215,13 +229,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {title || 'Simple Steps'}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'Everything you need to get started'}
         </p>
@@ -250,13 +264,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
                 </div>
                 <h3
                   className="text-xl font-bold mb-2 text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  style={headingStyle}
                 >
                   {step.title}
                 </h3>
                 <p
                   className="text-sm text-base-content/70"
-                  style={textColor ? { color: textColor } : undefined}
+                  style={textStyle}
                 >
                   {step.description}
                 </p>

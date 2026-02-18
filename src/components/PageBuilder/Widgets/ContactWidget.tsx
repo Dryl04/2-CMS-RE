@@ -1,3 +1,4 @@
+import React from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
@@ -9,34 +10,48 @@ interface ContactWidgetProps {
 export default function ContactWidget({ section }: ContactWidgetProps) {
   const { title, subtitle, email, phone, address, showForm } = section.content;
 
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
   const renderDefault = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-base-content">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-base-content" style={headingStyle}>
           {title || 'Get in Touch'}
         </h2>
         {subtitle && (
-          <h2 className="text-lg sm:text-xl font-normal text-base-content/70">
+          <p className="text-lg sm:text-xl font-normal text-base-content/70" style={subtitleStyle}>
             {subtitle}
-          </h2>
+          </p>
         )}
       </div>
 
       <div className="grid md:grid-cols-2 gap-8 sm:gap-12">
         <div className="space-y-6">
-          <h3 className="text-xl sm:text-2xl font-bold mb-6 text-base-content">Contact Information</h3>
+          <h3 className="text-xl sm:text-2xl font-bold mb-6 text-base-content" style={headingStyle}>Contact Information</h3>
 
           {email && (
             <div className="flex items-start space-x-4">
               <div
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-primary"
-
               >
                 <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" />
               </div>
               <div>
-                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content">Email</div>
-                <a href={`mailto:${email}`} className="text-sm sm:text-base hover:underline text-base-content/70">
+                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content" style={headingStyle}>Email</div>
+                <a href={`mailto:${email}`} className="text-sm sm:text-base hover:underline text-base-content/70" style={textStyle}>
                   {email}
                 </a>
               </div>
@@ -47,13 +62,12 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
             <div className="flex items-start space-x-4">
               <div
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-primary"
-
               >
                 <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" />
               </div>
               <div>
-                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content">Phone</div>
-                <a href={`tel:${phone}`} className="text-sm sm:text-base hover:underline text-base-content/70">
+                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content" style={headingStyle}>Phone</div>
+                <a href={`tel:${phone}`} className="text-sm sm:text-base hover:underline text-base-content/70" style={textStyle}>
                   {phone}
                 </a>
               </div>
@@ -64,13 +78,12 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
             <div className="flex items-start space-x-4">
               <div
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-primary"
-
               >
                 <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" />
               </div>
               <div>
-                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content">Address</div>
-                <p className="text-sm sm:text-base text-base-content/70">{address}</p>
+                <div className="font-semibold mb-1 text-sm sm:text-base text-base-content" style={headingStyle}>Address</div>
+                <p className="text-sm sm:text-base text-base-content/70" style={textStyle}>{address}</p>
               </div>
             </div>
           )}
@@ -80,7 +93,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
           <div className="bg-base-100 rounded-2xl p-6 sm:p-8 border border-base-content/10">
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               <div>
-                <label className="block text-sm font-semibold mb-2 text-base-content">
+                <label className="block text-sm font-semibold mb-2 text-base-content" style={headingStyle}>
                   Name
                 </label>
                 <input
@@ -90,7 +103,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-2 text-base-content">
+                <label className="block text-sm font-semibold mb-2 text-base-content" style={headingStyle}>
                   Email
                 </label>
                 <input
@@ -100,7 +113,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-2 text-base-content">
+                <label className="block text-sm font-semibold mb-2 text-base-content" style={headingStyle}>
                   Message
                 </label>
                 <textarea
@@ -125,20 +138,20 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
 
   const renderCentered = () => (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-base-content">
+      <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-base-content" style={headingStyle}>
         {title || 'Get in Touch'}
       </h2>
       {subtitle && (
-        <h2 className="text-lg sm:text-xl mb-12 font-normal text-base-content/70">
+        <p className="text-lg sm:text-xl mb-12 font-normal text-base-content/70" style={subtitleStyle}>
           {subtitle}
-        </h2>
+        </p>
       )}
 
       <div className="space-y-4 mb-12">
         {email && (
           <div className="flex items-center justify-center space-x-3 text-base-content/70">
             <Mail className="w-5 h-5" />
-            <a href={`mailto:${email}`} className="hover:underline text-sm sm:text-base">
+            <a href={`mailto:${email}`} className="hover:underline text-sm sm:text-base" style={textStyle}>
               {email}
             </a>
           </div>
@@ -147,7 +160,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
         {phone && (
           <div className="flex items-center justify-center space-x-3 text-base-content/70">
             <Phone className="w-5 h-5" />
-            <a href={`tel:${phone}`} className="hover:underline text-sm sm:text-base">
+            <a href={`tel:${phone}`} className="hover:underline text-sm sm:text-base" style={textStyle}>
               {phone}
             </a>
           </div>
@@ -156,7 +169,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
         {address && (
           <div className="flex items-center justify-center space-x-3 text-base-content/70">
             <MapPin className="w-5 h-5" />
-            <span className="text-sm sm:text-base">{address}</span>
+            <span className="text-sm sm:text-base" style={textStyle}>{address}</span>
           </div>
         )}
       </div>
@@ -193,27 +206,27 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
 
   const renderMinimal = () => (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-base-content">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-base-content" style={headingStyle}>
         {title || 'Get in Touch'}
       </h2>
 
       <div className="flex flex-col sm:flex-row flex-wrap gap-6 sm:gap-8">
         {email && (
-          <a href={`mailto:${email}`} className="flex items-center space-x-2 hover:underline text-base-content/70">
+          <a href={`mailto:${email}`} className="flex items-center space-x-2 hover:underline text-base-content/70" style={textStyle}>
             <Mail className="w-5 h-5" />
             <span className="text-sm sm:text-base">{email}</span>
           </a>
         )}
 
         {phone && (
-          <a href={`tel:${phone}`} className="flex items-center space-x-2 hover:underline text-base-content/70">
+          <a href={`tel:${phone}`} className="flex items-center space-x-2 hover:underline text-base-content/70" style={textStyle}>
             <Phone className="w-5 h-5" />
             <span className="text-sm sm:text-base">{phone}</span>
           </a>
         )}
 
         {address && (
-          <div className="flex items-center space-x-2 text-base-content/70">
+          <div className="flex items-center space-x-2 text-base-content/70" style={textStyle}>
             <MapPin className="w-5 h-5 flex-shrink-0" />
             <span className="text-sm sm:text-base">{address}</span>
           </div>

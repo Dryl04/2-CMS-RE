@@ -28,6 +28,23 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
   const content = section?.content || {};
   const design = section?.design || {};
 
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+
   const bgColor = design?.background?.type === 'color' && design.background.value
     ? design.background.value
     : '#1a1d3d';
@@ -136,10 +153,10 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
                       key={`stat-${index}`}
                       className="flex-shrink-0 w-[380px] h-[280px] rounded-2xl bg-gradient-to-br from-[#ffd7c4] via-[#ffe5d6] to-[#fff0e8] p-8 flex flex-col items-center justify-center shadow-xl"
                     >
-                      <div className="text-7xl font-black text-[#1a1d3d] mb-4 leading-none">
+                      <div className="text-7xl font-black text-[#1a1d3d] mb-4 leading-none" style={headingStyle}>
                         {statNumber}
                       </div>
-                      <div className="text-xl font-bold text-[#1a1d3d] text-center">
+                      <div className="text-xl font-bold text-[#1a1d3d] text-center" style={textStyle}>
                         {statLabel}
                       </div>
                     </div>
@@ -151,7 +168,7 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
                     key={`testimonial-${index}`}
                     className="flex-shrink-0 w-[380px] h-[280px] rounded-2xl bg-[#2a2d5a] p-8 flex flex-col justify-between shadow-xl hover:shadow-2xl transition-shadow"
                   >
-                    <p className="text-white text-lg font-bold leading-relaxed line-clamp-6">
+                    <p className="text-white text-lg font-bold leading-relaxed line-clamp-6" style={textStyle}>
                       "{testimonial.quote}"
                     </p>
 
@@ -174,10 +191,10 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
                         </div>
                       )}
                       <div className="min-w-0">
-                        <div className="text-white font-bold text-base truncate">
+                        <div className="text-white font-bold text-base truncate" style={headingStyle}>
                           {testimonial.name}
                         </div>
-                        <div className="text-white/70 text-sm truncate">
+                        <div className="text-white/70 text-sm truncate" style={subtitleStyle}>
                           {testimonial.badge}
                         </div>
                       </div>

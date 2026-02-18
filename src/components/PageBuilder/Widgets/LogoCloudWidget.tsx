@@ -1,3 +1,4 @@
+import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
 interface LogoCloudWidgetProps {
@@ -8,8 +9,20 @@ interface LogoCloudWidgetProps {
 export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
   const { title, subtitle, logos } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   const defaultLogos = [
     { name: 'Company 1', url: 'https://via.placeholder.com/200x80/cccccc/666666?text=Logo+1' },
@@ -27,7 +40,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
           {title && (
             <h2
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-base-content"
-              style={headingColor ? { color: headingColor } : undefined}
+              style={headingStyle}
             >
               {title}
             </h2>
@@ -35,7 +48,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
           {subtitle && (
             <p
               className="text-sm sm:text-base md:text-lg text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={subtitleStyle}
             >
               {subtitle}
             </p>
@@ -67,7 +80,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
           {title && (
             <h2
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-base-content"
-              style={headingColor ? { color: headingColor } : undefined}
+              style={headingStyle}
             >
               {title}
             </h2>
@@ -75,7 +88,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
           {subtitle && (
             <p
               className="text-sm sm:text-base md:text-lg text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={subtitleStyle}
             >
               {subtitle}
             </p>
@@ -124,7 +137,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
           {title && (
             <h2
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-base-content"
-              style={headingColor ? { color: headingColor } : undefined}
+              style={headingStyle}
             >
               {title}
             </h2>
@@ -132,7 +145,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
           {subtitle && (
             <p
               className="text-sm sm:text-base md:text-lg text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={subtitleStyle}
             >
               {subtitle}
             </p>
@@ -181,7 +194,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
           {title && (
             <h2
               className="text-lg sm:text-xl md:text-2xl font-bold mb-3 md:mb-4 text-base-content"
-              style={headingColor ? { color: headingColor } : undefined}
+              style={headingStyle}
             >
               {title}
             </h2>
@@ -189,7 +202,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
           {subtitle && (
             <p
               className="text-xs sm:text-sm md:text-base text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={subtitleStyle}
             >
               {subtitle}
             </p>

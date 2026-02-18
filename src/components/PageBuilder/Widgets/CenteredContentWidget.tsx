@@ -15,9 +15,19 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
     image
   } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const subtitleColor = section.design?.typography?.subtitleColor;
+  const typo = section.design?.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
   const buttonBg = section.design?.colors?.buttonBackground;
   const buttonText = section.design?.colors?.buttonText;
   const buttonBorder = section.design?.colors?.buttonBorder;
@@ -36,13 +46,13 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
       <div className="space-y-6">
         <p
           className="text-xs lg:text-sm tracking-widest uppercase font-medium text-base-content/70"
-          style={subtitleColor ? { color: subtitleColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'SAMPLE SUBTITLE'}
         </p>
         <h2
           className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight max-w-4xl mx-auto text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {headline || 'Development of Multimedia Interactive Content'}
         </h2>
@@ -59,7 +69,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
       <div className="space-y-8">
         <p
           className="text-sm lg:text-lg leading-relaxed max-w-3xl mx-auto text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={textStyle}
         >
           {description || 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et magna aliqua minim veniam nostrud exercitation ullamco laboris velit esse cillum nulla pariatur.'}
         </p>
@@ -80,13 +90,13 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
       <div className="space-y-4">
         <p
           className="text-xs lg:text-sm tracking-widest uppercase font-medium text-base-content/70"
-          style={subtitleColor ? { color: subtitleColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'SAMPLE SUBTITLE'}
         </p>
         <h2
           className="text-2xl sm:text-3xl lg:text-5xl font-bold leading-tight text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          style={headingStyle}
         >
           {headline || 'Development of Multimedia Interactive Content'}
         </h2>
@@ -103,7 +113,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
       <div className="space-y-6">
         <p
           className="text-sm lg:text-base leading-relaxed text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={textStyle}
         >
           {description || 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et magna aliqua minim veniam.'}
         </p>
@@ -124,13 +134,13 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
       <div className="space-y-6">
         <p
           className="text-xs lg:text-sm tracking-widest uppercase font-medium text-base-content/70"
-          style={subtitleColor ? { color: subtitleColor } : undefined}
+          style={subtitleStyle}
         >
           {subtitle || 'SAMPLE SUBTITLE'}
         </p>
         <h2
-          className="text-3xl sm:text-5xl lg:text-7xl font-bold leading-tight text-base-content"
-          style={headingColor ? { color: headingColor } : undefined}
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight text-base-content"
+          style={headingStyle}
         >
           {headline || 'Development of Multimedia Interactive Content'}
         </h2>
@@ -147,7 +157,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
       <div className="space-y-8">
         <p
           className="text-base lg:text-xl leading-relaxed max-w-4xl mx-auto text-base-content/70"
-          style={textColor ? { color: textColor } : undefined}
+          style={textStyle}
         >
           {description || 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et magna aliqua minim veniam nostrud exercitation ullamco laboris velit esse cillum nulla pariatur.'}
         </p>

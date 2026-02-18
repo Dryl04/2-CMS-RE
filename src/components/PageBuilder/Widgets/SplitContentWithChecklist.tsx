@@ -1,3 +1,4 @@
+import React from 'react';
 import { Check } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
@@ -7,9 +8,18 @@ interface SplitContentWithChecklistProps {
 
 export default function SplitContentWithChecklist({ section }: SplitContentWithChecklistProps) {
   const { content, design } = section;
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
 
   return (
     <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
@@ -17,14 +27,14 @@ export default function SplitContentWithChecklist({ section }: SplitContentWithC
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
       }}>
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
-            <div className="space-y-6">
-              <h2 className="text-4xl md:text-5xl font-bold leading-tight text-base-content" style={headingColor ? { color: headingColor } : undefined}>
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="space-y-6 lg:space-y-8">
+            <div className="space-y-4 sm:space-y-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-base-content" style={headingStyle}>
                 {content.title || 'Quis autem veleum repreh enderit.'}
               </h2>
               {content.description && (
-                <p className="text-lg leading-relaxed text-base-content/70" style={textColor ? { color: textColor } : undefined}>
+                <p className="text-base sm:text-lg leading-relaxed text-base-content/70" style={textStyle}>
                   {content.description}
                 </p>
               )}
@@ -35,11 +45,11 @@ export default function SplitContentWithChecklist({ section }: SplitContentWithC
             )}
 
             {content.checklist && (
-              <div className="flex flex-wrap gap-x-8 gap-y-4">
+              <div className="flex flex-wrap gap-x-6 gap-y-3 sm:gap-x-8 sm:gap-y-4">
                 {content.checklist.map((item: string, index: number) => (
                   <div key={index} className="flex items-center space-x-2">
-                    <Check className="w-5 h-5 text-base-content/70" style={textColor ? { color: textColor } : undefined} />
-                    <span className="text-base text-base-content/70" style={textColor ? { color: textColor } : undefined}>
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-base-content/70 flex-shrink-0" style={textStyle} />
+                    <span className="text-sm sm:text-base text-base-content/70" style={textStyle}>
                       {item}
                     </span>
                   </div>
@@ -50,7 +60,7 @@ export default function SplitContentWithChecklist({ section }: SplitContentWithC
 
           <div>
             {content.image ? (
-              <div className="bg-base-300 rounded-lg" style={{ height: '500px' }}>
+              <div className="bg-base-300 rounded-lg overflow-hidden h-64 sm:h-80 lg:h-[500px]">
                 <img
                   src={content.image}
                   alt={content.title}
@@ -58,7 +68,7 @@ export default function SplitContentWithChecklist({ section }: SplitContentWithC
                 />
               </div>
             ) : (
-              <div className="bg-base-300 rounded-lg" style={{ height: '500px' }} />
+              <div className="bg-base-300 rounded-lg h-64 sm:h-80 lg:h-[500px]" />
             )}
           </div>
         </div>

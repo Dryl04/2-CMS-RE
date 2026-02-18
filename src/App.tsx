@@ -14,6 +14,7 @@ import DaisyThemeManager from './components/DaisyThemeManager';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import VisualPageBuilder from './components/VisualPageBuilder';
+import BuilderPreviewPage from './components/PageBuilder/BuilderPreviewPage';
 import { supabase, SEOMetadata } from './lib/supabase';
 
 type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder';
@@ -70,6 +71,10 @@ function AppContent() {
     setSeoPage(null);
     window.history.pushState({}, '', '/');
   };
+
+  if (window.location.pathname === '/__preview') {
+    return <BuilderPreviewPage />;
+  }
 
   if (loading) {
     return (

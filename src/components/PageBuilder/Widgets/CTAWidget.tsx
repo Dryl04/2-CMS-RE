@@ -1,3 +1,4 @@
+import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
 interface CTAWidgetProps {
@@ -8,11 +9,23 @@ interface CTAWidgetProps {
 export default function CTAWidget({ section }: CTAWidgetProps) {
   const { headline, description, primaryCta, primaryLink, secondaryCta, secondaryLink } = section.content;
 
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-
-  const headingStyle = headingColor ? { color: headingColor } : undefined;
-  const textStyle = textColor ? { color: textColor } : undefined;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   const renderBanner = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,12 +37,12 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
           >
             {headline || 'Ready to Get Started?'}
           </h2>
-          <h2
+          <p
             className="text-base sm:text-lg font-normal text-base-content/80"
-            style={textStyle}
+            style={subtitleStyle}
           >
             {description || 'Join thousands of satisfied customers today'}
-          </h2>
+          </p>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
           <a
@@ -42,7 +55,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
             <a
               href={secondaryLink || '#'}
               className="btn btn-ghost font-semibold whitespace-nowrap text-base-content"
-              style={headingStyle}
+              style={linkStyle}
             >
               {secondaryCta}
             </a>
@@ -60,12 +73,12 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
       >
         {headline || 'Ready to Get Started?'}
       </h2>
-      <h2
+      <p
         className="text-lg sm:text-xl mb-8 font-normal text-base-content/80"
-        style={textStyle}
+        style={subtitleStyle}
       >
         {description || 'Join thousands of satisfied customers today'}
-      </h2>
+      </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
         <a
           href={primaryLink || '#'}
@@ -94,12 +107,12 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
         >
           {headline || 'Ready to Get Started?'}
         </h2>
-        <h2
+        <p
           className="text-lg sm:text-xl mb-8 font-normal text-base-content/80"
-          style={textStyle}
+          style={subtitleStyle}
         >
           {description || 'Join thousands of satisfied customers today'}
-        </h2>
+        </p>
         <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
           <a
             href={primaryLink || '#'}
@@ -111,7 +124,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
             <a
               href={secondaryLink || '#'}
               className="btn btn-ghost font-semibold flex items-center py-3 sm:py-4 text-base-content"
-              style={headingStyle}
+              style={linkStyle}
             >
               {secondaryCta} &rarr;
             </a>

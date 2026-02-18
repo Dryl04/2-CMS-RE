@@ -7,8 +7,19 @@ interface FAQTwoColumnsWidgetProps {
 export default function FAQTwoColumnsWidget({ section }: FAQTwoColumnsWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   const faqs = content.faqs || [];
   const leftColumn = faqs.filter((_: any, index: number) => index % 2 === 0);
@@ -24,14 +35,14 @@ export default function FAQTwoColumnsWidget({ section }: FAQTwoColumnsWidgetProp
           {content.subtitle && (
             <p
               className="text-sm font-medium tracking-wider uppercase mb-4 text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={subtitleStyle}
             >
               {content.subtitle}
             </p>
           )}
           <h2
             className="text-4xl md:text-5xl font-bold text-base-content"
-            style={headingColor ? { color: headingColor } : undefined}
+            style={headingStyle}
           >
             {content.title || 'Frequently Asked Questions'}
           </h2>
@@ -43,13 +54,13 @@ export default function FAQTwoColumnsWidget({ section }: FAQTwoColumnsWidgetProp
               <div key={`left-${index}`}>
                 <h3
                   className="text-xl font-bold mb-4 text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  style={headingStyle}
                 >
                   {faq.question}
                 </h3>
                 <p
                   className="text-base leading-relaxed text-base-content/70"
-                  style={textColor ? { color: textColor } : undefined}
+                  style={textStyle}
                 >
                   {faq.answer}
                 </p>
@@ -62,13 +73,13 @@ export default function FAQTwoColumnsWidget({ section }: FAQTwoColumnsWidgetProp
               <div key={`right-${index}`}>
                 <h3
                   className="text-xl font-bold mb-4 text-base-content"
-                  style={headingColor ? { color: headingColor } : undefined}
+                  style={headingStyle}
                 >
                   {faq.question}
                 </h3>
                 <p
                   className="text-base leading-relaxed text-base-content/70"
-                  style={textColor ? { color: textColor } : undefined}
+                  style={textStyle}
                 >
                   {faq.answer}
                 </p>

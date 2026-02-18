@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
@@ -10,10 +11,25 @@ interface ClickFunnelCenterCardProps {
 export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCardProps) {
   const { content, design } = section;
 
+  const typo = design?.typography || {};
+  const fontFamily = typo.fontFamily || undefined;
+  const headingFontFamily = typo.headingFontFamily || fontFamily || undefined;
+
   const bgColor = design?.background?.type === 'color' ? design.background.value : '#1B2A4E';
-  const titleColor = design?.typography?.headingColor || '#1F2937';
-  const textColor = design?.typography?.textColor || '#4B5563';
-  const highlightColor = design?.typography?.highlightColor || '#000000';
+
+  const headingStyle: React.CSSProperties = {
+    ...(headingFontFamily ? { fontFamily: headingFontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const bodyTextStyle: React.CSSProperties = {
+    ...(fontFamily ? { fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const highlightStyle: React.CSSProperties = {
+    ...(fontFamily ? { fontFamily } : {}),
+  };
+
   const buttonBg = design?.colors?.buttonBg || '#F59E0B';
   const buttonText = design?.colors?.buttonText || '#000000';
   const cardBg = design?.colors?.cardBg || '#FFFFFF';
@@ -84,13 +100,13 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
 
   return (
     <div
-      className="relative min-h-screen flex flex-col overflow-hidden"
+      className="relative flex flex-col overflow-hidden py-8 sm:py-12"
       style={{ backgroundColor: bgColor }}
     >
       {content.showLeftDecor !== false && (
         <>
           <div
-            className="absolute left-0 top-1/4 w-40 h-40"
+            className="absolute left-0 top-1/4 w-24 h-24 sm:w-40 sm:h-40"
             style={{
               background: `radial-gradient(ellipse at center, ${decorLeftColor}60 0%, transparent 70%)`,
               clipPath: 'polygon(0 0, 100% 20%, 80% 100%, 0 80%)',
@@ -98,7 +114,7 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
             }}
           />
           <div
-            className="absolute left-0 top-1/3 w-32 h-32"
+            className="absolute left-0 top-1/3 w-20 h-20 sm:w-32 sm:h-32"
             style={{
               background: `radial-gradient(ellipse at center, ${decorRightColor}40 0%, transparent 70%)`,
               clipPath: 'polygon(0 30%, 100% 0, 100% 70%, 0 100%)',
@@ -111,7 +127,7 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
       {content.showRightDecor !== false && (
         <>
           <div
-            className="absolute right-0 top-0 w-48 h-48"
+            className="absolute right-0 top-0 w-32 h-32 sm:w-48 sm:h-48"
             style={{
               background: `radial-gradient(ellipse at center, ${decorLeftColor}50 0%, transparent 70%)`,
               clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 80% 80%)',
@@ -119,7 +135,7 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
             }}
           />
           <div
-            className="absolute right-0 top-12 w-40 h-40"
+            className="absolute right-0 top-12 w-28 h-28 sm:w-40 sm:h-40"
             style={{
               background: `radial-gradient(ellipse at center, ${decorRightColor}50 0%, transparent 70%)`,
               clipPath: 'polygon(0 0, 100% 20%, 100% 100%, 30% 80%)',
@@ -129,13 +145,13 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
         </>
       )}
 
-      <nav className="relative z-10 pt-6 px-8">
-        <div className="max-w-7xl mx-auto flex justify-center gap-4 flex-wrap">
+      <nav className="relative z-10 pt-4 sm:pt-6 px-4 sm:px-8">
+        <div className="max-w-7xl mx-auto flex justify-center gap-2 sm:gap-4 flex-wrap">
           {navItems.map((item: any, index: number) => (
             <button
               key={index}
               onClick={() => setActiveTabIndex(index)}
-              className="px-6 py-2 rounded-lg font-medium text-sm transition-all hover:opacity-100"
+              className="px-3 py-1.5 sm:px-6 sm:py-2 rounded-lg font-medium text-xs sm:text-sm transition-all hover:opacity-100"
               style={{
                 backgroundColor: activeTabIndex === index ? navBg : 'transparent',
                 color: activeTabIndex === index ? navActiveText : navText,
@@ -148,46 +164,46 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
         </div>
       </nav>
 
-      <div className="relative z-10 flex-1 flex items-center justify-center px-8 py-16">
+      <div className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-8 py-8 sm:py-16">
         <div
-          className="w-full max-w-6xl rounded-3xl overflow-hidden shadow-2xl"
+          className="w-full max-w-6xl rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl"
           style={{ backgroundColor: cardBg }}
         >
-          <div className="grid md:grid-cols-2 gap-0 min-h-[500px]">
-            <div className="flex flex-col justify-center p-12 lg:p-16">
+          <div className="grid md:grid-cols-2 gap-0">
+            <div className="flex flex-col justify-center p-6 sm:p-10 lg:p-12">
               <h2
-                className="text-4xl lg:text-5xl font-bold mb-6 transition-all duration-300"
-                style={{ color: titleColor }}
+                className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 sm:mb-6 transition-all duration-300"
+                style={headingStyle}
               >
                 {activeTab.title || 'Your Funnel'}
               </h2>
               <p
-                className="text-lg mb-2 transition-all duration-300"
-                style={{ color: textColor }}
+                className="text-base sm:text-lg mb-2 transition-all duration-300"
+                style={bodyTextStyle}
               >
                 {activeTab.subtitle || 'Convert your online visitors into paying customers with the'}{' '}
-                <span className="font-bold" style={{ color: highlightColor }}>
+                <span className="font-bold" style={highlightStyle}>
                   {activeTab.highlight || 'best funnel builder on the planet'}
                 </span>
                 .{' '}
                 {activeTab.description || 'Easy to use, incredibly fast, and optimized to turn clicks into cash.'}
               </p>
-              <div className="mt-8">
+              <div className="mt-6 sm:mt-8">
                 <button
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 hover:shadow-lg"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all hover:scale-105 hover:shadow-lg"
                   style={{
                     backgroundColor: buttonBg,
                     color: buttonText,
                   }}
                 >
                   {activeTab.buttonText || 'Try for Free'}
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
 
             <div
-              className="relative flex items-center justify-center p-8"
+              className="relative flex items-center justify-center p-6 sm:p-8 min-h-[240px] sm:min-h-[320px]"
               style={{ backgroundColor: mediaBg }}
             >
               {activeTab.mediaType === 'video' && activeTab.mediaUrl ? (

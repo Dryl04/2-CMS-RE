@@ -1,3 +1,4 @@
+import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
 interface HeroWidgetProps {
@@ -8,46 +9,60 @@ interface HeroWidgetProps {
 export default function HeroWidget({ section }: HeroWidgetProps) {
   const { headline, subheadline, ctaText, ctaLink, image } = section.content;
 
-  // Design overrides -- only applied as inline styles when explicitly set
-  const headingColor = section.design?.typography?.headingColor;
-  const textColor = section.design?.typography?.textColor;
-  const buttonBg = section.design?.colors?.buttonBackground;
+  const design = section.design || {};
+  const typo = design.typography || {};
+  const h1Style: React.CSSProperties = {
+    ...(typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h1FontWeight || typo.headingFontWeight ? { fontWeight: typo.h1FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h1FontSize || typo.headingFontSize ? { fontSize: typo.h1FontSize || typo.headingFontSize } : {}),
+    ...(typo.h1Color || typo.headingColor ? { color: typo.h1Color || typo.headingColor } : {}),
+  };
+  const h2Style: React.CSSProperties = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
+  };
+  const headingStyle = h1Style;
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.subtitleColor ? { color: typo.subtitleColor } : {}),
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
-  const overlayEnabled = section.design?.overlay?.enabled !== false;
-  const overlayColor = section.design?.overlay?.color || '#000000';
-  const overlayOpacity = section.design?.overlay?.opacity ?? 0.4;
-  const overlayGradient = section.design?.overlay?.gradient || 'none';
-  const overlayGradientDirection = section.design?.overlay?.gradientDirection || 'to bottom';
-
-  const blurAmount = section.design?.effects?.blur || 0;
-  const brightness = section.design?.effects?.brightness ?? 100;
-  const contrast = section.design?.effects?.contrast ?? 100;
-  const saturate = section.design?.effects?.saturate ?? 100;
-  const grayscale = section.design?.effects?.grayscale || 0;
-  const sepia = section.design?.effects?.sepia || 0;
-  const hueRotate = section.design?.effects?.hueRotate || 0;
-
-  const parallaxEnabled = section.design?.effects?.parallax || false;
-  const animationEnabled = section.design?.effects?.animation || false;
-  const animationType = section.design?.effects?.animationType || 'fade-in';
-
-  const contentPosition = section.design?.layout?.contentPosition || 'left';
-  const contentAlignment = section.design?.layout?.contentAlignment || 'start';
-  const minHeight = section.design?.layout?.minHeight || '500px';
-  const maxWidth = section.design?.layout?.maxWidth || '7xl';
-
-  // Build optional inline style objects -- only include properties when overrides exist
-  const headingStyle: React.CSSProperties | undefined = headingColor
-    ? { color: headingColor }
-    : undefined;
-
-  const textStyle: React.CSSProperties | undefined = textColor
-    ? { color: textColor }
-    : undefined;
-
+  const buttonBg = design.colors?.buttonBackground;
   const buttonStyle: React.CSSProperties | undefined = buttonBg
     ? { backgroundColor: buttonBg }
     : undefined;
+
+  const overlayEnabled = design.overlay?.enabled !== false;
+  const overlayColor = design.overlay?.color || '#000000';
+  const overlayOpacity = design.overlay?.opacity ?? 0.4;
+  const overlayGradient = design.overlay?.gradient || 'none';
+  const overlayGradientDirection = design.overlay?.gradientDirection || 'to bottom';
+
+  const blurAmount = design.effects?.blur || 0;
+  const brightness = design.effects?.brightness ?? 100;
+  const contrast = design.effects?.contrast ?? 100;
+  const saturate = design.effects?.saturate ?? 100;
+  const grayscale = design.effects?.grayscale || 0;
+  const sepia = design.effects?.sepia || 0;
+  const hueRotate = design.effects?.hueRotate || 0;
+
+  const parallaxEnabled = design.effects?.parallax || false;
+  const animationEnabled = design.effects?.animation || false;
+  const animationType = design.effects?.animationType || 'fade-in';
+
+  const contentPosition = design.layout?.contentPosition || 'left';
+  const contentAlignment = design.layout?.contentAlignment || 'start';
+  const minHeight = design.layout?.minHeight || '500px';
+  const maxWidth = design.layout?.maxWidth || '7xl';
 
   const getOverlayStyle = () => {
     if (!overlayEnabled) return {};
@@ -141,12 +156,12 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           >
             {headline || 'Your Amazing Headline'}
           </h1>
-          <h2
+          <p
             className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal"
-            style={textStyle}
+            style={subtitleStyle}
           >
             {subheadline || 'A compelling subheadline that explains your value proposition'}
-          </h2>
+          </p>
           <a
             href={ctaLink || '#'}
             className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -181,12 +196,12 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
       >
         {headline || 'Your Amazing Headline'}
       </h1>
-      <h2
+      <p
         className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal"
-        style={textStyle}
+        style={subtitleStyle}
       >
         {subheadline || 'A compelling subheadline that explains your value proposition'}
-      </h2>
+      </p>
       <a
         href={ctaLink || '#'}
         className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -209,9 +224,9 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           >
             {headline || 'Your Amazing Headline'}
           </h1>
-          <h2 className="text-base-content/70 text-lg sm:text-xl mb-8 font-normal" style={textStyle}>
+          <p className="text-base-content/70 text-lg sm:text-xl mb-8 font-normal" style={subtitleStyle}>
             {subheadline || 'A compelling subheadline that explains your value proposition'}
-          </h2>
+          </p>
           <a
             href={ctaLink || '#'}
             className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -248,16 +263,16 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
       >
         {headline || 'Your Amazing Headline'}
       </h1>
-      <h2
+      <p
         className="text-base-content/70 text-base sm:text-lg mb-6 font-normal"
-        style={textStyle}
+        style={subtitleStyle}
       >
         {subheadline || 'A compelling subheadline that explains your value proposition'}
-      </h2>
+      </p>
       <a
         href={ctaLink || '#'}
         className="text-base-content font-semibold hover:underline transition-all"
-        style={headingStyle}
+        style={linkStyle}
       >
         {ctaText || 'Get Started'} &rarr;
       </a>
@@ -289,12 +304,12 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
             >
               {headline || 'Your Amazing Headline'}
             </h1>
-            <h2
+            <p
               className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal drop-shadow-md"
-              style={textStyle}
+              style={subtitleStyle}
             >
               {subheadline || 'A compelling subheadline that explains your value proposition'}
-            </h2>
+            </p>
             <a
               href={ctaLink || '#'}
               className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105"

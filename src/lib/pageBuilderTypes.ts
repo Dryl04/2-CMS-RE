@@ -17,10 +17,24 @@ export interface PageBuilderSection {
     };
     typography?: {
       fontFamily?: string;
+      headingFontFamily?: string;
       fontSize?: string;
       lineHeight?: string;
       headingColor?: string;
+      headingFontSize?: string;
+      headingFontWeight?: string;
+      h1Color?: string;
+      h1FontFamily?: string;
+      h1FontWeight?: string;
+      h1FontSize?: string;
+      h2Color?: string;
+      h2FontFamily?: string;
+      h2FontWeight?: string;
+      h2FontSize?: string;
+      subtitleColor?: string;
       textColor?: string;
+      textFontSize?: string;
+      linkColor?: string;
     };
     colors?: {
       primary?: string;

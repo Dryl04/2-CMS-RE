@@ -6,8 +6,23 @@ interface ImmersiveSplitShowcaseWidgetProps {
 
 export default function ImmersiveSplitShowcaseWidget({ section }: ImmersiveSplitShowcaseWidgetProps) {
   const { content, design } = section;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   const lines = content.leftLines || [
     'Visual Effects',
@@ -29,16 +44,16 @@ export default function ImmersiveSplitShowcaseWidget({ section }: ImmersiveSplit
 
           <div className="relative z-10 grid lg:grid-cols-2 gap-8 p-6 sm:p-10 lg:p-14 min-h-[520px]">
             <div>
-              <p className="text-sm uppercase tracking-widest text-neutral-content/80">
+              <p className="text-sm uppercase tracking-widest text-neutral-content/80" style={subtitleStyle}>
                 {content.eyebrow || 'Generative workflows that scale'}
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold mt-3 text-neutral-content" style={headingColor ? { color: headingColor } : undefined}>
+              <h2 className="text-3xl sm:text-4xl font-bold mt-3 text-neutral-content" style={headingStyle}>
                 {content.title || 'Create in every style your brand needs'}
               </h2>
 
-              <div className="mt-8 space-y-2">
+              <div className="mt-6 sm:mt-8 space-y-1 sm:space-y-2">
                 {lines.map((line: string, index: number) => (
-                  <p key={index} className="text-4xl sm:text-5xl font-light text-neutral-content/80">
+                  <p key={index} className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-neutral-content/80" style={textStyle}>
                     {line}
                   </p>
                 ))}
@@ -47,13 +62,13 @@ export default function ImmersiveSplitShowcaseWidget({ section }: ImmersiveSplit
 
             <div className="self-start lg:self-center lg:justify-self-end bg-base-100/90 backdrop-blur rounded-2xl border border-base-content/10 p-4 w-full max-w-md">
               <img src={content.cardImage || ''} alt="card" className="w-full h-56 object-cover rounded-xl bg-base-300" />
-              <h3 className="mt-4 text-xl font-semibold" style={headingColor ? { color: headingColor } : undefined}>
+              <h3 className="mt-4 text-xl font-semibold" style={headingStyle}>
                 {content.cardTitle || 'Commercial Shoot'}
               </h3>
-              <p className="mt-2 text-sm opacity-80" style={textColor ? { color: textColor } : undefined}>
+              <p className="mt-2 text-sm opacity-80" style={textStyle}>
                 {content.cardDescription || 'Create branded visuals with consistent style and quality.'}
               </p>
-              <a href={content.cardCtaLink || '#'} className="btn btn-primary btn-sm mt-4">
+              <a href={content.cardCtaLink || '#'} className="btn btn-primary btn-sm mt-4" style={linkStyle}>
                 {content.cardCtaText || 'Try now'}
               </a>
             </div>

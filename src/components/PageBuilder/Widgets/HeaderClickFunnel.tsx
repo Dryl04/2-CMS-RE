@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArrowRight, Menu, X } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 import { useState } from 'react';
@@ -11,12 +12,26 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { content, design } = section;
 
+  const typo = design?.typography || {};
+
   const bgColor = design?.background?.type === 'color' ? design.background.value : '#1B2A4E';
-  const textColor = design?.typography?.textColor || '#FFFFFF';
-  const navColor = design?.typography?.navColor || '#E5E7EB';
+  const fontFamily = typo.fontFamily || undefined;
+
+  const navStyle: React.CSSProperties = {
+    ...(fontFamily ? { fontFamily } : {}),
+  };
+  const logoStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || fontFamily ? { fontFamily: typo.headingFontFamily || fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const bodyTextStyle: React.CSSProperties = {
+    ...(fontFamily ? { fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+
   const buttonBg = design?.colors?.buttonBg || '#F59E0B';
   const buttonText = design?.colors?.buttonText || '#000000';
-  const logoColor = design?.typography?.headingColor || '#FFFFFF';
 
   return (
     <header style={{ backgroundColor: bgColor }}>
@@ -40,7 +55,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
                 )}
                 <span
                   className="text-xl font-bold tracking-wide"
-                  style={{ color: logoColor }}
+                  style={logoStyle}
                 >
                   {content.logoText || 'Brand'}
                 </span>
@@ -54,7 +69,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
                 key={index}
                 href={item.link || '#'}
                 className="text-sm font-medium transition-opacity hover:opacity-80"
-                style={{ color: navColor }}
+                style={navStyle}
               >
                 {item.label}
               </a>
@@ -82,7 +97,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2"
-            style={{ color: textColor }}
+            style={bodyTextStyle}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -97,7 +112,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
                 key={index}
                 href={item.link || '#'}
                 className="block py-2 text-sm font-medium"
-                style={{ color: navColor }}
+                style={navStyle}
               >
                 {item.label}
               </a>

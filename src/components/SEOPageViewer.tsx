@@ -66,7 +66,7 @@ import ProcessStepsCardsWidget from './PageBuilder/Widgets/ProcessStepsCardsWidg
 import EditorialCardsRowWidget from './PageBuilder/Widgets/EditorialCardsRowWidget';
 import MinimalFinalCTAWidget from './PageBuilder/Widgets/MinimalFinalCTAWidget';
 import CinematicFooterWidget from './PageBuilder/Widgets/CinematicFooterWidget';
-import { getWidgetButtonRadius, getWidgetButtonSizeVars, getWidgetThemeProps, normalizeSectionForTheme } from '../lib/widgetThemeHelper';
+import { getWidgetWrapperProps, normalizeSectionForTheme } from '../lib/widgetThemeHelper';
 
 interface SEOPageViewerProps {
   page: SEOMetadata;
@@ -320,40 +320,14 @@ function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
   return (
     <>
       {sections.map((section, index) => {
-        const normalizedSection = normalizeSectionForTheme(section);
-        if (!normalizedSection?.type) {
-          return null;
-        }
-        const widgetTheme = getWidgetThemeProps(normalizedSection);
-        const buttonRadius = getWidgetButtonRadius(normalizedSection);
-        const buttonSizeVars = getWidgetButtonSizeVars(normalizedSection);
-
+        if (!section?.type) return null;
+        const { normalizedSection, className, dataTheme, style } = getWidgetWrapperProps(section);
         return (
           <div
-            className="widget-design-scope"
+            className={className}
             key={normalizedSection.id || `section-${index}`}
-            data-theme={widgetTheme.dataTheme}
-            style={{
-              backgroundColor:
-                normalizedSection.design.background.type === 'color' && normalizedSection.design.background.value
-                  ? normalizedSection.design.background.value
-                  : undefined,
-              paddingTop: normalizedSection.design.spacing.paddingTop,
-              paddingBottom: normalizedSection.design.spacing.paddingBottom,
-              marginTop: normalizedSection.design.spacing.marginTop,
-              marginBottom: normalizedSection.design.spacing.marginBottom,
-              '--widget-heading-color': normalizedSection.design.typography?.headingColor || '',
-              '--widget-text-color': normalizedSection.design.typography?.textColor || '',
-              '--widget-btn-bg': normalizedSection.design.colors?.buttonBackground || '',
-              '--widget-btn-text': normalizedSection.design.colors?.buttonText || '',
-              '--widget-btn-bg-hover': normalizedSection.design.colors?.buttonBackgroundHover || '',
-              '--widget-accent-color': normalizedSection.design.colors?.accent || '',
-              '--widget-icon-bg': normalizedSection.design.colors?.iconBackground || '',
-              '--widget-icon-color': normalizedSection.design.colors?.iconColor || '',
-              '--widget-btn-radius': buttonRadius,
-              ...buttonSizeVars,
-              ...widgetTheme.customStyles,
-            }}
+            data-theme={dataTheme}
+            style={style as React.CSSProperties}
           >
             <SectionRenderer section={normalizedSection} />
           </div>

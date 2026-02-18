@@ -16,9 +16,21 @@ const iconMap: { [key: string]: any } = {
 export default function ContentWithServicesWidget({ section }: ContentWithServicesWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
   const servicesBg = design.colors?.servicesBackground;
+
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   const gridCols = content.services?.length === 2 ? 'grid-cols-2' : 'grid-cols-2';
 
@@ -31,20 +43,20 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             {content.subtitle && (
-              <p className="text-sm font-medium tracking-wider uppercase text-base-content/70" style={{ color: textColor }}>
+              <p className="text-sm font-medium tracking-wider uppercase text-base-content/70" style={subtitleStyle}>
                 {content.subtitle}
               </p>
             )}
-            <h2 className="text-4xl md:text-5xl font-bold leading-tight text-base-content" style={{ color: headingColor }}>
+            <h2 className="text-4xl md:text-5xl font-bold leading-tight text-base-content" style={headingStyle}>
               {content.title || 'Website Performance and Speed Optimization Techniques'}
             </h2>
             {content.description && (
-              <p className="text-base leading-relaxed text-base-content/70" style={{ color: textColor }}>
+              <p className="text-base leading-relaxed text-base-content/70" style={textStyle}>
                 {content.description}
               </p>
             )}
             {content.additionalText && (
-              <p className="text-base leading-relaxed text-base-content/70" style={{ color: textColor }}>
+              <p className="text-base leading-relaxed text-base-content/70" style={textStyle}>
                 {content.additionalText}
               </p>
             )}
@@ -73,12 +85,12 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
                 const IconComponent = iconMap[service.icon] || Umbrella;
                 return (
                   <div key={index} className="p-6 rounded-lg bg-base-200" style={servicesBg ? { backgroundColor: servicesBg } : undefined}>
-                    <IconComponent className="w-12 h-12 mb-4 text-base-content" style={{ color: headingColor }} />
-                    <h3 className="text-lg font-bold leading-tight text-base-content" style={{ color: headingColor }}>
+                    <IconComponent className="w-12 h-12 mb-4 text-base-content" style={headingStyle} />
+                    <h3 className="text-lg font-bold leading-tight text-base-content" style={headingStyle}>
                       {service.title}
                     </h3>
                     {service.description && (
-                      <p className="text-sm mt-2 text-base-content/70" style={{ color: textColor }}>
+                      <p className="text-sm mt-2 text-base-content/70" style={textStyle}>
                         {service.description}
                       </p>
                     )}

@@ -1,79 +1,18 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, Edit3, FolderOpen, Download, FileJson, FileSpreadsheet, X, Palette, Settings } from 'lucide-react';
 import { PageBuilderSection, DeviceType } from '../../lib/pageBuilderTypes';
 import { supabase, PageTemplate, SEOMetadata } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDaisyTheme } from '../../contexts/DaisyThemeContext';
 import { exportTemplateAsJSON, exportTemplateAsCSV, downloadFile } from '../../lib/templateExport';
+import { generateCustomThemeCSS, getThemeInlineVars, type DaisyThemeTokens } from '../../lib/daisyThemes';
+import { savePreviewData } from './BuilderPreviewPage';
 import WidgetLibrary from './WidgetLibrary';
 import Canvas from './Canvas';
 import PropertiesPanel from './PropertiesPanel';
 import SEOPageViewer from '../SEOPageViewer';
-import HeaderWidget from './Widgets/HeaderWidget';
-import HeroWidget from './Widgets/HeroWidget';
-import FeaturesWidget from './Widgets/FeaturesWidget';
-import CTAWidget from './Widgets/CTAWidget';
-import TestimonialsWidget from './Widgets/TestimonialsWidget';
-import ContactWidget from './Widgets/ContactWidget';
-import FooterWidget from './Widgets/FooterWidget';
-import PricingWidget from './Widgets/PricingWidget';
-import StatsWidget from './Widgets/StatsWidget';
-import TeamWidget from './Widgets/TeamWidget';
-import FAQWidget from './Widgets/FAQWidget';
-import LogoCloudWidget from './Widgets/LogoCloudWidget';
-import VideoHeroWidget from './Widgets/VideoHeroWidget';
-import GalleryWidget from './Widgets/GalleryWidget';
-import TimelineWidget from './Widgets/TimelineWidget';
-import NewsletterWidget from './Widgets/NewsletterWidget';
-import ProcessWidget from './Widgets/ProcessWidget';
-import ImageTextSplitWidget from './Widgets/ImageTextSplitWidget';
-import ContentShowcaseWidget from './Widgets/ContentShowcaseWidget';
-import CenteredContentWidget from './Widgets/CenteredContentWidget';
-import TextColumnsWidget from './Widgets/TextColumnsWidget';
-import ServicesGridWidget from './Widgets/ServicesGridWidget';
-import ContactSplitWidget from './Widgets/ContactSplitWidget';
-import FeedbackContactWidget from './Widgets/FeedbackContactWidget';
-import ServicesCardsWidget from './Widgets/ServicesCardsWidget';
-import MembershipPricingWidget from './Widgets/MembershipPricingWidget';
-import FAQTwoColumnsWidget from './Widgets/FAQTwoColumnsWidget';
-import IntegrationsGridWidget from './Widgets/IntegrationsGridWidget';
-import HeroWithServicesWidget from './Widgets/HeroWithServicesWidget';
-import ImageStatsFAQWidget from './Widgets/ImageStatsFAQWidget';
-import TimelineGridWidget from './Widgets/TimelineGridWidget';
-import NewsletterSignupWidget from './Widgets/NewsletterSignupWidget';
-import SocialFollowWidget from './Widgets/SocialFollowWidget';
-import ServicesCarouselWidget from './Widgets/ServicesCarouselWidget';
-import BentoFeaturesWidget from './Widgets/BentoFeaturesWidget';
-import FeaturesCarouselWidget from './Widgets/FeaturesCarouselWidget';
-import ContentWithServicesWidget from './Widgets/ContentWithServicesWidget';
-import SplitContentWithChecklist from './Widgets/SplitContentWithChecklist';
-import DropCapWithServices from './Widgets/DropCapWithServices';
-import CenteredTestimonial from './Widgets/CenteredTestimonial';
-import ContentVideoServices from './Widgets/ContentVideoServices';
-import ProcessAlternating from './Widgets/ProcessAlternating';
-import HeroWithTestimonials from './Widgets/HeroWithTestimonials';
-import BrandIdentityHero from './Widgets/BrandIdentityHero';
-import SimpleCenteredHero from './Widgets/SimpleCenteredHero';
-import SimpleHeaderDivider from './Widgets/SimpleHeaderDivider';
-import HeaderTopInfo from './Widgets/HeaderTopInfo';
-import HeaderWithIcons from './Widgets/HeaderWithIcons';
-import HeaderAccountBar from './Widgets/HeaderAccountBar';
-import HeaderFullContact from './Widgets/HeaderFullContact';
-import HeaderClickFunnel from './Widgets/HeaderClickFunnel';
-import ClickFunnelsHero from './Widgets/ClickFunnelsHero';
-import ClickFunnelCenterCard from './Widgets/ClickFunnelCenterCard';
-import ClickFunnelTestimonials from './Widgets/ClickFunnelTestimonials';
-import ClickFunnelFeatures from './Widgets/ClickFunnelFeatures';
-import ClickFunnelFooter from './Widgets/ClickFunnelFooter';
-import CreativeNetworkHeroWidget from './Widgets/CreativeNetworkHeroWidget';
-import ImmersiveSplitShowcaseWidget from './Widgets/ImmersiveSplitShowcaseWidget';
-import ProviderMasonryWidget from './Widgets/ProviderMasonryWidget';
-import ProcessStepsCardsWidget from './Widgets/ProcessStepsCardsWidget';
-import EditorialCardsRowWidget from './Widgets/EditorialCardsRowWidget';
-import MinimalFinalCTAWidget from './Widgets/MinimalFinalCTAWidget';
-import CinematicFooterWidget from './Widgets/CinematicFooterWidget';
 import DaisyThemeManager from '../DaisyThemeManager';
-import { getWidgetButtonRadius, getWidgetButtonSizeVars, getWidgetThemeProps, normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
+import { normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
 
 interface PageBuilderProps {
   onNavigate?: (view: string) => void;
@@ -117,6 +56,12 @@ function normalizeSectionsData(raw: unknown): PageBuilderSection[] {
 
   return [];
 }
+
+const DEVICE_VIEWPORT_WIDTHS: Record<DeviceType, number | null> = {
+  desktop: null,
+  tablet: 768,
+  mobile: 375,
+};
 
 export default function PageBuilder({
   onNavigate,
@@ -370,13 +315,37 @@ export default function PageBuilder({
     setBuilderView('editor');
   };
 
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+  const editorContainerRef = useRef<HTMLDivElement>(null);
+  const previewIframeRef = useRef<HTMLIFrameElement>(null);
+
   const getDeviceWidth = () => {
-    switch (device) {
-      case 'mobile': return '375px';
-      case 'tablet': return '768px';
-      default: return '100%';
-    }
+    const w = DEVICE_VIEWPORT_WIDTHS[device];
+    return w ? `${w}px` : '100%';
   };
+
+  const buildPreviewPayload = useCallback(() => {
+    const customThemesCSS = daisyThemes
+      .filter(t => t.source === 'custom')
+      .map(t => generateCustomThemeCSS(t.slug, t.tokens, t.font_config))
+      .join('\n\n');
+    const themeTokens = daisyThemeSlug
+      ? daisyThemes.find(t => t.slug === daisyThemeSlug)?.tokens
+      : undefined;
+    return { sections, daisyThemeSlug, customThemesCSS, themeTokens };
+  }, [sections, daisyThemeSlug, daisyThemes]);
+
+  useEffect(() => {
+    if (!showPreview) return;
+    const payload = buildPreviewPayload();
+    savePreviewData(payload);
+    if (previewIframeRef.current?.contentWindow) {
+      previewIframeRef.current.contentWindow.postMessage(
+        { type: 'BUILDER_PREVIEW_UPDATE', payload },
+        '*'
+      );
+    }
+  }, [showPreview, buildPreviewPayload]);
 
   const renderTemplateListView = () => (
     <div className="flex flex-col flex-1">
@@ -708,123 +677,45 @@ export default function PageBuilder({
       </div>
 
       {showPreview ? (
-        <div className="flex-1 overflow-auto bg-gray-100 p-8">
-          <div
-            className="mx-auto bg-base-100 rounded-lg shadow-lg overflow-hidden transition-all duration-300 page-themed"
-            style={{ width: getDeviceWidth(), maxWidth: '100%' }}
-            data-theme={daisyThemeSlug || undefined}
-          >
-            {sections.length === 0 ? (
-              <div className="p-12 text-center text-gray-500">Aucune section a previsualiser</div>
-            ) : (
-              sections.map((section) => {
-                const normalizedSection = normalizeSectionForTheme(section);
-                const widgetTheme = getWidgetThemeProps(normalizedSection);
-                const buttonRadius = getWidgetButtonRadius(normalizedSection);
-                const buttonSizeVars = getWidgetButtonSizeVars(normalizedSection);
-                const noop = () => { };
-                const widgetProps = { section: normalizedSection, onUpdate: noop };
-                const renderWidget = () => {
-                  switch (normalizedSection.type) {
-                    case 'header': return <HeaderWidget {...widgetProps} />;
-                    case 'hero': return <HeroWidget {...widgetProps} />;
-                    case 'features': return <FeaturesWidget {...widgetProps} />;
-                    case 'cta': return <CTAWidget {...widgetProps} />;
-                    case 'testimonials': return <TestimonialsWidget {...widgetProps} />;
-                    case 'contact': return <ContactWidget {...widgetProps} />;
-                    case 'footer': return <FooterWidget {...widgetProps} />;
-                    case 'pricing': return <PricingWidget {...widgetProps} />;
-                    case 'stats': return <StatsWidget {...widgetProps} />;
-                    case 'team': return <TeamWidget {...widgetProps} />;
-                    case 'faq': return <FAQWidget {...widgetProps} />;
-                    case 'logocloud': return <LogoCloudWidget {...widgetProps} />;
-                    case 'videohero': return <VideoHeroWidget {...widgetProps} />;
-                    case 'gallery': return <GalleryWidget {...widgetProps} />;
-                    case 'timeline': return <TimelineWidget {...widgetProps} />;
-                    case 'newsletter': return <NewsletterWidget {...widgetProps} />;
-                    case 'process': return <ProcessWidget {...widgetProps} />;
-                    case 'image-text-split': return <ImageTextSplitWidget {...widgetProps} />;
-                    case 'content-showcase': return <ContentShowcaseWidget {...widgetProps} />;
-                    case 'centered-content': return <CenteredContentWidget {...widgetProps} />;
-                    case 'text-columns': return <TextColumnsWidget {...widgetProps} />;
-                    case 'services-grid': return <ServicesGridWidget {...widgetProps} />;
-                    case 'contact-split': return <ContactSplitWidget {...widgetProps} />;
-                    case 'feedback-contact': return <FeedbackContactWidget {...widgetProps} />;
-                    case 'services-cards': return <ServicesCardsWidget {...widgetProps} />;
-                    case 'membership-pricing': return <MembershipPricingWidget {...widgetProps} />;
-                    case 'faq-two-columns': return <FAQTwoColumnsWidget {...widgetProps} />;
-                    case 'integrations-grid': return <IntegrationsGridWidget {...widgetProps} />;
-                    case 'hero-with-services': return <HeroWithServicesWidget {...widgetProps} />;
-                    case 'image-stats-faq': return <ImageStatsFAQWidget {...widgetProps} />;
-                    case 'timeline-grid': return <TimelineGridWidget {...widgetProps} />;
-                    case 'newsletter-signup': return <NewsletterSignupWidget {...widgetProps} />;
-                    case 'social-follow': return <SocialFollowWidget {...widgetProps} />;
-                    case 'services-carousel': return <ServicesCarouselWidget {...widgetProps} />;
-                    case 'bento-features': return <BentoFeaturesWidget {...widgetProps} />;
-                    case 'features-carousel': return <FeaturesCarouselWidget {...widgetProps} />;
-                    case 'content-with-services': return <ContentWithServicesWidget {...widgetProps} />;
-                    case 'split-content-checklist': return <SplitContentWithChecklist {...widgetProps} />;
-                    case 'dropcap-services': return <DropCapWithServices {...widgetProps} />;
-                    case 'centered-testimonial': return <CenteredTestimonial {...widgetProps} />;
-                    case 'content-video-services': return <ContentVideoServices {...widgetProps} />;
-                    case 'process-alternating': return <ProcessAlternating {...widgetProps} />;
-                    case 'hero-with-testimonials': return <HeroWithTestimonials {...widgetProps} />;
-                    case 'brand-identity-hero': return <BrandIdentityHero {...widgetProps} />;
-                    case 'simple-centered-hero': return <SimpleCenteredHero {...widgetProps} />;
-                    case 'simple-header-divider': return <SimpleHeaderDivider {...widgetProps} />;
-                    case 'header-top-info': return <HeaderTopInfo {...widgetProps} />;
-                    case 'header-with-icons': return <HeaderWithIcons {...widgetProps} />;
-                    case 'header-account-bar': return <HeaderAccountBar {...widgetProps} />;
-                    case 'header-full-contact': return <HeaderFullContact {...widgetProps} />;
-                    case 'header-clickfunnel': return <HeaderClickFunnel {...widgetProps} />;
-                    case 'clickfunnels-hero': return <ClickFunnelsHero {...widgetProps} />;
-                    case 'clickfunnel-center-card': return <ClickFunnelCenterCard {...widgetProps} />;
-                    case 'click-funnel-testimonials': return <ClickFunnelTestimonials {...widgetProps} />;
-                    case 'clickfunnel-features': return <ClickFunnelFeatures {...widgetProps} />;
-                    case 'clickfunnel-footer': return <ClickFunnelFooter {...widgetProps} />;
-                    case 'creative-network-hero': return <CreativeNetworkHeroWidget {...widgetProps} />;
-                    case 'immersive-split-showcase': return <ImmersiveSplitShowcaseWidget {...widgetProps} />;
-                    case 'provider-masonry': return <ProviderMasonryWidget {...widgetProps} />;
-                    case 'process-steps-cards': return <ProcessStepsCardsWidget {...widgetProps} />;
-                    case 'editorial-cards-row': return <EditorialCardsRowWidget {...widgetProps} />;
-                    case 'minimal-final-cta': return <MinimalFinalCTAWidget {...widgetProps} />;
-                    case 'cinematic-footer': return <CinematicFooterWidget {...widgetProps} />;
-                    default: return null;
+        <div ref={previewContainerRef} className="flex-1 overflow-hidden bg-gray-200 flex flex-col items-center py-6 px-4">
+          {sections.length === 0 ? (
+            <div className="flex-1 flex items-center justify-center text-gray-500">
+              Aucune section à prévisualiser
+            </div>
+          ) : (
+            <div
+              className="flex-1 w-full flex flex-col items-center"
+              style={{ maxWidth: DEVICE_VIEWPORT_WIDTHS[device] ? `${DEVICE_VIEWPORT_WIDTHS[device]}px` : '100%' }}
+            >
+              {DEVICE_VIEWPORT_WIDTHS[device] && (
+                <div className="flex items-center gap-2 mb-3 text-xs text-gray-500 font-medium">
+                  {device === 'mobile' && <Smartphone className="w-3.5 h-3.5" />}
+                  {device === 'tablet' && <Tablet className="w-3.5 h-3.5" />}
+                  <span>{DEVICE_VIEWPORT_WIDTHS[device]}px</span>
+                </div>
+              )}
+              <iframe
+                ref={previewIframeRef}
+                src="/__preview"
+                title="Aperçu"
+                className="w-full bg-white rounded-lg shadow-xl border border-gray-300"
+                style={{
+                  height: '100%',
+                  minHeight: '600px',
+                  display: 'block',
+                }}
+                onLoad={() => {
+                  const payload = buildPreviewPayload();
+                  if (previewIframeRef.current?.contentWindow) {
+                    previewIframeRef.current.contentWindow.postMessage(
+                      { type: 'BUILDER_PREVIEW_UPDATE', payload },
+                      '*'
+                    );
                   }
-                };
-                return (
-                  <div
-                    className="widget-design-scope"
-                    key={normalizedSection.id}
-                    data-theme={widgetTheme.dataTheme}
-                    style={{
-                      backgroundColor:
-                        normalizedSection.design.background.type === 'color' && normalizedSection.design.background.value
-                          ? normalizedSection.design.background.value
-                          : undefined,
-                      paddingTop: normalizedSection.design.spacing.paddingTop,
-                      paddingBottom: normalizedSection.design.spacing.paddingBottom,
-                      marginTop: normalizedSection.design.spacing.marginTop,
-                      marginBottom: normalizedSection.design.spacing.marginBottom,
-                      '--widget-heading-color': normalizedSection.design.typography?.headingColor || '',
-                      '--widget-text-color': normalizedSection.design.typography?.textColor || '',
-                      '--widget-btn-bg': normalizedSection.design.colors?.buttonBackground || '',
-                      '--widget-btn-text': normalizedSection.design.colors?.buttonText || '',
-                      '--widget-btn-bg-hover': normalizedSection.design.colors?.buttonBackgroundHover || '',
-                      '--widget-accent-color': normalizedSection.design.colors?.accent || '',
-                      '--widget-icon-bg': normalizedSection.design.colors?.iconBackground || '',
-                      '--widget-icon-color': normalizedSection.design.colors?.iconColor || '',
-                      '--widget-btn-radius': buttonRadius,
-                      ...buttonSizeVars,
-                      ...widgetTheme.customStyles,
-                    }}
-                  >
-                    {renderWidget()}
-                  </div>
-                );
-              })
-            )}
-          </div>
+                }}
+              />
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex flex-1 overflow-hidden">
@@ -832,11 +723,11 @@ export default function PageBuilder({
             <WidgetLibrary onAddSection={addSection} existingSections={sections} />
           </div>
 
-          <div className="flex-1 overflow-auto bg-gray-100 p-6 custom-scrollbar">
-            <div
-              className="mx-auto transition-all duration-300 page-themed"
-              style={{ width: getDeviceWidth(), maxWidth: '100%' }}
-              data-theme={daisyThemeSlug || undefined}
+          <div ref={editorContainerRef} className="flex-1 overflow-auto bg-gray-100 p-6 custom-scrollbar">
+            <CanvasWrapper
+              device={device}
+              daisyThemeSlug={daisyThemeSlug}
+              themeTokens={daisyThemes.find(t => t.slug === daisyThemeSlug)?.tokens}
             >
               <Canvas
                 sections={sections}
@@ -846,8 +737,9 @@ export default function PageBuilder({
                 onDeleteSection={deleteSection}
                 onDuplicateSection={duplicateSection}
                 onReorder={reorderSections}
+                canvasThemeSlug={daisyThemeSlug}
               />
-            </div>
+            </CanvasWrapper>
           </div>
 
           <div className="w-80 border-l border-gray-200 bg-white flex flex-col overflow-hidden">
@@ -868,6 +760,34 @@ export default function PageBuilder({
           onClose={() => setShowDaisyThemeManager(false)}
         />
       )}
+    </div>
+  );
+}
+
+function CanvasWrapper({
+  device,
+  daisyThemeSlug,
+  themeTokens,
+  children,
+}: {
+  device: DeviceType;
+  daisyThemeSlug: string | null;
+  themeTokens?: DaisyThemeTokens;
+  children: React.ReactNode;
+}) {
+  const themeVars = themeTokens ? getThemeInlineVars(themeTokens) : {};
+  return (
+    <div
+      className="mx-auto page-themed bg-base-100 text-base-content"
+      style={{
+        width: DEVICE_VIEWPORT_WIDTHS[device] ? `${DEVICE_VIEWPORT_WIDTHS[device]}px` : '100%',
+        maxWidth: '100%',
+        ...themeVars,
+      }}
+      data-theme={daisyThemeSlug || 'light'}
+      data-canvas-device={device !== 'desktop' ? device : undefined}
+    >
+      {children}
     </div>
   );
 }

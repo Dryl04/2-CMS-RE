@@ -1,3 +1,4 @@
+import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
 interface ClickFunnelFooterProps {
@@ -72,8 +73,20 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
     ? section.design.background.value
     : '#0a1628';
 
-  const headingColor = section.design?.typography?.headingColor || '#FFFFFF';
-  const textColor = section.design?.typography?.textColor || '#9CA3AF';
+  const typo = section.design?.typography || {};
+  const fontFamily = typo.fontFamily || undefined;
+  const headingFontFamily = typo.headingFontFamily || fontFamily || undefined;
+
+  const headingStyle: React.CSSProperties = {
+    ...(headingFontFamily ? { fontFamily: headingFontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const linkTextStyle: React.CSSProperties = {
+    ...(fontFamily ? { fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+
   const linkHoverColor = section.design?.colors?.linkHover || '#FFFFFF';
 
   const variant = section.variant || 'default';
@@ -104,7 +117,7 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
               </div>
               <span
                 className="text-xl font-bold"
-                style={{ color: headingColor }}
+                style={headingStyle}
               >
                 {logoText}
               </span>
@@ -117,7 +130,7 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
             <div key={index}>
               <h3
                 className="font-bold text-lg mb-4"
-                style={{ color: headingColor }}
+                style={headingStyle}
               >
                 {column.title}
               </h3>
@@ -127,12 +140,12 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
                     <a
                       href={link.url}
                       className="transition-colors duration-200 hover-link"
-                      style={{ color: textColor }}
+                      style={linkTextStyle}
                       onMouseEnter={(e) => {
                         (e.target as HTMLElement).style.color = linkHoverColor;
                       }}
                       onMouseLeave={(e) => {
-                        (e.target as HTMLElement).style.color = textColor;
+                        (e.target as HTMLElement).style.color = '';
                       }}
                     >
                       {link.label}
@@ -146,10 +159,10 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
 
         {showPrivacyChoices && (
           <div className="flex justify-center items-center gap-2 pt-8 border-t border-gray-700">
-            <svg viewBox="0 0 24 24" className="w-5 h-5" style={{ color: textColor, fill: 'currentColor' }}>
+            <svg viewBox="0 0 24 24" className="w-5 h-5" style={{ fill: 'currentColor' }}>
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
-            <span style={{ color: textColor }}>
+            <span style={linkTextStyle}>
               {privacyChoicesText}
             </span>
           </div>

@@ -8,8 +8,23 @@ interface IntegrationsGridWidgetProps {
 export default function IntegrationsGridWidget({ section }: IntegrationsGridWidgetProps) {
   const { content, design } = section;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
-  const headingColor = design.typography?.headingColor;
-  const textColor = design.typography?.textColor;
+
+  const typo = design.typography || {};
+  const headingStyle: React.CSSProperties = {
+    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
+    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  };
+  const textStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+  };
+  const subtitleStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
+  const linkStyle: React.CSSProperties = {
+    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+  };
 
   return (
     <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
@@ -21,21 +36,21 @@ export default function IntegrationsGridWidget({ section }: IntegrationsGridWidg
           {content.subtitle && (
             <p
               className="text-xs sm:text-sm font-medium tracking-wider uppercase mb-3 md:mb-4 text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={subtitleStyle}
             >
               {content.subtitle}
             </p>
           )}
           <h2
             className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-base-content"
-            style={headingColor ? { color: headingColor } : undefined}
+            style={headingStyle}
           >
             {content.title || 'Integrations'}
           </h2>
           {content.description && (
             <p
               className="text-base md:text-lg max-w-3xl mx-auto text-base-content/70"
-              style={textColor ? { color: textColor } : undefined}
+              style={textStyle}
             >
               {content.description}
             </p>
@@ -64,20 +79,20 @@ export default function IntegrationsGridWidget({ section }: IntegrationsGridWidg
                 <div className="pt-4 md:pt-6 border-t border-base-content/10">
                   <h3
                     className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-base-content"
-                    style={headingColor ? { color: headingColor } : undefined}
+                    style={headingStyle}
                   >
                     {integration.name}
                   </h3>
                   <p
                     className="text-xs sm:text-sm mb-3 sm:mb-4 text-base-content/70"
-                    style={textColor ? { color: textColor } : undefined}
+                    style={textStyle}
                   >
                     {integration.description}
                   </p>
                   <a
                     href={integration.link || '#'}
                     className="inline-flex items-center space-x-2 font-bold text-xs sm:text-sm hover:underline transition text-base-content"
-                    style={headingColor ? { color: headingColor } : undefined}
+                    style={{ ...headingStyle, ...linkStyle }}
                   >
                     <span>{integration.linkText || 'MORE'}</span>
                     <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
