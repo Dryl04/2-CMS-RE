@@ -3,6 +3,7 @@
 ## 1) Patch/code + bref changelog
 
 ### Objectif atteint
+
 - Uniformisation de la configuration par sous-sections (Titres, Paragraphes, Boutons & liens) via une édition rapide commune.
 - Ajout des contrôles manquants pour les boutons sur les widgets hero-like (couleur bouton, texte, hover).
 - Amélioration de l’intuitivité pour la couleur du menu/navigation.
@@ -10,6 +11,7 @@
 - Renforcement des contrôles d’espacement (padding + marges haut/bas) dans le panneau design.
 
 ### Fichiers modifiés
+
 - src/components/PageBuilder/PropertiesPanel.tsx
   - Ajout d’un bloc “Édition rapide uniforme” (Titres / Paragraphes / Boutons & liens).
   - Conservation des éditeurs spécifiques existants (pas de refonte complète).
