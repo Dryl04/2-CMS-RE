@@ -19,6 +19,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
 
   const navStyle: React.CSSProperties = {
     ...(fontFamily ? { fontFamily } : {}),
+    ...(typo.linkColor ? { color: typo.linkColor } : {}),
   };
   const logoStyle: React.CSSProperties = {
     ...(typo.headingFontFamily || fontFamily ? { fontFamily: typo.headingFontFamily || fontFamily } : {}),

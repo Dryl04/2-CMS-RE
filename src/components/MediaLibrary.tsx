@@ -16,6 +16,8 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
   const [uploading, setUploading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
+  const [copySuccessId, setCopySuccessId] = useState<string | null>(null);
+  const [actionMessage, setActionMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     loadMedia();
@@ -29,16 +31,29 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setMediaFiles(data || []);
+      const files = data || [];
+      setMediaFiles(files);
+      setSelectedFiles((previous) => {
+        const existing = new Set(files.map((file) => file.id));
+        return new Set([...previous].filter((id) => existing.has(id)));
+      });
     } catch (error) {
       console.error('Error loading media:', error);
+      setActionMessage({ type: 'error', text: 'Erreur lors du chargement des médias.' });
     } finally {
       setLoading(false);
     }
   };
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    if (!profile?.id) {
+      setActionMessage({ type: 'error', text: 'Utilisateur non identifié: impossible d\'uploader.' });
+      return;
+    }
+
     setUploading(true);
+    let successCount = 0;
+    let errorCount = 0;
 
     for (const file of acceptedFiles) {
       try {
@@ -60,7 +75,7 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
 
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-        const filePath = `${profile?.id}/${fileName}`;
+        const filePath = `${profile.id}/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
           .from('media')
@@ -80,6 +95,11 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
             img.onload = () => {
               width = img.width;
               height = img.height;
+              URL.revokeObjectURL(img.src);
+              resolve(null);
+            };
+            img.onerror = () => {
+              URL.revokeObjectURL(img.src);
               resolve(null);
             };
           });
@@ -99,14 +119,22 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
           });
 
         if (dbError) throw dbError;
+        successCount += 1;
       } catch (error) {
         console.error('Error uploading file:', error);
-        alert(`Erreur lors de l'upload de ${file.name}`);
+        errorCount += 1;
       }
     }
 
     setUploading(false);
     await loadMedia();
+    if (successCount > 0 && errorCount === 0) {
+      setActionMessage({ type: 'success', text: `${successCount} fichier(s) uploadé(s) avec succès.` });
+    } else if (successCount > 0 && errorCount > 0) {
+      setActionMessage({ type: 'error', text: `${successCount} fichier(s) uploadé(s), ${errorCount} en erreur.` });
+    } else if (errorCount > 0) {
+      setActionMessage({ type: 'error', text: `Échec de l'upload (${errorCount} fichier(s)).` });
+    }
   }, [profile]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -121,8 +149,11 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
     if (!confirm(`Supprimer ${file.original_filename} ?`)) return;
 
     try {
-      const fileName = file.file_path.split('/').pop();
-      const filePath = `${file.uploaded_by}/${fileName}`;
+      if (!file.uploaded_by || !file.filename) {
+        throw new Error('Informations de stockage manquantes');
+      }
+
+      const filePath = `${file.uploaded_by}/${file.filename}`;
 
       const { error: storageError } = await supabase.storage
         .from('media')
@@ -138,9 +169,10 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
       if (dbError) throw dbError;
 
       await loadMedia();
+      setActionMessage({ type: 'success', text: 'Média supprimé.' });
     } catch (error) {
       console.error('Error deleting file:', error);
-      alert('Erreur lors de la suppression');
+      setActionMessage({ type: 'error', text: 'Erreur lors de la suppression du média.' });
     }
   };
 
@@ -162,33 +194,69 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
     if (!confirm(`Supprimer ${selectedFiles.size} fichier(s) ?`)) return;
 
     setDeleting(true);
+    let deletedCount = 0;
+    let failedCount = 0;
     for (const fileId of selectedFiles) {
       const file = mediaFiles.find(f => f.id === fileId);
       if (file) {
         try {
-          const fileName = file.filename;
-          const filePath = `${file.uploaded_by}/${fileName}`;
+          if (!file.uploaded_by || !file.filename) {
+            throw new Error('Informations de stockage manquantes');
+          }
+
+          const filePath = `${file.uploaded_by}/${file.filename}`;
 
           await supabase.storage.from('media').remove([filePath]);
           await supabase.from('media_files').delete().eq('id', file.id);
+          deletedCount += 1;
         } catch (error) {
           console.error('Error deleting file:', error);
+          failedCount += 1;
         }
       }
     }
     setSelectedFiles(new Set());
     setDeleting(false);
     await loadMedia();
+    if (deletedCount > 0 && failedCount === 0) {
+      setActionMessage({ type: 'success', text: `${deletedCount} fichier(s) supprimé(s).` });
+    } else if (deletedCount > 0 && failedCount > 0) {
+      setActionMessage({ type: 'error', text: `${deletedCount} supprimé(s), ${failedCount} en erreur.` });
+    } else {
+      setActionMessage({ type: 'error', text: 'Aucune suppression effectuée.' });
+    }
   };
 
-  const copyUrl = (url: string) => {
-    navigator.clipboard.writeText(url);
+  const copyUrl = async (fileId: string, url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopySuccessId(fileId);
+      setTimeout(() => {
+        setCopySuccessId((current) => (current === fileId ? null : current));
+      }, 1800);
+    } catch (error) {
+      console.error('Clipboard error:', error);
+      setActionMessage({ type: 'error', text: 'Impossible de copier l\'URL.' });
+    }
   };
 
   const filteredFiles = mediaFiles.filter((file) =>
     file.original_filename.toLowerCase().includes(searchTerm.toLowerCase()) ||
     file.alt_text?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const areAllFilteredSelected =
+    filteredFiles.length > 0 && filteredFiles.every((file) => selectedFiles.has(file.id));
+
+  const toggleSelectAllFiltered = () => {
+    const newSelection = new Set(selectedFiles);
+    if (areAllFilteredSelected) {
+      filteredFiles.forEach((file) => newSelection.delete(file.id));
+    } else {
+      filteredFiles.forEach((file) => newSelection.add(file.id));
+    }
+    setSelectedFiles(newSelection);
+  };
 
   if (loading) {
     return (
@@ -203,6 +271,22 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
 
   return (
     <div>
+      {actionMessage && (
+        <div className={`mb-4 rounded-xl border px-4 py-3 text-sm font-medium flex items-center justify-between ${
+          actionMessage.type === 'success'
+            ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+            : 'bg-red-50 border-red-200 text-red-800'
+        }`}>
+          <span>{actionMessage.text}</span>
+          <button
+            onClick={() => setActionMessage(null)}
+            className="ml-3 text-xs underline hover:no-underline"
+          >
+            Fermer
+          </button>
+        </div>
+      )}
+
       <div className="mb-8">
         <button
           onClick={() => onNavigate?.('dashboard')}
@@ -251,7 +335,7 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
       </div>
 
       <div className="mb-6">
-        <div className="relative">
+        <div className="relative mb-3">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             type="text"
@@ -261,6 +345,14 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
             className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent"
           />
         </div>
+        {filteredFiles.length > 0 && (
+          <button
+            onClick={toggleSelectAllFiltered}
+            className="text-sm text-gray-700 hover:text-gray-900 font-medium"
+          >
+            {areAllFilteredSelected ? 'Tout désélectionner (résultats visibles)' : 'Tout sélectionner (résultats visibles)'}
+          </button>
+        )}
       </div>
 
       {selectedFiles.size > 0 && (
@@ -327,23 +419,32 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
 
                 <button
                   onClick={() => toggleSelection(file.id)}
-                  className="absolute top-2 left-2 w-6 h-6 bg-white rounded-lg border-2 border-gray-300 flex items-center justify-center transition-all hover:border-black"
+                  aria-label={selectedFiles.has(file.id) ? 'Désélectionner ce média' : 'Sélectionner ce média'}
+                  className="absolute top-2 left-2 z-20 w-6 h-6 bg-white rounded-lg border-2 border-gray-300 flex items-center justify-center transition-all hover:border-black"
                 >
                   {selectedFiles.has(file.id) && (
                     <Check className="w-4 h-4 text-black" />
                   )}
                 </button>
 
+                <input
+                  type="checkbox"
+                  checked={selectedFiles.has(file.id)}
+                  onChange={() => toggleSelection(file.id)}
+                  className="sr-only"
+                  aria-label={`Sélectionner ${file.original_filename}`}
+                />
+
                 <div
-                  className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer"
+                  className="absolute inset-0 z-10 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer pointer-events-none group-hover:pointer-events-auto"
                   onClick={() => setPreviewFile(file)}
                 >
                   <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
                     <button
-                      onClick={() => copyUrl(file.file_path)}
+                      onClick={() => copyUrl(file.id, file.file_path)}
                       className="bg-white text-gray-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
                     >
-                      Copier URL
+                      {copySuccessId === file.id ? 'URL copiée' : 'Copier URL'}
                     </button>
                     <button
                       onClick={() => deleteFile(file)}

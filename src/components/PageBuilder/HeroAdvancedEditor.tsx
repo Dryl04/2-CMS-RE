@@ -58,7 +58,7 @@ export function HeroAdvancedEditor({ section, updateDesign }: HeroAdvancedEditor
           {overlayEnabled && (
             <>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Couleur overlay</label>
+                <label className="block text-xs text-gray-600 mb-1">Couleur de superposition</label>
                 <input
                   type="color"
                   value={overlayColor}
@@ -235,7 +235,7 @@ export function HeroAdvancedEditor({ section, updateDesign }: HeroAdvancedEditor
       <div className="border-t border-gray-200 pt-4">
         <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
           <span className="w-2 h-2 bg-green-600 rounded-full"></span>
-          Effets & Animation
+          Effets et animation
         </h3>
         <div className="space-y-3">
           <label className="flex items-center">

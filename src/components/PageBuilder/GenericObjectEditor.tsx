@@ -15,6 +15,89 @@ interface GenericObjectEditorProps {
 
 const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent';
 
+const FRIENDLY_FIELD_LABELS: Record<string, string> = {
+  hero: 'Hero',
+  title: 'Titre',
+  subtitle: 'Sous-titre',
+  headline: 'Titre principal',
+  subheadline: 'Sous-titre principal',
+  description: 'Description',
+  content: 'Contenu',
+  image: 'Image',
+  logo: 'Logo',
+  avatar: 'Avatar',
+  thumbnail: 'Vignette',
+  video: 'Vidéo',
+  videourl: 'URL de la vidéo',
+  cta: 'Appel à l’action',
+  ctatext: 'Texte du bouton',
+  ctalink: 'Lien du bouton',
+  button: 'Bouton',
+  buttontext: 'Texte du bouton',
+  buttonurl: 'Lien du bouton',
+  buttonbackground: 'Couleur du bouton',
+  buttonbackgroundhover: 'Couleur du bouton au survol',
+  buttontextcolor: 'Couleur du texte du bouton',
+  buttonfontsize: 'Taille du texte du bouton',
+  buttonfontfamily: 'Police du texte du bouton',
+  buttontextsize: 'Taille du texte du bouton',
+  buttontextfontfamily: 'Police du texte du bouton',
+  fontfamily: 'Police',
+  fontsize: 'Taille du texte',
+  lineheight: 'Hauteur de ligne',
+  textcolor: 'Couleur du texte',
+  headingcolor: 'Couleur des titres',
+  headingfontsize: 'Taille des titres',
+  headingfontfamily: 'Police des titres',
+  headingfontweight: 'Graisse des titres',
+  h1color: 'Couleur H1',
+  h2color: 'Couleur H2',
+  link: 'Lien',
+  linkcolor: 'Couleur des liens',
+  background: 'Arrière-plan',
+  backgroundvalue: 'Couleur de fond',
+  overlay: 'Superposition',
+  overlaycolor: 'Couleur de superposition',
+  overlayopacity: 'Opacité de la superposition',
+  spacing: 'Espacement',
+  paddingtop: 'Padding haut',
+  paddingbottom: 'Padding bas',
+  margintop: 'Marge haute',
+  marginbottom: 'Marge basse',
+  primary: 'Couleur principale',
+  secondary: 'Couleur secondaire',
+  accent: 'Couleur d’accent',
+};
+
+const TOKEN_TRANSLATIONS: Record<string, string> = {
+  button: 'bouton',
+  text: 'texte',
+  size: 'taille',
+  font: 'police',
+  family: 'famille',
+  color: 'couleur',
+  background: 'arrière-plan',
+  hover: 'survol',
+  link: 'lien',
+  title: 'titre',
+  subtitle: 'sous-titre',
+  headline: 'titre principal',
+  description: 'description',
+  content: 'contenu',
+  image: 'image',
+  logo: 'logo',
+  video: 'vidéo',
+  overlay: 'superposition',
+  spacing: 'espacement',
+  padding: 'padding',
+  margin: 'marge',
+  top: 'haut',
+  bottom: 'bas',
+  primary: 'principale',
+  secondary: 'secondaire',
+  accent: 'accent',
+};
+
 const isPlainObject = (value: unknown): value is JsonObject => {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 };
@@ -37,13 +120,45 @@ const createEmptyFromSample = (sample: JsonValue): JsonValue => {
   return '';
 };
 
-const prettifyLabel = (label?: string) => {
-  if (!label) return '';
-  return label
+const normalizeLabelKey = (value?: string) => (value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+const toSentenceCase = (value: string) =>
+  value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+
+const prettifyLabel = (label?: string, path?: string) => {
+  const rawLabel = label || '';
+  const rawPath = path || '';
+
+  const normalizedPath = normalizeLabelKey(rawPath);
+  const normalizedLabel = normalizeLabelKey(rawLabel);
+
+  if (normalizedPath && FRIENDLY_FIELD_LABELS[normalizedPath]) {
+    return FRIENDLY_FIELD_LABELS[normalizedPath];
+  }
+
+  if (normalizedLabel && FRIENDLY_FIELD_LABELS[normalizedLabel]) {
+    return FRIENDLY_FIELD_LABELS[normalizedLabel];
+  }
+
+  const source = rawLabel || rawPath.split('.').pop() || '';
+  if (!source) return '';
+
+  const spaced = source
     .replace(/([A-Z])/g, ' $1')
-    .replace(/[_-]/g, ' ')
-    .replace(/^\w/, (c) => c.toUpperCase())
+    .replace(/[_.-]/g, ' ')
     .trim();
+
+  const translated = spaced
+    .split(/\s+/)
+    .map((token) => {
+      const translatedToken = TOKEN_TRANSLATIONS[token.toLowerCase()];
+      return translatedToken || token.toLowerCase();
+    })
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return toSentenceCase(translated || spaced);
 };
 
 const isMediaField = (label?: string) => {
@@ -78,7 +193,7 @@ const isColorField = (label: string | undefined, path: string | undefined, value
 };
 
 function GenericValueField({ value, onChange, label, depth = 0, path = '' }: GenericObjectEditorProps) {
-  const displayLabel = prettifyLabel(label);
+  const displayLabel = prettifyLabel(label, path);
   const hasLabel = Boolean(label);
 
   if (Array.isArray(value)) {

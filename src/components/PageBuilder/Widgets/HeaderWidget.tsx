@@ -36,12 +36,14 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
   const textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+    ...(typo.linkColor ? { color: typo.linkColor } : {}),
   };
   const subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
   const linkStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.linkColor ? { color: typo.linkColor } : {}),
   };
 
   const renderDefault = () => (

@@ -11,6 +11,17 @@ interface SEOFormProps {
 }
 
 export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBuilder }: SEOFormProps) {
+  const normalizeSlug = (value: string) =>
+    value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
   const getCurrentDomain = () => {
     if (typeof window !== 'undefined') {
       const protocol = window.location.protocol;
@@ -54,7 +65,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
       const parts = pageKey.split('/');
 
       if (parts.length > 1) {
-        setSlug(parts[parts.length - 1]);
+        setSlug(normalizeSlug(parts[parts.length - 1]));
         const parentPath = parts.slice(0, -1).join('/');
         const parentPage = availablePages.find(p => p.page_key === parentPath);
         if (parentPage) {
@@ -64,7 +75,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
           setShowNewParent(true);
         }
       } else {
-        setSlug(pageKey);
+        setSlug(normalizeSlug(pageKey));
         setParentPageId(null);
       }
 
@@ -138,14 +149,14 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
 
   const getFullUrl = () => {
     const parentPath = getParentPath();
-    const cleanSlug = slug.trim().replace(/^\/+|\/+$/g, '');
+    const cleanSlug = normalizeSlug(slug.trim().replace(/^\/+|\/+$/g, ''));
     const path = parentPath ? `${parentPath}/${cleanSlug}` : cleanSlug;
     return `${domain}/${path}`;
   };
 
   const getPageKey = () => {
     const parentPath = getParentPath();
-    const cleanSlug = slug.trim().replace(/^\/+|\/+$/g, '');
+    const cleanSlug = normalizeSlug(slug.trim().replace(/^\/+|\/+$/g, ''));
     return parentPath ? `${parentPath}/${cleanSlug}` : cleanSlug;
   };
 
@@ -466,7 +477,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
               <input
                 type="text"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                onChange={(e) => setSlug(normalizeSlug(e.target.value))}
                 placeholder="mon-slug-de-page"
                 className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900"
                 required

@@ -92,6 +92,65 @@ const HERO_SEO_WIDGET_TYPES = new Set([
   'creative-network-hero',
 ]);
 
+const TITLE_FIELD_KEYS = [
+  'headline',
+  'title',
+  'logoText',
+  'formTitle',
+  'tagline',
+] as const;
+
+const PARAGRAPH_FIELD_KEYS = [
+  'subheadline',
+  'subtitle',
+  'description',
+  'additionalText',
+  'privacyNote',
+  'content',
+] as const;
+
+const BUTTON_TEXT_FIELD_KEYS = [
+  'ctaText',
+  'buttonText',
+  'primaryCta',
+  'secondaryCta',
+  'primaryText',
+  'secondaryText',
+] as const;
+
+const BUTTON_LINK_FIELD_KEYS = [
+  'ctaLink',
+  'buttonUrl',
+  'primaryLink',
+  'secondaryLink',
+  'link',
+] as const;
+
+const UNIFORM_FIELD_LABELS: Record<string, string> = {
+  headline: 'Titre principal',
+  title: 'Titre',
+  logoText: 'Nom de marque',
+  formTitle: 'Titre du formulaire',
+  tagline: 'Accroche',
+  subheadline: 'Sous-titre',
+  subtitle: 'Sous-titre',
+  description: 'Description',
+  additionalText: 'Texte additionnel',
+  privacyNote: 'Note de confidentialité',
+  content: 'Contenu texte',
+  ctaText: 'Texte bouton principal',
+  buttonText: 'Texte bouton',
+  primaryCta: 'Texte bouton principal',
+  secondaryCta: 'Texte bouton secondaire',
+  primaryText: 'Texte bouton principal',
+  secondaryText: 'Texte bouton secondaire',
+  ctaLink: 'Lien bouton principal',
+  buttonUrl: 'Lien bouton',
+  primaryLink: 'Lien bouton principal',
+  secondaryLink: 'Lien bouton secondaire',
+  link: 'Lien',
+};
+
 function ColorOverrideField({
   label,
   value,
@@ -184,24 +243,115 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
     onUpdateSection({ variant: newVariant });
   };
 
+  const renderUniformQuickEdit = () => {
+    const content = section.content || {};
+
+    const titleFields = TITLE_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
+    const paragraphFields = PARAGRAPH_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
+    const buttonTextFields = BUTTON_TEXT_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
+    const buttonLinkFields = BUTTON_LINK_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
+
+    const hasAnyField =
+      titleFields.length > 0 ||
+      paragraphFields.length > 0 ||
+      buttonTextFields.length > 0 ||
+      buttonLinkFields.length > 0;
+
+    if (!hasAnyField) return null;
+
+    return (
+      <div className="space-y-5">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+          <p className="text-xs text-gray-600">
+            Edition rapide uniforme: mêmes sous-sections sur chaque widget (titres, paragraphes, boutons/liens).
+          </p>
+        </div>
+
+        {titleFields.length > 0 && (
+          <div className="border border-gray-200 rounded-lg p-3 space-y-3">
+            <h4 className="text-xs font-semibold tracking-wide text-gray-700 uppercase">Titres</h4>
+            {titleFields.map((key) => (
+              <div key={key}>
+                <label className="block text-xs text-gray-600 mb-1">{UNIFORM_FIELD_LABELS[key] || key}</label>
+                <input
+                  type="text"
+                  value={section.content[key] || ''}
+                  onChange={(e) => updateContent(key, e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {paragraphFields.length > 0 && (
+          <div className="border border-gray-200 rounded-lg p-3 space-y-3">
+            <h4 className="text-xs font-semibold tracking-wide text-gray-700 uppercase">Paragraphes</h4>
+            {paragraphFields.map((key) => (
+              <div key={key}>
+                <label className="block text-xs text-gray-600 mb-1">{UNIFORM_FIELD_LABELS[key] || key}</label>
+                <textarea
+                  value={section.content[key] || ''}
+                  onChange={(e) => updateContent(key, e.target.value)}
+                  rows={key === 'description' || key === 'content' ? 3 : 2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {(buttonTextFields.length > 0 || buttonLinkFields.length > 0) && (
+          <div className="border border-gray-200 rounded-lg p-3 space-y-3">
+            <h4 className="text-xs font-semibold tracking-wide text-gray-700 uppercase">Boutons & liens</h4>
+            {buttonTextFields.map((key) => (
+              <div key={key}>
+                <label className="block text-xs text-gray-600 mb-1">{UNIFORM_FIELD_LABELS[key] || key}</label>
+                <input
+                  type="text"
+                  value={section.content[key] || ''}
+                  onChange={(e) => updateContent(key, e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
+            ))}
+            {buttonLinkFields.map((key) => (
+              <div key={key}>
+                <label className="block text-xs text-gray-600 mb-1">{UNIFORM_FIELD_LABELS[key] || key}</label>
+                <input
+                  type="text"
+                  value={section.content[key] || ''}
+                  onChange={(e) => updateContent(key, e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const editorProps = { section, updateContent };
 
   const renderContentTab = () => {
+    const quickEdit = renderUniformQuickEdit();
+
     switch (section.type) {
       case 'hero':
-        return <HeroContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<HeroContentEditor {...editorProps} /></div>;
       case 'features':
-        return <FeaturesContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<FeaturesContentEditor {...editorProps} /></div>;
       case 'cta':
-        return <CTAContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<CTAContentEditor {...editorProps} /></div>;
       case 'header':
-        return <HeaderContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<HeaderContentEditor {...editorProps} /></div>;
       case 'contact':
-        return <ContactContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ContactContentEditor {...editorProps} /></div>;
       case 'testimonials':
-        return <TestimonialsContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<TestimonialsContentEditor {...editorProps} /></div>;
       case 'footer':
-        return <FooterContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<FooterContentEditor {...editorProps} /></div>;
       case 'image-text-split':
         return <ImageTextSplitContentEditor {...editorProps} />;
       case 'content-showcase':
@@ -215,7 +365,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       case 'click-funnel-testimonials':
         return <ClickFunnelTestimonialsContentEditor {...editorProps} />;
       case 'clickfunnel-features':
-        return <ClickFunnelFeaturesContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ClickFunnelFeaturesContentEditor {...editorProps} /></div>;
       case 'clickfunnel-footer':
         return <ClickFunnelFooterContentEditor {...editorProps} />;
       case 'pricing':
@@ -230,7 +380,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       case 'logocloud':
         return <LogoCloudContentEditor {...editorProps} />;
       case 'videohero':
-        return <VideoHeroContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<VideoHeroContentEditor {...editorProps} /></div>;
       case 'gallery':
         return <GalleryContentEditor {...editorProps} />;
       case 'timeline':
@@ -270,7 +420,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       case 'content-with-services':
         return <HeroWithServicesContentEditor {...editorProps} />;
       case 'clickfunnels-hero':
-        return <ClickFunnelsHeroContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ClickFunnelsHeroContentEditor {...editorProps} /></div>;
       case 'membership-pricing':
         return <MembershipPricingContentEditor {...editorProps} />;
       case 'bento-features':
@@ -280,6 +430,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       default:
         return (
           <div className="space-y-4">
+            {quickEdit}
             <p className="text-xs text-gray-500">
               Éditeur générique du contenu pour ce widget.
             </p>
@@ -425,6 +576,27 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           <div className="border-t border-gray-200 pt-4">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">Boutons</h3>
             <div className="space-y-3">
+              <ColorOverrideField
+                label="Couleur bouton"
+                value={section.design.colors?.buttonBackground}
+                fallback="#000000"
+                onChange={(v) => updateDesign('colors', 'buttonBackground', v)}
+                onClear={() => clearDesign('colors', 'buttonBackground')}
+              />
+              <ColorOverrideField
+                label="Couleur texte bouton"
+                value={section.design.colors?.buttonText}
+                fallback="#ffffff"
+                onChange={(v) => updateDesign('colors', 'buttonText', v)}
+                onClear={() => clearDesign('colors', 'buttonText')}
+              />
+              <ColorOverrideField
+                label="Couleur bouton (hover)"
+                value={section.design.colors?.buttonBackgroundHover}
+                fallback="#1F2937"
+                onChange={(v) => updateDesign('colors', 'buttonBackgroundHover', v)}
+                onClear={() => clearDesign('colors', 'buttonBackgroundHover')}
+              />
               <div>
                 <label className="block text-xs text-gray-600 mb-1">Taille des boutons</label>
                 <select
@@ -624,7 +796,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             />
 
             <ColorOverrideField
-              label="Couleur liens"
+              label="Couleur liens / menu navigation"
               value={section.design.typography?.linkColor}
               fallback="#111827"
               onChange={(v) => updateDesign('typography', 'linkColor', v)}
@@ -777,6 +949,26 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                 onChange={(e) => updateDesign('spacing', 'paddingBottom', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
                 placeholder="ex: 80px"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Marge haute</label>
+              <input
+                type="text"
+                value={section.design.spacing.marginTop}
+                onChange={(e) => updateDesign('spacing', 'marginTop', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+                placeholder="ex: 0px"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Marge basse</label>
+              <input
+                type="text"
+                value={section.design.spacing.marginBottom}
+                onChange={(e) => updateDesign('spacing', 'marginBottom', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+                placeholder="ex: 0px"
               />
             </div>
           </div>
