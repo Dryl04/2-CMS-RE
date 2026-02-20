@@ -133,9 +133,15 @@ function isLegacyDefaultColors(colors: Record<string, unknown>) {
     "buttonBackgroundHover",
     "buttonRadius",
     "buttonSize",
+    "buttonBorderStyle",
+    "buttonBorderWidth",
+    "buttonBorderColor",
+    "buttonShadow",
     "accent",
     "iconBackground",
     "iconColor",
+    "iconRadius",
+    "mediaRadius",
   ]);
 
   const keys = Object.keys(colors);
@@ -297,9 +303,8 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
   const hasLinkColor = !!(typo.linkColor || colors.accent);
   const hasBtnBg = !!colors.buttonBackground;
 
-  const usesInternalVerticalSpacing = INTERNAL_VERTICAL_SPACING_WIDGET_TYPES.has(
-    normalizedSection.type,
-  );
+  const usesInternalVerticalSpacing =
+    INTERNAL_VERTICAL_SPACING_WIDGET_TYPES.has(normalizedSection.type);
 
   const className = [
     "widget-design-scope",
@@ -351,7 +356,15 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
       ? { "--widget-icon-bg": colors.iconBackground }
       : {}),
     ...(colors.iconColor ? { "--widget-icon-color": colors.iconColor } : {}),
+    ...(colors.iconRadius ? { "--widget-icon-radius": colors.iconRadius } : {}),
+    ...(colors.mediaRadius
+      ? { "--widget-media-radius": colors.mediaRadius }
+      : {}),
     "--widget-btn-radius": buttonRadius,
+    "--widget-btn-border-style": colors.buttonBorderStyle || "none",
+    "--widget-btn-border-width": colors.buttonBorderWidth || "0px",
+    "--widget-btn-border-color": colors.buttonBorderColor || "transparent",
+    "--widget-btn-shadow": colors.buttonShadow || "none",
     ...buttonSizeVars,
     ...(typo.buttonFontSize
       ? { "--widget-btn-font-size": typo.buttonFontSize }

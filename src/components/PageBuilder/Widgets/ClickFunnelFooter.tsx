@@ -110,7 +110,7 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
             <img src={logo} alt={logoText} className="h-8" />
           ) : (
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-base-100 rounded-full flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-5 h-5 text-red-500 fill-current">
                   <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" />
                 </svg>

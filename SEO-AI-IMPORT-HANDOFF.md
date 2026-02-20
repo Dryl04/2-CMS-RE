@@ -4,6 +4,8 @@
 
 Produce a **valid JSON file** that can be pasted into the SEO importer to create/update pages in bulk.
 
+Primary safety objective: the AI agent must know **exactly what it is allowed to modify** to avoid import validation errors.
+
 The expected workflow is:
 
 1. Export a page template from the builder (`JSON` export).
@@ -63,6 +65,45 @@ With **Format B**, importer auto-fallbacks:
 
 ---
 
+## Critical Rule – What the AI Agent May Modify
+
+To minimize errors, the AI agent should apply this rule:
+
+### ✅ Allowed modifications (safe)
+
+- Page SEO fields: `title`, `description`, `keywords`, `og_title`, `og_description`, `og_image`, `canonical_url`, `language`, `status`, `seo_h1`, `seo_h2`, `content`.
+- `page_key` only when explicitly requested (must remain slug-valid).
+- In `sections_data`: **content values only** (text, URLs, CTA labels/links, list item text).
+
+### ❌ Forbidden modifications (unless explicitly requested)
+
+- Do not change section structure keys: `id`, `type`, `order`, `variant`, `design`, `advanced`.
+- Do not add/remove/reorder sections.
+- Do not rename keys.
+- Do not convert object ↔ array types.
+- Do not inject unknown root keys.
+- Do not overwrite `template_id` / `daisy_theme_slug` if already provided and valid.
+
+---
+
+## Section Editing Safety Contract
+
+When a template export is provided, the AI must:
+
+1. Keep the exact section skeleton.
+2. Keep array cardinality unless user explicitly asks to add/remove items.
+3. Modify only leaf values inside `content`.
+4. Preserve data types for every edited value.
+
+Examples:
+
+- `keywords`: `string[]` preferred; comma-string accepted but array is safer.
+- `status`: must be one of `draft`, `published`, `archived`.
+- `sections_data`: must remain an array of objects.
+- `content` and `design`: must remain objects.
+
+---
+
 ## Page-Level Rules
 
 ### Required fields
@@ -108,6 +149,10 @@ Invalid examples:
 - `café-lyon`
 - `landing_page`
 
+Regex reference:
+
+- `^[a-z0-9]+(?:-[a-z0-9]+)*$`
+
 ---
 
 ## sections_data Contract
@@ -125,6 +170,11 @@ Strong recommendation for fidelity:
 - Modify only `content` values.
 - Keep same number/order of sections as template.
 - Keep same cardinality in arrays (features, testimonials, nav items, columns) unless explicitly requested.
+
+If a section is present, ensure:
+
+- `content` exists and is an object.
+- `design` exists and is an object.
 
 ---
 
@@ -149,6 +199,25 @@ Before returning JSON, ensure:
 - Every page has non-empty `title`.
 - Any `sections_data` provided is an array of valid section objects.
 
+Additional anti-error checks:
+
+- No duplicate `page_key` after slug normalization.
+- No empty string for required fields.
+- No `null` for required fields.
+- No markdown fences in output.
+- Output can be parsed by `JSON.parse` without transformation.
+
+---
+
+## Recommended Generation Procedure for AI Agent
+
+1. Start from exported template JSON.
+2. Copy section skeleton unchanged.
+3. Apply SEO/page edits.
+4. Apply `content` text edits only inside sections.
+5. Run the hard checklist.
+6. Return final payload as raw JSON only.
+
 ---
 
 ## Important Output Instruction for AI Agent
@@ -156,3 +225,5 @@ Before returning JSON, ensure:
 Return **JSON only**.
 Do **not** wrap in markdown.
 Do **not** add explanations before/after JSON.
+
+If uncertain about a field, keep original template value instead of guessing a new structure.

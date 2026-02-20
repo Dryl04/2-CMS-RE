@@ -82,7 +82,7 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
           </div>
 
           <div className="lg:col-span-6">
-            <div className="relative rounded-2xl overflow-hidden min-h-[260px] sm:min-h-[360px] lg:min-h-[450px] bg-black shadow-xl">
+            <div className="relative rounded-2xl overflow-hidden min-h-[260px] sm:min-h-[360px] lg:min-h-[450px] bg-neutral shadow-xl">
               {content.videoUrl && isPlaying ? (
                 <iframe
                   src={getEmbedUrl(content.videoUrl)}
@@ -98,10 +98,10 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
                     alt="Video thumbnail"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-neutral/30 flex items-center justify-center">
                     <button
                       onClick={() => setIsPlaying((prev) => !prev)}
-                      className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full text-white shadow-2xl transition-transform hover:scale-105"
+                      className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full text-neutral-content shadow-2xl transition-transform hover:scale-105"
                       style={accentColor ? { backgroundColor: accentColor } : undefined}
                       aria-label={isPlaying ? 'Pause video' : 'Play video'}
                     >
@@ -118,7 +118,7 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
               {content.videoUrl && isPlaying && (
                 <button
                   onClick={() => setIsPlaying(false)}
-                  className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-white shadow-lg"
+                  className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-neutral-content shadow-lg"
                   style={accentColor ? { backgroundColor: accentColor } : undefined}
                   aria-label="Pause video"
                 >

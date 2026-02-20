@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Settings, Palette, Code } from 'lucide-react';
+import { Settings, Palette, Code, ChevronDown, ChevronRight } from 'lucide-react';
 import { PageBuilderSection } from '../../lib/pageBuilderTypes';
 import { widgetLibrary } from '../../lib/widgetLibrary';
 import WidgetThemeSelector from './WidgetThemeSelector';
@@ -80,6 +80,50 @@ const BUTTON_FONT_SIZE_OPTIONS = [
   { value: '1.125rem', label: 'Grand (1.125rem)' },
   { value: '1.25rem', label: 'Très grand (1.25rem)' },
 ];
+
+const BUTTON_SHADOW_OPTIONS = [
+  { value: 'none', label: 'Aucune' },
+  { value: '0 1px 2px 0 rgba(0,0,0,0.05)', label: 'Très légère' },
+  { value: '0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1)', label: 'Légère' },
+  { value: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)', label: 'Moyenne' },
+  { value: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)', label: 'Grande' },
+  { value: '0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)', label: 'Très grande' },
+  { value: '0 25px 50px -12px rgba(0,0,0,0.25)', label: 'Intense' },
+];
+
+function CollapsibleSection({
+  title,
+  defaultOpen = true,
+  children,
+  icon,
+}: {
+  title: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+  icon?: React.ReactNode;
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="border-t border-gray-200 pt-3">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between w-full text-left mb-2 group"
+      >
+        <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+          {icon}
+          {title}
+        </h3>
+        {isOpen ? (
+          <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+        ) : (
+          <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+        )}
+      </button>
+      {isOpen && <div className="space-y-3">{children}</div>}
+    </div>
+  );
+}
 
 const HERO_SEO_WIDGET_TYPES = new Set([
   'hero',
@@ -448,219 +492,317 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       return (
         <div className="space-y-6">
           <WidgetThemeSelector section={section} onUpdateSection={onUpdateSection} />
-          <div className="border-t border-gray-200 pt-4">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Typographie des titres</h3>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">Police H1</label>
-                <select
-                  value={section.design.typography?.h1FontFamily || ''}
-                  onChange={(e) => updateDesign('typography', 'h1FontFamily', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
-                >
-                  <option value="">Hérité</option>
-                  <option value="Inter, sans-serif">Inter</option>
-                  <option value="'Geist', sans-serif">Geist</option>
-                  <option value="'DM Sans', sans-serif">DM Sans</option>
-                  <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
-                  <option value="Georgia, serif">Georgia</option>
-                  <option value="'Playfair Display', serif">Playfair Display</option>
-                  <option value="'Merriweather', serif">Merriweather</option>
-                  <option value="'Lora', serif">Lora</option>
-                  <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">Taille H1</label>
-                <select
-                  value={section.design.typography?.h1FontSize || ''}
-                  onChange={(e) => updateDesign('typography', 'h1FontSize', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
-                >
-                  <option value="">Par défaut</option>
-                  <option value="1.5rem">Petit (1.5rem)</option>
-                  <option value="2rem">Moyen (2rem)</option>
-                  <option value="2.5rem">Grand (2.5rem)</option>
-                  <option value="3rem">Très grand (3rem)</option>
-                  <option value="3.75rem">Énorme (3.75rem)</option>
-                  <option value="4.5rem">Géant (4.5rem)</option>
-                  <option value="6rem">Maxi (6rem)</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">Graisse H1</label>
-                <select
-                  value={section.design.typography?.h1FontWeight || ''}
-                  onChange={(e) => updateDesign('typography', 'h1FontWeight', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
-                >
-                  <option value="">Par défaut</option>
-                  <option value="300">Léger (300)</option>
-                  <option value="400">Normal (400)</option>
-                  <option value="500">Medium (500)</option>
-                  <option value="600">Semi-gras (600)</option>
-                  <option value="700">Gras (700)</option>
-                  <option value="800">Extra-gras (800)</option>
-                  <option value="900">Noir (900)</option>
-                </select>
-              </div>
-              <ColorOverrideField
-                label="Couleur H1"
-                value={section.design.typography?.h1Color}
-                fallback="#111827"
-                onChange={(v) => updateDesign('typography', 'h1Color', v)}
-                onClear={() => clearDesign('typography', 'h1Color')}
-              />
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">Police H2 / sous-titre</label>
-                <select
-                  value={section.design.typography?.h2FontFamily || ''}
-                  onChange={(e) => updateDesign('typography', 'h2FontFamily', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
-                >
-                  <option value="">Hérité</option>
-                  <option value="Inter, sans-serif">Inter</option>
-                  <option value="'Geist', sans-serif">Geist</option>
-                  <option value="'DM Sans', sans-serif">DM Sans</option>
-                  <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
-                  <option value="Georgia, serif">Georgia</option>
-                  <option value="'Playfair Display', serif">Playfair Display</option>
-                  <option value="'Merriweather', serif">Merriweather</option>
-                  <option value="'Lora', serif">Lora</option>
-                  <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">Taille H2 / sous-titre</label>
-                <select
-                  value={section.design.typography?.h2FontSize || ''}
-                  onChange={(e) => updateDesign('typography', 'h2FontSize', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
-                >
-                  <option value="">Par défaut</option>
-                  <option value="0.875rem">Très petit (0.875rem)</option>
-                  <option value="1rem">Petit (1rem)</option>
-                  <option value="1.125rem">Normal (1.125rem)</option>
-                  <option value="1.25rem">Moyen (1.25rem)</option>
-                  <option value="1.5rem">Grand (1.5rem)</option>
-                  <option value="1.75rem">Très grand (1.75rem)</option>
-                  <option value="2rem">Énorme (2rem)</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">Graisse H2 / sous-titre</label>
-                <select
-                  value={section.design.typography?.h2FontWeight || ''}
-                  onChange={(e) => updateDesign('typography', 'h2FontWeight', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
-                >
-                  <option value="">Par défaut</option>
-                  <option value="300">Léger (300)</option>
-                  <option value="400">Normal (400)</option>
-                  <option value="500">Medium (500)</option>
-                  <option value="600">Semi-gras (600)</option>
-                  <option value="700">Gras (700)</option>
-                  <option value="800">Extra-gras (800)</option>
-                  <option value="900">Noir (900)</option>
-                </select>
-              </div>
-              <ColorOverrideField
-                label="Couleur H2 / sous-titre"
-                value={section.design.typography?.h2Color}
-                fallback="#6B7280"
-                onChange={(v) => updateDesign('typography', 'h2Color', v)}
-                onClear={() => clearDesign('typography', 'h2Color')}
-              />
+          <CollapsibleSection title="Typographie des titres" defaultOpen={false}>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Police H1</label>
+              <select
+                value={section.design.typography?.h1FontFamily || ''}
+                onChange={(e) => updateDesign('typography', 'h1FontFamily', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+              >
+                <option value="">Hérité</option>
+                <option value="Inter, sans-serif">Inter</option>
+                <option value="'Geist', sans-serif">Geist</option>
+                <option value="'DM Sans', sans-serif">DM Sans</option>
+                <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Playfair Display', serif">Playfair Display</option>
+                <option value="'Merriweather', serif">Merriweather</option>
+                <option value="'Lora', serif">Lora</option>
+                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+              </select>
             </div>
-          </div>
-          <div className="border-t border-gray-200 pt-4">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Boutons</h3>
-            <div className="space-y-3">
-              <ColorOverrideField
-                label="Couleur bouton"
-                value={section.design.colors?.buttonBackground}
-                fallback="#000000"
-                onChange={(v) => updateDesign('colors', 'buttonBackground', v)}
-                onClear={() => clearDesign('colors', 'buttonBackground')}
-              />
-              <ColorOverrideField
-                label="Couleur texte bouton"
-                value={section.design.colors?.buttonText}
-                fallback="#ffffff"
-                onChange={(v) => updateDesign('colors', 'buttonText', v)}
-                onClear={() => clearDesign('colors', 'buttonText')}
-              />
-              <ColorOverrideField
-                label="Couleur bouton (hover)"
-                value={section.design.colors?.buttonBackgroundHover}
-                fallback="#1F2937"
-                onChange={(v) => updateDesign('colors', 'buttonBackgroundHover', v)}
-                onClear={() => clearDesign('colors', 'buttonBackgroundHover')}
-              />
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">Taille des boutons</label>
-                <select
-                  value={section.design.colors?.buttonSize || 'md'}
-                  onChange={(e) => updateDesign('colors', 'buttonSize', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-                >
-                  <option value="sm">Petit</option>
-                  <option value="md">Moyen</option>
-                  <option value="lg">Grand</option>
-                  <option value="xl">Très grand</option>
-                </select>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Taille H1</label>
+              <select
+                value={section.design.typography?.h1FontSize || ''}
+                onChange={(e) => updateDesign('typography', 'h1FontSize', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+              >
+                <option value="">Par défaut</option>
+                <option value="1.5rem">Petit (1.5rem)</option>
+                <option value="2rem">Moyen (2rem)</option>
+                <option value="2.5rem">Grand (2.5rem)</option>
+                <option value="3rem">Très grand (3rem)</option>
+                <option value="3.75rem">Énorme (3.75rem)</option>
+                <option value="4.5rem">Géant (4.5rem)</option>
+                <option value="6rem">Maxi (6rem)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Graisse H1</label>
+              <select
+                value={section.design.typography?.h1FontWeight || ''}
+                onChange={(e) => updateDesign('typography', 'h1FontWeight', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+              >
+                <option value="">Par défaut</option>
+                <option value="300">Léger (300)</option>
+                <option value="400">Normal (400)</option>
+                <option value="500">Medium (500)</option>
+                <option value="600">Semi-gras (600)</option>
+                <option value="700">Gras (700)</option>
+                <option value="800">Extra-gras (800)</option>
+                <option value="900">Noir (900)</option>
+              </select>
+            </div>
+            <ColorOverrideField
+              label="Couleur H1"
+              value={section.design.typography?.h1Color}
+              fallback="#111827"
+              onChange={(v) => updateDesign('typography', 'h1Color', v)}
+              onClear={() => clearDesign('typography', 'h1Color')}
+            />
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Police H2 / sous-titre</label>
+              <select
+                value={section.design.typography?.h2FontFamily || ''}
+                onChange={(e) => updateDesign('typography', 'h2FontFamily', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+              >
+                <option value="">Hérité</option>
+                <option value="Inter, sans-serif">Inter</option>
+                <option value="'Geist', sans-serif">Geist</option>
+                <option value="'DM Sans', sans-serif">DM Sans</option>
+                <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Playfair Display', serif">Playfair Display</option>
+                <option value="'Merriweather', serif">Merriweather</option>
+                <option value="'Lora', serif">Lora</option>
+                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Taille H2 / sous-titre</label>
+              <select
+                value={section.design.typography?.h2FontSize || ''}
+                onChange={(e) => updateDesign('typography', 'h2FontSize', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+              >
+                <option value="">Par défaut</option>
+                <option value="0.875rem">Très petit (0.875rem)</option>
+                <option value="1rem">Petit (1rem)</option>
+                <option value="1.125rem">Normal (1.125rem)</option>
+                <option value="1.25rem">Moyen (1.25rem)</option>
+                <option value="1.5rem">Grand (1.5rem)</option>
+                <option value="1.75rem">Très grand (1.75rem)</option>
+                <option value="2rem">Énorme (2rem)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Graisse H2 / sous-titre</label>
+              <select
+                value={section.design.typography?.h2FontWeight || ''}
+                onChange={(e) => updateDesign('typography', 'h2FontWeight', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+              >
+                <option value="">Par défaut</option>
+                <option value="300">Léger (300)</option>
+                <option value="400">Normal (400)</option>
+                <option value="500">Medium (500)</option>
+                <option value="600">Semi-gras (600)</option>
+                <option value="700">Gras (700)</option>
+                <option value="800">Extra-gras (800)</option>
+                <option value="900">Noir (900)</option>
+              </select>
+            </div>
+            <ColorOverrideField
+              label="Couleur H2 / sous-titre"
+              value={section.design.typography?.h2Color}
+              fallback="#6B7280"
+              onChange={(v) => updateDesign('typography', 'h2Color', v)}
+              onClear={() => clearDesign('typography', 'h2Color')}
+            />
+          </CollapsibleSection>
+          <CollapsibleSection title="Boutons" defaultOpen={false}>
+            <ColorOverrideField
+              label="Couleur bouton"
+              value={section.design.colors?.buttonBackground}
+              fallback="#000000"
+              onChange={(v) => updateDesign('colors', 'buttonBackground', v)}
+              onClear={() => clearDesign('colors', 'buttonBackground')}
+            />
+            <ColorOverrideField
+              label="Couleur texte bouton"
+              value={section.design.colors?.buttonText}
+              fallback="#ffffff"
+              onChange={(v) => updateDesign('colors', 'buttonText', v)}
+              onClear={() => clearDesign('colors', 'buttonText')}
+            />
+            <ColorOverrideField
+              label="Couleur bouton (hover)"
+              value={section.design.colors?.buttonBackgroundHover}
+              fallback="#1F2937"
+              onChange={(v) => updateDesign('colors', 'buttonBackgroundHover', v)}
+              onClear={() => clearDesign('colors', 'buttonBackgroundHover')}
+            />
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Taille des boutons</label>
+              <select
+                value={section.design.colors?.buttonSize || 'md'}
+                onChange={(e) => updateDesign('colors', 'buttonSize', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              >
+                <option value="sm">Petit</option>
+                <option value="md">Moyen</option>
+                <option value="lg">Grand</option>
+                <option value="xl">Très grand</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Taille du texte du bouton</label>
+              <select
+                value={section.design.typography?.buttonFontSize || ''}
+                onChange={(e) => updateDesign('typography', 'buttonFontSize', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              >
+                {BUTTON_FONT_SIZE_OPTIONS.map(option => (
+                  <option key={option.value || 'auto'} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Police du texte du bouton</label>
+              <select
+                value={section.design.typography?.buttonFontFamily || ''}
+                onChange={(e) => updateDesign('typography', 'buttonFontFamily', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              >
+                {FONT_FAMILY_OPTIONS.map(option => (
+                  <option key={option.value || 'inherit'} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons</label>
+              <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                <input
+                  type="range"
+                  min="0"
+                  max="32"
+                  step="1"
+                  value={parseInt((section.design.colors?.buttonRadius || '12').replace('px', ''), 10) || 12}
+                  onChange={(e) => updateDesign('colors', 'buttonRadius', `${e.target.value}px`)}
+                  className="w-full"
+                />
+                <input
+                  type="text"
+                  value={section.design.colors?.buttonRadius || '12px'}
+                  onChange={(e) => updateDesign('colors', 'buttonRadius', e.target.value)}
+                  className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                />
               </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">Taille du texte du bouton</label>
-                <select
-                  value={section.design.typography?.buttonFontSize || ''}
-                  onChange={(e) => updateDesign('typography', 'buttonFontSize', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-                >
-                  {BUTTON_FONT_SIZE_OPTIONS.map(option => (
-                    <option key={option.value || 'auto'} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">Police du texte du bouton</label>
-                <select
-                  value={section.design.typography?.buttonFontFamily || ''}
-                  onChange={(e) => updateDesign('typography', 'buttonFontFamily', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-                >
-                  {FONT_FAMILY_OPTIONS.map(option => (
-                    <option key={option.value || 'inherit'} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
-                <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
-                  <input
-                    type="range"
-                    min="0"
-                    max="32"
-                    step="1"
-                    value={parseInt((section.design.colors?.buttonRadius || '12').replace('px', ''), 10) || 12}
-                    onChange={(e) => updateDesign('colors', 'buttonRadius', `${e.target.value}px`)}
-                    className="w-full"
-                  />
-                  <input
-                    type="text"
-                    value={section.design.colors?.buttonRadius || '12px'}
-                    onChange={(e) => updateDesign('colors', 'buttonRadius', e.target.value)}
-                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                  />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Type de bordure bouton</label>
+              <select
+                value={section.design.colors?.buttonBorderStyle || 'none'}
+                onChange={(e) => updateDesign('colors', 'buttonBorderStyle', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              >
+                <option value="none">Aucune</option>
+                <option value="solid">Pleine</option>
+                <option value="dashed">Tirets</option>
+                <option value="dotted">Points</option>
+              </select>
+            </div>
+            {section.design.colors?.buttonBorderStyle && section.design.colors.buttonBorderStyle !== 'none' && (
+              <>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Épaisseur bordure bouton</label>
+                  <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                    <input
+                      type="range"
+                      min="0"
+                      max="6"
+                      step="1"
+                      value={parseInt((section.design.colors?.buttonBorderWidth || '1').replace('px', ''), 10) || 1}
+                      onChange={(e) => updateDesign('colors', 'buttonBorderWidth', `${e.target.value}px`)}
+                      className="w-full"
+                    />
+                    <span className="text-xs text-gray-500 w-12 text-right">{section.design.colors?.buttonBorderWidth || '1px'}</span>
+                  </div>
                 </div>
+                <ColorOverrideField
+                  label="Couleur bordure bouton"
+                  value={section.design.colors?.buttonBorderColor}
+                  fallback="#000000"
+                  onChange={(v) => updateDesign('colors', 'buttonBorderColor', v)}
+                  onClear={() => clearDesign('colors', 'buttonBorderColor')}
+                />
+              </>
+            )}
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Ombre du bouton</label>
+              <select
+                value={section.design.colors?.buttonShadow || 'none'}
+                onChange={(e) => updateDesign('colors', 'buttonShadow', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              >
+                {BUTTON_SHADOW_OPTIONS.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </CollapsibleSection>
+
+          <CollapsibleSection title="Icônes" defaultOpen={false}>
+            <ColorOverrideField
+              label="Couleur de fond des icônes"
+              value={section.design.colors?.iconBackground}
+              fallback="#000000"
+              onChange={(v) => updateDesign('colors', 'iconBackground', v)}
+              onClear={() => clearDesign('colors', 'iconBackground')}
+            />
+            <ColorOverrideField
+              label="Couleur des icônes"
+              value={section.design.colors?.iconColor}
+              fallback="#ffffff"
+              onChange={(v) => updateDesign('colors', 'iconColor', v)}
+              onClear={() => clearDesign('colors', 'iconColor')}
+            />
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Arrondi du contour d'icônes</label>
+              <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                <input
+                  type="range"
+                  min="0"
+                  max="50"
+                  step="1"
+                  value={parseInt((section.design.colors?.iconRadius || '16').replace('px', '').replace('%', ''), 10) || 16}
+                  onChange={(e) => updateDesign('colors', 'iconRadius', `${e.target.value}px`)}
+                  className="w-full"
+                />
+                <span className="text-xs text-gray-500 w-14 text-right">{section.design.colors?.iconRadius || '16px'}</span>
               </div>
             </div>
-          </div>
-          {section.type === 'hero' && (
+          </CollapsibleSection>
+
+          <CollapsibleSection title="Médias (Images & Vidéos)" defaultOpen={false}>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Arrondi des médias</label>
+              <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                <input
+                  type="range"
+                  min="0"
+                  max="50"
+                  step="1"
+                  value={parseInt((section.design.colors?.mediaRadius || '16').replace('px', ''), 10) || 16}
+                  onChange={(e) => updateDesign('colors', 'mediaRadius', `${e.target.value}px`)}
+                  className="w-full"
+                />
+                <span className="text-xs text-gray-500 w-14 text-right">{section.design.colors?.mediaRadius || '16px'}</span>
+              </div>
+            </div>
+          </CollapsibleSection>
+
+          {HERO_SEO_WIDGET_TYPES.has(section.type) && (
             <div className="border-t border-gray-200 pt-4">
               <HeroAdvancedEditor section={section} updateDesign={updateDesign} />
             </div>
@@ -722,203 +864,300 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           </div>
         )}
 
-        <div className="border-t border-gray-200 pt-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">Typographie</h3>
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Police globale</label>
-              <select
-                value={section.design.typography?.fontFamily || ''}
-                onChange={(e) => updateDesign('typography', 'fontFamily', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-              >
-                {FONT_FAMILY_OPTIONS.map(option => (
-                  <option key={option.value || 'inherit'} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <CollapsibleSection title="Typographie" defaultOpen={false}>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Police globale</label>
+            <select
+              value={section.design.typography?.fontFamily || ''}
+              onChange={(e) => updateDesign('typography', 'fontFamily', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+            >
+              {FONT_FAMILY_OPTIONS.map(option => (
+                <option key={option.value || 'inherit'} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Police des titres</label>
-              <select
-                value={section.design.typography?.headingFontFamily || ''}
-                onChange={(e) => updateDesign('typography', 'headingFontFamily', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-              >
-                {FONT_FAMILY_OPTIONS.map(option => (
-                  <option key={option.value || 'inherit'} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Police des titres</label>
+            <select
+              value={section.design.typography?.headingFontFamily || ''}
+              onChange={(e) => updateDesign('typography', 'headingFontFamily', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+            >
+              {FONT_FAMILY_OPTIONS.map(option => (
+                <option key={option.value || 'inherit'} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            <ColorOverrideField
-              label="Couleur titres (tous)"
-              value={section.design.typography?.headingColor}
-              fallback="#111827"
-              onChange={(v) => updateDesign('typography', 'headingColor', v)}
-              onClear={() => clearDesign('typography', 'headingColor')}
-            />
+          <ColorOverrideField
+            label="Couleur titres (tous)"
+            value={section.design.typography?.headingColor}
+            fallback="#111827"
+            onChange={(v) => updateDesign('typography', 'headingColor', v)}
+            onClear={() => clearDesign('typography', 'headingColor')}
+          />
 
-            <ColorOverrideField
-              label="Couleur H1 (spécifique)"
-              value={section.design.typography?.h1Color}
-              fallback="#111827"
-              onChange={(v) => updateDesign('typography', 'h1Color', v)}
-              onClear={() => clearDesign('typography', 'h1Color')}
-            />
+          <ColorOverrideField
+            label="Couleur H1 (spécifique)"
+            value={section.design.typography?.h1Color}
+            fallback="#111827"
+            onChange={(v) => updateDesign('typography', 'h1Color', v)}
+            onClear={() => clearDesign('typography', 'h1Color')}
+          />
 
-            <ColorOverrideField
-              label="Couleur H2 (spécifique)"
-              value={section.design.typography?.h2Color}
-              fallback="#1F2937"
-              onChange={(v) => updateDesign('typography', 'h2Color', v)}
-              onClear={() => clearDesign('typography', 'h2Color')}
-            />
+          <ColorOverrideField
+            label="Couleur H2 (spécifique)"
+            value={section.design.typography?.h2Color}
+            fallback="#1F2937"
+            onChange={(v) => updateDesign('typography', 'h2Color', v)}
+            onClear={() => clearDesign('typography', 'h2Color')}
+          />
 
-            <ColorOverrideField
-              label="Couleur sous-titre"
-              value={section.design.typography?.subtitleColor}
-              fallback="#6B7280"
-              onChange={(v) => updateDesign('typography', 'subtitleColor', v)}
-              onClear={() => clearDesign('typography', 'subtitleColor')}
-            />
+          <ColorOverrideField
+            label="Couleur sous-titre"
+            value={section.design.typography?.subtitleColor}
+            fallback="#6B7280"
+            onChange={(v) => updateDesign('typography', 'subtitleColor', v)}
+            onClear={() => clearDesign('typography', 'subtitleColor')}
+          />
 
-            <ColorOverrideField
-              label="Couleur texte corps"
-              value={section.design.typography?.textColor}
-              fallback="#4B5563"
-              onChange={(v) => updateDesign('typography', 'textColor', v)}
-              onClear={() => clearDesign('typography', 'textColor')}
-            />
+          <ColorOverrideField
+            label="Couleur texte corps"
+            value={section.design.typography?.textColor}
+            fallback="#4B5563"
+            onChange={(v) => updateDesign('typography', 'textColor', v)}
+            onClear={() => clearDesign('typography', 'textColor')}
+          />
 
-            <ColorOverrideField
-              label="Couleur liens / menu navigation"
-              value={section.design.typography?.linkColor}
-              fallback="#111827"
-              onChange={(v) => updateDesign('typography', 'linkColor', v)}
-              onClear={() => clearDesign('typography', 'linkColor')}
-            />
+          <ColorOverrideField
+            label="Couleur liens / menu navigation"
+            value={section.design.typography?.linkColor}
+            fallback="#111827"
+            onChange={(v) => updateDesign('typography', 'linkColor', v)}
+            onClear={() => clearDesign('typography', 'linkColor')}
+          />
 
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Graisse des titres</label>
-              <select
-                value={section.design.typography?.headingFontWeight || ''}
-                onChange={(e) => updateDesign('typography', 'headingFontWeight', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-              >
-                <option value="">Par defaut</option>
-                <option value="300">Leger (300)</option>
-                <option value="400">Normal (400)</option>
-                <option value="500">Medium (500)</option>
-                <option value="600">Semi-gras (600)</option>
-                <option value="700">Gras (700)</option>
-                <option value="800">Extra-gras (800)</option>
-                <option value="900">Noir (900)</option>
-              </select>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Graisse des titres</label>
+            <select
+              value={section.design.typography?.headingFontWeight || ''}
+              onChange={(e) => updateDesign('typography', 'headingFontWeight', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+            >
+              <option value="">Par defaut</option>
+              <option value="300">Leger (300)</option>
+              <option value="400">Normal (400)</option>
+              <option value="500">Medium (500)</option>
+              <option value="600">Semi-gras (600)</option>
+              <option value="700">Gras (700)</option>
+              <option value="800">Extra-gras (800)</option>
+              <option value="900">Noir (900)</option>
+            </select>
+          </div>
+        </CollapsibleSection>
+
+        <CollapsibleSection title="Boutons" defaultOpen={false}>
+          <ColorOverrideField
+            label="Couleur bouton"
+            value={section.design.colors?.buttonBackground}
+            fallback="#000000"
+            onChange={(v) => updateDesign('colors', 'buttonBackground', v)}
+            onClear={() => clearDesign('colors', 'buttonBackground')}
+          />
+
+          <ColorOverrideField
+            label="Couleur texte bouton"
+            value={section.design.colors?.buttonText}
+            fallback="#ffffff"
+            onChange={(v) => updateDesign('colors', 'buttonText', v)}
+            onClear={() => clearDesign('colors', 'buttonText')}
+          />
+
+          <ColorOverrideField
+            label="Couleur bouton (hover)"
+            value={section.design.colors?.buttonBackgroundHover}
+            fallback="#1F2937"
+            onChange={(v) => updateDesign('colors', 'buttonBackgroundHover', v)}
+            onClear={() => clearDesign('colors', 'buttonBackgroundHover')}
+          />
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Taille des boutons</label>
+            <select
+              value={section.design.colors?.buttonSize || 'md'}
+              onChange={(e) => updateDesign('colors', 'buttonSize', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+            >
+              <option value="sm">Petit</option>
+              <option value="md">Moyen</option>
+              <option value="lg">Grand</option>
+              <option value="xl">Très grand</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Taille du texte du bouton</label>
+            <select
+              value={section.design.typography?.buttonFontSize || ''}
+              onChange={(e) => updateDesign('typography', 'buttonFontSize', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+            >
+              {BUTTON_FONT_SIZE_OPTIONS.map(option => (
+                <option key={option.value || 'auto'} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Police du texte du bouton</label>
+            <select
+              value={section.design.typography?.buttonFontFamily || ''}
+              onChange={(e) => updateDesign('typography', 'buttonFontFamily', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+            >
+              {FONT_FAMILY_OPTIONS.map(option => (
+                <option key={option.value || 'inherit'} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons</label>
+            <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+              <input
+                type="range"
+                min="0"
+                max="32"
+                step="1"
+                value={parseInt((section.design.colors?.buttonRadius || '12').replace('px', ''), 10) || 12}
+                onChange={(e) => updateDesign('colors', 'buttonRadius', `${e.target.value}px`)}
+                className="w-full"
+              />
+              <input
+                type="text"
+                value={section.design.colors?.buttonRadius || '12px'}
+                onChange={(e) => updateDesign('colors', 'buttonRadius', e.target.value)}
+                className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+              />
             </div>
           </div>
-        </div>
 
-        <div className="border-t border-gray-200 pt-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">Boutons</h3>
-          <div className="space-y-3">
-            <ColorOverrideField
-              label="Couleur bouton"
-              value={section.design.colors?.buttonBackground}
-              fallback="#000000"
-              onChange={(v) => updateDesign('colors', 'buttonBackground', v)}
-              onClear={() => clearDesign('colors', 'buttonBackground')}
-            />
-
-            <ColorOverrideField
-              label="Couleur texte bouton"
-              value={section.design.colors?.buttonText}
-              fallback="#ffffff"
-              onChange={(v) => updateDesign('colors', 'buttonText', v)}
-              onClear={() => clearDesign('colors', 'buttonText')}
-            />
-
-            <ColorOverrideField
-              label="Couleur bouton (hover)"
-              value={section.design.colors?.buttonBackgroundHover}
-              fallback="#1F2937"
-              onChange={(v) => updateDesign('colors', 'buttonBackgroundHover', v)}
-              onClear={() => clearDesign('colors', 'buttonBackgroundHover')}
-            />
-
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Taille des boutons</label>
-              <select
-                value={section.design.colors?.buttonSize || 'md'}
-                onChange={(e) => updateDesign('colors', 'buttonSize', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-              >
-                <option value="sm">Petit</option>
-                <option value="md">Moyen</option>
-                <option value="lg">Grand</option>
-                <option value="xl">Très grand</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Taille du texte du bouton</label>
-              <select
-                value={section.design.typography?.buttonFontSize || ''}
-                onChange={(e) => updateDesign('typography', 'buttonFontSize', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-              >
-                {BUTTON_FONT_SIZE_OPTIONS.map(option => (
-                  <option key={option.value || 'auto'} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Police du texte du bouton</label>
-              <select
-                value={section.design.typography?.buttonFontFamily || ''}
-                onChange={(e) => updateDesign('typography', 'buttonFontFamily', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-              >
-                {FONT_FAMILY_OPTIONS.map(option => (
-                  <option key={option.value || 'inherit'} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
-              <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
-                <input
-                  type="range"
-                  min="0"
-                  max="32"
-                  step="1"
-                  value={parseInt((section.design.colors?.buttonRadius || '12').replace('px', ''), 10) || 12}
-                  onChange={(e) => updateDesign('colors', 'buttonRadius', `${e.target.value}px`)}
-                  className="w-full"
-                />
-                <input
-                  type="text"
-                  value={section.design.colors?.buttonRadius || '12px'}
-                  onChange={(e) => updateDesign('colors', 'buttonRadius', e.target.value)}
-                  className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                />
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Type de bordure bouton</label>
+            <select
+              value={section.design.colors?.buttonBorderStyle || 'none'}
+              onChange={(e) => updateDesign('colors', 'buttonBorderStyle', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+            >
+              <option value="none">Aucune</option>
+              <option value="solid">Pleine</option>
+              <option value="dashed">Tirets</option>
+              <option value="dotted">Points</option>
+            </select>
+          </div>
+          {section.design.colors?.buttonBorderStyle && section.design.colors.buttonBorderStyle !== 'none' && (
+            <>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Épaisseur bordure bouton</label>
+                <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                  <input
+                    type="range"
+                    min="0"
+                    max="6"
+                    step="1"
+                    value={parseInt((section.design.colors?.buttonBorderWidth || '1').replace('px', ''), 10) || 1}
+                    onChange={(e) => updateDesign('colors', 'buttonBorderWidth', `${e.target.value}px`)}
+                    className="w-full"
+                  />
+                  <span className="text-xs text-gray-500 w-12 text-right">{section.design.colors?.buttonBorderWidth || '1px'}</span>
+                </div>
               </div>
+              <ColorOverrideField
+                label="Couleur bordure bouton"
+                value={section.design.colors?.buttonBorderColor}
+                fallback="#000000"
+                onChange={(v) => updateDesign('colors', 'buttonBorderColor', v)}
+                onClear={() => clearDesign('colors', 'buttonBorderColor')}
+              />
+            </>
+          )}
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Ombre du bouton</label>
+            <select
+              value={section.design.colors?.buttonShadow || 'none'}
+              onChange={(e) => updateDesign('colors', 'buttonShadow', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+            >
+              {BUTTON_SHADOW_OPTIONS.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </CollapsibleSection>
+
+        <CollapsibleSection title="Icônes" defaultOpen={false}>
+          <ColorOverrideField
+            label="Couleur de fond des icônes"
+            value={section.design.colors?.iconBackground}
+            fallback="#000000"
+            onChange={(v) => updateDesign('colors', 'iconBackground', v)}
+            onClear={() => clearDesign('colors', 'iconBackground')}
+          />
+          <ColorOverrideField
+            label="Couleur des icônes"
+            value={section.design.colors?.iconColor}
+            fallback="#ffffff"
+            onChange={(v) => updateDesign('colors', 'iconColor', v)}
+            onClear={() => clearDesign('colors', 'iconColor')}
+          />
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Arrondi du contour d'icônes</label>
+            <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+              <input
+                type="range"
+                min="0"
+                max="50"
+                step="1"
+                value={parseInt((section.design.colors?.iconRadius || '16').replace('px', '').replace('%', ''), 10) || 16}
+                onChange={(e) => updateDesign('colors', 'iconRadius', `${e.target.value}px`)}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-500 w-14 text-right">{section.design.colors?.iconRadius || '16px'}</span>
             </div>
           </div>
-        </div>
+        </CollapsibleSection>
 
-        <div>
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">Arriere-plan</h3>
+        <CollapsibleSection title="Médias (Images & Vidéos)" defaultOpen={false}>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Arrondi des médias</label>
+            <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+              <input
+                type="range"
+                min="0"
+                max="50"
+                step="1"
+                value={parseInt((section.design.colors?.mediaRadius || '16').replace('px', ''), 10) || 16}
+                onChange={(e) => updateDesign('colors', 'mediaRadius', `${e.target.value}px`)}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-500 w-14 text-right">{section.design.colors?.mediaRadius || '16px'}</span>
+            </div>
+          </div>
+        </CollapsibleSection>
+
+        <CollapsibleSection title="Arrière-plan" defaultOpen={false}>
           <ColorOverrideField
             label="Couleur de fond"
             value={section.design.background?.value || undefined}
@@ -926,53 +1165,50 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             onChange={(v) => updateDesign('background', 'value', v)}
             onClear={() => updateDesign('background', 'value', '')}
           />
-        </div>
+        </CollapsibleSection>
 
-        <div>
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">Espacement</h3>
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Padding haut</label>
-              <input
-                type="text"
-                value={section.design.spacing.paddingTop}
-                onChange={(e) => updateDesign('spacing', 'paddingTop', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-                placeholder="ex: 80px"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Padding bas</label>
-              <input
-                type="text"
-                value={section.design.spacing.paddingBottom}
-                onChange={(e) => updateDesign('spacing', 'paddingBottom', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-                placeholder="ex: 80px"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Marge haute</label>
-              <input
-                type="text"
-                value={section.design.spacing.marginTop}
-                onChange={(e) => updateDesign('spacing', 'marginTop', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-                placeholder="ex: 0px"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Marge basse</label>
-              <input
-                type="text"
-                value={section.design.spacing.marginBottom}
-                onChange={(e) => updateDesign('spacing', 'marginBottom', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
-                placeholder="ex: 0px"
-              />
-            </div>
+        <CollapsibleSection title="Espacement" defaultOpen={false}>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Padding haut</label>
+            <input
+              type="text"
+              value={section.design.spacing.paddingTop}
+              onChange={(e) => updateDesign('spacing', 'paddingTop', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+              placeholder="ex: 80px"
+            />
           </div>
-        </div>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Padding bas</label>
+            <input
+              type="text"
+              value={section.design.spacing.paddingBottom}
+              onChange={(e) => updateDesign('spacing', 'paddingBottom', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+              placeholder="ex: 80px"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Marge haute</label>
+            <input
+              type="text"
+              value={section.design.spacing.marginTop}
+              onChange={(e) => updateDesign('spacing', 'marginTop', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+              placeholder="ex: 0px"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Marge basse</label>
+            <input
+              type="text"
+              value={section.design.spacing.marginBottom}
+              onChange={(e) => updateDesign('spacing', 'marginBottom', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+              placeholder="ex: 0px"
+            />
+          </div>
+        </CollapsibleSection>
 
       </div>
     );

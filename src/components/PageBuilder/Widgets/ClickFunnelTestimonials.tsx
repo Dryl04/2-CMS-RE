@@ -19,7 +19,7 @@ interface ClickFunnelTestimonialsProps {
 }
 
 const LogoPlaceholder = ({ name }: { name: string }) => (
-  <div className="px-6 py-2 text-white/60 font-bold text-xl tracking-tight">
+  <div className="px-6 py-2 text-neutral-content/60 font-bold text-xl tracking-tight">
     {name}
   </div>
 );
@@ -168,7 +168,7 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
                     key={`testimonial-${index}`}
                     className="flex-shrink-0 w-[380px] h-[280px] rounded-2xl bg-[#2a2d5a] p-8 flex flex-col justify-between shadow-xl hover:shadow-2xl transition-shadow"
                   >
-                    <p className="text-white text-lg font-bold leading-relaxed line-clamp-6" style={textStyle}>
+                    <p className="text-neutral-content text-lg font-bold leading-relaxed line-clamp-6" style={textStyle}>
                       "{testimonial.quote}"
                     </p>
 
@@ -177,24 +177,24 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
                         <img
                           src={testimonial.avatar}
                           alt={testimonial.name}
-                          className="w-14 h-14 rounded-full object-cover border-2 border-white/20 flex-shrink-0"
+                          className="w-14 h-14 rounded-full object-cover border-2 border-neutral-content/20 flex-shrink-0"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
                           }}
                         />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-white/10 border-2 border-white/20 flex items-center justify-center flex-shrink-0">
-                          <span className="text-white text-xl font-bold">
+                        <div className="w-14 h-14 rounded-full bg-neutral-content/10 border-2 border-neutral-content/20 flex items-center justify-center flex-shrink-0">
+                          <span className="text-neutral-content text-xl font-bold">
                             {testimonial.name.charAt(0)}
                           </span>
                         </div>
                       )}
                       <div className="min-w-0">
-                        <div className="text-white font-bold text-base truncate" style={headingStyle}>
+                        <div className="text-neutral-content font-bold text-base truncate" style={headingStyle}>
                           {testimonial.name}
                         </div>
-                        <div className="text-white/70 text-sm truncate" style={subtitleStyle}>
+                        <div className="text-neutral-content/70 text-sm truncate" style={subtitleStyle}>
                           {testimonial.badge}
                         </div>
                       </div>

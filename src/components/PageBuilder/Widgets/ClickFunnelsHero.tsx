@@ -136,7 +136,7 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
               }}
             />
             <button
-              className="btn btn-primary inline-flex items-center justify-center px-8 py-4 rounded-md text-base font-bold transition-all hover:opacity-90 shadow-lg whitespace-nowrap"
+              className="btn btn-primary inline-flex items-center justify-center text-base font-bold transition-all hover:opacity-90 shadow-lg whitespace-nowrap"
               style={buttonBg || buttonText ? {
                 ...(buttonBg ? { backgroundColor: buttonBg } : {}),
                 ...(buttonText ? { color: buttonText } : {}),

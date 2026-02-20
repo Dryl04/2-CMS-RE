@@ -81,8 +81,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
               ))}
             </ul>
             <button
-              className={`w-full py-3 px-6 rounded-xl font-semibold transition-all hover:shadow-lg ${plan.popular ? 'bg-primary text-primary-content' : 'bg-transparent text-primary border-2 border-primary'
-                }`}
+              className={`${plan.popular ? 'btn btn-primary' : 'btn btn-outline btn-primary'} w-full font-semibold transition-all hover:shadow-lg`}
               style={accentColor ? {
                 backgroundColor: plan.popular ? accentColor : undefined,
                 color: plan.popular ? undefined : accentColor,
@@ -249,7 +248,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
         </div>
 
         <button
-          className="px-12 py-4 rounded-xl font-semibold text-lg transition-all hover:shadow-xl bg-primary text-primary-content"
+          className="btn btn-primary font-semibold text-lg transition-all hover:shadow-xl"
           style={accentColor ? { backgroundColor: accentColor } : undefined}
         >
           Get Started Now

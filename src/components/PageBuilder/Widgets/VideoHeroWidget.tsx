@@ -40,10 +40,21 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   };
 
   const accentColor = design.colors?.accent;
+  const overlayEnabled = design.overlay?.enabled !== false;
+  const overlayColor = design.overlay?.color || '#000000';
+  const overlayOpacity = design.overlay?.opacity ?? 0.5;
 
   const playPauseButtonStyle: React.CSSProperties = accentColor
     ? { backgroundColor: accentColor }
     : {};
+
+  const getOverlayStyle = (): React.CSSProperties => {
+    if (!overlayEnabled) return { display: 'none' };
+    return {
+      backgroundColor: overlayColor,
+      opacity: overlayOpacity,
+    };
+  };
 
   const getEmbedUrl = (url: string) => {
     if (!url) return '';
@@ -59,12 +70,12 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   };
 
   const renderBackground = () => (
-    <div className="relative w-full min-h-[360px] sm:min-h-[500px] lg:min-h-[640px] overflow-hidden bg-black">
+    <div className="relative w-full min-h-[360px] sm:min-h-[500px] lg:min-h-[640px] overflow-hidden bg-neutral">
       <div className="absolute inset-0">
         {isPlaying ? (
           <iframe
             src={getEmbedUrl(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
-            className="w-full h-full bg-black"
+            className="w-full h-full bg-neutral"
             frameBorder="0"
             allow="autoplay; fullscreen"
             allowFullScreen
@@ -79,25 +90,25 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         )}
       </div>
 
-      <div className="absolute inset-0 bg-neutral/50" />
+      <div className="absolute inset-0" style={getOverlayStyle()} />
 
       <div className="relative h-full flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-neutral-content"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-base-content drop-shadow-lg"
             style={h1Style}
           >
             {title || 'Watch Our Story'}
           </h1>
           <h2
-            className="text-lg sm:text-xl lg:text-2xl mb-8 text-neutral-content/90"
+            className="text-lg sm:text-xl lg:text-2xl mb-8 text-base-content/90 drop-shadow-md"
             style={h2Style}
           >
             {subtitle || 'Discover what makes us different'}
           </h2>
           <button
             onClick={() => setIsPlaying((prev) => !prev)}
-            className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full text-white hover:scale-105 transition-transform shadow-2xl"
+            className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full text-primary-content hover:scale-105 transition-transform shadow-2xl"
             style={playPauseButtonStyle}
             aria-label={isPlaying ? 'Pause video' : 'Play video'}
           >
@@ -113,7 +124,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
       {isPlaying && (
         <button
           onClick={() => setIsPlaying(false)}
-          className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-lg"
+          className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-primary-content shadow-lg"
           style={playPauseButtonStyle}
           aria-label="Pause video"
         >
@@ -141,12 +152,12 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         </h2>
       </div>
 
-      <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-black">
+      <div className="relative widget-media rounded-3xl overflow-hidden shadow-2xl bg-neutral">
         <div className="aspect-video">
           {isPlaying ? (
             <iframe
               src={getEmbedUrl(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
-              className="w-full h-full bg-black"
+              className="w-full h-full bg-neutral"
               frameBorder="0"
               allow="autoplay; fullscreen"
               allowFullScreen
@@ -169,7 +180,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         {isPlaying && (
           <button
             onClick={() => setIsPlaying(false)}
-            className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-white shadow-lg"
+            className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-primary-content shadow-lg"
             style={playPauseButtonStyle}
             aria-label="Pause video"
           >
@@ -182,7 +193,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         <div className="text-center mt-8">
           <a
             href={ctaLink || '#'}
-            className="inline-block px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-lg bg-primary text-primary-content"
+            className="btn btn-primary font-semibold transition-all hover:shadow-lg"
             style={accentColor ? { backgroundColor: accentColor } : undefined}
           >
             {ctaText}
@@ -211,7 +222,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
           {ctaText && (
             <a
               href={ctaLink || '#'}
-              className="inline-block px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-lg bg-primary text-primary-content"
+              className="btn btn-primary font-semibold transition-all hover:shadow-lg"
               style={accentColor ? { backgroundColor: accentColor } : undefined}
             >
               {ctaText}
@@ -219,12 +230,12 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
           )}
         </div>
 
-        <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-black">
+        <div className="relative widget-media rounded-2xl overflow-hidden shadow-2xl bg-neutral">
           <div className="aspect-video">
             {isPlaying ? (
               <iframe
                 src={getEmbedUrl(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
-                className="w-full h-full bg-black"
+                className="w-full h-full bg-neutral"
                 frameBorder="0"
                 allow="autoplay; fullscreen"
                 allowFullScreen
@@ -247,7 +258,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
           {isPlaying && (
             <button
               onClick={() => setIsPlaying(false)}
-              className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-white shadow-lg"
+              className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-primary-content shadow-lg"
               style={playPauseButtonStyle}
               aria-label="Pause video"
             >

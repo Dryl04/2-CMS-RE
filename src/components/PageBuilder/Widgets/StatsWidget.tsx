@@ -105,7 +105,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         {(stats || defaultStats).map((stat: any, index: number) => {
           const variants = [
-            'bg-primary text-primary-content',
+            'widget-icon-container text-primary-content',
             'bg-secondary text-secondary-content',
             'bg-accent text-accent-content',
             'bg-info text-info-content',
@@ -200,7 +200,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
             </p>
           )}
           <button
-            className="btn btn-primary px-8 py-3 rounded-xl font-semibold transition-all hover:shadow-lg"
+            className="btn btn-primary font-semibold transition-all hover:shadow-lg"
             style={accentColor ? { backgroundColor: accentColor } : undefined}
           >
             Learn More

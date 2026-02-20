@@ -57,9 +57,13 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
   const animationType = design.effects?.animationType || 'fade-in';
 
   const contentPosition = design.layout?.contentPosition || 'left';
-  const contentAlignment = design.layout?.contentAlignment || 'start';
+  const contentAlignment = design.layout?.contentAlignment || 'center';
   const minHeight = design.layout?.minHeight || '500px';
   const maxWidth = design.layout?.maxWidth || '7xl';
+
+  const overlayImageUrl = design.overlay?.imageUrl || '';
+  const overlayImageOpacity = design.overlay?.imageOpacity ?? 0.3;
+  const overlayImageBlend = design.overlay?.imageBlend || 'normal';
 
   const getOverlayStyle = () => {
     if (!overlayEnabled) return {};
@@ -113,7 +117,30 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
       'center': 'items-center',
       'end': 'items-end',
     };
-    return alignmentMap[contentAlignment] || 'items-start';
+    return alignmentMap[contentAlignment] || 'items-center';
+  };
+
+  const getTextAlignClass = () => {
+    const map: { [key: string]: string } = {
+      left: 'text-left',
+      center: 'text-center',
+      right: 'text-right',
+    };
+    return map[contentPosition] || '';
+  };
+
+  const renderOverlayImage = () => {
+    if (!overlayEnabled || !overlayImageUrl) return null;
+    return (
+      <div
+        className="absolute inset-0 bg-cover bg-center pointer-events-none"
+        style={{
+          backgroundImage: `url(${overlayImageUrl})`,
+          opacity: overlayImageOpacity,
+          mixBlendMode: overlayImageBlend as any,
+        }}
+      />
+    );
   };
 
   const getContentPositionClass = () => {
@@ -145,8 +172,8 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
 
   const renderDefault = () => (
     <div className={`${getMaxWidthClass()} mx-auto px-4 sm:px-6 lg:px-8 ${getAnimationClass()}`}>
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-        <div>
+      <div className={`grid lg:grid-cols-2 gap-8 lg:gap-12 ${getContentAlignmentClass()}`}>
+        <div className={getTextAlignClass()}>
           <h1
             className="text-base-content text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 lg:mb-6 leading-tight"
             style={h1Style}
@@ -161,7 +188,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           </h2>
           <a
             href={ctaLink || '#'}
-            className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
+            className="btn btn-primary font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
           >
             {ctaText || 'Get Started'}
           </a>
@@ -170,7 +197,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           <img
             src={image || 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
             alt="Hero"
-            className="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-2xl shadow-xl"
+            className="widget-media w-full h-64 sm:h-80 lg:h-96 object-cover rounded-2xl shadow-xl"
             style={{ filter: getImageFilter() }}
           />
           {overlayEnabled && (
@@ -179,6 +206,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
               style={getOverlayStyle()}
             />
           )}
+          {renderOverlayImage()}
         </div>
       </div>
     </div>
@@ -200,7 +228,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
       </h2>
       <a
         href={ctaLink || '#'}
-        className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
+        className="btn btn-primary font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
       >
         {ctaText || 'Get Started'}
       </a>
@@ -224,7 +252,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           </h2>
           <a
             href={ctaLink || '#'}
-            className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
+            className="btn btn-primary font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
           >
             {ctaText || 'Get Started'}
           </a>
@@ -289,6 +317,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           style={getOverlayStyle()}
         />
       )}
+      {renderOverlayImage()}
       <div className={`relative z-10 flex ${getContentAlignmentClass()} ${getContentPositionClass()} h-full`}>
         <div className={`${getMaxWidthClass()} mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 ${getAnimationClass()}`}>
           <div className={`max-w-2xl ${contentPosition === 'center' ? 'mx-auto text-center' : ''}`}>
@@ -306,7 +335,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
             </h2>
             <a
               href={ctaLink || '#'}
-              className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105"
+              className="btn btn-primary font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105"
             >
               {ctaText || 'Get Started'}
             </a>

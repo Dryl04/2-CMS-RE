@@ -81,7 +81,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
             {content.ctaText && (
               <a
                 href={content.ctaLink || '#'}
-                className="btn btn-primary inline-flex items-center px-5 py-2.5 rounded-md text-sm font-semibold transition-all hover:opacity-90 shadow-lg"
+                className="btn btn-primary inline-flex items-center text-sm font-semibold transition-all hover:opacity-90 shadow-lg"
                 style={buttonBg || buttonText ? {
                   ...(buttonBg ? { backgroundColor: buttonBg } : {}),
                   ...(buttonText ? { color: buttonText } : {}),
@@ -121,7 +121,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
             {content.ctaText && (
               <a
                 href={content.ctaLink || '#'}
-                className="btn btn-primary inline-flex items-center justify-center w-full px-5 py-2.5 rounded-md text-sm font-semibold mt-4"
+                className="btn btn-primary inline-flex items-center justify-center w-full text-sm font-semibold mt-4"
                 style={buttonBg || buttonText ? {
                   ...(buttonBg ? { backgroundColor: buttonBg } : {}),
                   ...(buttonText ? { color: buttonText } : {}),

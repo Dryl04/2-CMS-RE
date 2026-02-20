@@ -29,7 +29,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
   const renderCentered = () => (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center">
-        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-primary/20">
+        <div className="w-16 h-16 flex items-center justify-center mx-auto mb-6 widget-icon-container">
           <Mail className="w-8 h-8 text-primary" />
         </div>
         <h2
@@ -53,7 +53,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
           />
           <button
             type="submit"
-            className="btn btn-primary px-8 py-4 rounded-xl font-semibold whitespace-nowrap transition-all hover:shadow-lg flex items-center justify-center"
+            className="btn btn-primary font-semibold whitespace-nowrap transition-all hover:shadow-lg flex items-center justify-center"
           >
             <Send className="w-5 h-5 mr-2" />
             {buttonText || 'Subscribe'}
@@ -97,7 +97,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
             />
             <button
               type="submit"
-              className="btn btn-primary w-full sm:w-auto px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-lg flex items-center justify-center"
+              className="btn btn-primary w-full sm:w-auto font-semibold transition-all hover:shadow-lg flex items-center justify-center"
 
             >
               {buttonText || 'Subscribe Now'}
@@ -155,7 +155,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
             />
             <button
               type="submit"
-              className="btn btn-primary px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all hover:shadow-lg"
+              className="btn btn-primary font-semibold whitespace-nowrap transition-all hover:shadow-lg"
 
             >
               {buttonText || 'Sign Up'}
@@ -171,7 +171,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
       <div className="bg-base-100 rounded-3xl shadow-2xl p-8 sm:p-12 border border-base-content/10">
         <div className="text-center mb-8">
           <div
-            className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 bg-primary"
+            className="inline-flex items-center justify-center w-20 h-20 mb-6 widget-icon-container"
             style={accentColor ? { backgroundColor: accentColor } : undefined}
           >
             <Mail className="w-10 h-10 text-primary-content" />
@@ -207,7 +207,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
           </div>
           <button
             type="submit"
-            className="btn btn-primary w-full py-4 rounded-xl font-semibold text-lg transition-all hover:shadow-xl"
+            className="btn btn-primary w-full font-semibold text-lg transition-all hover:shadow-xl"
 
           >
             {buttonText || 'Subscribe'}

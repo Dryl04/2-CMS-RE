@@ -47,7 +47,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
         <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
           <a
             href={primaryLink || '#'}
-            className="btn btn-primary px-6 sm:px-8 rounded-xl font-semibold whitespace-nowrap"
+            className="btn btn-primary font-semibold whitespace-nowrap"
           >
             {primaryCta || 'Start Free Trial'}
           </a>
@@ -82,14 +82,14 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
         <a
           href={primaryLink || '#'}
-          className="btn btn-primary px-6 sm:px-8 sm:py-4 rounded-xl font-semibold"
+          className="btn btn-primary font-semibold"
         >
           {primaryCta || 'Start Free Trial'}
         </a>
         {secondaryCta && (
           <a
             href={secondaryLink || '#'}
-            className="btn btn-outline px-6 sm:px-8 sm:py-4 rounded-xl font-semibold"
+            className="btn btn-outline font-semibold"
           >
             {secondaryCta}
           </a>
@@ -116,7 +116,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
         <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
           <a
             href={primaryLink || '#'}
-            className="btn btn-primary px-6 sm:px-8 sm:py-4 rounded-xl font-semibold"
+            className="btn btn-primary font-semibold"
           >
             {primaryCta || 'Start Free Trial'}
           </a>

@@ -190,7 +190,7 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
               </p>
               <div className="mt-6 sm:mt-8">
                 <button
-                  className="btn btn-primary inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all hover:scale-105 hover:shadow-lg"
+                  className="btn btn-primary inline-flex items-center gap-2 font-semibold text-sm sm:text-base transition-all hover:scale-105 hover:shadow-lg"
                   style={buttonBg || buttonText ? {
                     ...(buttonBg ? { backgroundColor: buttonBg } : {}),
                     ...(buttonText ? { color: buttonText } : {}),

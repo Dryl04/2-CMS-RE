@@ -43,8 +43,34 @@
     font-size: var(--widget-btn-font-size, 0.9rem);
     font-family: var(--widget-btn-font-family, inherit);
     min-height: var(--widget-btn-min-height, 2.6rem);
+    height: var(--widget-btn-min-height, 2.6rem);
     padding-left: var(--widget-btn-px, 1.1rem);
     padding-right: var(--widget-btn-px, 1.1rem);
+    padding-top: 0;
+    padding-bottom: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    border-width: var(--widget-btn-border-width, 0px);
+    border-style: var(--widget-btn-border-style, none);
+    border-color: var(--widget-btn-border-color, transparent);
+    box-shadow: var(--widget-btn-shadow, none);
+  }
+
+  /* Icon background and border-radius from CSS variables */
+  .widget-design-scope .widget-icon-container {
+    background-color: var(--widget-icon-bg, oklch(var(--p)));
+    border-radius: var(--widget-icon-radius, 1rem);
+  }
+  .widget-design-scope .widget-icon-container > svg {
+    color: var(--widget-icon-color, oklch(var(--pc)));
+  }
+
+  /* Media (images & videos) border-radius from CSS variable */
+  .widget-design-scope .widget-media {
+    border-radius: var(--widget-media-radius, 1rem);
+    overflow: hidden;
   }
 
   /* Base: widget scope inherits DaisyUI theme colors from data-theme parent */
@@ -79,11 +105,12 @@
   .widget-design-scope.wds-btn-bg .btn {
     background-color: var(--widget-btn-bg) !important;
     color: var(--widget-btn-text, inherit) !important;
-    border-color: color-mix(
-      in oklab,
-      var(--widget-btn-bg) 75%,
-      black
+    border-color: var(
+      --widget-btn-border-color,
+      color-mix(in oklab, var(--widget-btn-bg) 85%, black)
     ) !important;
+    border-width: var(--widget-btn-border-width, 0px) !important;
+    border-style: var(--widget-btn-border-style, none) !important;
   }
 
   .widget-design-scope.wds-btn-bg .btn:hover {
@@ -97,11 +124,12 @@
   .widget-design-scope.wds-btn-bg .btn.btn-ghost {
     background-color: transparent !important;
     color: var(--widget-btn-text, inherit) !important;
-    border-color: color-mix(
-      in oklab,
-      var(--widget-btn-bg) 40%,
-      white
+    border-color: var(
+      --widget-btn-border-color,
+      color-mix(in oklab, var(--widget-btn-bg) 40%, white)
     ) !important;
+    border-width: var(--widget-btn-border-width, 1px) !important;
+    border-style: var(--widget-btn-border-style, solid) !important;
   }
 
   .widget-design-scope svg {

@@ -193,7 +193,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               </p>
               <h3 className="text-4xl lg:text-5xl font-bold text-neutral-content mb-4">{item.title}</h3>
               <button
-                className="self-start px-8 py-3 rounded-xl font-semibold transition-all hover:shadow-xl bg-primary text-primary-content"
+                className="btn btn-primary self-start font-semibold transition-all hover:shadow-xl"
                 style={accentColor ? { backgroundColor: accentColor } : undefined}
               >
                 View Project
@@ -265,7 +265,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               <h3 className="text-3xl lg:text-5xl font-bold text-neutral-content mb-6">{item.title}</h3>
               <a
                 href={item.link}
-                className="self-start px-8 py-4 rounded-xl font-semibold bg-base-100 transition-all hover:shadow-xl text-primary"
+                className="btn btn-ghost self-start font-semibold transition-all hover:shadow-xl"
                 style={accentColor ? { color: accentColor } : undefined}
               >
                 View Details

@@ -68,14 +68,12 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
             return (
               <div
                 key={index}
-                className={`rounded-2xl p-6 sm:p-8 shadow-lg transition-transform hover:scale-105 ${
-                  isFeatured ? 'bg-neutral text-neutral-content' : 'bg-base-100'
-                }`}
+                className={`rounded-2xl p-6 sm:p-8 shadow-lg transition-transform hover:scale-105 ${isFeatured ? 'bg-neutral text-neutral-content' : 'bg-base-100'
+                  }`}
               >
                 <div className="mb-8">
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto ${
-                    isFeatured ? 'bg-neutral-content/20' : 'bg-primary'
-                  }`}>
+                  <div className={`w-16 h-16 flex items-center justify-center mb-6 mx-auto ${isFeatured ? 'bg-neutral-content/20' : 'widget-icon-container'
+                    }`}>
                     <IconComponent className={`w-8 h-8 ${isFeatured ? 'text-neutral-content' : 'text-primary-content'}`} />
                   </div>
                   <h3
@@ -92,9 +90,8 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                   </p>
                 </div>
 
-                <div className={`space-y-3 mb-8 py-8 border-t border-b ${
-                  isFeatured ? 'border-neutral-content/20' : 'border-base-content/10'
-                }`}>
+                <div className={`space-y-3 mb-8 py-8 border-t border-b ${isFeatured ? 'border-neutral-content/20' : 'border-base-content/10'
+                  }`}>
                   {plan.features?.map((feature: any, fIndex: number) => {
                     const isIncluded = feature.included !== false;
                     return (
@@ -137,11 +134,10 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                 </div>
 
                 <button
-                  className={`w-full py-3 rounded-lg font-semibold transition hover:opacity-90 ${
-                    isFeatured
+                  className={`w-full py-3 rounded-lg font-semibold transition hover:opacity-90 ${isFeatured
                       ? 'bg-neutral-content text-neutral'
                       : 'bg-base-100 text-base-content border border-base-content/10'
-                  }`}
+                    }`}
                 >
                   {plan.ctaText || 'Get Started'}
                 </button>

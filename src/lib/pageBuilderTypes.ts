@@ -47,8 +47,14 @@ export interface PageBuilderSection {
       buttonBackgroundHover?: string;
       buttonRadius?: string;
       buttonSize?: "sm" | "md" | "lg" | "xl";
+      buttonBorderStyle?: "none" | "solid" | "dashed" | "dotted";
+      buttonBorderWidth?: string;
+      buttonBorderColor?: string;
+      buttonShadow?: string;
       iconBackground?: string;
       iconColor?: string;
+      iconRadius?: string;
+      mediaRadius?: string;
     };
   };
   themeConfig?: {
