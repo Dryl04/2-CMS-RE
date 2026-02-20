@@ -306,8 +306,8 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
         <button
           onClick={() => setImportMode('template')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${importMode === 'template'
-              ? 'bg-gray-900 text-white shadow-sm'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            ? 'bg-gray-900 text-white shadow-sm'
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
         >
           <Layers className="w-4 h-4" />
@@ -316,8 +316,8 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
         <button
           onClick={() => setImportMode('simple')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${importMode === 'simple'
-              ? 'bg-gray-900 text-white shadow-sm'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            ? 'bg-gray-900 text-white shadow-sm'
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
         >
           <FileJson className="w-4 h-4" />
@@ -473,8 +473,8 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-gray-900 truncate">{page.page_key}</span>
                         <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${page.status === 'published'
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : 'bg-gray-100 text-gray-600'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-gray-100 text-gray-600'
                           }`}>
                           {page.status === 'published' ? 'Publication auto' : 'Brouillon'}
                         </span>

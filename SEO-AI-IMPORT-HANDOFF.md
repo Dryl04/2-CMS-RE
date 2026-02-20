@@ -236,20 +236,20 @@ If `sections_data` is provided, each section must contain at least:
 
 The following fields are used across widgets and must contain plain URLs:
 
-| Field | Used by |
-|-------|---------|
-| `content.image` | hero, image-text-split, content-showcase, image-stats-faq, split-content-checklist |
-| `content.backgroundImage` | immersive-split-showcase, cinematic-footer |
-| `content.thumbnail` | videohero, content-video-services |
-| `content.logo` | header-clickfunnel |
-| `testimonials[].avatar` | testimonials, click-funnel-testimonials, hero-with-testimonials |
-| `members[].avatar` | team |
-| `items[].image` | gallery, provider-masonry |
-| `steps[].image` | process-steps-cards, process-alternating |
-| `cards[].image` | editorial-cards-row |
-| `services[].image` | services-cards |
-| `events[].image` | timeline |
-| `features[].thumbnailUrl` | clickfunnel-features |
+| Field                     | Used by                                                                            |
+| ------------------------- | ---------------------------------------------------------------------------------- |
+| `content.image`           | hero, image-text-split, content-showcase, image-stats-faq, split-content-checklist |
+| `content.backgroundImage` | immersive-split-showcase, cinematic-footer                                         |
+| `content.thumbnail`       | videohero, content-video-services                                                  |
+| `content.logo`            | header-clickfunnel                                                                 |
+| `testimonials[].avatar`   | testimonials, click-funnel-testimonials, hero-with-testimonials                    |
+| `members[].avatar`        | team                                                                               |
+| `items[].image`           | gallery, provider-masonry                                                          |
+| `steps[].image`           | process-steps-cards, process-alternating                                           |
+| `cards[].image`           | editorial-cards-row                                                                |
+| `services[].image`        | services-cards                                                                     |
+| `events[].image`          | timeline                                                                           |
+| `features[].thumbnailUrl` | clickfunnel-features                                                               |
 
 > **Note:** The importer includes automatic sanitization that strips markdown link syntax from URLs. However, providing clean URLs avoids potential edge cases and ensures maximum compatibility.
 

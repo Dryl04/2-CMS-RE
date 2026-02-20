@@ -63,37 +63,37 @@ Chaque page du tableau doit contenir exactement les champs suivants :
 
 ### Champs SEO obligatoires
 
-| Champ | Type | Obligatoire | Contraintes | Description |
-|-------|------|-------------|-------------|-------------|
-| `page_key` | string | OUI | Unique, slug URL (minuscules, tirets, pas d'espaces ni accents) | Identifiant unique = URL de la page. Ex: `"plombier-paris-15"` |
-| `title` | string | OUI | **60 caracteres maximum** | Titre SEO affiche dans Google. Inclure le mot-cle principal + localisation + marque |
-| `description` | string | OUI | **160 caracteres maximum** | Meta description Google. Doit donner envie de cliquer, inclure un appel a l'action |
-| `keywords` | string[] | OUI | Tableau de 3 a 8 mots-cles | Mots-cles SEO. Inclure : mot-cle principal, variations, longue traine, localisation |
-| `status` | string | OUI | `"published"` ou `"draft"` | Mettre `"published"` pour publication automatique |
-| `language` | string | OUI | Code ISO | `"fr"` pour le francais |
+| Champ         | Type     | Obligatoire | Contraintes                                                     | Description                                                                         |
+| ------------- | -------- | ----------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `page_key`    | string   | OUI         | Unique, slug URL (minuscules, tirets, pas d'espaces ni accents) | Identifiant unique = URL de la page. Ex: `"plombier-paris-15"`                      |
+| `title`       | string   | OUI         | **60 caracteres maximum**                                       | Titre SEO affiche dans Google. Inclure le mot-cle principal + localisation + marque |
+| `description` | string   | OUI         | **160 caracteres maximum**                                      | Meta description Google. Doit donner envie de cliquer, inclure un appel a l'action  |
+| `keywords`    | string[] | OUI         | Tableau de 3 a 8 mots-cles                                      | Mots-cles SEO. Inclure : mot-cle principal, variations, longue traine, localisation |
+| `status`      | string   | OUI         | `"published"` ou `"draft"`                                      | Mettre `"published"` pour publication automatique                                   |
+| `language`    | string   | OUI         | Code ISO                                                        | `"fr"` pour le francais                                                             |
 
 ### Champs SEO optionnels (fortement recommandes)
 
-| Champ | Type | Contraintes | Description |
-|-------|------|-------------|-------------|
-| `og_title` | string | 60 caracteres max | Titre pour les reseaux sociaux (Facebook, LinkedIn). Peut etre plus accrocheur que le title SEO |
-| `og_description` | string | 160 caracteres max | Description pour les reseaux sociaux |
-| `og_image` | string | URL valide, image 1200x630px | Image d'apercu pour les reseaux sociaux |
-| `canonical_url` | string | URL complete | URL canonique de la page |
-| `seo_h1` | string | Libre | Balise H1 de la page. Doit contenir le mot-cle principal |
-| `seo_h2` | string | Libre | Balise H2 de la page. Doit contenir un mot-cle secondaire |
+| Champ            | Type   | Contraintes                  | Description                                                                                     |
+| ---------------- | ------ | ---------------------------- | ----------------------------------------------------------------------------------------------- |
+| `og_title`       | string | 60 caracteres max            | Titre pour les reseaux sociaux (Facebook, LinkedIn). Peut etre plus accrocheur que le title SEO |
+| `og_description` | string | 160 caracteres max           | Description pour les reseaux sociaux                                                            |
+| `og_image`       | string | URL valide, image 1200x630px | Image d'apercu pour les reseaux sociaux                                                         |
+| `canonical_url`  | string | URL complete                 | URL canonique de la page                                                                        |
+| `seo_h1`         | string | Libre                        | Balise H1 de la page. Doit contenir le mot-cle principal                                        |
+| `seo_h2`         | string | Libre                        | Balise H2 de la page. Doit contenir un mot-cle secondaire                                       |
 
 ### Champ de liaison au modele
 
-| Champ | Type | Description |
-|-------|------|-------------|
-| `template_id` | string | L'ID du modele utilise (fourni dans le JSON du modele sous `template.id`). Recopier tel quel. |
-| `daisy_theme_slug` | string ou null | Le slug du theme DaisyUI (fourni dans `template.daisy_theme_slug`). Recopier tel quel. |
+| Champ              | Type           | Description                                                                                   |
+| ------------------ | -------------- | --------------------------------------------------------------------------------------------- |
+| `template_id`      | string         | L'ID du modele utilise (fourni dans le JSON du modele sous `template.id`). Recopier tel quel. |
+| `daisy_theme_slug` | string ou null | Le slug du theme DaisyUI (fourni dans `template.daisy_theme_slug`). Recopier tel quel.        |
 
 ### Champ de contenu visuel
 
-| Champ | Type | Description |
-|-------|------|-------------|
+| Champ           | Type  | Description                                                                                                   |
+| --------------- | ----- | ------------------------------------------------------------------------------------------------------------- |
 | `sections_data` | array | Le tableau des sections du modele avec le contenu remplace. Accepte aussi la cle `sections`. Voir ci-dessous. |
 
 ---
@@ -144,6 +144,7 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
 ```
 
 **Regles :**
+
 - `logoText` : Nom de l'entreprise / marque
 - `ctaText` : Appel a l'action clair (ex: "Devis gratuit", "Reserver", "Nous contacter")
 - `ctaLink` : Lien vers l'action (tel:, mailto:, #ancre, ou URL)
@@ -165,6 +166,7 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
 ```
 
 **Regles :**
+
 - `headline` : Doit etre identique ou tres proche du `seo_h1`. Inclure le mot-cle principal
 - `subheadline` : 1-2 phrases. Proposition de valeur + elements de confiance (anciennete, nombre clients, certification)
 - `ctaText` : Verbe d'action + benefice (ex: "Obtenez votre devis gratuit")
@@ -200,6 +202,7 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
 ```
 
 **Regles :**
+
 - `title` : Inclure un mot-cle SEO + la localisation si pertinent
 - `features` : Garder exactement le meme nombre de features que dans le modele
 - `icon` : Garder les icones du modele (`"zap"`, `"shield"`, `"heart"`, etc.). Valeurs possibles : `zap`, `shield`, `heart`, `star`, `check`, `award`, `target`, `users`, `clock`, `globe`
@@ -226,6 +229,7 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
 ```
 
 **Regles :**
+
 - `title` : Inclure un element de preuve sociale (nombre de clients, note moyenne)
 - `testimonials` : Garder exactement le meme nombre que dans le modele
 - `quote` : 20-40 mots. Doit sembler authentique, mentionner un detail concret, inclure un benefice
@@ -250,6 +254,7 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
 ```
 
 **Regles :**
+
 - `headline` : Creer un sentiment d'urgence ou de benefice immediat
 - `primaryCta` : Verbe d'action + benefice
 - Les champs `secondaryCta` et `secondaryLink` sont optionnels
@@ -269,6 +274,7 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
 ```
 
 **Regles :**
+
 - Utiliser des coordonnees fictives mais realistes
 - Le format telephone doit etre francais (01/02/03/04/05 XX XX XX XX)
 
@@ -283,9 +289,7 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
     "columns": [
       {
         "title": "Titre colonne",
-        "links": [
-          { "url": "#ancre", "label": "Texte du lien" }
-        ]
+        "links": [{ "url": "#ancre", "label": "Texte du lien" }]
       }
     ],
     "socialLinks": [
@@ -299,6 +303,7 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
 ```
 
 **Regles :**
+
 - `logoText` : Meme nom de marque que dans le header
 - `columns` : Garder le meme nombre de colonnes que dans le modele
 - `links` dans chaque colonne : Adapter les labels au contexte de l'entreprise
@@ -311,27 +316,32 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
 ## Regles SEO a respecter imperativement
 
 ### Titre SEO (`title`)
+
 - **60 caracteres maximum**
 - Format : `Mot-cle principal - Benefice | Marque` ou `Marque - Mot-cle | Localisation`
 - Inclure le mot-cle principal au debut
 
 ### Meta description (`description`)
+
 - **160 caracteres maximum**
 - Inclure le mot-cle principal
 - Terminer par un appel a l'action
 - Donner envie de cliquer
 
 ### Mots-cles (`keywords`)
+
 - 3 a 8 mots-cles par page
 - Inclure : mot-cle principal, variations, longue traine, localisation
 - Pas de doublons entre pages similaires
 
 ### Balise H1 (`seo_h1` et `hero.headline`)
+
 - Un seul H1 par page
 - Doit contenir le mot-cle principal
 - Doit etre identique ou tres similaire entre `seo_h1` et `sections_data[hero].content.headline`
 
 ### Contenu general
+
 - Ton professionnel et convaincant
 - Adapte au secteur d'activite
 - Inclure des elements de confiance : chiffres, certifications, anciennete
@@ -410,9 +420,9 @@ Avant de soumettre votre JSON, verifiez :
 5. **URLs d'images inventees** : N'utilisez que des URLs Pexels verifiees
 6. **URLs en format markdown** : Les URLs d'images doivent etre brutes (`https://...`), pas au format `[texte](url)` — meme si l'importateur corrige automatiquement, evitez ce format
 7. **Title trop long** : 60 caracteres maximum, pas un de plus
-7. **Description trop longue** : 160 caracteres maximum
-8. **page_key avec espaces/accents** : Uniquement minuscules, chiffres et tirets
-9. **Oublier template_id** : Toujours inclure l'ID du modele
+8. **Description trop longue** : 160 caracteres maximum
+9. **page_key avec espaces/accents** : Uniquement minuscules, chiffres et tirets
+10. **Oublier template_id** : Toujours inclure l'ID du modele
 11. **Status incorrect** : `"published"` pour publication auto, `"draft"` pour brouillon
 
 ---
