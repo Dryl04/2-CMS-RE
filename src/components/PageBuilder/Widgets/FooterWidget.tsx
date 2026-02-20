@@ -61,7 +61,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
                     <a
                       key={index}
                       href={social.url || '#'}
-                      className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center hover:opacity-80 transition-opacity widget-icon-container text-primary-content"
+                      className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center hover:opacity-80 transition-opacity bg-primary text-primary-content"
                       target="_blank"
                       rel="noopener noreferrer"
                     >

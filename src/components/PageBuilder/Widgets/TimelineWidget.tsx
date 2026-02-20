@@ -87,8 +87,9 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
           {(events || defaultEvents).map((event: any, index: number) => (
             <div
               key={index}
-              className={`relative flex items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                }`}
+              className={`relative flex items-center ${
+                index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+              }`}
             >
               <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'} pl-14 sm:pl-20 md:pl-0`}>
                 <div
@@ -113,7 +114,7 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
 
               <div className="absolute left-6 sm:left-8 md:left-1/2 transform md:-translate-x-1/2">
                 <div
-                  className="w-4 h-4 border-4 border-base-100 widget-icon-container"
+                  className="w-4 h-4 rounded-full border-4 border-base-100 bg-primary"
                   style={accentColor ? { backgroundColor: accentColor } : undefined}
                 />
               </div>
@@ -162,7 +163,7 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
             <div key={index} className="flex-shrink-0 w-full sm:w-auto lg:w-72">
               <div className="relative">
                 <div
-                  className="hidden md:block absolute top-0 left-1/2 transform -translate-x-1/2 w-5 h-5 md:w-6 md:h-6 border-4 border-base-100 widget-icon-container"
+                  className="hidden md:block absolute top-0 left-1/2 transform -translate-x-1/2 w-5 h-5 md:w-6 md:h-6 rounded-full border-4 border-base-100 bg-primary"
                   style={accentColor ? { backgroundColor: accentColor } : undefined}
                 />
               </div>

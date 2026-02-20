@@ -194,7 +194,7 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
             className="bg-base-100 rounded-2xl p-6 shadow-lg border border-base-content/10 hover:shadow-xl transition-all hover:-translate-y-1"
           >
             <div
-              className="w-12 h-12 flex items-center justify-center mb-4 widget-icon-container"
+              className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-primary/10"
               style={accentColor ? { backgroundColor: `${accentColor}15` } : undefined}
             >
               <span

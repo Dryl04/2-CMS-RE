@@ -61,7 +61,7 @@ export default function SocialFollowWidget({ section }: SocialFollowWidgetProps)
 
             {content.ctaText && (
               <button
-                className="btn btn-primary font-semibold transition hover:opacity-90 text-sm sm:text-base"
+                className="px-6 py-2.5 sm:px-8 sm:py-3 rounded-full font-semibold transition hover:opacity-90 bg-primary text-primary-content text-sm sm:text-base"
                 style={buttonBg || buttonText ? { backgroundColor: buttonBg, color: buttonText } : undefined}
               >
                 {content.ctaText}

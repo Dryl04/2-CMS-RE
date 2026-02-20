@@ -8,6 +8,39 @@ Le JSON que vous produisez sera importe directement dans le systeme et publie au
 
 ---
 
+## Comprendre le modele exporte
+
+Quand vous recevez un export de template, il a cette structure :
+
+```json
+{
+  "template": {
+    "id": "uuid-du-modele",
+    "name": "Nom du modele",
+    "daisy_theme_slug": "light",
+    "exported_at": "2026-02-20T..."
+  },
+  "sections": [ ... tableau de sections ... ],
+  "variables": [
+    {
+      "sectionId": "section-hero-xxx",
+      "sectionType": "hero",
+      "sectionVariant": "default",
+      "fieldPath": "content.headline",
+      "fieldLabel": "Titre principal",
+      "fieldType": "text",
+      "currentValue": "Texte actuel"
+    }
+  ]
+}
+```
+
+Le tableau `variables` liste tous les champs editables de chaque section. Utilisez-le comme reference pour savoir quels champs `content` modifier dans `sections_data`. Recopiez les sections telles quelles et ne changez que les valeurs `content` listees dans `variables`.
+
+**Important :** Ne modifiez PAS `design`, `variant`, `themeConfig`, ni `advanced` sauf si on vous le demande explicitement — ces proprietes controlent le style visuel et doivent rester intactes.
+
+---
+
 ## Format du JSON a produire
 
 Le JSON final doit etre un objet avec une cle `"pages"` contenant un tableau de pages :
@@ -55,12 +88,13 @@ Chaque page du tableau doit contenir exactement les champs suivants :
 | Champ | Type | Description |
 |-------|------|-------------|
 | `template_id` | string | L'ID du modele utilise (fourni dans le JSON du modele sous `template.id`). Recopier tel quel. |
+| `daisy_theme_slug` | string ou null | Le slug du theme DaisyUI (fourni dans `template.daisy_theme_slug`). Recopier tel quel. |
 
 ### Champ de contenu visuel
 
 | Champ | Type | Description |
 |-------|------|-------------|
-| `sections_data` | array | Le tableau des sections du modele avec le contenu remplace. Voir ci-dessous. |
+| `sections_data` | array | Le tableau des sections du modele avec le contenu remplace. Accepte aussi la cle `sections`. Voir ci-dessous. |
 
 ---
 
@@ -81,9 +115,10 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
 - `id` : Garder les memes identifiants de section
 - `type` : Ne pas changer le type de widget
 - `order` : Conserver l'ordre (mais corriger la numerotation: 0, 1, 2, 3, 4...)
-- `design` : Ne pas toucher au design (couleurs, espacement, typographie, fond)
-- `variant` : Ne pas changer la variante d'affichage
-- `advanced` : Ne pas toucher aux parametres avances
+- `design` : Ne pas toucher au design (couleurs, espacement, typographie, fond, medias)
+- `variant` : Ne pas changer la variante d'affichage (obligatoire pour le rendu correct)
+- `advanced` : Ne pas toucher aux parametres avances (visibilite)
+- `themeConfig` : Ne pas toucher a la configuration de theme (themeMode, themeRef, customTokens)
 
 ---
 
@@ -133,7 +168,7 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
 - `headline` : Doit etre identique ou tres proche du `seo_h1`. Inclure le mot-cle principal
 - `subheadline` : 1-2 phrases. Proposition de valeur + elements de confiance (anciennete, nombre clients, certification)
 - `ctaText` : Verbe d'action + benefice (ex: "Obtenez votre devis gratuit")
-- `image` : URL d'une image Pexels pertinente au format paysage (w=1260&h=750). Ne pas inventer d'URL, utiliser uniquement des URLs Pexels valides
+- `image` : URL d'une image Pexels pertinente au format paysage (w=1260&h=750). Ne pas inventer d'URL, utiliser uniquement des URLs Pexels valides. **URL brute uniquement, ne PAS utiliser le format lien markdown** (voir section "URLs des images")
 - `ctaLink` : Lien coherent avec l'action (telephone, formulaire, page)
 
 ### Section `features` (Fonctionnalites / Services)
@@ -305,6 +340,42 @@ Le `sections_data` est le coeur du travail. C'est le tableau des sections visuel
 
 ---
 
+## URLs des images et medias
+
+**IMPORTANT :** Toutes les URLs d'images et de medias doivent etre des **URLs brutes** (commencant par `https://`). Ne JAMAIS utiliser le format lien markdown `[texte](url)`.
+
+### Format correct
+
+```json
+"image": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750"
+```
+
+### Format INCORRECT (a ne pas utiliser)
+
+```json
+"image": "[https://images.pexels.com/photos/3184291/...](https://images.pexels.com/photos/3184291/...)"
+```
+
+### Champs concernes
+
+Les champs suivants contiennent des URLs d'images dans les sections :
+
+- `content.image` — hero, image-text-split, content-showcase, image-stats-faq
+- `content.backgroundImage` — immersive-split-showcase, cinematic-footer
+- `content.thumbnail` — videohero, content-video-services
+- `content.logo` — header-clickfunnel
+- `testimonials[].avatar` — testimonials, hero-with-testimonials
+- `members[].avatar` — team
+- `items[].image` — gallery, provider-masonry
+- `steps[].image` — process-steps-cards, process-alternating
+- `cards[].image` — editorial-cards-row
+- `services[].image` — services-cards
+- `events[].image` — timeline
+
+> **Note :** L'importateur inclut un nettoyage automatique qui corrige les URLs en format markdown. Cependant, fournir des URLs propres des le depart evite les cas limites et garantit une compatibilite maximale.
+
+---
+
 ## Checklist avant soumission
 
 Avant de soumettre votre JSON, verifiez :
@@ -318,10 +389,12 @@ Avant de soumettre votre JSON, verifiez :
 - [ ] Les `sections_data` contiennent toutes les sections du modele
 - [ ] Les `id` de section sont identiques au modele
 - [ ] Les `type` de section sont identiques au modele
-- [ ] Les champs `design`, `variant`, `advanced` sont identiques au modele
+- [ ] Les `variant` de section sont identiques au modele (champ obligatoire)
+- [ ] Les champs `design`, `variant`, `advanced`, `themeConfig` sont identiques au modele
 - [ ] Seuls les champs `content` ont ete modifies
 - [ ] Le nombre d'elements dans les tableaux (features, testimonials, navItems, columns) est identique au modele
-- [ ] Les URLs d'images sont des URLs Pexels valides
+- [ ] Les URLs d'images sont des URLs Pexels valides (format brut `https://...`, pas de markdown)
+- [ ] Les URLs d'images dans les sous-objets (testimonials, features, items) sont aussi en format brut
 - [ ] Le `status` est bien `"published"` pour une publication automatique
 - [ ] Le `seo_h1` correspond au `headline` de la section hero
 - [ ] Les ancres (`#`) dans les liens sont coherentes entre header, footer et sections
@@ -335,11 +408,12 @@ Avant de soumettre votre JSON, verifiez :
 3. **Ajouter/supprimer des sections** : Gardez exactement les memes sections
 4. **Changer le nombre de features/testimonials** : Gardez exactement le meme nombre
 5. **URLs d'images inventees** : N'utilisez que des URLs Pexels verifiees
-6. **Title trop long** : 60 caracteres maximum, pas un de plus
+6. **URLs en format markdown** : Les URLs d'images doivent etre brutes (`https://...`), pas au format `[texte](url)` — meme si l'importateur corrige automatiquement, evitez ce format
+7. **Title trop long** : 60 caracteres maximum, pas un de plus
 7. **Description trop longue** : 160 caracteres maximum
 8. **page_key avec espaces/accents** : Uniquement minuscules, chiffres et tirets
 9. **Oublier template_id** : Toujours inclure l'ID du modele
-10. **Status incorrect** : `"published"` pour publication auto, `"draft"` pour brouillon
+11. **Status incorrect** : `"published"` pour publication auto, `"draft"` pour brouillon
 
 ---
 

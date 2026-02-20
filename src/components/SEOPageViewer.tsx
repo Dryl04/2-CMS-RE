@@ -67,6 +67,7 @@ import EditorialCardsRowWidget from './PageBuilder/Widgets/EditorialCardsRowWidg
 import MinimalFinalCTAWidget from './PageBuilder/Widgets/MinimalFinalCTAWidget';
 import CinematicFooterWidget from './PageBuilder/Widgets/CinematicFooterWidget';
 import { getWidgetWrapperProps, normalizeSectionForTheme } from '../lib/widgetThemeHelper';
+import { sanitizeSectionUrls } from '../lib/contentSanitizer';
 
 interface SEOPageViewerProps {
   page: SEOMetadata;
@@ -181,7 +182,8 @@ function normalizeSectionsData(raw: unknown): PageBuilderSection[] {
 
 function SectionRenderer({ section }: { section: PageBuilderSection }) {
   const noop = () => { };
-  const normalizedSection = normalizeSectionForTheme(section);
+  const sanitizedSection = sanitizeSectionUrls(section);
+  const normalizedSection = normalizeSectionForTheme(sanitizedSection);
   const props = { section: normalizedSection, onUpdate: noop };
 
   switch (normalizedSection.type) {
@@ -327,6 +329,9 @@ function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
             className={className}
             key={normalizedSection.id || `section-${index}`}
             data-theme={dataTheme}
+            data-widget-type={normalizedSection.type}
+            data-widget-overlay={normalizedSection.design?.media?.overlayImage ? 'on' : undefined}
+            data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'bottom-right'}
             style={style as React.CSSProperties}
           >
             <SectionRenderer section={normalizedSection} />

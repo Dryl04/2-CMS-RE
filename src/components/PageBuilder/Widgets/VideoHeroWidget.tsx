@@ -11,8 +11,11 @@ interface VideoHeroWidgetProps {
 export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   const { title, subtitle, videoUrl, thumbnail, ctaText, ctaLink } = section.content;
   const [isPlaying, setIsPlaying] = useState(false);
+  const textPosition = section.content?.textPosition || 'center';
 
   const design = section.design || {};
+  const hideDecorationsOnVideoPlay = design.media?.hideDecorationsOnVideoPlay === true;
+  const shouldHideDecorations = hideDecorationsOnVideoPlay && isPlaying;
   const typo = design.typography || {};
   const h1Style: React.CSSProperties = {
     ...(typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
@@ -40,21 +43,10 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   };
 
   const accentColor = design.colors?.accent;
-  const overlayEnabled = design.overlay?.enabled !== false;
-  const overlayColor = design.overlay?.color || '#000000';
-  const overlayOpacity = design.overlay?.opacity ?? 0.5;
 
   const playPauseButtonStyle: React.CSSProperties = accentColor
     ? { backgroundColor: accentColor }
     : {};
-
-  const getOverlayStyle = (): React.CSSProperties => {
-    if (!overlayEnabled) return { display: 'none' };
-    return {
-      backgroundColor: overlayColor,
-      opacity: overlayOpacity,
-    };
-  };
 
   const getEmbedUrl = (url: string) => {
     if (!url) return '';
@@ -70,7 +62,12 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   };
 
   const renderBackground = () => (
-    <div className="relative w-full min-h-[360px] sm:min-h-[500px] lg:min-h-[640px] overflow-hidden bg-neutral">
+    <div
+      className="relative group w-full min-h-[360px] sm:min-h-[500px] lg:min-h-[640px] overflow-hidden bg-neutral"
+      data-widget-media-frame
+      data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+      data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+    >
       <div className="absolute inset-0">
         {isPlaying ? (
           <iframe
@@ -90,18 +87,18 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         )}
       </div>
 
-      <div className="absolute inset-0" style={getOverlayStyle()} />
+      <div className="absolute inset-0 bg-neutral/50" />
 
-      <div className="relative h-full flex items-center justify-center">
-        <div className="max-w-4xl mx-auto px-4 text-center">
+      <div className={`absolute inset-0 flex ${textPosition === 'top' ? 'items-start' : textPosition === 'bottom' ? 'items-end' : 'items-center'} justify-center py-10 sm:py-16 transition-opacity ${shouldHideDecorations ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <div className="w-full max-w-4xl mx-auto px-4 text-center">
           <h1
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-base-content drop-shadow-lg"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-neutral-content"
             style={h1Style}
           >
             {title || 'Watch Our Story'}
           </h1>
           <h2
-            className="text-lg sm:text-xl lg:text-2xl mb-8 text-base-content/90 drop-shadow-md"
+            className="text-lg sm:text-xl lg:text-2xl mb-8 text-neutral-content/90"
             style={h2Style}
           >
             {subtitle || 'Discover what makes us different'}
@@ -110,6 +107,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
             onClick={() => setIsPlaying((prev) => !prev)}
             className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full text-primary-content hover:scale-105 transition-transform shadow-2xl"
             style={playPauseButtonStyle}
+            data-widget-icon-frame
             aria-label={isPlaying ? 'Pause video' : 'Play video'}
           >
             {isPlaying ? (
@@ -124,7 +122,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
       {isPlaying && (
         <button
           onClick={() => setIsPlaying(false)}
-          className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-primary-content shadow-lg"
+          className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-primary-content shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
           style={playPauseButtonStyle}
           aria-label="Pause video"
         >
@@ -152,7 +150,12 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         </h2>
       </div>
 
-      <div className="relative widget-media rounded-3xl overflow-hidden shadow-2xl bg-neutral">
+      <div
+        className="relative group rounded-3xl overflow-hidden shadow-2xl bg-neutral"
+        data-widget-media-frame
+        data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+        data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+      >
         <div className="aspect-video">
           {isPlaying ? (
             <iframe
@@ -180,7 +183,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         {isPlaying && (
           <button
             onClick={() => setIsPlaying(false)}
-            className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-primary-content shadow-lg"
+            className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-primary-content shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
             style={playPauseButtonStyle}
             aria-label="Pause video"
           >
@@ -193,7 +196,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         <div className="text-center mt-8">
           <a
             href={ctaLink || '#'}
-            className="btn btn-primary font-semibold transition-all hover:shadow-lg"
+            className="inline-block px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-lg bg-primary text-primary-content"
             style={accentColor ? { backgroundColor: accentColor } : undefined}
           >
             {ctaText}
@@ -206,7 +209,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   const renderSplit = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid lg:grid-cols-2 gap-12 items-center">
-        <div>
+        <div className={`transition-opacity ${shouldHideDecorations ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <h1
             className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-base-content"
             style={h1Style}
@@ -222,7 +225,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
           {ctaText && (
             <a
               href={ctaLink || '#'}
-              className="btn btn-primary font-semibold transition-all hover:shadow-lg"
+              className="inline-block px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-lg bg-primary text-primary-content"
               style={accentColor ? { backgroundColor: accentColor } : undefined}
             >
               {ctaText}
@@ -230,7 +233,12 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
           )}
         </div>
 
-        <div className="relative widget-media rounded-2xl overflow-hidden shadow-2xl bg-neutral">
+        <div
+          className="relative group rounded-2xl overflow-hidden shadow-2xl bg-neutral"
+          data-widget-media-frame
+          data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+          data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+        >
           <div className="aspect-video">
             {isPlaying ? (
               <iframe
@@ -258,7 +266,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
           {isPlaying && (
             <button
               onClick={() => setIsPlaying(false)}
-              className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-primary-content shadow-lg"
+              className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-primary-content shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
               style={playPauseButtonStyle}
               aria-label="Pause video"
             >
@@ -287,7 +295,13 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
             {subtitle || 'Watch our product demo and discover all the features'}
           </h2>
 
-          <div className="relative inline-block rounded-3xl overflow-hidden shadow-2xl cursor-pointer group" onClick={() => setIsPlaying(true)}>
+          <div
+            className="relative inline-block rounded-3xl overflow-hidden shadow-2xl cursor-pointer group"
+            onClick={() => setIsPlaying(true)}
+            data-widget-media-frame
+            data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+            data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+          >
             <img
               src={thumbnail || 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1920'}
               alt="Video thumbnail"

@@ -92,7 +92,7 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
             <div className="flex items-center space-x-6">
               {content.phone && (
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 flex items-center justify-center widget-icon-container" style={typo.headingColor ? { backgroundColor: typo.headingColor } : undefined}>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary" style={typo.headingColor ? { backgroundColor: typo.headingColor } : undefined}>
                     <Phone className="w-5 h-5 text-primary-content" />
                   </div>
                   <span className="text-lg font-bold text-base-content" style={headingStyle}>

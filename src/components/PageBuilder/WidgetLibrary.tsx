@@ -9,6 +9,67 @@ interface WidgetLibraryProps {
   existingSections: PageBuilderSection[];
 }
 
+interface WidgetFamily {
+  id: string;
+  label: string;
+  description: string;
+  icon: string;
+  types: string[];
+}
+
+interface GroupedVariant {
+  id: string;
+  label: string;
+  sourceWidget: WidgetDefinition;
+  variantId: string;
+}
+
+interface GroupedWidget {
+  id: string;
+  label: string;
+  description: string;
+  icon: string;
+  variants: GroupedVariant[];
+}
+
+const WIDGET_FAMILIES: WidgetFamily[] = [
+  {
+    id: 'header-family',
+    label: 'Header',
+    description: 'En-têtes et navigation',
+    icon: 'layout',
+    types: ['header', 'simple-header-divider', 'header-top-info', 'header-with-icons', 'header-account-bar', 'header-full-contact', 'header-clickfunnel'],
+  },
+  {
+    id: 'hero-family',
+    label: 'Hero',
+    description: 'Sections d’accroche et variantes héro',
+    icon: 'monitor',
+    types: ['hero', 'clickfunnels-hero', 'clickfunnel-center-card', 'hero-with-services', 'hero-with-testimonials', 'brand-identity-hero', 'simple-centered-hero', 'creative-network-hero', 'videohero'],
+  },
+  {
+    id: 'features-family',
+    label: 'Features',
+    description: 'Blocs fonctionnalités et services',
+    icon: 'grid',
+    types: ['features', 'services-grid', 'services-cards', 'services-carousel', 'bento-features', 'features-carousel', 'content-with-services', 'dropcap-services', 'integrations-grid'],
+  },
+  {
+    id: 'process-family',
+    label: 'Process',
+    description: 'Process, timelines et déroulés',
+    icon: 'workflow',
+    types: ['process', 'process-alternating', 'process-steps-cards', 'timeline', 'timeline-grid'],
+  },
+  {
+    id: 'proof-family',
+    label: 'Preuves sociales',
+    description: 'Témoignages, stats, équipe, logos',
+    icon: 'users',
+    types: ['testimonials', 'centered-testimonial', 'stats', 'team', 'logocloud'],
+  },
+];
+
 const iconMap: Record<string, any> = {
   monitor: Monitor,
   grid: Grid,
@@ -65,10 +126,62 @@ export default function WidgetLibrary({ onAddSection, existingSections }: Widget
     return widget.unique && existingTypes.has(widget.type);
   };
 
-  const filteredWidgets = widgetLibrary.filter(widget =>
-    widget.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    widget.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const groupedWidgets: GroupedWidget[] = (() => {
+    const consumedTypes = new Set<string>();
+
+    const fromFamilies = WIDGET_FAMILIES.map((family) => {
+      const matchedWidgets = family.types
+        .map((type) => widgetLibrary.find((widget) => widget.type === type))
+        .filter((widget): widget is WidgetDefinition => Boolean(widget));
+
+      matchedWidgets.forEach((widget) => consumedTypes.add(widget.type));
+
+      const variants = matchedWidgets.flatMap((widget) =>
+        widget.variants.map((variant) => ({
+          id: `${widget.type}::${variant.id}`,
+          label: matchedWidgets.length > 1 ? `${widget.label} — ${variant.label}` : variant.label,
+          sourceWidget: widget,
+          variantId: variant.id,
+        })),
+      );
+
+      return {
+        id: family.id,
+        label: family.label,
+        description: family.description,
+        icon: family.icon,
+        variants,
+      };
+    }).filter((group) => group.variants.length > 0);
+
+    const standalone = widgetLibrary
+      .filter((widget) => !consumedTypes.has(widget.type))
+      .map((widget) => ({
+        id: widget.type,
+        label: widget.label,
+        description: widget.description,
+        icon: widget.icon,
+        variants: widget.variants.map((variant) => ({
+          id: `${widget.type}::${variant.id}`,
+          label: variant.label,
+          sourceWidget: widget,
+          variantId: variant.id,
+        })),
+      }));
+
+    return [...fromFamilies, ...standalone];
+  })();
+
+  const filteredWidgets = groupedWidgets.filter((widget) => {
+    const normalizedSearch = searchTerm.toLowerCase();
+    if (!normalizedSearch) return true;
+
+    return (
+      widget.label.toLowerCase().includes(normalizedSearch) ||
+      widget.description.toLowerCase().includes(normalizedSearch) ||
+      widget.variants.some((variant) => variant.label.toLowerCase().includes(normalizedSearch))
+    );
+  });
 
   const createSection = (widget: WidgetDefinition, variantId: string) => {
     const section: PageBuilderSection = {
@@ -120,14 +233,15 @@ export default function WidgetLibrary({ onAddSection, existingSections }: Widget
       <div className="flex-1 overflow-y-auto p-4">
         <div className="space-y-2">
           {filteredWidgets.map((widget) => {
-            const Icon = iconMap[widget.icon];
-            const isExpanded = expandedWidget === widget.type;
-            const isDisabled = isWidgetDisabled(widget);
+            const Icon = iconMap[widget.icon] || Layout;
+            const isExpanded = expandedWidget === widget.id;
+            const selectableVariants = widget.variants.filter((variant) => !isWidgetDisabled(variant.sourceWidget));
+            const isDisabled = selectableVariants.length === 0;
 
             return (
-              <div key={widget.type} className={`border border-gray-200 rounded-lg overflow-hidden ${isDisabled ? 'opacity-50' : ''}`}>
+              <div key={widget.id} className={`border border-gray-200 rounded-lg overflow-hidden ${isDisabled ? 'opacity-50' : ''}`}>
                 <button
-                  onClick={() => !isDisabled && setExpandedWidget(isExpanded ? null : widget.type)}
+                  onClick={() => !isDisabled && setExpandedWidget(isExpanded ? null : widget.id)}
                   disabled={isDisabled}
                   className={`w-full flex items-start space-x-3 p-3 transition-colors text-left ${isDisabled ? 'cursor-not-allowed' : 'hover:bg-gray-50'
                     }`}
@@ -138,14 +252,9 @@ export default function WidgetLibrary({ onAddSection, existingSections }: Widget
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2">
                       <h3 className="font-semibold text-sm text-gray-900">{widget.label}</h3>
-                      {widget.unique && (
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
-                          Unique
-                        </span>
-                      )}
                     </div>
                     <p className="text-xs text-gray-500 line-clamp-1">
-                      {isDisabled ? 'Deja ajoute a la page' : widget.description}
+                      {isDisabled ? 'Toutes les variantes disponibles sont déjà ajoutées' : widget.description}
                     </p>
                   </div>
                   {!isDisabled && <Plus className="w-5 h-5 text-gray-400 flex-shrink-0" />}
@@ -155,15 +264,19 @@ export default function WidgetLibrary({ onAddSection, existingSections }: Widget
                   <div className="border-t border-gray-200 bg-gray-50 p-2">
                     <p className="text-xs text-gray-600 mb-2 px-2">Choisir une variante:</p>
                     <div className="space-y-1">
-                      {widget.variants.map((variant) => (
-                        <button
-                          key={variant.id}
-                          onClick={() => createSection(widget, variant.id)}
-                          className="w-full text-left px-3 py-2 text-sm hover:bg-white rounded-lg transition-colors text-gray-700 hover:text-gray-900"
-                        >
-                          {variant.label}
-                        </button>
-                      ))}
+                      {widget.variants.map((variant) => {
+                        const variantDisabled = isWidgetDisabled(variant.sourceWidget);
+                        return (
+                          <button
+                            key={variant.id}
+                            onClick={() => !variantDisabled && createSection(variant.sourceWidget, variant.variantId)}
+                            disabled={variantDisabled}
+                            className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${variantDisabled ? 'text-gray-400 bg-gray-100 cursor-not-allowed' : 'hover:bg-white text-gray-700 hover:text-gray-900'}`}
+                          >
+                            {variant.label}
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
                 )}

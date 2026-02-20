@@ -79,7 +79,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
           return (
             <div key={index} className="text-center">
               <div
-                className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-4 widget-icon-container"
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-primary"
               >
                 <Icon
                   className="w-7 h-7 sm:w-8 sm:h-8 text-primary-content"
@@ -134,7 +134,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
             >
               <div className={isEven ? '' : 'md:col-start-2'}>
                 <div
-                  className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mb-6 widget-icon-container"
+                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-6 bg-primary"
                 >
                   <Icon
                     className="w-7 h-7 sm:w-8 sm:h-8 text-primary-content"

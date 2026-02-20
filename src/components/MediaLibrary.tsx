@@ -7,9 +7,10 @@ import { useAuth } from '../contexts/AuthContext';
 
 interface MediaLibraryProps {
   onNavigate?: (view: string) => void;
+  onSelectMedia?: (url: string) => void;
 }
 
-export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
+export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibraryProps) {
   const { profile } = useAuth();
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -272,11 +273,10 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
   return (
     <div>
       {actionMessage && (
-        <div className={`mb-4 rounded-xl border px-4 py-3 text-sm font-medium flex items-center justify-between ${
-          actionMessage.type === 'success'
+        <div className={`mb-4 rounded-xl border px-4 py-3 text-sm font-medium flex items-center justify-between ${actionMessage.type === 'success'
             ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
             : 'bg-red-50 border-red-200 text-red-800'
-        }`}>
+          }`}>
           <span>{actionMessage.text}</span>
           <button
             onClick={() => setActionMessage(null)}
@@ -306,11 +306,10 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
       <div className="mb-8">
         <div
           {...getRootProps()}
-          className={`border-2 border-dashed rounded-3xl p-12 text-center cursor-pointer transition-all ${
-            isDragActive
+          className={`border-2 border-dashed rounded-3xl p-12 text-center cursor-pointer transition-all ${isDragActive
               ? 'border-black bg-gray-50'
               : 'border-gray-300 hover:border-gray-400'
-          }`}
+            }`}
         >
           <input {...getInputProps()} />
           <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -398,11 +397,10 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
           {filteredFiles.map((file) => (
             <div
               key={file.id}
-              className={`group relative bg-white rounded-2xl border-2 overflow-hidden transition-all ${
-                selectedFiles.has(file.id)
+              className={`group relative bg-white rounded-2xl border-2 overflow-hidden transition-all ${selectedFiles.has(file.id)
                   ? 'border-black'
                   : 'border-gray-200 hover:border-gray-300'
-              }`}
+                }`}
             >
               <div className="aspect-square bg-gray-100 relative">
                 {file.mime_type.startsWith('image/') ? (
@@ -440,6 +438,14 @@ export default function MediaLibrary({ onNavigate }: MediaLibraryProps) {
                   onClick={() => setPreviewFile(file)}
                 >
                   <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
+                    {onSelectMedia && (
+                      <button
+                        onClick={() => onSelectMedia(file.file_path)}
+                        className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                      >
+                        Utiliser
+                      </button>
+                    )}
                     <button
                       onClick={() => copyUrl(file.id, file.file_path)}
                       className="bg-white text-gray-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"

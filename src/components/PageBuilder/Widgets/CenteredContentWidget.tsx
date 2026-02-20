@@ -35,10 +35,10 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
   const buttonStyle =
     buttonBg || buttonText || buttonBorder
       ? {
-        backgroundColor: buttonBg,
-        color: buttonText,
-        border: buttonBorder ? `2px solid ${buttonBorder}` : undefined,
-      }
+          backgroundColor: buttonBg,
+          color: buttonText,
+          border: buttonBorder ? `2px solid ${buttonBorder}` : undefined,
+        }
       : undefined;
 
   const renderDefault = () => (
@@ -76,7 +76,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
 
         <a
           href={ctaLink || '#'}
-          className="btn btn-primary font-semibold transition-all duration-300 hover:opacity-80 transform hover:scale-105"
+          className="inline-block px-12 py-4 rounded-full font-semibold text-base transition-all duration-300 hover:opacity-80 transform hover:scale-105 bg-primary text-primary-content border-2 border-primary"
           style={buttonStyle}
         >
           {ctaText || 'Learn More'}
@@ -120,7 +120,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
 
         <a
           href={ctaLink || '#'}
-          className="btn btn-primary font-semibold transition-all duration-300 hover:opacity-80"
+          className="inline-block px-10 py-3 rounded-full font-semibold text-sm transition-all duration-300 hover:opacity-80 bg-primary text-primary-content border-2 border-primary"
           style={buttonStyle}
         >
           {ctaText || 'Learn More'}
@@ -164,7 +164,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
 
         <a
           href={ctaLink || '#'}
-          className="btn btn-primary font-semibold transition-all duration-300 hover:opacity-80 transform hover:scale-105"
+          className="inline-block px-14 py-5 rounded-full font-semibold text-lg transition-all duration-300 hover:opacity-80 transform hover:scale-105 bg-primary text-primary-content border-2 border-primary"
           style={buttonStyle}
         >
           {ctaText || 'Learn More'}

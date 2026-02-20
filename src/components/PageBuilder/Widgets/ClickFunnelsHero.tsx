@@ -12,7 +12,7 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
 
   const typo = design?.typography || {};
 
-  const bgColor = design?.background?.type === 'color' ? design.background.value : '#1B2A4E';
+  const bgColor = design?.background?.type === 'color' ? design.background.value : undefined;
   const fontFamily = typo.headingFontFamily || typo.fontFamily || undefined;
 
   const h1Style: React.CSSProperties = {
@@ -37,15 +37,15 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
 
   const buttonBg = design?.colors?.buttonBackground || design?.colors?.buttonBg;
   const buttonText = design?.colors?.buttonText;
-  const inputBg = design?.colors?.inputBg || '#FFFFFF';
-  const inputText = design?.colors?.inputText || '#374151';
-  const decorLeftColor = design?.colors?.decorLeftColor || '#DC2626';
-  const decorRightColor = design?.colors?.decorRightColor || '#3B82F6';
+  const inputBg = design?.colors?.inputBg || 'oklch(var(--b1))';
+  const inputText = design?.colors?.inputText || 'oklch(var(--bc))';
+  const decorLeftColor = design?.colors?.decorLeftColor || 'oklch(var(--p))';
+  const decorRightColor = design?.colors?.decorRightColor || 'oklch(var(--s))';
 
   return (
     <div
-      className="relative min-h-[600px] flex items-center justify-center overflow-hidden"
-      style={{ backgroundColor: bgColor }}
+      className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-base-100 text-base-content"
+      style={bgColor ? { backgroundColor: bgColor } : undefined}
     >
       {content.showLeftDecor !== false && (
         <>
@@ -119,7 +119,7 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
           <style>
             {`
               .clickfunnels-hero-input::placeholder {
-                color: ${design?.colors?.inputPlaceholder || '#9CA3AF'};
+                color: ${design?.colors?.inputPlaceholder || 'oklch(var(--bc) / 0.55)'};
                 opacity: 1;
               }
             `}
@@ -136,7 +136,7 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
               }}
             />
             <button
-              className="btn btn-primary inline-flex items-center justify-center text-base font-bold transition-all hover:opacity-90 shadow-lg whitespace-nowrap"
+              className="btn btn-primary inline-flex items-center justify-center px-8 py-4 rounded-md text-base font-bold transition-all hover:opacity-90 shadow-lg whitespace-nowrap"
               style={buttonBg || buttonText ? {
                 ...(buttonBg ? { backgroundColor: buttonBg } : {}),
                 ...(buttonText ? { color: buttonText } : {}),

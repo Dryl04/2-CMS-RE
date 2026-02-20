@@ -63,7 +63,7 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
 
   const bgColor = section.design?.background?.type === 'color' && section.design?.background?.value
     ? section.design.background.value
-    : '#0a1628';
+    : undefined;
 
   const typo = section.design?.typography || {};
   const fontFamily = typo.fontFamily || undefined;
@@ -83,7 +83,7 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
   const buttonTextColor = section.design?.colors?.buttonText;
 
   return (
-    <section className="py-0 px-4" style={{ backgroundColor: bgColor }}>
+    <section className="py-0 px-4 bg-base-100 text-base-content" style={bgColor ? { backgroundColor: bgColor } : undefined}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10 md:mb-12">
           <h2
@@ -117,9 +117,9 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
                       alt={feature.author}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-base-content/20 flex items-center justify-center">
                       <div
-                        className="w-12 h-12 flex items-center justify-center transform transition-transform duration-300 group-hover:scale-110 widget-icon-container"
+                        className="w-12 h-12 rounded-full flex items-center justify-center transform transition-transform duration-300 group-hover:scale-110 bg-primary"
                         style={buttonBg ? { backgroundColor: buttonBg } : undefined}
                       >
                         <Play
@@ -152,7 +152,7 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
         <div className="text-center">
           <a
             href={buttonUrl}
-            className="btn btn-primary font-bold transition-opacity duration-300 hover:opacity-90 text-lg"
+            className="inline-block font-bold px-8 py-4 rounded-lg transition-opacity duration-300 hover:opacity-90 text-lg bg-primary text-primary-content"
             style={buttonBg || buttonTextColor ? {
               ...(buttonBg ? { backgroundColor: buttonBg } : {}),
               ...(buttonTextColor ? { color: buttonTextColor } : {}),

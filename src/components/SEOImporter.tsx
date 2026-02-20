@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { normalizeSectionForTheme } from '../lib/widgetThemeHelper';
+import { sanitizeSectionUrls, extractPlainUrl } from '../lib/contentSanitizer';
 
 interface ImportedPage {
   page_key: string;
@@ -114,6 +115,9 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
         if (!section.design || typeof section.design !== 'object') {
           errors.push({ row, field: `sections_data[${sIdx}].design`, message: 'Chaque section doit avoir un objet design' });
         }
+        if (!section.variant) {
+          errors.push({ row, field: `sections_data[${sIdx}].variant`, message: 'Section sans variant — la variante par défaut sera utilisée' });
+        }
       });
     }
 
@@ -121,7 +125,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
   };
 
   const normalizeSectionsForImport = (sections: any[] = []) =>
-    sections.map((section) => normalizeSectionForTheme(section));
+    sections.map((section) => normalizeSectionForTheme(sanitizeSectionUrls(section)));
 
   const parseInput = (raw: string): ImportedPage[] => {
     const parsed = JSON.parse(raw);
@@ -145,14 +149,19 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
       const baseThemeSlug = payload.template?.daisy_theme_slug ?? null;
 
       if (Array.isArray(payload.pages)) {
-        return payload.pages.map((page) => ({
-          ...page,
-          template_id: page.template_id || baseTemplateId,
-          daisy_theme_slug: page.daisy_theme_slug ?? baseThemeSlug,
-          sections_data: Array.isArray(page.sections_data) && page.sections_data.length > 0
-            ? normalizeSectionsForImport(page.sections_data)
-            : normalizeSectionsForImport(baseSections),
-        }));
+        return payload.pages.map((page) => {
+          const pageSections = Array.isArray(page.sections_data) && page.sections_data.length > 0
+            ? page.sections_data
+            : Array.isArray((page as any).sections) && (page as any).sections.length > 0
+              ? (page as any).sections
+              : baseSections;
+          return {
+            ...page,
+            template_id: page.template_id || baseTemplateId,
+            daisy_theme_slug: page.daisy_theme_slug ?? baseThemeSlug,
+            sections_data: normalizeSectionsForImport(pageSections),
+          };
+        });
       }
     }
 
@@ -208,7 +217,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
           keywords: Array.isArray(page.keywords) ? page.keywords : [],
           og_title: page.og_title || null,
           og_description: page.og_description || null,
-          og_image: page.og_image || null,
+          og_image: page.og_image ? extractPlainUrl(page.og_image) : null,
           canonical_url: page.canonical_url || null,
           language: page.language || 'fr',
           status: page.status || 'draft',

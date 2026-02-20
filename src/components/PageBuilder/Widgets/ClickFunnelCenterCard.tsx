@@ -15,7 +15,7 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
   const fontFamily = typo.fontFamily || undefined;
   const headingFontFamily = typo.headingFontFamily || fontFamily || undefined;
 
-  const bgColor = design?.background?.type === 'color' ? design.background.value : '#1B2A4E';
+  const bgColor = design?.background?.type === 'color' ? design.background.value : undefined;
 
   const headingStyle: React.CSSProperties = {
     ...(headingFontFamily ? { fontFamily: headingFontFamily } : {}),
@@ -32,13 +32,13 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
 
   const buttonBg = design?.colors?.buttonBackground || design?.colors?.buttonBg;
   const buttonText = design?.colors?.buttonText;
-  const cardBg = design?.colors?.cardBg || '#FFFFFF';
-  const mediaBg = design?.colors?.mediaBg || '#E5E7EB';
-  const navBg = design?.colors?.navBg || '#93C5FD';
-  const navText = design?.colors?.navText || '#1F2937';
-  const navActiveText = design?.colors?.navActiveText || '#1F2937';
-  const decorLeftColor = design?.colors?.decorLeftColor || '#DC2626';
-  const decorRightColor = design?.colors?.decorRightColor || '#F59E0B';
+  const cardBg = design?.colors?.cardBg || 'oklch(var(--b1))';
+  const mediaBg = design?.colors?.mediaBg || 'oklch(var(--b2))';
+  const navBg = design?.colors?.navBg || 'oklch(var(--b3))';
+  const navText = design?.colors?.navText || 'oklch(var(--bc))';
+  const navActiveText = design?.colors?.navActiveText || 'oklch(var(--bc))';
+  const decorLeftColor = design?.colors?.decorLeftColor || 'oklch(var(--p))';
+  const decorRightColor = design?.colors?.decorRightColor || 'oklch(var(--a))';
 
   const navItems = content.navItems || [
     {
@@ -100,8 +100,8 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
 
   return (
     <div
-      className="relative flex flex-col overflow-hidden py-8 sm:py-12"
-      style={{ backgroundColor: bgColor }}
+      className="relative flex flex-col overflow-hidden py-8 sm:py-12 bg-base-100 text-base-content"
+      style={bgColor ? { backgroundColor: bgColor } : undefined}
     >
       {content.showLeftDecor !== false && (
         <>
@@ -190,7 +190,7 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
               </p>
               <div className="mt-6 sm:mt-8">
                 <button
-                  className="btn btn-primary inline-flex items-center gap-2 font-semibold text-sm sm:text-base transition-all hover:scale-105 hover:shadow-lg"
+                  className="btn btn-primary inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all hover:scale-105 hover:shadow-lg"
                   style={buttonBg || buttonText ? {
                     ...(buttonBg ? { backgroundColor: buttonBg } : {}),
                     ...(buttonText ? { color: buttonText } : {}),
@@ -205,6 +205,9 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
             <div
               className="relative flex items-center justify-center p-6 sm:p-8 min-h-[240px] sm:min-h-[320px]"
               style={{ backgroundColor: mediaBg }}
+              data-widget-media-frame
+              data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+              data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
             >
               {activeTab.mediaType === 'video' && activeTab.mediaUrl ? (
                 <video
@@ -214,14 +217,14 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
                   loop
                   muted
                   playsInline
-                  className="w-full h-full object-cover rounded-xl transition-all duration-300"
+                  className="w-full h-full object-cover transition-all duration-300"
                 />
               ) : (
                 <img
                   key={activeTab.mediaUrl}
                   src={activeTab.mediaUrl}
                   alt={activeTab.mediaAlt || activeTab.title || 'Preview'}
-                  className="w-full h-full object-cover rounded-xl transition-all duration-300"
+                  className="w-full h-full object-cover transition-all duration-300"
                 />
               )}
             </div>

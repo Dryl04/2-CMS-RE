@@ -47,14 +47,27 @@ export interface PageBuilderSection {
       buttonBackgroundHover?: string;
       buttonRadius?: string;
       buttonSize?: "sm" | "md" | "lg" | "xl";
-      buttonBorderStyle?: "none" | "solid" | "dashed" | "dotted";
       buttonBorderWidth?: string;
+      buttonBorderStyle?: "none" | "solid" | "dashed" | "dotted";
       buttonBorderColor?: string;
       buttonShadow?: string;
       iconBackground?: string;
       iconColor?: string;
+      iconBorderColor?: string;
+      iconBorderWidth?: string;
       iconRadius?: string;
-      mediaRadius?: string;
+    };
+    media?: {
+      imageRadius?: string;
+      overlayImage?: string;
+      overlayPosition?:
+        | "top-left"
+        | "top-right"
+        | "bottom-left"
+        | "bottom-right"
+        | "center";
+      overlaySize?: string;
+      hideDecorationsOnVideoPlay?: boolean;
     };
   };
   themeConfig?: {

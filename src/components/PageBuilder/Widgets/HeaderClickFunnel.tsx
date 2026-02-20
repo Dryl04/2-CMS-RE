@@ -14,7 +14,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
 
   const typo = design?.typography || {};
 
-  const bgColor = design?.background?.type === 'color' ? design.background.value : '#1B2A4E';
+  const bgColor = design?.background?.type === 'color' ? design.background.value : undefined;
   const fontFamily = typo.fontFamily || undefined;
 
   const navStyle: React.CSSProperties = {
@@ -35,7 +35,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
   const buttonText = design?.colors?.buttonText;
 
   return (
-    <header style={{ backgroundColor: bgColor }}>
+    <header className="bg-base-100 text-base-content" style={bgColor ? { backgroundColor: bgColor } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-2">
@@ -47,8 +47,8 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
                   <div
                     className="w-8 h-8 rounded flex items-center justify-center text-sm font-bold"
                     style={{
-                      backgroundColor: content.logoIconBg || '#FFFFFF',
-                      color: content.logoIconColor || '#EF4444',
+                      backgroundColor: content.logoIconBg || 'oklch(var(--b1))',
+                      color: content.logoIconColor || 'oklch(var(--p))',
                     }}
                   >
                     {content.logoIcon}
@@ -81,7 +81,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
             {content.ctaText && (
               <a
                 href={content.ctaLink || '#'}
-                className="btn btn-primary inline-flex items-center text-sm font-semibold transition-all hover:opacity-90 shadow-lg"
+                className="btn btn-primary inline-flex items-center px-5 py-2.5 rounded-md text-sm font-semibold transition-all hover:opacity-90 shadow-lg"
                 style={buttonBg || buttonText ? {
                   ...(buttonBg ? { backgroundColor: buttonBg } : {}),
                   ...(buttonText ? { color: buttonText } : {}),
@@ -106,7 +106,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+        <div className="md:hidden border-t" style={{ borderColor: 'oklch(var(--bc) / 0.12)' }}>
           <div className="px-4 py-4 space-y-3">
             {(content.navItems || []).map((item: any, index: number) => (
               <a
@@ -121,7 +121,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
             {content.ctaText && (
               <a
                 href={content.ctaLink || '#'}
-                className="btn btn-primary inline-flex items-center justify-center w-full text-sm font-semibold mt-4"
+                className="btn btn-primary inline-flex items-center justify-center w-full px-5 py-2.5 rounded-md text-sm font-semibold mt-4"
                 style={buttonBg || buttonText ? {
                   ...(buttonBg ? { backgroundColor: buttonBg } : {}),
                   ...(buttonText ? { color: buttonText } : {}),

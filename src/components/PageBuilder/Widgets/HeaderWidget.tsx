@@ -32,6 +32,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
     ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+    ...(typo.headingColor || typo.h1Color ? { color: typo.headingColor || typo.h1Color } : {}),
   };
   const textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
@@ -345,12 +346,12 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               </a>
             )}
             {showSearch && (
-              <a href={searchLink || '#'} className="btn btn-ghost btn-sm btn-square" aria-label="Rechercher">
+              <a href={searchLink || '#'} className="btn btn-ghost btn-sm btn-square" aria-label="Rechercher" data-widget-icon-frame>
                 <Search className="w-4 h-4" />
               </a>
             )}
             {showCart && (
-              <a href={cartLink || '#'} className="btn btn-ghost btn-sm btn-square" aria-label="Panier">
+              <a href={cartLink || '#'} className="btn btn-ghost btn-sm btn-square" aria-label="Panier" data-widget-icon-frame>
                 <ShoppingBag className="w-4 h-4" />
               </a>
             )}

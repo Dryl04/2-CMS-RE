@@ -565,6 +565,7 @@ export function exportTemplateAsJSON(template: PageTemplate): string {
     variables: variables.map((v) => ({
       sectionId: v.sectionId,
       sectionType: v.sectionType,
+      sectionVariant: v.sectionVariant,
       fieldPath: v.fieldPath,
       fieldLabel: v.fieldLabel,
       fieldType: v.fieldType,

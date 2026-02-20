@@ -308,16 +308,19 @@ export default function SectionRenderer({
 
       <div
         className={`relative overflow-hidden transition-all ${!previewMode && isSelected
-            ? 'ring-2 ring-black shadow-lg'
-            : !previewMode && isHovered
-              ? 'ring-2 ring-gray-300'
-              : ''
+          ? 'ring-2 ring-black shadow-lg'
+          : !previewMode && isHovered
+            ? 'ring-2 ring-gray-300'
+            : ''
           }`}
       >
 
         <div
           className={wrapperClassName}
           data-theme={dataTheme || canvasThemeSlug || undefined}
+          data-widget-type={normalizedSection.type}
+          data-widget-overlay={normalizedSection.design?.media?.overlayImage ? 'on' : undefined}
+          data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'bottom-right'}
           style={wrapperStyle as React.CSSProperties}
         >
           {renderWidget()}

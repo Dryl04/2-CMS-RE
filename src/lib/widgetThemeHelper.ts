@@ -40,8 +40,12 @@ const COLOR_OVERRIDE_KEYS = [
   "buttonBackground",
   "buttonText",
   "buttonBackgroundHover",
+  "buttonBorderColor",
+  "buttonShadow",
   "iconBackground",
   "iconColor",
+  "iconBorderColor",
+  "iconRadius",
 ] as const;
 
 const TYPOGRAPHY_COLOR_KEYS = [
@@ -133,15 +137,16 @@ function isLegacyDefaultColors(colors: Record<string, unknown>) {
     "buttonBackgroundHover",
     "buttonRadius",
     "buttonSize",
-    "buttonBorderStyle",
     "buttonBorderWidth",
+    "buttonBorderStyle",
     "buttonBorderColor",
     "buttonShadow",
     "accent",
     "iconBackground",
     "iconColor",
+    "iconBorderColor",
+    "iconBorderWidth",
     "iconRadius",
-    "mediaRadius",
   ]);
 
   const keys = Object.keys(colors);
@@ -302,6 +307,35 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
   const hasTextColor = !!typo.textColor;
   const hasLinkColor = !!(typo.linkColor || colors.accent);
   const hasBtnBg = !!colors.buttonBackground;
+  const hasBtnText = !!colors.buttonText;
+  const hasBtnHover = !!colors.buttonBackgroundHover;
+
+  // Typography conditional flags — only activate CSS overrides when custom values are set
+  const hasFontFamily = !!typo.fontFamily;
+  const hasHeadingFontFamily = !!typo.headingFontFamily;
+  const hasHeadingFontWeight = !!typo.headingFontWeight;
+  const hasHeadingFontSize = !!typo.headingFontSize;
+  const hasH1FontFamily = !!(typo.h1FontFamily || typo.headingFontFamily);
+  const hasH1FontWeight = !!(typo.h1FontWeight || typo.headingFontWeight);
+  const hasH1FontSize = !!typo.h1FontSize;
+  const hasH2FontFamily = !!(typo.h2FontFamily || typo.headingFontFamily);
+  const hasH2FontWeight = !!(typo.h2FontWeight || typo.headingFontWeight);
+  const hasH2FontSize = !!typo.h2FontSize;
+  const hasTextFontSize = !!typo.textFontSize;
+
+  const buttonBorderStyle = colors.buttonBorderStyle || "none";
+  const buttonBorderWidth =
+    buttonBorderStyle === "none"
+      ? "0px"
+      : normalizeRadius(colors.buttonBorderWidth) || "1px";
+  const buttonBorderColor =
+    buttonBorderStyle === "none"
+      ? "transparent"
+      : colors.buttonBorderColor || "currentColor";
+  const buttonShadow = colors.buttonShadow || "none";
+  const iconRadius = normalizeRadius(colors.iconRadius) || "0.75rem";
+  const mediaRadius =
+    normalizeRadius(normalizedSection.design?.media?.imageRadius) || "12px";
 
   const usesInternalVerticalSpacing =
     INTERNAL_VERTICAL_SPACING_WIDGET_TYPES.has(normalizedSection.type);
@@ -316,11 +350,26 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
     hasTextColor ? "wds-text-color" : "",
     hasLinkColor ? "wds-link-color" : "",
     hasBtnBg ? "wds-btn-bg" : "",
+    hasBtnText ? "wds-btn-text" : "",
+    hasBtnHover ? "wds-btn-hover" : "",
+    hasFontFamily ? "wds-font-family" : "",
+    hasHeadingFontFamily ? "wds-heading-font-family" : "",
+    hasHeadingFontWeight ? "wds-heading-font-weight" : "",
+    hasHeadingFontSize ? "wds-heading-font-size" : "",
+    hasH1FontFamily ? "wds-h1-font-family" : "",
+    hasH1FontWeight ? "wds-h1-font-weight" : "",
+    hasH1FontSize ? "wds-h1-font-size" : "",
+    hasH2FontFamily ? "wds-h2-font-family" : "",
+    hasH2FontWeight ? "wds-h2-font-weight" : "",
+    hasH2FontSize ? "wds-h2-font-size" : "",
+    hasTextFontSize ? "wds-text-font-size" : "",
   ]
     .filter(Boolean)
     .join(" ");
 
   const style: Record<string, string | undefined> = {
+    "--widget-section-bg":
+      normalizedSection.design.background.value || undefined,
     backgroundColor:
       normalizedSection.design.background.type === "color" &&
       normalizedSection.design.background.value
@@ -351,20 +400,63 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
     ...(colors.buttonBackgroundHover
       ? { "--widget-btn-bg-hover": colors.buttonBackgroundHover }
       : {}),
-    ...(colors.accent ? { "--widget-accent-color": colors.accent } : {}),
-    ...(colors.iconBackground
-      ? { "--widget-icon-bg": colors.iconBackground }
+    ...(colors.buttonBorderColor
+      ? { "--widget-btn-border-color": colors.buttonBorderColor }
       : {}),
+    "--widget-btn-border-width": buttonBorderWidth,
+    "--widget-btn-border-style": buttonBorderStyle,
+    "--widget-btn-border-color": buttonBorderColor,
+    "--widget-btn-shadow": buttonShadow,
+    ...(colors.accent ? { "--widget-accent-color": colors.accent } : {}),
+    "--widget-icon-bg": colors.iconBackground || "oklch(var(--b2))",
     ...(colors.iconColor ? { "--widget-icon-color": colors.iconColor } : {}),
-    ...(colors.iconRadius ? { "--widget-icon-radius": colors.iconRadius } : {}),
-    ...(colors.mediaRadius
-      ? { "--widget-media-radius": colors.mediaRadius }
+    ...(colors.iconBorderColor
+      ? { "--widget-icon-border-color": colors.iconBorderColor }
+      : {}),
+    ...(colors.iconBorderWidth
+      ? { "--widget-icon-border-width": colors.iconBorderWidth }
+      : {}),
+    "--widget-icon-radius": iconRadius,
+    ...(typo.fontFamily ? { "--widget-font-family": typo.fontFamily } : {}),
+    ...(typo.headingFontFamily
+      ? { "--widget-heading-font-family": typo.headingFontFamily }
+      : {}),
+    ...(typo.headingFontWeight
+      ? { "--widget-heading-font-weight": typo.headingFontWeight }
+      : {}),
+    ...(typo.headingFontSize
+      ? { "--widget-heading-font-size": typo.headingFontSize }
+      : {}),
+    ...(typo.h1FontFamily
+      ? { "--widget-h1-font-family": typo.h1FontFamily }
+      : {}),
+    ...(typo.h1FontWeight
+      ? { "--widget-h1-font-weight": typo.h1FontWeight }
+      : {}),
+    ...(typo.h1FontSize ? { "--widget-h1-font-size": typo.h1FontSize } : {}),
+    ...(typo.h2FontFamily
+      ? { "--widget-h2-font-family": typo.h2FontFamily }
+      : {}),
+    ...(typo.h2FontWeight
+      ? { "--widget-h2-font-weight": typo.h2FontWeight }
+      : {}),
+    ...(typo.h2FontSize ? { "--widget-h2-font-size": typo.h2FontSize } : {}),
+    ...(typo.textFontSize
+      ? { "--widget-text-font-size": typo.textFontSize }
+      : {}),
+    "--widget-media-radius": mediaRadius,
+    ...(normalizedSection.design?.media?.overlayImage
+      ? {
+          "--widget-media-overlay-image": `url(${normalizedSection.design.media.overlayImage})`,
+        }
+      : {}),
+    ...(normalizedSection.design?.media?.overlaySize
+      ? {
+          "--widget-media-overlay-size":
+            normalizedSection.design.media.overlaySize,
+        }
       : {}),
     "--widget-btn-radius": buttonRadius,
-    "--widget-btn-border-style": colors.buttonBorderStyle || "none",
-    "--widget-btn-border-width": colors.buttonBorderWidth || "0px",
-    "--widget-btn-border-color": colors.buttonBorderColor || "transparent",
-    "--widget-btn-shadow": colors.buttonShadow || "none",
     ...buttonSizeVars,
     ...(typo.buttonFontSize
       ? { "--widget-btn-font-size": typo.buttonFontSize }
@@ -391,6 +483,8 @@ export function getOverrideStyle(section: PageBuilderSection) {
   const buttonHover = section.design?.colors?.buttonBackgroundHover;
   const iconBg = section.design?.colors?.iconBackground;
   const iconColor = section.design?.colors?.iconColor;
+  const iconBorderColor = section.design?.colors?.iconBorderColor;
+  const buttonBorderColor = section.design?.colors?.buttonBorderColor;
   const accentColor = section.design?.colors?.accent;
 
   return {
@@ -399,8 +493,10 @@ export function getOverrideStyle(section: PageBuilderSection) {
     buttonBg,
     buttonText,
     buttonHover,
+    buttonBorderColor,
     iconBg,
     iconColor,
+    iconBorderColor,
     accentColor,
   };
 }

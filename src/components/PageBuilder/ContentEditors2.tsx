@@ -343,6 +343,18 @@ export function VideoHeroContentEditor({ section, updateContent }: ContentEditor
         <textarea value={section.content.subtitle || ''} onChange={(e) => updateContent('subtitle', e.target.value)} rows={2} className={inputClass} />
       </div>
       <div>
+        <label className={labelClass}>Position du texte</label>
+        <select
+          value={section.content.textPosition || 'center'}
+          onChange={(e) => updateContent('textPosition', e.target.value)}
+          className={inputClass}
+        >
+          <option value="top">Haut</option>
+          <option value="center">Centré</option>
+          <option value="bottom">Bas</option>
+        </select>
+      </div>
+      <div>
         <label className={labelClass}>URL de la video</label>
         <input type="text" value={section.content.videoUrl || ''} onChange={(e) => updateContent('videoUrl', e.target.value)} className={inputClass} placeholder="https://youtube.com/watch?v=..." />
       </div>

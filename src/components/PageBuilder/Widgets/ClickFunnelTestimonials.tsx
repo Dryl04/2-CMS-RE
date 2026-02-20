@@ -19,7 +19,7 @@ interface ClickFunnelTestimonialsProps {
 }
 
 const LogoPlaceholder = ({ name }: { name: string }) => (
-  <div className="px-6 py-2 text-neutral-content/60 font-bold text-xl tracking-tight">
+  <div className="px-6 py-2 text-base-content/60 font-bold text-xl tracking-tight">
     {name}
   </div>
 );
@@ -47,7 +47,7 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
 
   const bgColor = design?.background?.type === 'color' && design.background.value
     ? design.background.value
-    : '#1a1d3d';
+    : undefined;
 
   const defaultLogos: Logo[] = [
     { name: 'USA TODAY', imageUrl: '' },
@@ -108,7 +108,7 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
   const statCardPosition = Math.floor(testimonials.length / 2);
 
   return (
-    <div className="relative w-full py-16 overflow-hidden" style={{ backgroundColor: bgColor }}>
+    <div className="relative w-full py-16 overflow-hidden bg-base-100 text-base-content" style={bgColor ? { backgroundColor: bgColor } : undefined}>
       <div className="container mx-auto px-4">
         {showLogos && logos.length > 0 && (
           <div className="flex flex-wrap items-center justify-center gap-12 mb-16">
@@ -151,12 +151,12 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
                   return (
                     <div
                       key={`stat-${index}`}
-                      className="flex-shrink-0 w-[380px] h-[280px] rounded-2xl bg-gradient-to-br from-[#ffd7c4] via-[#ffe5d6] to-[#fff0e8] p-8 flex flex-col items-center justify-center shadow-xl"
+                      className="flex-shrink-0 w-[380px] h-[280px] rounded-2xl bg-gradient-to-br from-base-200 via-base-100 to-base-200 p-8 flex flex-col items-center justify-center shadow-xl"
                     >
-                      <div className="text-7xl font-black text-[#1a1d3d] mb-4 leading-none" style={headingStyle}>
+                      <div className="text-7xl font-black text-base-content mb-4 leading-none" style={headingStyle}>
                         {statNumber}
                       </div>
-                      <div className="text-xl font-bold text-[#1a1d3d] text-center" style={textStyle}>
+                      <div className="text-xl font-bold text-base-content text-center" style={textStyle}>
                         {statLabel}
                       </div>
                     </div>
@@ -166,9 +166,9 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
                 return (
                   <div
                     key={`testimonial-${index}`}
-                    className="flex-shrink-0 w-[380px] h-[280px] rounded-2xl bg-[#2a2d5a] p-8 flex flex-col justify-between shadow-xl hover:shadow-2xl transition-shadow"
+                    className="flex-shrink-0 w-[380px] h-[280px] rounded-2xl bg-base-200 p-8 flex flex-col justify-between shadow-xl hover:shadow-2xl transition-shadow"
                   >
-                    <p className="text-neutral-content text-lg font-bold leading-relaxed line-clamp-6" style={textStyle}>
+                    <p className="text-base-content text-lg font-bold leading-relaxed line-clamp-6" style={textStyle}>
                       "{testimonial.quote}"
                     </p>
 
@@ -177,24 +177,24 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
                         <img
                           src={testimonial.avatar}
                           alt={testimonial.name}
-                          className="w-14 h-14 rounded-full object-cover border-2 border-neutral-content/20 flex-shrink-0"
+                          className="w-14 h-14 rounded-full object-cover border-2 border-base-content/20 flex-shrink-0"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
                           }}
                         />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-neutral-content/10 border-2 border-neutral-content/20 flex items-center justify-center flex-shrink-0">
-                          <span className="text-neutral-content text-xl font-bold">
+                        <div className="w-14 h-14 rounded-full bg-base-content/10 border-2 border-base-content/20 flex items-center justify-center flex-shrink-0">
+                          <span className="text-base-content text-xl font-bold">
                             {testimonial.name.charAt(0)}
                           </span>
                         </div>
                       )}
                       <div className="min-w-0">
-                        <div className="text-neutral-content font-bold text-base truncate" style={headingStyle}>
+                        <div className="text-base-content font-bold text-base truncate" style={headingStyle}>
                           {testimonial.name}
                         </div>
-                        <div className="text-neutral-content/70 text-sm truncate" style={subtitleStyle}>
+                        <div className="text-base-content/70 text-sm truncate" style={subtitleStyle}>
                           {testimonial.badge}
                         </div>
                       </div>

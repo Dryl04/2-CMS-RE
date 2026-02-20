@@ -81,8 +81,9 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
           {(steps || defaultSteps).map((step: any, index: number) => (
             <div key={index} className="text-center">
               <div
-                className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mx-auto mb-4 md:mb-6 flex items-center justify-center widget-icon-container"
+                className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mx-auto mb-4 md:mb-6 rounded-xl md:rounded-2xl flex items-center justify-center bg-primary"
                 style={accentColor ? { backgroundColor: accentColor } : undefined}
+                data-widget-icon-frame
               >
                 <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-content">{step.number}</span>
               </div>
@@ -136,8 +137,9 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
             </div>
             <div className="relative">
               <div
-                className="inline-flex items-center justify-center w-16 h-16 mb-4 widget-icon-container"
+                className="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 bg-primary/20"
                 style={accentColor ? { backgroundColor: `${accentColor}20` } : undefined}
+                data-widget-icon-frame
               >
                 <span
                   className="text-2xl font-bold text-primary"
@@ -198,8 +200,9 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
           {(steps || defaultSteps).map((step: any, index: number) => (
             <div key={index} className="relative pl-16 sm:pl-20">
               <div
-                className="absolute left-0 w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center widget-icon-container"
+                className="absolute left-0 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-primary"
                 style={accentColor ? { backgroundColor: accentColor } : undefined}
+                data-widget-icon-frame
               >
                 <span className="text-lg sm:text-2xl font-bold text-primary-content">{step.number}</span>
               </div>
@@ -250,8 +253,9 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
           >
             <div className="flex items-start gap-6">
               <div
-                className="flex-shrink-0 w-14 h-14 flex items-center justify-center widget-icon-container"
+                className="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center bg-primary"
                 style={accentColor ? { backgroundColor: accentColor } : undefined}
+                data-widget-icon-frame
               >
                 <CheckCircle className="w-7 h-7 text-primary-content" />
               </div>

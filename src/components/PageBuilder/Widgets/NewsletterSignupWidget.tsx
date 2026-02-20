@@ -55,7 +55,7 @@ export default function NewsletterSignupWidget({ section }: NewsletterSignupWidg
             />
             <button
               type="submit"
-              className="btn btn-primary font-bold uppercase tracking-wider hover:opacity-90 transition whitespace-nowrap"
+              className="bg-primary text-primary-content px-8 py-3 rounded-full font-bold uppercase tracking-wider hover:opacity-90 transition whitespace-nowrap"
             >
               {content.buttonText || 'SUBSCRIBE'}
             </button>

@@ -15,6 +15,8 @@ const iconMap: { [key: string]: any } = {
 export default function ContentVideoServices({ section }: ContentVideoServicesProps) {
   const { content, design } = section;
   const [isPlaying, setIsPlaying] = useState(false);
+  const hideDecorationsOnVideoPlay = design.media?.hideDecorationsOnVideoPlay === true;
+  const shouldHideDecorations = hideDecorationsOnVideoPlay && isPlaying;
   const bg = design.background.type === 'color' ? design.background.value : undefined;
   const typo = design.typography || {};
   const accentColor = design.colors?.accent || design.colors?.buttonBackground;
@@ -55,7 +57,7 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
     <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-          <div className="lg:col-span-3 bg-base-100 rounded-2xl p-6 sm:p-8 shadow-lg">
+          <div className={`lg:col-span-3 bg-base-100 rounded-2xl p-6 sm:p-8 shadow-lg transition-all ${shouldHideDecorations ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             {content.subtitle && (
               <p className="text-sm font-medium tracking-wider uppercase mb-3 sm:mb-4 text-base-content/70" style={subtitleStyle}>
                 {content.subtitle}
@@ -82,11 +84,16 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
           </div>
 
           <div className="lg:col-span-6">
-            <div className="relative rounded-2xl overflow-hidden min-h-[260px] sm:min-h-[360px] lg:min-h-[450px] bg-neutral shadow-xl">
+            <div
+              className="relative group min-h-[260px] sm:min-h-[360px] lg:min-h-[450px] bg-neutral shadow-xl"
+              data-widget-media-frame
+              data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+              data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+            >
               {content.videoUrl && isPlaying ? (
                 <iframe
                   src={getEmbedUrl(content.videoUrl)}
-                  className="absolute inset-0 w-full h-full bg-black"
+                  className="absolute inset-0 w-full h-full bg-neutral"
                   frameBorder="0"
                   allow="autoplay; fullscreen"
                   allowFullScreen
@@ -101,7 +108,7 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
                   <div className="absolute inset-0 bg-neutral/30 flex items-center justify-center">
                     <button
                       onClick={() => setIsPlaying((prev) => !prev)}
-                      className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full text-neutral-content shadow-2xl transition-transform hover:scale-105"
+                      className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full text-primary-content shadow-2xl transition-transform hover:scale-105"
                       style={accentColor ? { backgroundColor: accentColor } : undefined}
                       aria-label={isPlaying ? 'Pause video' : 'Play video'}
                     >
@@ -118,7 +125,7 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
               {content.videoUrl && isPlaying && (
                 <button
                   onClick={() => setIsPlaying(false)}
-                  className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-neutral-content shadow-lg"
+                  className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full p-2 text-primary-content shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                   style={accentColor ? { backgroundColor: accentColor } : undefined}
                   aria-label="Pause video"
                 >
@@ -128,13 +135,15 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
             </div>
           </div>
 
-          <div className="lg:col-span-3 grid sm:grid-cols-3 lg:grid-cols-1 gap-6 sm:gap-4 lg:gap-8">
+          <div className={`lg:col-span-3 grid sm:grid-cols-3 lg:grid-cols-1 gap-6 sm:gap-4 lg:gap-8 transition-all ${shouldHideDecorations ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             {content.services?.map((service: any, index: number) => {
               const IconComponent = iconMap[service.icon] || Umbrella;
               return (
                 <div key={index} className="text-center space-y-2 sm:space-y-3">
                   <div className="flex justify-center">
-                    <IconComponent className="w-10 h-10 sm:w-12 sm:h-12 text-base-content" style={headingStyle} />
+                    <span data-widget-icon-frame className="inline-flex items-center justify-center p-2">
+                      <IconComponent className="w-10 h-10 sm:w-12 sm:h-12 text-base-content" style={headingStyle} />
+                    </span>
                   </div>
                   <h3 className="text-base sm:text-lg font-bold leading-tight text-base-content" style={headingStyle}>
                     {service.title}

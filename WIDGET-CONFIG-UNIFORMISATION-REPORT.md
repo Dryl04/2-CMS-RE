@@ -1,55 +1,97 @@
-# Patch de configuration widgets — Uniformisation (impact minimal)
+# Rapport d’uniformisation widgets — Audit exhaustif (tous types & variantes)
 
-## 1) Patch/code + bref changelog
+Date: 20/02/2026
 
-### Objectif atteint
+## 1) Résumé d’exécution
 
-- Uniformisation de la configuration par sous-sections (Titres, Paragraphes, Boutons & liens) via une édition rapide commune.
-- Ajout des contrôles manquants pour les boutons sur les widgets hero-like (couleur bouton, texte, hover).
-- Amélioration de l’intuitivité pour la couleur du menu/navigation.
-- Correction de normalisation automatique des slugs (espaces -> tirets, nettoyage URL-safe).
-- Renforcement des contrôles d’espacement (padding + marges haut/bas) dans le panneau design.
+- Audit technique réalisé sur l’ensemble des widgets et variantes déclarés dans la librairie.
+- Corrections appliquées en priorité au niveau transversal (types + helper thème + CSS scope + panneau Design), pour couvrir toutes les variantes sans divergence.
+- Vérification build effectuée après patch: OK.
 
-### Fichiers modifiés
+## 2) Correctifs transversaux appliqués
 
-- src/components/PageBuilder/PropertiesPanel.tsx
-  - Ajout d’un bloc “Édition rapide uniforme” (Titres / Paragraphes / Boutons & liens).
-  - Conservation des éditeurs spécifiques existants (pas de refonte complète).
-  - Ajout des couleurs de bouton dans la branche design des widgets hero-like.
-  - Renommage du libellé de couleur de liens pour clarifier le cas menu/navigation.
-  - Ajout des champs “Marge haute” et “Marge basse” dans la section Espacement.
+### Agrégation des widgets
 
-- src/components/PageBuilder/Widgets/HeaderWidget.tsx
-  - Application explicite de typography.linkColor sur les liens/menu pour un comportement plus évident côté utilisateur.
+- Regroupement structuré des widgets par familles dans la bibliothèque d’insertion:
+  - Header
+  - Hero
+  - Features
+  - Process
+  - Preuves sociales
+- Les variantes restent intactes et créent toujours le bon `type` interne (pas de rupture de rendu).
 
-- src/components/PageBuilder/Widgets/HeaderClickFunnel.tsx
-  - Application explicite de typography.linkColor sur les liens de navigation.
+### Uniformisation Design (tous widgets)
 
-- src/components/SEOForm.tsx
-  - Ajout d’une normalisation de slug (minuscules, suppression accents/caractères invalides, espaces -> tirets, collapse des tirets).
-  - Application de cette normalisation en saisie, en édition existante et en génération page_key/canonical_url.
+- Ajout d’une `Couleur Dominante` globale dans Design.
+- Ajout de la personnalisation complète des boutons:
+  - Couleur bouton
+  - Couleur texte bouton
+  - Couleur hover
+  - Arrondi
+  - Taille
+  - Bordure (style, épaisseur, couleur)
+- Ajout d’une section `Icônes`:
+  - Couleur contenu
+  - Couleur fond
+  - Couleur contour
+  - Épaisseur contour
+- Ajout de la section `Images & vidéos`:
+  - Arrondi médias
+  - Overlay image
+  - Position overlay
+  - Taille overlay
 
-## 2) Checklist de tests manuels (courte)
+### Robustesse rendu (anti-dysfonctionnements)
 
-- [ ] Ouvrir plusieurs widgets différents et vérifier l’apparition de “Édition rapide uniforme” avec sections:
-  - [ ] Titres
-  - [ ] Paragraphes
-  - [ ] Boutons & liens
-- [ ] Sur un Hero: modifier couleur bouton / texte bouton / hover dans Design et vérifier rendu immédiat en canvas + aperçu.
-- [ ] Sur un Header/Header ClickFunnel: modifier “Couleur liens / menu navigation” et vérifier desktop + menu mobile.
-- [ ] Modifier Padding haut/bas + Marge haute/basse et vérifier effet sur le widget courant.
-- [ ] Créer une page SEO avec slug contenant des espaces/accents (ex: “Mon Offre Été 2026”) et vérifier slug auto: “mon-offre-ete-2026”.
-- [ ] Enregistrer puis rouvrir une page/widget pour vérifier persistance des réglages.
+- Priorités typo renforcées au niveau CSS scope widget:
+  - H1/H2 spécifiques > titres globaux > police widget > thème
+  - Forçage prioritaire H1/H2 pour éviter les conflits inline selon variantes.
+- Correctif global sur styles boutons (incluant cas `.btn` et boutons natifs sans classe `.btn`).
+- Correctif global icônes (contenu + cadre) avec fallback auto sur conteneurs d’icônes.
+- Correctif fond Header pour tous types contenant `header`.
 
-## 3) Note de suivi — champs renommés (ancien -> nouveau)
+## 3) Corrections spécifiques demandées
 
-> Remarque: pas de renommage de clés de données persistées (DB/JSON). Renommages effectués au niveau des libellés UI pour lisibilité.
+### Widget Vidéo
 
-- Couleur liens -> Couleur liens / menu navigation
-- (Nouveau groupe UI) Édition rapide uniforme -> Titres / Paragraphes / Boutons & liens
-- (Nouveaux champs UI) Espacement -> Marge haute, Marge basse
+- Texte non tronqué (hauteur/positionnement sécurisé).
+- Position texte configurable (`top`, `center`, `bottom`) avec centrage par défaut.
 
-## Portée / contrainte respectée
+### Widget Image / upload réel
 
-- Impact minimal: modifications ciblées sur la configuration widgets et UI associée uniquement.
-- Pas de refactorisation complète de l’architecture des widgets.
+- L’option upload permet une sélection réelle depuis la médiathèque avec action `Utiliser`.
+- Flux upload conservé (upload + stockage + URL), puis injection immédiate dans le widget.
+
+### Widget Header
+
+- Logo texte (`Brand`) désormais bien impacté par les réglages Design (couleur/typo).
+
+### Bugs ciblés rappelés
+
+- Hover + texte bouton: corrigés de manière robuste via variables & classes dédiées.
+- Arrière-plan Header: corrigé côté scope CSS pour tous widgets header-like.
+
+## 4) Fichiers clés touchés
+
+- `src/components/PageBuilder/WidgetLibrary.tsx`
+- `src/components/PageBuilder/PropertiesPanel.tsx`
+- `src/lib/pageBuilderTypes.ts`
+- `src/lib/widgetThemeHelper.ts`
+- `src/index.css`
+- `src/components/PageBuilder/SectionRenderer.tsx`
+- `src/components/SEOPageViewer.tsx`
+- `src/components/MediaLibrary.tsx`
+- `src/components/PageBuilder/Widgets/VideoHeroWidget.tsx`
+- `src/components/PageBuilder/ContentEditors2.tsx`
+- `src/components/PageBuilder/Widgets/HeaderWidget.tsx`
+- `GUIDE-PRIORITES-PERSONNALISATION-WIDGETS.md`
+
+## 5) Validation
+
+- Build production: `npm run build` => succès.
+- Pas d’erreurs TypeScript détectées sur les fichiers modifiés.
+
+## 6) Note d’architecture
+
+- L’approche a privilégié des correctifs de socle (centralisés) pour éviter les écarts entre variantes et limiter les régressions futures.
+- Les ajustements unitaires ont été faits uniquement quand nécessaire (Video/Header/Media).

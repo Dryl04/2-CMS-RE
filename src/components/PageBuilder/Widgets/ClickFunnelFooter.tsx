@@ -71,7 +71,7 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
 
   const bgColor = section.design?.background?.type === 'color' && section.design?.background?.value
     ? section.design.background.value
-    : '#0a1628';
+    : undefined;
 
   const typo = section.design?.typography || {};
   const fontFamily = typo.fontFamily || undefined;
@@ -87,7 +87,7 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
 
-  const linkHoverColor = section.design?.colors?.linkHover || '#FFFFFF';
+  const linkHoverColor = section.design?.colors?.linkHover || 'oklch(var(--bc))';
 
   const variant = section.variant || 'default';
 
@@ -103,15 +103,15 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
   };
 
   return (
-    <footer className="py-16 px-4" style={{ backgroundColor: bgColor }}>
+    <footer className="py-16 px-4 bg-base-100 text-base-content" style={bgColor ? { backgroundColor: bgColor } : undefined}>
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-center mb-12">
           {logo ? (
             <img src={logo} alt={logoText} className="h-8" />
           ) : (
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-base-100 rounded-full flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-5 h-5 text-red-500 fill-current">
+              <div className="w-8 h-8 bg-base-200 rounded-full flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 text-primary fill-current">
                   <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" />
                 </svg>
               </div>
@@ -158,7 +158,7 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
         </div>
 
         {showPrivacyChoices && (
-          <div className="flex justify-center items-center gap-2 pt-8 border-t border-gray-700">
+          <div className="flex justify-center items-center gap-2 pt-8 border-t border-base-content/20">
             <svg viewBox="0 0 24 24" className="w-5 h-5" style={{ fill: 'currentColor' }}>
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>

@@ -50,6 +50,7 @@ import {
 } from './ContentEditors2';
 import { HeroAdvancedEditor } from './HeroAdvancedEditor';
 import GenericObjectEditor from './GenericObjectEditor';
+import ImageUploadField from './ImageUploadField';
 
 interface PropertiesPanelProps {
   section: PageBuilderSection | null;
@@ -83,47 +84,10 @@ const BUTTON_FONT_SIZE_OPTIONS = [
 
 const BUTTON_SHADOW_OPTIONS = [
   { value: 'none', label: 'Aucune' },
-  { value: '0 1px 2px 0 rgba(0,0,0,0.05)', label: 'Très légère' },
-  { value: '0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1)', label: 'Légère' },
-  { value: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)', label: 'Moyenne' },
-  { value: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)', label: 'Grande' },
-  { value: '0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)', label: 'Très grande' },
-  { value: '0 25px 50px -12px rgba(0,0,0,0.25)', label: 'Intense' },
+  { value: '0 2px 6px rgba(0, 0, 0, 0.12)', label: 'Légère' },
+  { value: '0 8px 18px rgba(0, 0, 0, 0.18)', label: 'Moyenne' },
+  { value: '0 14px 28px rgba(0, 0, 0, 0.24)', label: 'Forte' },
 ];
-
-function CollapsibleSection({
-  title,
-  defaultOpen = true,
-  children,
-  icon,
-}: {
-  title: string;
-  defaultOpen?: boolean;
-  children: React.ReactNode;
-  icon?: React.ReactNode;
-}) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-  return (
-    <div className="border-t border-gray-200 pt-3">
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full text-left mb-2 group"
-      >
-        <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-          {icon}
-          {title}
-        </h3>
-        {isOpen ? (
-          <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
-        ) : (
-          <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
-        )}
-      </button>
-      {isOpen && <div className="space-y-3">{children}</div>}
-    </div>
-  );
-}
 
 const HERO_SEO_WIDGET_TYPES = new Set([
   'hero',
@@ -244,6 +208,36 @@ function ColorOverrideField({
           <span className="text-xs text-gray-400">Couleur du thème actif</span>
         </div>
       )}
+    </div>
+  );
+}
+
+function CollapsibleSection({
+  title,
+  defaultOpen = false,
+  children,
+}: {
+  title: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <div className="border-t border-gray-200 pt-2">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between py-2 text-sm font-semibold text-gray-900 hover:text-gray-700 transition-colors"
+      >
+        <span>{title}</span>
+        {isOpen ? (
+          <ChevronDown className="w-4 h-4 text-gray-500" />
+        ) : (
+          <ChevronRight className="w-4 h-4 text-gray-500" />
+        )}
+      </button>
+      {isOpen && <div className="pb-2 space-y-3">{children}</div>}
     </div>
   );
 }
@@ -490,8 +484,19 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
   const renderDesignTab = () => {
     if (HERO_SEO_WIDGET_TYPES.has(section.type)) {
       return (
-        <div className="space-y-6">
+        <div className="space-y-2">
           <WidgetThemeSelector section={section} onUpdateSection={onUpdateSection} />
+
+          <CollapsibleSection title="Palette globale" defaultOpen={false}>
+            <ColorOverrideField
+              label="Couleur Dominante"
+              value={section.design.colors?.accent}
+              fallback="#111827"
+              onChange={(v) => updateDesign('colors', 'accent', v)}
+              onClear={() => clearDesign('colors', 'accent')}
+            />
+          </CollapsibleSection>
+
           <CollapsibleSection title="Typographie des titres" defaultOpen={false}>
             <div>
               <label className="block text-xs text-gray-600 mb-1">Police H1</label>
@@ -614,6 +619,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               onClear={() => clearDesign('typography', 'h2Color')}
             />
           </CollapsibleSection>
+
           <CollapsibleSection title="Boutons" defaultOpen={false}>
             <ColorOverrideField
               label="Couleur bouton"
@@ -678,7 +684,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons</label>
+              <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
               <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
                 <input
                   type="range"
@@ -697,115 +703,177 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                 />
               </div>
             </div>
+
             <div>
               <label className="block text-xs text-gray-600 mb-1">Type de bordure bouton</label>
               <select
                 value={section.design.colors?.buttonBorderStyle || 'none'}
                 onChange={(e) => updateDesign('colors', 'buttonBorderStyle', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
               >
                 <option value="none">Aucune</option>
-                <option value="solid">Pleine</option>
+                <option value="solid">Continue</option>
                 <option value="dashed">Tirets</option>
-                <option value="dotted">Points</option>
+                <option value="dotted">Pointillés</option>
               </select>
             </div>
-            {section.design.colors?.buttonBorderStyle && section.design.colors.buttonBorderStyle !== 'none' && (
-              <>
-                <div>
-                  <label className="block text-xs text-gray-600 mb-1">Épaisseur bordure bouton</label>
-                  <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
-                    <input
-                      type="range"
-                      min="0"
-                      max="6"
-                      step="1"
-                      value={parseInt((section.design.colors?.buttonBorderWidth || '1').replace('px', ''), 10) || 1}
-                      onChange={(e) => updateDesign('colors', 'buttonBorderWidth', `${e.target.value}px`)}
-                      className="w-full"
-                    />
-                    <span className="text-xs text-gray-500 w-12 text-right">{section.design.colors?.buttonBorderWidth || '1px'}</span>
-                  </div>
-                </div>
-                <ColorOverrideField
-                  label="Couleur bordure bouton"
-                  value={section.design.colors?.buttonBorderColor}
-                  fallback="#000000"
-                  onChange={(v) => updateDesign('colors', 'buttonBorderColor', v)}
-                  onClear={() => clearDesign('colors', 'buttonBorderColor')}
-                />
-              </>
-            )}
+
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Épaisseur bordure bouton</label>
+              <input
+                type="text"
+                value={section.design.colors?.buttonBorderWidth || '0px'}
+                onChange={(e) => updateDesign('colors', 'buttonBorderWidth', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                placeholder="ex: 0px, 1px"
+              />
+            </div>
+
             <div>
               <label className="block text-xs text-gray-600 mb-1">Ombre du bouton</label>
               <select
                 value={section.design.colors?.buttonShadow || 'none'}
                 onChange={(e) => updateDesign('colors', 'buttonShadow', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
               >
-                {BUTTON_SHADOW_OPTIONS.map(option => (
+                {BUTTON_SHADOW_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
                 ))}
               </select>
             </div>
+
+            <ColorOverrideField
+              label="Couleur bordure bouton"
+              value={section.design.colors?.buttonBorderColor}
+              fallback="#111827"
+              onChange={(v) => updateDesign('colors', 'buttonBorderColor', v)}
+              onClear={() => clearDesign('colors', 'buttonBorderColor')}
+            />
           </CollapsibleSection>
 
           <CollapsibleSection title="Icônes" defaultOpen={false}>
             <ColorOverrideField
-              label="Couleur de fond des icônes"
+              label="Couleur contenu icône"
+              value={section.design.colors?.iconColor}
+              fallback="#111827"
+              onChange={(v) => updateDesign('colors', 'iconColor', v)}
+              onClear={() => clearDesign('colors', 'iconColor')}
+            />
+            <ColorOverrideField
+              label="Couleur fond icône"
               value={section.design.colors?.iconBackground}
-              fallback="#000000"
+              fallback="#F3F4F6"
               onChange={(v) => updateDesign('colors', 'iconBackground', v)}
               onClear={() => clearDesign('colors', 'iconBackground')}
             />
             <ColorOverrideField
-              label="Couleur des icônes"
-              value={section.design.colors?.iconColor}
-              fallback="#ffffff"
-              onChange={(v) => updateDesign('colors', 'iconColor', v)}
-              onClear={() => clearDesign('colors', 'iconColor')}
+              label="Couleur contour icône"
+              value={section.design.colors?.iconBorderColor}
+              fallback="#D1D5DB"
+              onChange={(v) => updateDesign('colors', 'iconBorderColor', v)}
+              onClear={() => clearDesign('colors', 'iconBorderColor')}
             />
             <div>
-              <label className="block text-xs text-gray-600 mb-1">Arrondi du contour d'icônes</label>
+              <label className="block text-xs text-gray-600 mb-1">Épaisseur contour icône</label>
+              <input
+                type="text"
+                value={section.design.colors?.iconBorderWidth || '0px'}
+                onChange={(e) => updateDesign('colors', 'iconBorderWidth', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                placeholder="ex: 1px"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Arrondi du contour d'icône</label>
               <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
                 <input
                   type="range"
                   min="0"
-                  max="50"
+                  max="40"
                   step="1"
-                  value={parseInt((section.design.colors?.iconRadius || '16').replace('px', '').replace('%', ''), 10) || 16}
+                  value={parseInt((section.design.colors?.iconRadius || '12px').replace('px', ''), 10) || 12}
                   onChange={(e) => updateDesign('colors', 'iconRadius', `${e.target.value}px`)}
                   className="w-full"
                 />
-                <span className="text-xs text-gray-500 w-14 text-right">{section.design.colors?.iconRadius || '16px'}</span>
+                <input
+                  type="text"
+                  value={section.design.colors?.iconRadius || '12px'}
+                  onChange={(e) => updateDesign('colors', 'iconRadius', e.target.value)}
+                  className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                />
               </div>
             </div>
           </CollapsibleSection>
 
-          <CollapsibleSection title="Médias (Images & Vidéos)" defaultOpen={false}>
+          <CollapsibleSection title="Images & vidéos" defaultOpen={false}>
             <div>
               <label className="block text-xs text-gray-600 mb-1">Arrondi des médias</label>
               <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
                 <input
                   type="range"
                   min="0"
-                  max="50"
+                  max="48"
                   step="1"
-                  value={parseInt((section.design.colors?.mediaRadius || '16').replace('px', ''), 10) || 16}
-                  onChange={(e) => updateDesign('colors', 'mediaRadius', `${e.target.value}px`)}
+                  value={parseInt((section.design.media?.imageRadius || '12px').replace('px', ''), 10) || 12}
+                  onChange={(e) => updateDesign('media', 'imageRadius', `${e.target.value}px`)}
                   className="w-full"
                 />
-                <span className="text-xs text-gray-500 w-14 text-right">{section.design.colors?.mediaRadius || '16px'}</span>
+                <input
+                  type="text"
+                  value={section.design.media?.imageRadius || '12px'}
+                  onChange={(e) => updateDesign('media', 'imageRadius', e.target.value)}
+                  className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                />
               </div>
             </div>
+            <ImageUploadField
+              label="Image à superposer (overlay)"
+              value={section.design.media?.overlayImage || ''}
+              onChange={(url) => updateDesign('media', 'overlayImage', url)}
+              placeholder="URL du logo à superposer"
+              mediaType="image"
+            />
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Position overlay</label>
+              <select
+                value={section.design.media?.overlayPosition || 'bottom-right'}
+                onChange={(e) => updateDesign('media', 'overlayPosition', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+              >
+                <option value="top-left">Haut gauche</option>
+                <option value="top-right">Haut droite</option>
+                <option value="bottom-left">Bas gauche</option>
+                <option value="bottom-right">Bas droite</option>
+                <option value="center">Centre</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Taille overlay</label>
+              <input
+                type="text"
+                value={section.design.media?.overlaySize || '84px'}
+                onChange={(e) => updateDesign('media', 'overlaySize', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                placeholder="ex: 84px"
+              />
+            </div>
+            <label className="flex items-center space-x-2 cursor-pointer text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={section.design.media?.hideDecorationsOnVideoPlay === true}
+                onChange={(e) => updateDesign('media', 'hideDecorationsOnVideoPlay', e.target.checked)}
+                className="w-4 h-4 rounded border-gray-300"
+              />
+              <span>Masquer textes/icônes pendant lecture vidéo</span>
+            </label>
           </CollapsibleSection>
 
-          {HERO_SEO_WIDGET_TYPES.has(section.type) && (
-            <div className="border-t border-gray-200 pt-4">
+          {section.type === 'hero' && (
+            <CollapsibleSection title="Paramètres Hero avancés" defaultOpen={false}>
               <HeroAdvancedEditor section={section} updateDesign={updateDesign} />
-            </div>
+            </CollapsibleSection>
           )}
         </div>
       );
@@ -818,9 +886,14 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       section.design.typography?.subtitleColor ||
       section.design.typography?.textColor ||
       section.design.typography?.linkColor ||
+      section.design.colors?.accent ||
       section.design.colors?.buttonBackground ||
       section.design.colors?.buttonText ||
       section.design.colors?.buttonBackgroundHover ||
+      section.design.colors?.buttonBorderColor ||
+      section.design.colors?.iconBackground ||
+      section.design.colors?.iconColor ||
+      section.design.colors?.iconBorderColor ||
       (section.design.background?.value && section.design.background.value !== '')
     );
 
@@ -833,9 +906,14 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       delete typo.textColor;
       delete typo.linkColor;
       const colors = { ...(section.design.colors || {}) };
+      delete colors.accent;
       delete colors.buttonBackground;
       delete colors.buttonText;
       delete colors.buttonBackgroundHover;
+      delete colors.buttonBorderColor;
+      delete colors.iconBackground;
+      delete colors.iconColor;
+      delete colors.iconBorderColor;
       onUpdateSection({
         design: {
           ...section.design,
@@ -847,7 +925,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
     };
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-2">
         <WidgetThemeSelector section={section} onUpdateSection={onUpdateSection} />
 
         {hasAnyColorOverride && (
@@ -863,6 +941,16 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             </button>
           </div>
         )}
+
+        <CollapsibleSection title="Palette globale" defaultOpen={false}>
+          <ColorOverrideField
+            label="Couleur Dominante"
+            value={section.design.colors?.accent}
+            fallback="#111827"
+            onChange={(v) => updateDesign('colors', 'accent', v)}
+            onClear={() => clearDesign('colors', 'accent')}
+          />
+        </CollapsibleSection>
 
         <CollapsibleSection title="Typographie" defaultOpen={false}>
           <div>
@@ -1032,7 +1120,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           </div>
 
           <div>
-            <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons</label>
+            <label className="block text-xs text-gray-600 mb-1">Arrondi des boutons (widget)</label>
             <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
               <input
                 type="range"
@@ -1057,104 +1145,173 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             <select
               value={section.design.colors?.buttonBorderStyle || 'none'}
               onChange={(e) => updateDesign('colors', 'buttonBorderStyle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
             >
               <option value="none">Aucune</option>
-              <option value="solid">Pleine</option>
+              <option value="solid">Continue</option>
               <option value="dashed">Tirets</option>
-              <option value="dotted">Points</option>
+              <option value="dotted">Pointillés</option>
             </select>
           </div>
-          {section.design.colors?.buttonBorderStyle && section.design.colors.buttonBorderStyle !== 'none' && (
-            <>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">Épaisseur bordure bouton</label>
-                <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
-                  <input
-                    type="range"
-                    min="0"
-                    max="6"
-                    step="1"
-                    value={parseInt((section.design.colors?.buttonBorderWidth || '1').replace('px', ''), 10) || 1}
-                    onChange={(e) => updateDesign('colors', 'buttonBorderWidth', `${e.target.value}px`)}
-                    className="w-full"
-                  />
-                  <span className="text-xs text-gray-500 w-12 text-right">{section.design.colors?.buttonBorderWidth || '1px'}</span>
-                </div>
-              </div>
-              <ColorOverrideField
-                label="Couleur bordure bouton"
-                value={section.design.colors?.buttonBorderColor}
-                fallback="#000000"
-                onChange={(v) => updateDesign('colors', 'buttonBorderColor', v)}
-                onClear={() => clearDesign('colors', 'buttonBorderColor')}
-              />
-            </>
-          )}
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Épaisseur bordure bouton</label>
+            <input
+              type="text"
+              value={section.design.colors?.buttonBorderWidth || '0px'}
+              onChange={(e) => updateDesign('colors', 'buttonBorderWidth', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              placeholder="ex: 0px, 1px"
+            />
+          </div>
+
           <div>
             <label className="block text-xs text-gray-600 mb-1">Ombre du bouton</label>
             <select
               value={section.design.colors?.buttonShadow || 'none'}
               onChange={(e) => updateDesign('colors', 'buttonShadow', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
             >
-              {BUTTON_SHADOW_OPTIONS.map(option => (
+              {BUTTON_SHADOW_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
             </select>
           </div>
+
+          <ColorOverrideField
+            label="Couleur bordure bouton"
+            value={section.design.colors?.buttonBorderColor}
+            fallback="#111827"
+            onChange={(v) => updateDesign('colors', 'buttonBorderColor', v)}
+            onClear={() => clearDesign('colors', 'buttonBorderColor')}
+          />
         </CollapsibleSection>
 
         <CollapsibleSection title="Icônes" defaultOpen={false}>
           <ColorOverrideField
-            label="Couleur de fond des icônes"
-            value={section.design.colors?.iconBackground}
-            fallback="#000000"
-            onChange={(v) => updateDesign('colors', 'iconBackground', v)}
-            onClear={() => clearDesign('colors', 'iconBackground')}
-          />
-          <ColorOverrideField
-            label="Couleur des icônes"
+            label="Couleur contenu icône"
             value={section.design.colors?.iconColor}
-            fallback="#ffffff"
+            fallback="#111827"
             onChange={(v) => updateDesign('colors', 'iconColor', v)}
             onClear={() => clearDesign('colors', 'iconColor')}
           />
+
+          <ColorOverrideField
+            label="Couleur fond icône"
+            value={section.design.colors?.iconBackground}
+            fallback="#F3F4F6"
+            onChange={(v) => updateDesign('colors', 'iconBackground', v)}
+            onClear={() => clearDesign('colors', 'iconBackground')}
+          />
+
+          <ColorOverrideField
+            label="Couleur contour icône"
+            value={section.design.colors?.iconBorderColor}
+            fallback="#D1D5DB"
+            onChange={(v) => updateDesign('colors', 'iconBorderColor', v)}
+            onClear={() => clearDesign('colors', 'iconBorderColor')}
+          />
+
           <div>
-            <label className="block text-xs text-gray-600 mb-1">Arrondi du contour d'icônes</label>
+            <label className="block text-xs text-gray-600 mb-1">Épaisseur contour icône</label>
+            <input
+              type="text"
+              value={section.design.colors?.iconBorderWidth || '0px'}
+              onChange={(e) => updateDesign('colors', 'iconBorderWidth', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              placeholder="ex: 1px"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Arrondi du contour d'icône</label>
             <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
               <input
                 type="range"
                 min="0"
-                max="50"
+                max="40"
                 step="1"
-                value={parseInt((section.design.colors?.iconRadius || '16').replace('px', '').replace('%', ''), 10) || 16}
+                value={parseInt((section.design.colors?.iconRadius || '12px').replace('px', ''), 10) || 12}
                 onChange={(e) => updateDesign('colors', 'iconRadius', `${e.target.value}px`)}
                 className="w-full"
               />
-              <span className="text-xs text-gray-500 w-14 text-right">{section.design.colors?.iconRadius || '16px'}</span>
+              <input
+                type="text"
+                value={section.design.colors?.iconRadius || '12px'}
+                onChange={(e) => updateDesign('colors', 'iconRadius', e.target.value)}
+                className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+              />
             </div>
           </div>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Médias (Images & Vidéos)" defaultOpen={false}>
+        <CollapsibleSection title="Images & vidéos" defaultOpen={false}>
           <div>
             <label className="block text-xs text-gray-600 mb-1">Arrondi des médias</label>
             <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
               <input
                 type="range"
                 min="0"
-                max="50"
+                max="48"
                 step="1"
-                value={parseInt((section.design.colors?.mediaRadius || '16').replace('px', ''), 10) || 16}
-                onChange={(e) => updateDesign('colors', 'mediaRadius', `${e.target.value}px`)}
+                value={parseInt((section.design.media?.imageRadius || '12px').replace('px', ''), 10) || 12}
+                onChange={(e) => updateDesign('media', 'imageRadius', `${e.target.value}px`)}
                 className="w-full"
               />
-              <span className="text-xs text-gray-500 w-14 text-right">{section.design.colors?.mediaRadius || '16px'}</span>
+              <input
+                type="text"
+                value={section.design.media?.imageRadius || '12px'}
+                onChange={(e) => updateDesign('media', 'imageRadius', e.target.value)}
+                className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+              />
             </div>
           </div>
+
+          <ImageUploadField
+            label="Image à superposer (overlay)"
+            value={section.design.media?.overlayImage || ''}
+            onChange={(url) => updateDesign('media', 'overlayImage', url)}
+            placeholder="URL du logo à superposer"
+            mediaType="image"
+          />
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Position overlay</label>
+            <select
+              value={section.design.media?.overlayPosition || 'bottom-right'}
+              onChange={(e) => updateDesign('media', 'overlayPosition', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+            >
+              <option value="top-left">Haut gauche</option>
+              <option value="top-right">Haut droite</option>
+              <option value="bottom-left">Bas gauche</option>
+              <option value="bottom-right">Bas droite</option>
+              <option value="center">Centre</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Taille overlay</label>
+            <input
+              type="text"
+              value={section.design.media?.overlaySize || '84px'}
+              onChange={(e) => updateDesign('media', 'overlaySize', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              placeholder="ex: 84px"
+            />
+          </div>
+
+          <label className="flex items-center space-x-2 cursor-pointer text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={section.design.media?.hideDecorationsOnVideoPlay === true}
+              onChange={(e) => updateDesign('media', 'hideDecorationsOnVideoPlay', e.target.checked)}
+              className="w-4 h-4 rounded border-gray-300"
+            />
+            <span>Masquer textes/icônes pendant lecture vidéo</span>
+          </label>
         </CollapsibleSection>
 
         <CollapsibleSection title="Arrière-plan" defaultOpen={false}>
