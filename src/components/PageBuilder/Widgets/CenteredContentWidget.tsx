@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface CenteredContentWidgetProps {
   section: PageBuilderSection;
@@ -35,10 +36,10 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
   const buttonStyle =
     buttonBg || buttonText || buttonBorder
       ? {
-          backgroundColor: buttonBg,
-          color: buttonText,
-          border: buttonBorder ? `2px solid ${buttonBorder}` : undefined,
-        }
+        backgroundColor: buttonBg,
+        color: buttonText,
+        border: buttonBorder ? `2px solid ${buttonBorder}` : undefined,
+      }
       : undefined;
 
   const renderDefault = () => (
@@ -48,7 +49,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
           className="text-xs lg:text-sm tracking-widest uppercase font-medium text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'SAMPLE SUBTITLE'}
+          {renderRichText(subtitle, 'SAMPLE SUBTITLE')}
         </p>
         <h2
           className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight max-w-4xl mx-auto text-base-content"
@@ -71,7 +72,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
           className="text-sm lg:text-lg leading-relaxed max-w-3xl mx-auto text-base-content/70"
           style={textStyle}
         >
-          {description || 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et magna aliqua minim veniam nostrud exercitation ullamco laboris velit esse cillum nulla pariatur.'}
+          {renderRichText(description, 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et magna aliqua minim veniam nostrud exercitation ullamco laboris velit esse cillum nulla pariatur.')}
         </p>
 
         <a
@@ -92,7 +93,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
           className="text-xs lg:text-sm tracking-widest uppercase font-medium text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'SAMPLE SUBTITLE'}
+          {renderRichText(subtitle, 'SAMPLE SUBTITLE')}
         </p>
         <h2
           className="text-2xl sm:text-3xl lg:text-5xl font-bold leading-tight text-base-content"
@@ -115,7 +116,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
           className="text-sm lg:text-base leading-relaxed text-base-content/70"
           style={textStyle}
         >
-          {description || 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et magna aliqua minim veniam.'}
+          {renderRichText(description, 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et magna aliqua minim veniam.')}
         </p>
 
         <a
@@ -136,7 +137,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
           className="text-xs lg:text-sm tracking-widest uppercase font-medium text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'SAMPLE SUBTITLE'}
+          {renderRichText(subtitle, 'SAMPLE SUBTITLE')}
         </p>
         <h2
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight text-base-content"
@@ -159,7 +160,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
           className="text-base lg:text-xl leading-relaxed max-w-4xl mx-auto text-base-content/70"
           style={textStyle}
         >
-          {description || 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et magna aliqua minim veniam nostrud exercitation ullamco laboris velit esse cillum nulla pariatur.'}
+          {renderRichText(description, 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et magna aliqua minim veniam nostrud exercitation ullamco laboris velit esse cillum nulla pariatur.')}
         </p>
 
         <a

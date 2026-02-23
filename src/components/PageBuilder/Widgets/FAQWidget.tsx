@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { ChevronDown, Plus, Minus } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface FAQWidgetProps {
   section: PageBuilderSection;
@@ -102,7 +103,7 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
                     className="text-base leading-relaxed text-base-content/70"
                     style={textStyle}
                   >
-                    {faq.answer}
+                    {renderRichText(faq.answer)}
                   </p>
                 </div>
               )}
@@ -159,7 +160,7 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
                     className="text-sm leading-relaxed text-base-content/70"
                     style={textStyle}
                   >
-                    {faq.answer}
+                    {renderRichText(faq.answer)}
                   </p>
                 </div>
               )}
@@ -214,7 +215,7 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
               className="text-sm leading-relaxed text-base-content/70"
               style={textStyle}
             >
-              {faq.answer}
+              {renderRichText(faq.answer)}
             </p>
           </div>
         ))}
@@ -268,7 +269,7 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
               </button>
               {isOpen && (
                 <div className="px-6 pb-5 pt-0">
-                  <p className="text-base leading-relaxed opacity-95">{faq.answer}</p>
+                  <p className="text-base leading-relaxed opacity-95">{renderRichText(faq.answer)}</p>
                 </div>
               )}
             </div>

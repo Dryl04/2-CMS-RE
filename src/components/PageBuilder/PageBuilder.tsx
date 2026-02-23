@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, Edit3, FolderOpen, Download, FileJson, FileSpreadsheet, X, Palette, Settings } from 'lucide-react';
+import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, Edit3, FolderOpen, Download, FileJson, FileSpreadsheet, X, Palette, Settings, Copy } from 'lucide-react';
 import { PageBuilderSection, DeviceType } from '../../lib/pageBuilderTypes';
 import { supabase, PageTemplate, SEOMetadata } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -300,6 +300,28 @@ export default function PageBuilder({
     }
   };
 
+  const duplicateTemplate = async (template: PageTemplate) => {
+    try {
+      const duplicateData: Record<string, any> = {
+        name: `${template.name} (copie)`,
+        description: template.description || null,
+        sections_data: template.sections_data,
+        is_public: template.is_public ?? true,
+        daisy_theme_slug: template.daisy_theme_slug || null,
+      };
+      if (profile?.id) {
+        duplicateData.created_by = profile.id;
+      }
+      const { error } = await supabase.from('page_templates').insert(duplicateData);
+      if (error) throw error;
+      showToast('Modele duplique');
+      loadTemplates();
+    } catch (error) {
+      console.error('Error duplicating template:', error);
+      showToast('Erreur lors de la duplication');
+    }
+  };
+
   const resetEditor = () => {
     setEditingTemplateId(null);
     setTemplateName('Nouveau modele');
@@ -476,6 +498,16 @@ export default function PageBuilder({
                           title="Previsualiser"
                         >
                           <Eye className="w-4 h-4 text-blue-500" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            duplicateTemplate(template);
+                          }}
+                          className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Dupliquer"
+                        >
+                          <Copy className="w-4 h-4 text-blue-400" />
                         </button>
                         <button
                           onClick={(e) => {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Search, Monitor, Grid, MousePointer, Layout, Mail, MessageSquare, DollarSign, TrendingUp, Users, HelpCircle, Award, Video, Image, Clock, ListOrdered, Columns, AlignCenter, Minus, Layers, LayoutGrid, Phone, Zap, Shield, Heart, MessageCircle, Box, Umbrella, CreditCard, Paintbrush, Plug, Calendar, Share2, Sparkles, CheckSquare, Type, Quote, PlayCircle, Workflow, Facebook, Twitter, Youtube, Lock } from 'lucide-react';
+import { Plus, Search, Monitor, Grid, MousePointer, Layout, Mail, MessageSquare, DollarSign, TrendingUp, Users, HelpCircle, Award, Video, Image, Clock, ListOrdered, Columns, AlignCenter, Minus, Layers, LayoutGrid, Phone, Zap, Shield, Heart, MessageCircle, Box, Umbrella, CreditCard, Paintbrush, Plug, Calendar, Share2, Sparkles, CheckSquare, Type, Quote, PlayCircle, Workflow, Facebook, Twitter, Youtube, Lock, Code } from 'lucide-react';
 import { widgetLibrary } from '../../lib/widgetLibrary';
 import { PageBuilderSection, WidgetDefinition } from '../../lib/pageBuilderTypes';
 
@@ -68,6 +68,13 @@ const WIDGET_FAMILIES: WidgetFamily[] = [
     icon: 'users',
     types: ['testimonials', 'centered-testimonial', 'stats', 'team', 'logocloud'],
   },
+  {
+    id: 'developer-family',
+    label: 'Développeur',
+    description: 'Code, embed et intégrations',
+    icon: 'code',
+    types: ['embed', 'code-insert'],
+  },
 ];
 
 const iconMap: Record<string, any> = {
@@ -114,6 +121,7 @@ const iconMap: Record<string, any> = {
   twitter: Twitter,
   youtube: Youtube,
   lock: Lock,
+  code: Code,
 };
 
 export default function WidgetLibrary({ onAddSection, existingSections }: WidgetLibraryProps) {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ImageTextSplitWidgetProps {
   section: PageBuilderSection;
@@ -39,54 +40,54 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
   const renderDefault = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center">
-      <div className="relative">
-        <img
-          src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
-          alt="Content"
-          className="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover rounded-lg"
-        />
-      </div>
-      <div className="space-y-4 md:space-y-6">
-        <h2
-          className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
-          style={headingStyle}
-        >
-          {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione serui nesciunt est dolorem ipsum dolor sit amet consec tetur adipisci velit sed non numsuam modi.'}
-        </h2>
-
-        <div className="space-y-3 md:space-y-4">
-          <p
-            className="text-sm lg:text-base leading-relaxed text-base-content/70"
-            style={textStyle}
+        <div className="relative">
+          <img
+            src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
+            alt="Content"
+            className="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover rounded-lg"
+          />
+        </div>
+        <div className="space-y-4 md:space-y-6">
+          <h2
+            className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
+            style={headingStyle}
           >
-            {paragraph1 || 'Welcome to our digital sanctuary, an immersive space where the symphony of innovation and creativity harmoniously reverberates. As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary and delves deep into the extraordinary.'}
-          </p>
+            {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione serui nesciunt est dolorem ipsum dolor sit amet consec tetur adipisci velit sed non numsuam modi.'}
+          </h2>
 
-          <p
-            className="text-sm lg:text-base leading-relaxed text-base-content/70"
-            style={textStyle}
-          >
-            {paragraph2 || 'As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary and delves deep into the extraordinary. Here at our digital abode, we don\'t just design websites we orchestrate experiences, sculpting each pixel with intentionality and crafting narratives that leave an indelible mark.'}
-          </p>
-
-          {paragraph3 && (
+          <div className="space-y-3 md:space-y-4">
             <p
               className="text-sm lg:text-base leading-relaxed text-base-content/70"
               style={textStyle}
             >
-              {paragraph3}
+              {renderRichText(paragraph1, 'Welcome to our digital sanctuary, an immersive space where the symphony of innovation and creativity harmoniously reverberates. As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary and delves deep into the extraordinary.')}
             </p>
-          )}
-        </div>
 
-        <a
-          href={ctaLink || '#'}
-          className="inline-block font-semibold text-xs sm:text-sm tracking-wider uppercase border-b-2 pb-1 transition-colors hover:opacity-70 text-base-content border-base-content"
-          style={Object.keys(linkStyle).length ? { ...linkStyle, borderColor: typo.linkColor } : undefined}
-        >
-          {ctaText || 'LEARN MORE'}
-        </a>
-      </div>
+            <p
+              className="text-sm lg:text-base leading-relaxed text-base-content/70"
+              style={textStyle}
+            >
+              {renderRichText(paragraph2, 'As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary and delves deep into the extraordinary. Here at our digital abode, we don\'t just design websites we orchestrate experiences, sculpting each pixel with intentionality and crafting narratives that leave an indelible mark.')}
+            </p>
+
+            {paragraph3 && (
+              <p
+                className="text-sm lg:text-base leading-relaxed text-base-content/70"
+                style={textStyle}
+              >
+                {renderRichText(paragraph3)}
+              </p>
+            )}
+          </div>
+
+          <a
+            href={ctaLink || '#'}
+            className="inline-block font-semibold text-xs sm:text-sm tracking-wider uppercase border-b-2 pb-1 transition-colors hover:opacity-70 text-base-content border-base-content"
+            style={Object.keys(linkStyle).length ? { ...linkStyle, borderColor: typo.linkColor } : undefined}
+          >
+            {ctaText || 'LEARN MORE'}
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -94,54 +95,54 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
   const renderImageRight = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center">
-      <div className="space-y-4 md:space-y-6 order-2 md:order-1">
-        <h2
-          className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
-          style={headingStyle}
-        >
-          {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione serui nesciunt est dolorem ipsum dolor sit amet consec tetur adipisci velit sed non numsuam modi.'}
-        </h2>
-
-        <div className="space-y-3 md:space-y-4">
-          <p
-            className="text-sm lg:text-base leading-relaxed text-base-content/70"
-            style={textStyle}
+        <div className="space-y-4 md:space-y-6 order-2 md:order-1">
+          <h2
+            className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
+            style={headingStyle}
           >
-            {paragraph1 || 'Welcome to our digital sanctuary, an immersive space where the symphony of innovation and creativity harmoniously reverberates.'}
-          </p>
+            {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione serui nesciunt est dolorem ipsum dolor sit amet consec tetur adipisci velit sed non numsuam modi.'}
+          </h2>
 
-          <p
-            className="text-sm lg:text-base leading-relaxed text-base-content/70"
-            style={textStyle}
-          >
-            {paragraph2 || 'As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary and delves deep into the extraordinary.'}
-          </p>
-
-          {paragraph3 && (
+          <div className="space-y-3 md:space-y-4">
             <p
               className="text-sm lg:text-base leading-relaxed text-base-content/70"
               style={textStyle}
             >
-              {paragraph3}
+              {renderRichText(paragraph1, 'Welcome to our digital sanctuary, an immersive space where the symphony of innovation and creativity harmoniously reverberates.')}
             </p>
-          )}
-        </div>
 
-        <a
-          href={ctaLink || '#'}
-          className="inline-block font-semibold text-xs sm:text-sm tracking-wider uppercase border-b-2 pb-1 transition-colors hover:opacity-70 text-base-content border-base-content"
-          style={Object.keys(linkStyle).length ? { ...linkStyle, borderColor: typo.linkColor } : undefined}
-        >
-          {ctaText || 'LEARN MORE'}
-        </a>
-      </div>
-      <div className="relative order-1 md:order-2">
-        <img
-          src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
-          alt="Content"
-          className="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover rounded-lg"
-        />
-      </div>
+            <p
+              className="text-sm lg:text-base leading-relaxed text-base-content/70"
+              style={textStyle}
+            >
+              {renderRichText(paragraph2, 'As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary and delves deep into the extraordinary.')}
+            </p>
+
+            {paragraph3 && (
+              <p
+                className="text-sm lg:text-base leading-relaxed text-base-content/70"
+                style={textStyle}
+              >
+                {renderRichText(paragraph3)}
+              </p>
+            )}
+          </div>
+
+          <a
+            href={ctaLink || '#'}
+            className="inline-block font-semibold text-xs sm:text-sm tracking-wider uppercase border-b-2 pb-1 transition-colors hover:opacity-70 text-base-content border-base-content"
+            style={Object.keys(linkStyle).length ? { ...linkStyle, borderColor: typo.linkColor } : undefined}
+          >
+            {ctaText || 'LEARN MORE'}
+          </a>
+        </div>
+        <div className="relative order-1 md:order-2">
+          <img
+            src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
+            alt="Content"
+            className="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover rounded-lg"
+          />
+        </div>
       </div>
     </div>
   );
@@ -149,45 +150,45 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
   const renderStacked = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-6 md:space-y-8">
-      <div className="relative w-full">
-        <img
-          src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
-          alt="Content"
-          className="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover rounded-lg"
-        />
-      </div>
-      <div className="space-y-4 md:space-y-6">
-        <h2
-          className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
-          style={headingStyle}
-        >
-          {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione'}
-        </h2>
-
-        <div className="space-y-3 md:space-y-4">
-          <p
-            className="text-sm md:text-base leading-relaxed text-base-content/70"
-            style={textStyle}
-          >
-            {paragraph1 || 'Welcome to our digital sanctuary, an immersive space where the symphony of innovation and creativity harmoniously reverberates.'}
-          </p>
-
-          <p
-            className="text-sm md:text-base leading-relaxed text-base-content/70"
-            style={textStyle}
-          >
-            {paragraph2 || 'As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary.'}
-          </p>
+        <div className="relative w-full">
+          <img
+            src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
+            alt="Content"
+            className="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover rounded-lg"
+          />
         </div>
+        <div className="space-y-4 md:space-y-6">
+          <h2
+            className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
+            style={headingStyle}
+          >
+            {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione'}
+          </h2>
 
-        <a
-          href={ctaLink || '#'}
-          className="inline-block font-semibold text-xs sm:text-sm tracking-wider uppercase border-b-2 pb-1 transition-colors hover:opacity-70 text-base-content border-base-content"
-          style={Object.keys(linkStyle).length ? { ...linkStyle, borderColor: typo.linkColor } : undefined}
-        >
-          {ctaText || 'LEARN MORE'}
-        </a>
-      </div>
+          <div className="space-y-3 md:space-y-4">
+            <p
+              className="text-sm md:text-base leading-relaxed text-base-content/70"
+              style={textStyle}
+            >
+              {renderRichText(paragraph1, 'Welcome to our digital sanctuary, an immersive space where the symphony of innovation and creativity harmoniously reverberates.')}
+            </p>
+
+            <p
+              className="text-sm md:text-base leading-relaxed text-base-content/70"
+              style={textStyle}
+            >
+              {renderRichText(paragraph2, 'As you step into this virtual realm, be prepared for a transformative journey that transcends the ordinary.')}
+            </p>
+          </div>
+
+          <a
+            href={ctaLink || '#'}
+            className="inline-block font-semibold text-xs sm:text-sm tracking-wider uppercase border-b-2 pb-1 transition-colors hover:opacity-70 text-base-content border-base-content"
+            style={Object.keys(linkStyle).length ? { ...linkStyle, borderColor: typo.linkColor } : undefined}
+          >
+            {ctaText || 'LEARN MORE'}
+          </a>
+        </div>
       </div>
     </div>
   );

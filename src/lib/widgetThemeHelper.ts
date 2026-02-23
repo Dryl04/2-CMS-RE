@@ -375,6 +375,42 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
       normalizedSection.design.background.value
         ? normalizedSection.design.background.value
         : undefined,
+    ...(normalizedSection.design.background.type === "image" &&
+    normalizedSection.design.background.value
+      ? {
+          backgroundImage: `url(${normalizedSection.design.background.value})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          "--widget-bg-opacity": String(
+            normalizedSection.design.background.opacity ?? 1,
+          ),
+        }
+      : {}),
+    ...(normalizedSection.design.background.type === "gradient" &&
+    normalizedSection.design.background.value
+      ? {
+          backgroundImage: normalizedSection.design.background.value,
+        }
+      : {}),
+    ...(normalizedSection.design.background.overlayColor
+      ? {
+          "--widget-bg-overlay-color":
+            normalizedSection.design.background.overlayColor,
+        }
+      : {}),
+    ...(normalizedSection.design.background.overlayOpacity !== undefined
+      ? {
+          "--widget-bg-overlay-opacity": String(
+            normalizedSection.design.background.overlayOpacity,
+          ),
+        }
+      : {}),
+    position: ["image", "video"].includes(
+      normalizedSection.design.background.type,
+    )
+      ? "relative"
+      : undefined,
     paddingTop: usesInternalVerticalSpacing
       ? "0px"
       : normalizedSection.design.spacing.paddingTop,
@@ -467,11 +503,31 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
     ...widgetTheme.customStyles,
   };
 
+  // Transparent header overlay: position absolutely over the next section
+  const isOverlayHeader = isTransparentHeaderOverlay(normalizedSection);
+  // Sticky header: non-transparent headers stick to top on scroll
+  const isStickyHeader =
+    !isOverlayHeader && HEADER_TYPES.has(normalizedSection.type);
+
+  if (isOverlayHeader) {
+    style.position = "absolute";
+    style.top = "0";
+    style.left = "0";
+    style.right = "0";
+    style.zIndex = 50;
+    style.backgroundColor = "transparent";
+  } else if (isStickyHeader) {
+    style.position = "sticky";
+    style.top = "0";
+    style.zIndex = 40;
+  }
+
   return {
     normalizedSection,
     className,
     dataTheme: widgetTheme.dataTheme,
     style,
+    isOverlayHeader,
   };
 }
 
@@ -547,4 +603,20 @@ export function getWidgetButtonSizeVars(
         "--widget-btn-px": "1.1rem",
       };
   }
+}
+
+/** Whether a section is a transparent header that should overlay on the next section */
+const HEADER_TYPES = new Set([
+  "header",
+  "header-top-info",
+  "header-with-icons",
+  "header-account-bar",
+  "header-full-contact",
+  "header-clickfunnel",
+]);
+
+export function isTransparentHeaderOverlay(
+  section: PageBuilderSection,
+): boolean {
+  return HEADER_TYPES.has(section.type) && section.variant === "transparent";
 }

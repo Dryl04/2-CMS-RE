@@ -8,6 +8,12 @@ export interface PageBuilderSection {
     background: {
       type: "color" | "gradient" | "image" | "video";
       value: string;
+      opacity?: number;
+      overlayColor?: string;
+      overlayOpacity?: number;
+      videoAutoplay?: boolean;
+      videoNoBranding?: boolean;
+      videoFullWidth?: boolean;
     };
     spacing: {
       paddingTop: string;
@@ -115,7 +121,9 @@ export type WidgetType =
   | "process-steps-cards"
   | "editorial-cards-row"
   | "minimal-final-cta"
-  | "cinematic-footer";
+  | "cinematic-footer"
+  | "embed"
+  | "code-insert";
 
 export type DeviceType = "desktop" | "tablet" | "mobile";
 
