@@ -354,11 +354,61 @@ export function VideoHeroContentEditor({ section, updateContent }: ContentEditor
           <option value="bottom">Bas</option>
         </select>
       </div>
-      <div>
-        <label className={labelClass}>URL de la video</label>
-        <input type="text" value={section.content.videoUrl || ''} onChange={(e) => updateContent('videoUrl', e.target.value)} className={inputClass} placeholder="https://youtube.com/watch?v=..." />
-      </div>
+      <ImageUploadField
+        label="URL de la video"
+        value={section.content.videoUrl || ''}
+        onChange={(url) => updateContent('videoUrl', url)}
+        placeholder="https://youtube.com/watch?v=... ou vidéo mp4"
+        mediaType="video"
+      />
       <ImageUploadField label="Image de vignette" value={section.content.thumbnail || ''} onChange={(url) => updateContent('thumbnail', url)} placeholder="URL de la vignette" />
+      <label className="flex items-center space-x-2 cursor-pointer text-sm text-gray-700">
+        <input
+          type="checkbox"
+          checked={section.content.autoplay !== false}
+          onChange={(e) => updateContent('autoplay', e.target.checked)}
+          className="w-4 h-4 rounded border-gray-300"
+        />
+        <span>Lecture automatique</span>
+      </label>
+      <div>
+        <label className={labelClass}>Couleur de superposition vidéo</label>
+        <div className="flex items-center gap-2">
+          <input
+            type="color"
+            value={section.content.videoOverlayColor || '#000000'}
+            onChange={(e) => updateContent('videoOverlayColor', e.target.value)}
+            className="w-8 h-8 rounded border border-gray-300 cursor-pointer"
+          />
+          <input
+            type="text"
+            value={section.content.videoOverlayColor || ''}
+            onChange={(e) => updateContent('videoOverlayColor', e.target.value)}
+            className={inputClass}
+            placeholder="Ex: #000000 (vide = noir 50%)"
+          />
+          {section.content.videoOverlayColor && (
+            <button
+              onClick={() => updateContent('videoOverlayColor', '')}
+              className="text-xs text-gray-400 hover:text-red-500"
+            >✕</button>
+          )}
+        </div>
+      </div>
+      <div>
+        <label className={labelClass}>
+          Opacité superposition ({Math.round((section.content.videoOverlayOpacity ?? 0.5) * 100)}%)
+        </label>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          step="5"
+          value={Math.round((section.content.videoOverlayOpacity ?? 0.5) * 100)}
+          onChange={(e) => updateContent('videoOverlayOpacity', parseInt(e.target.value) / 100)}
+          className="w-full"
+        />
+      </div>
       <div>
         <label className={labelClass}>Texte du bouton</label>
         <input type="text" value={section.content.ctaText || ''} onChange={(e) => updateContent('ctaText', e.target.value)} className={inputClass} />
@@ -1172,6 +1222,13 @@ export function HeroWithServicesContentEditor({ section, updateContent }: Conten
         <input type="text" value={section.content.ctaText || ''} onChange={(e) => updateContent('ctaText', e.target.value)} className={`${inputClass} mb-2`} placeholder="Texte" />
         <input type="text" value={section.content.ctaLink || ''} onChange={(e) => updateContent('ctaLink', e.target.value)} className={inputClass} placeholder="Lien" />
       </div>
+      <ImageUploadField
+        label="Image principale"
+        value={section.content.image || ''}
+        onChange={(url) => updateContent('image', url)}
+        placeholder="URL de l'image"
+        mediaType="image"
+      />
       <div>
         <label className={labelClass}>Services (grille basse)</label>
         <div className="space-y-2">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check } from 'lucide-react';
+import { Check, ImageIcon } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 
 interface SplitContentWithChecklistProps {
@@ -68,7 +68,10 @@ export default function SplitContentWithChecklist({ section }: SplitContentWithC
                 />
               </div>
             ) : (
-              <div className="bg-base-300 rounded-lg h-64 sm:h-80 lg:h-[500px]" />
+              <div className="bg-base-300 rounded-lg h-64 sm:h-80 lg:h-[500px] flex flex-col items-center justify-center text-base-content/30">
+                <ImageIcon className="w-10 h-10 mb-2" />
+                <span className="text-sm font-medium">Image</span>
+              </div>
             )}
           </div>
         </div>

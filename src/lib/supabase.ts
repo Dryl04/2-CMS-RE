@@ -1,15 +1,15 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+  throw new Error("Missing Supabase environment variables");
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export type UserRole = 'admin' | 'seo_manager' | 'content_creator';
+export type UserRole = "admin" | "seo_manager" | "content_creator";
 
 export interface UserProfile {
   id: string;
@@ -32,7 +32,7 @@ export interface SEOMetadata {
   og_image?: string;
   canonical_url?: string;
   language?: string;
-  status: 'draft' | 'published' | 'archived';
+  status: "draft" | "published" | "archived";
   content?: string;
   sections_data?: any[];
   seo_h1?: string;
@@ -67,6 +67,7 @@ export interface PageTemplate {
   seo_h1?: string;
   seo_h2?: string;
   daisy_theme_slug?: string | null;
+  folder?: string | null;
   is_public: boolean;
   is_system: boolean;
   created_by?: string;

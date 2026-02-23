@@ -687,27 +687,27 @@ export const widgetLibrary: WidgetDefinition[] = [
       logos: [
         {
           name: "Company 1",
-          url: "https://via.placeholder.com/200x80/cccccc/666666?text=Logo+1",
+          url: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80"><rect fill="#e5e7eb" width="200" height="80" rx="8"/><text x="100" y="45" text-anchor="middle" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="16" font-weight="600">Logo 1</text></svg>')}`,
         },
         {
           name: "Company 2",
-          url: "https://via.placeholder.com/200x80/cccccc/666666?text=Logo+2",
+          url: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80"><rect fill="#e5e7eb" width="200" height="80" rx="8"/><text x="100" y="45" text-anchor="middle" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="16" font-weight="600">Logo 2</text></svg>')}`,
         },
         {
           name: "Company 3",
-          url: "https://via.placeholder.com/200x80/cccccc/666666?text=Logo+3",
+          url: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80"><rect fill="#e5e7eb" width="200" height="80" rx="8"/><text x="100" y="45" text-anchor="middle" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="16" font-weight="600">Logo 3</text></svg>')}`,
         },
         {
           name: "Company 4",
-          url: "https://via.placeholder.com/200x80/cccccc/666666?text=Logo+4",
+          url: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80"><rect fill="#e5e7eb" width="200" height="80" rx="8"/><text x="100" y="45" text-anchor="middle" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="16" font-weight="600">Logo 4</text></svg>')}`,
         },
         {
           name: "Company 5",
-          url: "https://via.placeholder.com/200x80/cccccc/666666?text=Logo+5",
+          url: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80"><rect fill="#e5e7eb" width="200" height="80" rx="8"/><text x="100" y="45" text-anchor="middle" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="16" font-weight="600">Logo 5</text></svg>')}`,
         },
         {
           name: "Company 6",
-          url: "https://via.placeholder.com/200x80/cccccc/666666?text=Logo+6",
+          url: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80"><rect fill="#e5e7eb" width="200" height="80" rx="8"/><text x="100" y="45" text-anchor="middle" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="16" font-weight="600">Logo 6</text></svg>')}`,
         },
       ],
     },

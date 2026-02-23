@@ -351,6 +351,19 @@ function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
             data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'bottom-right'}
             style={style as React.CSSProperties}
           >
+            {/* Background image layer with opacity */}
+            {normalizedSection.design?.background?.type === 'image' && normalizedSection.design.background.value && (
+              <div
+                className="absolute inset-0 z-0 pointer-events-none"
+                style={{
+                  backgroundImage: `url(${normalizedSection.design.background.value})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  opacity: normalizedSection.design.background.opacity ?? 1,
+                }}
+              />
+            )}
             {/* Background overlay for images/videos */}
             {normalizedSection.design?.background?.overlayColor && ['image', 'video'].includes(normalizedSection.design.background.type) && (
               <div

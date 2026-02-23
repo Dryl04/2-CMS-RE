@@ -1,4 +1,5 @@
 import React from 'react';
+import { ImageIcon } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 import { renderRichText } from '../../../lib/htmlSanitizer';
 import { renderIcon, ICON_MAP } from '../../../lib/iconLibrary';
@@ -56,6 +57,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
             <div key={index} className="text-center">
               <div
                 className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-primary"
+                data-widget-icon-frame
               >
                 {renderIcon(feature.icon, 'w-7 h-7 sm:w-8 sm:h-8 text-primary-content', 28)}
               </div>
@@ -108,6 +110,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
               <div className={isEven ? '' : 'md:col-start-2'}>
                 <div
                   className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-6 bg-primary"
+                  data-widget-icon-frame
                 >
                   {renderIcon(feature.icon, 'w-7 h-7 sm:w-8 sm:h-8 text-primary-content', 28)}
                 </div>
@@ -125,7 +128,10 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
                 </p>
               </div>
               <div className={isEven ? '' : 'md:col-start-1'}>
-                <div className="bg-base-200 rounded-2xl h-48 sm:h-64" />
+                <div className="bg-base-200 rounded-2xl h-48 sm:h-64 flex flex-col items-center justify-center text-base-content/30">
+                  <ImageIcon className="w-10 h-10 mb-2" />
+                  <span className="text-sm font-medium">Image</span>
+                </div>
               </div>
             </div>
           );

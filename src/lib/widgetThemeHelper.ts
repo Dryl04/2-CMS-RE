@@ -340,6 +340,12 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
   const usesInternalVerticalSpacing =
     INTERNAL_VERTICAL_SPACING_WIDGET_TYPES.has(normalizedSection.type);
 
+  // For widgets with internal spacing: use 0px by default but allow user overrides
+  const userPaddingTop = section.design?.spacing?.paddingTop;
+  const userPaddingBottom = section.design?.spacing?.paddingBottom;
+  const hasUserPaddingTop = userPaddingTop && userPaddingTop !== "0px";
+  const hasUserPaddingBottom = userPaddingBottom && userPaddingBottom !== "0px";
+
   const className = [
     "widget-design-scope",
     "text-base-content",
@@ -378,10 +384,7 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
     ...(normalizedSection.design.background.type === "image" &&
     normalizedSection.design.background.value
       ? {
-          backgroundImage: `url(${normalizedSection.design.background.value})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
+          "--widget-bg-image": `url(${normalizedSection.design.background.value})`,
           "--widget-bg-opacity": String(
             normalizedSection.design.background.opacity ?? 1,
           ),
@@ -412,10 +415,14 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
       ? "relative"
       : undefined,
     paddingTop: usesInternalVerticalSpacing
-      ? "0px"
+      ? hasUserPaddingTop
+        ? userPaddingTop
+        : "0px"
       : normalizedSection.design.spacing.paddingTop,
     paddingBottom: usesInternalVerticalSpacing
-      ? "0px"
+      ? hasUserPaddingBottom
+        ? userPaddingBottom
+        : "0px"
       : normalizedSection.design.spacing.paddingBottom,
     marginTop: normalizedSection.design.spacing.marginTop,
     marginBottom: normalizedSection.design.spacing.marginBottom,
@@ -453,6 +460,7 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
       ? { "--widget-icon-border-width": colors.iconBorderWidth }
       : {}),
     "--widget-icon-radius": iconRadius,
+    ...(colors.iconSize ? { "--widget-icon-size": colors.iconSize } : {}),
     ...(typo.fontFamily ? { "--widget-font-family": typo.fontFamily } : {}),
     ...(typo.headingFontFamily
       ? { "--widget-heading-font-family": typo.headingFontFamily }
@@ -502,6 +510,13 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
       : {}),
     ...widgetTheme.customStyles,
   };
+
+  // Section border radius
+  const sectionRadius = normalizeRadius(colors.sectionRadius);
+  if (sectionRadius && sectionRadius !== "0px") {
+    style.borderRadius = sectionRadius;
+    style.overflow = "hidden";
+  }
 
   // Transparent header overlay: position absolutely over the next section
   const isOverlayHeader = isTransparentHeaderOverlay(normalizedSection);

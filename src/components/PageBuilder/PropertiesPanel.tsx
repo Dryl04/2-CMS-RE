@@ -66,18 +66,60 @@ function RichTextArea({
   rows?: number;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const selectionRef = useRef<{ start: number; end: number }>({ start: 0, end: 0 });
+
+  // Track selection changes so we always have the latest selection even if focus is lost
+  const handleSelect = useCallback(() => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    selectionRef.current = { start: ta.selectionStart, end: ta.selectionEnd };
+  }, []);
 
   const wrapSelection = useCallback(
     (before: string, after: string) => {
       const ta = textareaRef.current;
       if (!ta) return;
-      const start = ta.selectionStart;
-      const end = ta.selectionEnd;
+      const start = selectionRef.current.start;
+      const end = selectionRef.current.end;
       const selected = value.substring(start, end);
+
+      // Toggle OFF: check if selection is already wrapped with the tag
+      if (selected.startsWith(before) && selected.endsWith(after)) {
+        // Remove outer tags from selection
+        const inner = selected.slice(before.length, selected.length - after.length);
+        const newValue = value.substring(0, start) + inner + value.substring(end);
+        onChange(newValue);
+        requestAnimationFrame(() => {
+          ta.focus();
+          ta.selectionStart = start;
+          ta.selectionEnd = start + inner.length;
+        });
+        return;
+      }
+
+      // Toggle OFF: check if surrounding text wraps the selection
+      const beforeStart = start - before.length;
+      const afterEnd = end + after.length;
+      if (
+        beforeStart >= 0 &&
+        afterEnd <= value.length &&
+        value.substring(beforeStart, start) === before &&
+        value.substring(end, afterEnd) === after
+      ) {
+        const newValue = value.substring(0, beforeStart) + selected + value.substring(afterEnd);
+        onChange(newValue);
+        requestAnimationFrame(() => {
+          ta.focus();
+          ta.selectionStart = beforeStart;
+          ta.selectionEnd = beforeStart + selected.length;
+        });
+        return;
+      }
+
+      // Toggle ON: wrap selection
       const newValue =
         value.substring(0, start) + before + selected + after + value.substring(end);
       onChange(newValue);
-      // Restore cursor after React re-render
       requestAnimationFrame(() => {
         ta.focus();
         ta.selectionStart = start + before.length;
@@ -93,8 +135,8 @@ function RichTextArea({
   const handleLink = () => {
     const ta = textareaRef.current;
     if (!ta) return;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
+    const start = selectionRef.current.start;
+    const end = selectionRef.current.end;
     const selected = value.substring(start, end);
     const url = prompt('URL du lien :', 'https://');
     if (!url) return;
@@ -106,20 +148,23 @@ function RichTextArea({
   const btnClass =
     'p-1 rounded hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors';
 
+  // Prevent buttons from stealing focus so textarea keeps its selection
+  const preventFocusLoss = (e: React.MouseEvent) => e.preventDefault();
+
   return (
     <div>
       <label className="block text-xs text-gray-600 mb-1">{label}</label>
       <div className="flex gap-0.5 mb-1">
-        <button type="button" className={btnClass} onClick={handleBold} title="Gras (HTML)">
+        <button type="button" className={btnClass} onClick={handleBold} onMouseDown={preventFocusLoss} title="Gras (HTML)">
           <Bold size={13} />
         </button>
-        <button type="button" className={btnClass} onClick={handleItalic} title="Italique (HTML)">
+        <button type="button" className={btnClass} onClick={handleItalic} onMouseDown={preventFocusLoss} title="Italique (HTML)">
           <Italic size={13} />
         </button>
-        <button type="button" className={btnClass} onClick={handleUnderline} title="Souligné (HTML)">
+        <button type="button" className={btnClass} onClick={handleUnderline} onMouseDown={preventFocusLoss} title="Souligné (HTML)">
           <Underline size={13} />
         </button>
-        <button type="button" className={btnClass} onClick={handleLink} title="Lien (HTML)">
+        <button type="button" className={btnClass} onClick={handleLink} onMouseDown={preventFocusLoss} title="Lien (HTML)">
           <Link2 size={13} />
         </button>
       </div>
@@ -127,6 +172,9 @@ function RichTextArea({
         ref={textareaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onSelect={handleSelect}
+        onKeyUp={handleSelect}
+        onClick={handleSelect}
         rows={rows}
         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono"
       />
@@ -1120,6 +1168,26 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                 />
               </div>
             </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Taille des icônes</label>
+              <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                <input
+                  type="range"
+                  min="12"
+                  max="64"
+                  step="2"
+                  value={parseInt((section.design.colors?.iconSize || '24px').replace('px', ''), 10) || 24}
+                  onChange={(e) => updateDesign('colors', 'iconSize', `${e.target.value}px`)}
+                  className="w-full"
+                />
+                <input
+                  type="text"
+                  value={section.design.colors?.iconSize || '24px'}
+                  onChange={(e) => updateDesign('colors', 'iconSize', e.target.value)}
+                  className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                />
+              </div>
+            </div>
           </CollapsibleSection>
 
           <CollapsibleSection title="Images & vidéos" defaultOpen={false}>
@@ -1190,6 +1258,72 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               <HeroAdvancedEditor section={section} updateDesign={updateDesign} />
             </CollapsibleSection>
           )}
+
+          <CollapsibleSection title="Bordures de section" defaultOpen={false}>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Arrondi de la section</label>
+              <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                <input
+                  type="range"
+                  min="0"
+                  max="48"
+                  step="2"
+                  value={parseInt((section.design.colors?.sectionRadius || '0px').replace('px', ''), 10) || 0}
+                  onChange={(e) => updateDesign('colors', 'sectionRadius', `${e.target.value}px`)}
+                  className="w-full"
+                />
+                <input
+                  type="text"
+                  value={section.design.colors?.sectionRadius || '0px'}
+                  onChange={(e) => updateDesign('colors', 'sectionRadius', e.target.value)}
+                  className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                />
+              </div>
+            </div>
+          </CollapsibleSection>
+
+          <CollapsibleSection title="Espacement" defaultOpen={false}>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Padding haut</label>
+              <input
+                type="text"
+                value={section.design.spacing.paddingTop}
+                onChange={(e) => updateDesign('spacing', 'paddingTop', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+                placeholder="ex: 80px"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Padding bas</label>
+              <input
+                type="text"
+                value={section.design.spacing.paddingBottom}
+                onChange={(e) => updateDesign('spacing', 'paddingBottom', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+                placeholder="ex: 80px"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Marge haute</label>
+              <input
+                type="text"
+                value={section.design.spacing.marginTop}
+                onChange={(e) => updateDesign('spacing', 'marginTop', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+                placeholder="ex: 0px"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Marge basse</label>
+              <input
+                type="text"
+                value={section.design.spacing.marginBottom}
+                onChange={(e) => updateDesign('spacing', 'marginBottom', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+                placeholder="ex: 0px"
+              />
+            </div>
+          </CollapsibleSection>
         </div>
       );
     }
@@ -1596,6 +1730,26 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               />
             </div>
           </div>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Taille des icônes</label>
+            <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+              <input
+                type="range"
+                min="12"
+                max="64"
+                step="2"
+                value={parseInt((section.design.colors?.iconSize || '24px').replace('px', ''), 10) || 24}
+                onChange={(e) => updateDesign('colors', 'iconSize', `${e.target.value}px`)}
+                className="w-full"
+              />
+              <input
+                type="text"
+                value={section.design.colors?.iconSize || '24px'}
+                onChange={(e) => updateDesign('colors', 'iconSize', e.target.value)}
+                className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+              />
+            </div>
+          </div>
         </CollapsibleSection>
 
         <CollapsibleSection title="Images & vidéos" defaultOpen={false}>
@@ -1764,16 +1918,13 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
 
           {section.design.background?.type === 'video' && (
             <>
-              <div>
-                <label className="block text-xs text-gray-600 mb-1">URL de la vidéo</label>
-                <input
-                  type="text"
-                  value={section.design.background?.value || ''}
-                  onChange={(e) => updateDesign('background', 'value', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                  placeholder="https://youtube.com/embed/... ou URL mp4"
-                />
-              </div>
+              <ImageUploadField
+                label="Vidéo de fond"
+                value={section.design.background?.value || ''}
+                onChange={(url) => updateDesign('background', 'value', url)}
+                placeholder="https://youtube.com/embed/... ou vidéo mp4"
+                mediaType="video"
+              />
               <ColorOverrideField
                 label="Couleur de superposition vidéo"
                 value={section.design.background?.overlayColor || undefined}
@@ -1828,6 +1979,29 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               </label>
             </>
           )}
+        </CollapsibleSection>
+
+        <CollapsibleSection title="Bordures de section" defaultOpen={false}>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Arrondi de la section</label>
+            <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+              <input
+                type="range"
+                min="0"
+                max="48"
+                step="2"
+                value={parseInt((section.design.colors?.sectionRadius || '0px').replace('px', ''), 10) || 0}
+                onChange={(e) => updateDesign('colors', 'sectionRadius', `${e.target.value}px`)}
+                className="w-full"
+              />
+              <input
+                type="text"
+                value={section.design.colors?.sectionRadius || '0px'}
+                onChange={(e) => updateDesign('colors', 'sectionRadius', e.target.value)}
+                className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+              />
+            </div>
+          </div>
         </CollapsibleSection>
 
         <CollapsibleSection title="Espacement" defaultOpen={false}>

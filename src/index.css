@@ -151,6 +151,15 @@
     border-width: var(--widget-icon-border-width, 0px);
     border-style: solid;
     border-radius: var(--widget-icon-radius, 0.75rem);
+    width: var(--widget-icon-size, auto);
+    height: var(--widget-icon-size, auto);
+    min-width: var(--widget-icon-size, auto);
+    min-height: var(--widget-icon-size, auto);
+  }
+
+  .widget-design-scope [data-widget-icon-frame] svg {
+    width: calc(var(--widget-icon-size, 28px) * 0.55) !important;
+    height: calc(var(--widget-icon-size, 28px) * 0.55) !important;
   }
 
   .widget-design-scope .widget-icon-container {
@@ -159,6 +168,15 @@
     border-width: var(--widget-icon-border-width, 0px);
     border-style: solid;
     border-radius: var(--widget-icon-radius, 0.75rem);
+    width: var(--widget-icon-size, auto);
+    height: var(--widget-icon-size, auto);
+    min-width: var(--widget-icon-size, auto);
+    min-height: var(--widget-icon-size, auto);
+  }
+
+  .widget-design-scope .widget-icon-container svg {
+    width: calc(var(--widget-icon-size, 28px) * 0.55) !important;
+    height: calc(var(--widget-icon-size, 28px) * 0.55) !important;
   }
 
   .widget-design-scope.wds-font-family {
