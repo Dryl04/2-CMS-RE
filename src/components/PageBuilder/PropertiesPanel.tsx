@@ -1253,6 +1253,168 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             </label>
           </CollapsibleSection>
 
+          <CollapsibleSection title="Arrière-plan" defaultOpen={false}>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Type d'arrière-plan</label>
+              <select
+                value={section.design.background?.type || 'color'}
+                onChange={(e) => {
+                  const newType = e.target.value as 'color' | 'gradient' | 'image' | 'video';
+                  onUpdateSection({
+                    design: {
+                      ...section.design,
+                      background: { ...section.design.background, type: newType },
+                    },
+                  });
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+              >
+                <option value="color">Couleur</option>
+                <option value="gradient">Dégradé</option>
+                <option value="image">Image</option>
+                <option value="video">Vidéo</option>
+              </select>
+            </div>
+
+            {section.design.background?.type === 'color' && (
+              <ColorOverrideField
+                label="Couleur de fond"
+                value={section.design.background?.value || undefined}
+                fallback="#ffffff"
+                onChange={(v) => updateDesign('background', 'value', v)}
+                onClear={() => updateDesign('background', 'value', '')}
+              />
+            )}
+
+            {section.design.background?.type === 'gradient' && (
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Dégradé CSS</label>
+                <input
+                  type="text"
+                  value={section.design.background?.value || ''}
+                  onChange={(e) => updateDesign('background', 'value', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  placeholder="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                />
+              </div>
+            )}
+
+            {section.design.background?.type === 'image' && (
+              <>
+                <ImageUploadField
+                  label="Image de fond"
+                  value={section.design.background?.value || ''}
+                  onChange={(url) => updateDesign('background', 'value', url)}
+                  placeholder="URL de l'image de fond"
+                  mediaType="image"
+                />
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">
+                    Opacité de l'image ({Math.round((section.design.background?.opacity ?? 1) * 100)}%)
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={Math.round((section.design.background?.opacity ?? 1) * 100)}
+                    onChange={(e) => updateDesign('background', 'opacity', parseInt(e.target.value) / 100)}
+                    className="w-full"
+                  />
+                </div>
+                <ColorOverrideField
+                  label="Couleur de superposition"
+                  value={section.design.background?.overlayColor || undefined}
+                  fallback="#000000"
+                  onChange={(v) => updateDesign('background', 'overlayColor', v)}
+                  onClear={() => {
+                    const bg = { ...(section.design.background || {}) };
+                    delete (bg as any).overlayColor;
+                    onUpdateSection({ design: { ...section.design, background: bg as any } });
+                  }}
+                />
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">
+                    Opacité superposition ({Math.round((section.design.background?.overlayOpacity ?? 0.5) * 100)}%)
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={Math.round((section.design.background?.overlayOpacity ?? 0.5) * 100)}
+                    onChange={(e) => updateDesign('background', 'overlayOpacity', parseInt(e.target.value) / 100)}
+                    className="w-full"
+                  />
+                </div>
+              </>
+            )}
+
+            {section.design.background?.type === 'video' && (
+              <>
+                <ImageUploadField
+                  label="Vidéo de fond"
+                  value={section.design.background?.value || ''}
+                  onChange={(url) => updateDesign('background', 'value', url)}
+                  placeholder="https://youtube.com/embed/... ou vidéo mp4"
+                  mediaType="video"
+                />
+                <ColorOverrideField
+                  label="Couleur de superposition vidéo"
+                  value={section.design.background?.overlayColor || undefined}
+                  fallback="#000000"
+                  onChange={(v) => updateDesign('background', 'overlayColor', v)}
+                  onClear={() => {
+                    const bg = { ...(section.design.background || {}) };
+                    delete (bg as any).overlayColor;
+                    onUpdateSection({ design: { ...section.design, background: bg as any } });
+                  }}
+                />
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">
+                    Opacité superposition ({Math.round((section.design.background?.overlayOpacity ?? 0.5) * 100)}%)
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={Math.round((section.design.background?.overlayOpacity ?? 0.5) * 100)}
+                    onChange={(e) => updateDesign('background', 'overlayOpacity', parseInt(e.target.value) / 100)}
+                    className="w-full"
+                  />
+                </div>
+                <label className="flex items-center space-x-2 cursor-pointer text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={section.design.background?.videoAutoplay !== false}
+                    onChange={(e) => updateDesign('background', 'videoAutoplay', e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-300"
+                  />
+                  <span>Lecture automatique</span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={section.design.background?.videoNoBranding === true}
+                    onChange={(e) => updateDesign('background', 'videoNoBranding', e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-300"
+                  />
+                  <span>Sans branding YouTube</span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={section.design.background?.videoFullWidth === true}
+                    onChange={(e) => updateDesign('background', 'videoFullWidth', e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-300"
+                  />
+                  <span>Pleine largeur</span>
+                </label>
+              </>
+            )}
+          </CollapsibleSection>
+
           {section.type === 'hero' && (
             <CollapsibleSection title="Paramètres Hero avancés" defaultOpen={false}>
               <HeroAdvancedEditor section={section} updateDesign={updateDesign} />
