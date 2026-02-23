@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, Edit3, FolderOpen, Download, FileJson, FileSpreadsheet, X, Palette, Settings, Copy } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, Edit3, FolderOpen, FolderPlus, Download, FileJson, FileSpreadsheet, X, Palette, Settings, Copy, Link2, Image } from 'lucide-react';
 import { PageBuilderSection, DeviceType } from '../../lib/pageBuilderTypes';
 import { supabase, PageTemplate, SEOMetadata } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -12,6 +12,7 @@ import Canvas from './Canvas';
 import PropertiesPanel from './PropertiesPanel';
 import SEOPageViewer from '../SEOPageViewer';
 import DaisyThemeManager from '../DaisyThemeManager';
+import PageAssetManager from './PageAssetManager';
 import { normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
 
 interface PageBuilderProps {
@@ -83,8 +84,11 @@ export default function PageBuilder({
   const [device, setDevice] = useState<DeviceType>('desktop');
   const [templateName, setTemplateName] = useState('Nouveau modele');
   const [templateDescription, setTemplateDescription] = useState('');
+  const [templateFolder, setTemplateFolder] = useState<string>('');
+  const [filterFolder, setFilterFolder] = useState<string>('');
   const [daisyThemeSlug, setDaisyThemeSlug] = useState<string | null>(null);
   const [showDaisyThemeManager, setShowDaisyThemeManager] = useState(false);
+  const [showAssetManager, setShowAssetManager] = useState(false);
   const [history, setHistory] = useState<PageBuilderSection[][]>([initialSections || []]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -92,6 +96,17 @@ export default function PageBuilder({
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const selectedSection = sections.find(s => s.id === selectedSectionId) || null;
+
+  const templateFolders = useMemo(() => {
+    const folders = new Set<string>();
+    templates.forEach(t => { if (t.folder) folders.add(t.folder); });
+    return Array.from(folders).sort();
+  }, [templates]);
+
+  const filteredTemplates = useMemo(() => {
+    if (!filterFolder) return templates;
+    return templates.filter(t => (t.folder || '') === filterFolder);
+  }, [templates, filterFolder]);
 
   useEffect(() => {
     if (mode === 'template') {
@@ -207,6 +222,7 @@ export default function PageBuilder({
         description: templateDescription || null,
         sections_data: normalizedSections,
         is_public: true,
+        folder: templateFolder || null,
       };
 
       const templateDataWithTheme: Record<string, any> = {
@@ -274,6 +290,7 @@ export default function PageBuilder({
     setEditingTemplateId(template.id);
     setTemplateName(template.name);
     setTemplateDescription(template.description || '');
+    setTemplateFolder(template.folder || '');
     setDaisyThemeSlug(template.daisy_theme_slug || null);
     const loadedSections = normalizeSectionsData(template.sections_data);
     setSections(loadedSections);
@@ -308,6 +325,7 @@ export default function PageBuilder({
         sections_data: template.sections_data,
         is_public: template.is_public ?? true,
         daisy_theme_slug: template.daisy_theme_slug || null,
+        folder: template.folder || null,
       };
       if (profile?.id) {
         duplicateData.created_by = profile.id;
@@ -326,6 +344,7 @@ export default function PageBuilder({
     setEditingTemplateId(null);
     setTemplateName('Nouveau modele');
     setTemplateDescription('');
+    setTemplateFolder('');
     setDaisyThemeSlug(null);
     setSections([]);
     setHistory([[]]);
@@ -410,6 +429,27 @@ export default function PageBuilder({
           </button>
         </div>
 
+        {templateFolders.length > 0 && (
+          <div className="flex items-center gap-2 mb-6 flex-wrap">
+            <button
+              onClick={() => setFilterFolder('')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${!filterFolder ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            >
+              Tous
+            </button>
+            {templateFolders.map(f => (
+              <button
+                key={f}
+                onClick={() => setFilterFolder(filterFolder === f ? '' : f)}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${filterFolder === f ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                <FolderOpen className="w-3 h-3" />
+                {f}
+              </button>
+            ))}
+          </div>
+        )}
+
         {loadingTemplates ? (
           <div className="text-center py-12">
             <div className="animate-spin w-10 h-10 border-4 border-gray-200 border-t-gray-900 rounded-full mx-auto"></div>
@@ -433,7 +473,7 @@ export default function PageBuilder({
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {templates.map((template) => {
+            {filteredTemplates.map((template) => {
               const templateSections = normalizeSectionsData(template.sections_data);
               const sectionCount = templateSections.length;
               return (
@@ -448,6 +488,11 @@ export default function PageBuilder({
                   </div>
                   <div className="p-5">
                     <h3 className="font-bold text-gray-900 mb-1">{template.name}</h3>
+                    {template.folder && (
+                      <span className="inline-flex items-center gap-1 text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full mb-1">
+                        <FolderOpen className="w-2.5 h-2.5" />{template.folder}
+                      </span>
+                    )}
                     {template.description && (
                       <p className="text-sm text-gray-500 mb-3 line-clamp-2">{template.description}</p>
                     )}
@@ -630,6 +675,22 @@ export default function PageBuilder({
                 placeholder="Description du modele (optionnel)"
               />
             )}
+            {mode === 'template' && (
+              <div className="flex items-center gap-1">
+                <FolderPlus className="w-3 h-3 text-gray-400" />
+                <input
+                  type="text"
+                  value={templateFolder}
+                  onChange={(e) => setTemplateFolder(e.target.value)}
+                  className="text-xs text-gray-500 bg-transparent border-none focus:outline-none focus:ring-1 focus:ring-gray-300 rounded px-2 py-0.5 w-32"
+                  placeholder="Dossier (optionnel)"
+                  list="template-folders-list"
+                />
+                <datalist id="template-folders-list">
+                  {templateFolders.map(f => <option key={f} value={f} />)}
+                </datalist>
+              </div>
+            )}
           </div>
 
           {daisyThemes.length > 0 && (
@@ -701,6 +762,14 @@ export default function PageBuilder({
             title="Retablir"
           >
             <Redo className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() => setShowAssetManager(true)}
+            className="p-1.5 hover:bg-gray-100 rounded"
+            title="Gestion liens & images"
+          >
+            <Link2 className="w-4 h-4" />
           </button>
 
           <div className="h-6 w-px bg-gray-200" />
@@ -838,6 +907,14 @@ export default function PageBuilder({
       {showDaisyThemeManager && (
         <DaisyThemeManager
           onClose={() => setShowDaisyThemeManager(false)}
+        />
+      )}
+
+      {showAssetManager && (
+        <PageAssetManager
+          sections={sections}
+          onUpdateSection={updateSection}
+          onClose={() => setShowAssetManager(false)}
         />
       )}
     </div>

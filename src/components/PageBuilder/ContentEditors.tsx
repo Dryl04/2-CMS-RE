@@ -145,6 +145,13 @@ export function CTAContentEditor({ section, updateContent }: ContentEditorProps)
           placeholder="Lien"
         />
       </div>
+      <ImageUploadField
+        label="Image (variante split)"
+        value={section.content.image || ''}
+        onChange={(url) => updateContent('image', url)}
+        placeholder="URL de l'image"
+        mediaType="image"
+      />
     </div>
   );
 }
@@ -574,8 +581,8 @@ export function TestimonialsContentEditor({ section, updateContent }: ContentEdi
                       key={star}
                       onClick={() => updateTestimonial(index, 'rating', star)}
                       className={`w-7 h-7 rounded text-sm font-medium transition-colors ${star <= (t.rating || 0)
-                          ? 'bg-yellow-400 text-white'
-                          : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
+                        ? 'bg-yellow-400 text-white'
+                        : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
                         }`}
                     >
                       {star}
@@ -1107,8 +1114,8 @@ export function ClickFunnelCenterCardContentEditor({ section, updateContent }: C
               key={index}
               onClick={() => setSelectedTabIndex(index)}
               className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${selectedTabIndex === index
-                  ? 'bg-black text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-black text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
             >
               {item.label || `Tab ${index + 1}`}

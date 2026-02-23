@@ -33,7 +33,7 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 
-  const gridCols = content.services?.length === 2 ? 'grid-cols-2' : 'grid-cols-2';
+  const gridCols = content.services?.length === 2 ? 'grid-cols-2' : content.services?.length >= 3 ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-1';
 
   return (
     <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
@@ -71,13 +71,22 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
           <div className="space-y-6">
             {content.image && (
               <div className="w-full mb-8">
-                <div className="bg-base-300 rounded-lg" style={{ height: '300px' }}>
-                  {content.imageLabel && (
-                    <div className="flex items-center justify-center h-full">
-                      <span className="text-sm text-neutral-content">{content.imageLabel}</span>
-                    </div>
-                  )}
-                </div>
+                {typeof content.image === 'string' && content.image.startsWith('http') ? (
+                  <img
+                    src={content.image}
+                    alt={content.imageLabel || content.title || 'Content image'}
+                    className="w-full rounded-lg object-cover"
+                    style={{ maxHeight: '400px' }}
+                  />
+                ) : (
+                  <div className="bg-base-300 rounded-lg" style={{ height: '300px' }}>
+                    {content.imageLabel && (
+                      <div className="flex items-center justify-center h-full">
+                        <span className="text-sm text-neutral-content">{content.imageLabel}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 

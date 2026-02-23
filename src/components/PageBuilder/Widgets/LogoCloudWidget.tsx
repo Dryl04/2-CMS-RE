@@ -56,11 +56,11 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 lg:gap-8 items-center">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 lg:gap-8 place-items-center">
         {(logos || defaultLogos).map((logo: any, index: number) => (
           <div
             key={index}
-            className="flex items-center justify-center grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
+            className="flex items-center justify-center w-full grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
           >
             <img
               src={logo.url}

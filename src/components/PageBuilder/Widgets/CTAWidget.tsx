@@ -132,7 +132,15 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
           )}
         </div>
       </div>
-      <div className="bg-base-300 rounded-2xl h-48 sm:h-64" />
+      {section.content.image ? (
+        <img
+          src={section.content.image}
+          alt={headline || 'CTA'}
+          className="w-full h-48 sm:h-64 object-cover rounded-2xl"
+        />
+      ) : (
+        <div className="bg-base-300 rounded-2xl h-48 sm:h-64" />
+      )}
     </div>
   );
 
