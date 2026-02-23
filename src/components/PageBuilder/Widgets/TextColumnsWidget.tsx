@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface TextColumnsWidgetProps {
   section: PageBuilderSection;
@@ -30,20 +31,20 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
   const columnsFromFlat = [content.column1, content.column2, content.column3].filter(Boolean);
   const columnsFromLegacy = Array.isArray(content.columns)
     ? content.columns
-        .map((column: unknown) => {
-          if (typeof column === 'string') return column;
-          if (typeof column === 'object' && column !== null && 'paragraphs' in column && Array.isArray((column as { paragraphs?: unknown[] }).paragraphs)) {
-            return ((column as { paragraphs: unknown[] }).paragraphs as string[]).join(' ');
-          }
-          if (typeof column === 'object' && column !== null && 'description' in column && typeof (column as { description?: unknown }).description === 'string') {
-            return (column as { description: string }).description;
-          }
-          if (typeof column === 'object' && column !== null && 'content' in column && typeof (column as { content?: unknown }).content === 'string') {
-            return (column as { content: string }).content;
-          }
-          return '';
-        })
-        .filter(Boolean)
+      .map((column: unknown) => {
+        if (typeof column === 'string') return column;
+        if (typeof column === 'object' && column !== null && 'paragraphs' in column && Array.isArray((column as { paragraphs?: unknown[] }).paragraphs)) {
+          return ((column as { paragraphs: unknown[] }).paragraphs as string[]).join(' ');
+        }
+        if (typeof column === 'object' && column !== null && 'description' in column && typeof (column as { description?: unknown }).description === 'string') {
+          return (column as { description: string }).description;
+        }
+        if (typeof column === 'object' && column !== null && 'content' in column && typeof (column as { content?: unknown }).content === 'string') {
+          return (column as { content: string }).content;
+        }
+        return '';
+      })
+      .filter(Boolean)
     : [];
 
   const columns = columnsFromFlat.length > 0 ? columnsFromFlat : columnsFromLegacy;
@@ -69,7 +70,7 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
             className="text-sm sm:text-base leading-relaxed text-base-content/70"
             style={textStyle}
           >
-            {column}
+            {renderRichText(column)}
           </p>
         ))}
       </div>
@@ -94,7 +95,7 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
             className="text-sm sm:text-base leading-relaxed text-base-content/70"
             style={textStyle}
           >
-            {column}
+            {renderRichText(column)}
           </p>
         ))}
       </div>
@@ -121,7 +122,7 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
             className="text-sm sm:text-base leading-relaxed text-base-content/70"
             style={textStyle}
           >
-            {column}
+            {renderRichText(column)}
           </p>
         ))}
       </div>
@@ -141,8 +142,8 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
         {section.variant === 'two-column'
           ? renderTwoColumns()
           : section.variant === 'centered'
-          ? renderCentered()
-          : renderThreeColumns()}
+            ? renderCentered()
+            : renderThreeColumns()}
       </div>
     </div>
   );

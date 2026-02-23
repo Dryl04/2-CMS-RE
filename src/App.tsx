@@ -17,12 +17,14 @@ import VisualPageBuilder from './components/VisualPageBuilder';
 import BuilderPreviewPage from './components/PageBuilder/BuilderPreviewPage';
 import { supabase, SEOMetadata } from './lib/supabase';
 
-type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder';
+type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder' | 'page-builder';
 
 function AppContent() {
   const { user, loading } = useAuth();
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [seoPage, setSeoPage] = useState<SEOMetadata | null>(null);
+  const [builderPageId, setBuilderPageId] = useState<string | null>(null);
+  const [builderInitialSections, setBuilderInitialSections] = useState<any[] | undefined>(undefined);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
   const [showDaisyThemeManager, setShowDaisyThemeManager] = useState(false);
 
@@ -69,7 +71,15 @@ function AppContent() {
   const handleNavigate = (view: string) => {
     setCurrentView(view as View);
     setSeoPage(null);
+    setBuilderPageId(null);
+    setBuilderInitialSections(undefined);
     window.history.pushState({}, '', '/');
+  };
+
+  const handleOpenPageBuilder = (pageId: string, sections: any[]) => {
+    setBuilderPageId(pageId);
+    setBuilderInitialSections(sections);
+    setCurrentView('page-builder');
   };
 
   if (window.location.pathname === '/__preview') {
@@ -121,23 +131,44 @@ function AppContent() {
     return <Auth />;
   }
 
-  const showFooter = currentView !== 'templates' && currentView !== 'visual-builder';
+  const showFooter = currentView !== 'templates' && currentView !== 'visual-builder' && currentView !== 'page-builder';
 
   return (
-    <div className={`bg-base-100 flex flex-col overflow-hidden ${currentView === 'templates' || currentView === 'visual-builder' ? 'h-screen' : 'min-h-screen'}`}>
-      {currentView !== 'visual-builder' && <Header onNavigate={handleNavigate} currentView={currentView} />}
+    <div className={`bg-base-100 flex flex-col overflow-hidden ${currentView === 'templates' || currentView === 'visual-builder' || currentView === 'page-builder' ? 'h-screen' : 'min-h-screen'}`}>
+      {currentView !== 'visual-builder' && currentView !== 'page-builder' && <Header onNavigate={handleNavigate} currentView={currentView} />}
 
-      <div className={currentView === 'visual-builder' ? 'flex-1 flex flex-col overflow-hidden' : currentView === 'templates' ? 'pt-16 flex-1 flex flex-col overflow-hidden' : 'pt-16 flex-1'}>
+      <div className={currentView === 'visual-builder' || currentView === 'page-builder' ? 'flex-1 flex flex-col overflow-hidden' : currentView === 'templates' ? 'pt-16 flex-1 flex flex-col overflow-hidden' : 'pt-16 flex-1'}>
         {currentView === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
 
         {currentView === 'pages' && (
           <div className="max-w-7xl mx-auto px-6 py-8 w-full">
-            <SEOManager onNavigate={handleNavigate} />
+            <SEOManager onNavigate={handleNavigate} onOpenPageBuilder={handleOpenPageBuilder} />
           </div>
         )}
 
         {currentView === 'visual-builder' && (
           <VisualPageBuilder onClose={() => handleNavigate('dashboard')} />
+        )}
+
+        {currentView === 'page-builder' && builderPageId && (
+          <PageBuilder
+            onNavigate={handleNavigate}
+            editingPageId={builderPageId}
+            initialSections={builderInitialSections as any}
+            mode="page"
+            onSavePageSections={async (sections) => {
+              try {
+                const { error } = await supabase
+                  .from('seo_metadata')
+                  .update({ sections_data: sections, updated_at: new Date().toISOString() })
+                  .eq('id', builderPageId);
+                if (error) throw error;
+                handleNavigate('pages');
+              } catch (err) {
+                console.error('Error saving page sections:', err);
+              }
+            }}
+          />
         )}
 
         {currentView === 'templates' && (

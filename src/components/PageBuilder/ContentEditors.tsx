@@ -2,6 +2,7 @@ import React from 'react';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { PageBuilderSection } from '../../lib/pageBuilderTypes';
 import ImageUploadField from './ImageUploadField';
+import IconPicker from './IconPicker';
 
 const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent';
 const labelClass = 'block text-sm font-medium text-gray-700 mb-2';
@@ -444,15 +445,10 @@ export function FeaturesContentEditor({ section, updateContent }: ContentEditorP
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <select
+              <IconPicker
                 value={feature.icon || 'zap'}
-                onChange={(e) => updateFeature(index, 'icon', e.target.value)}
-                className={inputClass}
-              >
-                {FEATURE_ICONS.map((icon) => (
-                  <option key={icon.id} value={icon.id}>{icon.label}</option>
-                ))}
-              </select>
+                onChange={(val) => updateFeature(index, 'icon', val)}
+              />
               <input
                 type="text"
                 value={feature.title || ''}
@@ -577,11 +573,10 @@ export function TestimonialsContentEditor({ section, updateContent }: ContentEdi
                     <button
                       key={star}
                       onClick={() => updateTestimonial(index, 'rating', star)}
-                      className={`w-7 h-7 rounded text-sm font-medium transition-colors ${
-                        star <= (t.rating || 0)
+                      className={`w-7 h-7 rounded text-sm font-medium transition-colors ${star <= (t.rating || 0)
                           ? 'bg-yellow-400 text-white'
                           : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
-                      }`}
+                        }`}
                     >
                       {star}
                     </button>
@@ -1111,11 +1106,10 @@ export function ClickFunnelCenterCardContentEditor({ section, updateContent }: C
             <button
               key={index}
               onClick={() => setSelectedTabIndex(index)}
-              className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${
-                selectedTabIndex === index
+              className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${selectedTabIndex === index
                   ? 'bg-black text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               {item.label || `Tab ${index + 1}`}
             </button>

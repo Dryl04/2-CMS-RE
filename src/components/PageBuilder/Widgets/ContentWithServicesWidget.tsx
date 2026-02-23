@@ -1,5 +1,6 @@
 import { Umbrella, Layers, PaintBucket, Clock, AlarmClock } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ContentWithServicesWidgetProps {
   section: PageBuilderSection;
@@ -52,12 +53,12 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
             </h2>
             {content.description && (
               <p className="text-base leading-relaxed text-base-content/70" style={textStyle}>
-                {content.description}
+                {renderRichText(content.description)}
               </p>
             )}
             {content.additionalText && (
               <p className="text-base leading-relaxed text-base-content/70" style={textStyle}>
-                {content.additionalText}
+                {renderRichText(content.additionalText)}
               </p>
             )}
             {content.ctaText && (
@@ -91,7 +92,7 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
                     </h3>
                     {service.description && (
                       <p className="text-sm mt-2 text-base-content/70" style={textStyle}>
-                        {service.description}
+                        {renderRichText(service.description)}
                       </p>
                     )}
                   </div>

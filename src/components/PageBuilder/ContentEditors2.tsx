@@ -2,7 +2,7 @@ import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { PageBuilderSection } from '../../lib/pageBuilderTypes';
 import ImageUploadField from './ImageUploadField';
-import { FEATURE_ICONS } from './ContentEditors';
+import IconPicker from './IconPicker';
 
 const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent';
 const labelClass = 'block text-sm font-medium text-gray-700 mb-2';
@@ -599,9 +599,7 @@ export function ServicesGridContentEditor({ section, updateContent }: ContentEdi
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <select value={service.icon || 'zap'} onChange={(e) => updateService(index, 'icon', e.target.value)} className={inputClass}>
-                {FEATURE_ICONS.map((icon) => (<option key={icon.id} value={icon.id}>{icon.label}</option>))}
-              </select>
+              <IconPicker value={service.icon || 'zap'} onChange={(val) => updateService(index, 'icon', val)} />
               <input type="text" value={service.title || ''} onChange={(e) => updateService(index, 'title', e.target.value)} className={inputClass} placeholder="Titre du service" />
               <textarea value={service.description || ''} onChange={(e) => updateService(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
               <div className="flex gap-2">
@@ -743,9 +741,7 @@ export function ServicesCardsContentEditor({ section, updateContent }: ContentEd
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <select value={service.icon || 'zap'} onChange={(e) => updateService(index, 'icon', e.target.value)} className={inputClass}>
-                {FEATURE_ICONS.map((icon) => (<option key={icon.id} value={icon.id}>{icon.label}</option>))}
-              </select>
+              <IconPicker value={service.icon || 'zap'} onChange={(val) => updateService(index, 'icon', val)} />
               <input type="text" value={service.title || ''} onChange={(e) => updateService(index, 'title', e.target.value)} className={inputClass} placeholder="Titre" />
               <textarea value={service.description || ''} onChange={(e) => updateService(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
               <ImageUploadField label="Image" value={service.image || ''} onChange={(url) => updateService(index, 'image', url)} placeholder="URL de l'image" />
@@ -1187,9 +1183,7 @@ export function HeroWithServicesContentEditor({ section, updateContent }: Conten
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <select value={service.icon || 'zap'} onChange={(e) => updateService(index, 'icon', e.target.value)} className={inputClass}>
-                {FEATURE_ICONS.map((icon) => (<option key={icon.id} value={icon.id}>{icon.label}</option>))}
-              </select>
+              <IconPicker value={service.icon || 'zap'} onChange={(val) => updateService(index, 'icon', val)} />
               <input type="text" value={service.title || ''} onChange={(e) => updateService(index, 'title', e.target.value)} className={inputClass} placeholder="Titre" />
               <textarea value={service.description || ''} onChange={(e) => updateService(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
             </div>

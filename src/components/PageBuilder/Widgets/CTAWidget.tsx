@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface CTAWidgetProps {
   section: PageBuilderSection;
@@ -41,7 +42,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
             className="text-base sm:text-lg font-normal text-base-content/80"
             style={subtitleStyle}
           >
-            {description || 'Join thousands of satisfied customers today'}
+            {renderRichText(description, 'Join thousands of satisfied customers today')}
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
@@ -77,7 +78,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
         className="text-lg sm:text-xl mb-8 font-normal text-base-content/80"
         style={subtitleStyle}
       >
-        {description || 'Join thousands of satisfied customers today'}
+        {renderRichText(description, 'Join thousands of satisfied customers today')}
       </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
         <a
@@ -111,7 +112,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
           className="text-lg sm:text-xl mb-8 font-normal text-base-content/80"
           style={subtitleStyle}
         >
-          {description || 'Join thousands of satisfied customers today'}
+          {renderRichText(description, 'Join thousands of satisfied customers today')}
         </p>
         <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
           <a

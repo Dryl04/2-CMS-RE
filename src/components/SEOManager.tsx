@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Edit, Trash2, Eye, FileUp, FormInput, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Search, Edit, Trash2, Eye, FileUp, FormInput, ExternalLink, ArrowLeft, Copy, Layout, FolderOpen } from 'lucide-react';
 import { supabase, SEOMetadata } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import SEOImporter from './SEOImporter';
@@ -10,14 +10,16 @@ type ViewMode = 'list' | 'form' | 'import' | 'view';
 
 interface SEOManagerProps {
   onNavigate?: (view: string) => void;
+  onOpenPageBuilder?: (pageId: string, sections: any[]) => void;
 }
 
-export default function SEOManager({ onNavigate }: SEOManagerProps) {
+export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManagerProps) {
   const { profile } = useAuth();
   const [metadata, setMetadata] = useState<SEOMetadata[]>([]);
   const [filteredMetadata, setFilteredMetadata] = useState<SEOMetadata[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'draft' | 'published' | 'archived'>('all');
+  const [folderFilter, setFolderFilter] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [editingPage, setEditingPage] = useState<SEOMetadata | undefined>(undefined);
@@ -67,6 +69,14 @@ export default function SEOManager({ onNavigate }: SEOManagerProps) {
       filtered = filtered.filter(item => item.status === statusFilter);
     }
 
+    if (folderFilter !== 'all') {
+      if (folderFilter === '__none__') {
+        filtered = filtered.filter(item => !(item as any).folder);
+      } else {
+        filtered = filtered.filter(item => (item as any).folder === folderFilter);
+      }
+    }
+
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter(item =>
@@ -77,7 +87,9 @@ export default function SEOManager({ onNavigate }: SEOManagerProps) {
     }
 
     setFilteredMetadata(filtered);
-  }, [searchQuery, statusFilter, metadata]);
+  }, [searchQuery, statusFilter, folderFilter, metadata]);
+
+  const folders = Array.from(new Set(metadata.map(m => (m as any).folder).filter(Boolean))) as string[];
 
   const handleStatusChange = async (id: string, newStatus: 'draft' | 'published' | 'archived') => {
     try {
@@ -114,6 +126,28 @@ export default function SEOManager({ onNavigate }: SEOManagerProps) {
     }
   };
 
+  const handleDuplicate = async (page: SEOMetadata) => {
+    try {
+      const newPageKey = `${page.page_key}-copie-${Date.now().toString(36)}`;
+      const { id, created_at, updated_at, ...rest } = page as any;
+      const duplicateData = {
+        ...rest,
+        page_key: newPageKey,
+        title: `${page.title} (copie)`,
+        status: 'draft' as const,
+        canonical_url: null,
+        user_id: profile?.id || page.user_id,
+      };
+      const { error } = await supabase.from('seo_metadata').insert(duplicateData);
+      if (error) throw error;
+      showToast('Page dupliquee');
+      loadMetadata();
+    } catch (error) {
+      console.error('Error duplicating page:', error);
+      showToast('Erreur lors de la duplication', 'error');
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const styles: Record<string, { bg: string; label: string }> = {
       draft: { bg: 'bg-gray-100 text-gray-700', label: 'Brouillon' },
@@ -142,8 +176,8 @@ export default function SEOManager({ onNavigate }: SEOManagerProps) {
     <div>
       {toastMessage && (
         <div className={`fixed top-20 right-6 z-50 px-4 py-3 rounded-xl shadow-lg border text-sm font-medium ${toastMessage.type === 'success'
-            ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-            : 'bg-red-50 border-red-200 text-red-800'
+          ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+          : 'bg-red-50 border-red-200 text-red-800'
           }`}>
           {toastMessage.text}
         </div>
@@ -235,6 +269,20 @@ export default function SEOManager({ onNavigate }: SEOManagerProps) {
                   <option value="archived">Archives</option>
                 </select>
 
+                {folders.length > 0 && (
+                  <select
+                    value={folderFilter}
+                    onChange={(e) => setFolderFilter(e.target.value)}
+                    className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  >
+                    <option value="all">Tous les dossiers</option>
+                    <option value="__none__">Sans dossier</option>
+                    {folders.map(f => (
+                      <option key={f} value={f}>{f}</option>
+                    ))}
+                  </select>
+                )}
+
                 <button
                   onClick={() => {
                     setEditingPage(undefined);
@@ -305,6 +353,12 @@ export default function SEOManager({ onNavigate }: SEOManagerProps) {
                           <span className={`px-2 py-0.5 rounded text-xs font-medium ${badge.bg}`}>
                             {badge.label}
                           </span>
+                          {(item as any).folder && (
+                            <span className="px-2 py-0.5 rounded text-xs font-medium bg-purple-50 text-purple-700 flex items-center space-x-1">
+                              <FolderOpen className="w-3 h-3" />
+                              <span>{(item as any).folder}</span>
+                            </span>
+                          )}
                         </div>
                         <h3 className="text-base font-bold text-gray-900 mb-1">{item.title}</h3>
                         {item.description && (
@@ -347,6 +401,22 @@ export default function SEOManager({ onNavigate }: SEOManagerProps) {
                           title="Modifier"
                         >
                           <Edit className="w-4 h-4 text-gray-500" />
+                        </button>
+                        {onOpenPageBuilder && (
+                          <button
+                            onClick={() => onOpenPageBuilder(item.id, (item as any).sections_data || [])}
+                            className="p-2 hover:bg-purple-50 rounded-lg transition-colors"
+                            title="Editer visuellement"
+                          >
+                            <Layout className="w-4 h-4 text-purple-500" />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDuplicate(item)}
+                          className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Dupliquer"
+                        >
+                          <Copy className="w-4 h-4 text-blue-400" />
                         </button>
                         <div className="hidden sm:flex bg-gray-100 rounded-lg p-0.5 mx-1">
                           <button

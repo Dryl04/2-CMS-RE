@@ -1,6 +1,7 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface PricingWidgetProps {
   section: PageBuilderSection;
@@ -37,7 +38,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           {title || 'Simple, Transparent Pricing'}
         </h2>
         <p className="text-lg sm:text-xl text-base-content/70" style={subtitleStyle}>
-          {subtitle || 'Choose the perfect plan for your needs'}
+          {renderRichText(subtitle, 'Choose the perfect plan for your needs')}
         </p>
       </div>
 
@@ -107,7 +108,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           {title || 'Compare Plans'}
         </h2>
         <p className="text-lg sm:text-xl text-base-content/70" style={subtitleStyle}>
-          {subtitle || 'Find the perfect fit for your business'}
+          {renderRichText(subtitle, 'Find the perfect fit for your business')}
         </p>
       </div>
 
@@ -160,7 +161,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           {title || 'Flexible Pricing'}
         </h2>
         <p className="text-lg sm:text-xl mb-6 text-base-content/70" style={subtitleStyle}>
-          {subtitle || 'Save 20% with annual billing'}
+          {renderRichText(subtitle, 'Save 20% with annual billing')}
         </p>
         <div className="inline-flex items-center bg-base-200 rounded-full p-1">
           <button className="btn btn-sm btn-primary px-6 rounded-full" style={accentColor ? { backgroundColor: accentColor } : undefined}>
@@ -217,7 +218,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           {title || 'One Simple Price'}
         </h2>
         <p className="text-lg text-base-content/70" style={subtitleStyle}>
-          {subtitle || "Everything you need, nothing you don't"}
+          {renderRichText(subtitle, "Everything you need, nothing you don't")}
         </p>
       </div>
 

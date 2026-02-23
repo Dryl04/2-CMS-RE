@@ -1,6 +1,7 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface TestimonialsWidgetProps {
   section: PageBuilderSection;
@@ -64,7 +65,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
               className="my-4 leading-relaxed text-sm sm:text-base text-base-content/70"
               style={textStyle}
             >
-              &ldquo;{testimonial.quote}&rdquo;
+              &ldquo;{renderRichText(testimonial.quote)}&rdquo;
             </p>
             <div className="flex items-center space-x-3">
               {testimonial.avatar && (
@@ -115,7 +116,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
             className="text-xl sm:text-2xl mb-8 leading-relaxed text-base-content/70"
             style={textStyle}
           >
-            &ldquo;{testimonial.quote}&rdquo;
+            &ldquo;{renderRichText(testimonial.quote)}&rdquo;
           </p>
           <div className="flex flex-col items-center">
             {testimonial.avatar && (
@@ -173,7 +174,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
               className="mb-3 italic text-sm sm:text-base text-base-content/70"
               style={textStyle}
             >
-              &ldquo;{testimonial.quote}&rdquo;
+              &ldquo;{renderRichText(testimonial.quote)}&rdquo;
             </p>
             <div className="text-sm">
               <span

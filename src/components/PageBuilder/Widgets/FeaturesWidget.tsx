@@ -1,36 +1,13 @@
 import React from 'react';
-import {
-  Zap, Shield, Heart, Star, Globe, Lock, Clock, Layers,
-  Users, Code, Eye, Award, Target, Settings, TrendingUp,
-  CheckCircle, Cpu, Database,
-} from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
+import { renderIcon, ICON_MAP } from '../../../lib/iconLibrary';
+import { Zap } from 'lucide-react';
 
 interface FeaturesWidgetProps {
   section: PageBuilderSection;
   onUpdate: (updates: Partial<PageBuilderSection>) => void;
 }
-
-const iconMap: Record<string, any> = {
-  zap: Zap,
-  shield: Shield,
-  heart: Heart,
-  star: Star,
-  globe: Globe,
-  lock: Lock,
-  clock: Clock,
-  layers: Layers,
-  users: Users,
-  code: Code,
-  eye: Eye,
-  award: Award,
-  target: Target,
-  settings: Settings,
-  'trending-up': TrendingUp,
-  'check-circle': CheckCircle,
-  cpu: Cpu,
-  database: Database,
-};
 
 const gridColsClass: Record<number, string> = {
   2: 'grid-cols-1 sm:grid-cols-2',
@@ -69,21 +46,18 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
           className="text-lg sm:text-xl font-normal text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Everything you need to succeed'}
+          {renderRichText(subtitle, 'Everything you need to succeed')}
         </p>
       </div>
 
       <div className={`grid ${gridColsClass[columns] || gridColsClass[3]} gap-6 sm:gap-8`}>
         {(features || []).map((feature: any, index: number) => {
-          const Icon = iconMap[feature.icon] || Zap;
           return (
             <div key={index} className="text-center">
               <div
                 className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-primary"
               >
-                <Icon
-                  className="w-7 h-7 sm:w-8 sm:h-8 text-primary-content"
-                />
+                {renderIcon(feature.icon, 'w-7 h-7 sm:w-8 sm:h-8 text-primary-content', 28)}
               </div>
               <h3
                 className="text-lg sm:text-xl font-bold mb-2 text-base-content"
@@ -95,7 +69,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
                 className="text-sm sm:text-base text-base-content/70"
                 style={textStyle}
               >
-                {feature.description}
+                {renderRichText(feature.description)}
               </p>
             </div>
           );
@@ -117,13 +91,12 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
           className="text-lg sm:text-xl font-normal text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Everything you need to succeed'}
+          {renderRichText(subtitle, 'Everything you need to succeed')}
         </p>
       </div>
 
       <div className="space-y-12 sm:space-y-16">
         {(features || []).map((feature: any, index: number) => {
-          const Icon = iconMap[feature.icon] || Zap;
           const isEven = index % 2 === 0;
 
           return (
@@ -136,9 +109,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
                 <div
                   className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-6 bg-primary"
                 >
-                  <Icon
-                    className="w-7 h-7 sm:w-8 sm:h-8 text-primary-content"
-                  />
+                  {renderIcon(feature.icon, 'w-7 h-7 sm:w-8 sm:h-8 text-primary-content', 28)}
                 </div>
                 <h3
                   className="text-xl sm:text-2xl font-bold mb-4 text-base-content"
@@ -150,7 +121,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
                   className="text-base sm:text-lg text-base-content/70"
                   style={textStyle}
                 >
-                  {feature.description}
+                  {renderRichText(feature.description)}
                 </p>
               </div>
               <div className={isEven ? '' : 'md:col-start-1'}>

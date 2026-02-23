@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface HeroWidgetProps {
   section: PageBuilderSection;
@@ -162,12 +163,12 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           >
             {headline || 'Your Amazing Headline'}
           </h1>
-          <h2
+          <div
             className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal"
             style={subtitleStyle}
           >
-            {subheadline || 'A compelling subheadline that explains your value proposition'}
-          </h2>
+            {renderRichText(subheadline, 'A compelling subheadline that explains your value proposition')}
+          </div>
           <a
             href={ctaLink || '#'}
             className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -201,12 +202,12 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
       >
         {headline || 'Your Amazing Headline'}
       </h1>
-      <h2
+      <div
         className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal"
         style={subtitleStyle}
       >
-        {subheadline || 'A compelling subheadline that explains your value proposition'}
-      </h2>
+        {renderRichText(subheadline, 'A compelling subheadline that explains your value proposition')}
+      </div>
       <a
         href={ctaLink || '#'}
         className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -228,9 +229,9 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           >
             {headline || 'Your Amazing Headline'}
           </h1>
-          <h2 className="text-base-content/70 text-lg sm:text-xl mb-8 font-normal" style={subtitleStyle}>
-            {subheadline || 'A compelling subheadline that explains your value proposition'}
-          </h2>
+          <div className="text-base-content/70 text-lg sm:text-xl mb-8 font-normal" style={subtitleStyle}>
+            {renderRichText(subheadline, 'A compelling subheadline that explains your value proposition')}
+          </div>
           <a
             href={ctaLink || '#'}
             className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -266,12 +267,12 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
       >
         {headline || 'Your Amazing Headline'}
       </h1>
-      <h2
+      <div
         className="text-base-content/70 text-base sm:text-lg mb-6 font-normal"
         style={subtitleStyle}
       >
-        {subheadline || 'A compelling subheadline that explains your value proposition'}
-      </h2>
+        {renderRichText(subheadline, 'A compelling subheadline that explains your value proposition')}
+      </div>
       <a
         href={ctaLink || '#'}
         className="text-base-content font-semibold hover:underline transition-all"
@@ -314,12 +315,12 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
             >
               {headline || 'Your Amazing Headline'}
             </h1>
-            <h2
+            <div
               className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal drop-shadow-md"
               style={subtitleStyle}
             >
-              {subheadline || 'A compelling subheadline that explains your value proposition'}
-            </h2>
+              {renderRichText(subheadline, 'A compelling subheadline that explains your value proposition')}
+            </div>
             <a
               href={ctaLink || '#'}
               className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105"

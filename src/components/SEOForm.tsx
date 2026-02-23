@@ -53,6 +53,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
   const [isSaving, setIsSaving] = useState(false);
   const [showHelp, setShowHelp] = useState(true);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [folder, setFolder] = useState('');
 
   useEffect(() => {
     loadTemplates();
@@ -89,6 +90,8 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
       setStatus(editingPage.status || 'draft');
       setSectionsData(editingPage.sections_data || []);
       setSelectedTemplateId(editingPage.template_id || null);
+
+      setFolder((editingPage as any).folder || '');
 
       if (editingPage.canonical_url) {
         try {
@@ -198,10 +201,14 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
         language: 'fr',
         status,
         imported_at: new Date().toISOString(),
+        folder: folder.trim() || null,
       };
 
-      if (userId && !editingPage) {
+      // Always include user_id so RLS INSERT/UPDATE policies are satisfied
+      if (userId) {
         data.user_id = userId;
+      } else if (editingPage?.user_id) {
+        data.user_id = editingPage.user_id;
       }
 
       if (editingPage?.id) {
@@ -665,6 +672,23 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
               <div className="text-xs text-gray-600 mt-1">Retire</div>
             </button>
           </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 border-2 border-purple-200">
+          <div className="flex items-center space-x-2 mb-4">
+            <svg className="w-5 h-5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+            </svg>
+            <h4 className="font-bold text-gray-900">Dossier (optionnel)</h4>
+          </div>
+          <input
+            type="text"
+            value={folder}
+            onChange={(e) => setFolder(e.target.value)}
+            placeholder="Ex: Blog, Produits, Landing pages..."
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-600"
+          />
+          <p className="text-xs text-gray-500 mt-1">Organisez vos pages dans des dossiers</p>
         </div>
 
         <button
