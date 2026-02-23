@@ -29,7 +29,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
   const renderCentered = () => (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center">
-        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-primary/20">
+        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-primary/20" data-widget-icon-frame>
           <Mail className="w-8 h-8 text-primary" />
         </div>
         <h2
@@ -173,6 +173,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
           <div
             className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 bg-primary"
             style={accentColor ? { backgroundColor: accentColor } : undefined}
+            data-widget-icon-frame
           >
             <Mail className="w-10 h-10 text-primary-content" />
           </div>

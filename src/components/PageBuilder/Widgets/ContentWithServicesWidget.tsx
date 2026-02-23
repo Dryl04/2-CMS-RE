@@ -1,6 +1,7 @@
-import { Umbrella, Layers, PaintBucket, Clock, AlarmClock } from 'lucide-react';
+import { Umbrella, Layers, PaintBucket, Clock, AlarmClock, ImageIcon } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 import { renderRichText } from '../../../lib/htmlSanitizer';
+import { renderIcon, ICON_MAP } from '../../../lib/iconLibrary';
 
 interface ContentWithServicesWidgetProps {
   section: PageBuilderSection;
@@ -79,11 +80,16 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
                     style={{ maxHeight: '400px' }}
                   />
                 ) : (
-                  <div className="bg-base-300 rounded-lg" style={{ height: '300px' }}>
-                    {content.imageLabel && (
+                  <div className="bg-base-300 rounded-lg flex flex-col items-center justify-center text-base-content/30" style={{ height: '300px' }}>
+                    {content.imageLabel ? (
                       <div className="flex items-center justify-center h-full">
                         <span className="text-sm text-neutral-content">{content.imageLabel}</span>
                       </div>
+                    ) : (
+                      <>
+                        <ImageIcon className="w-10 h-10 mb-2" />
+                        <span className="text-sm font-medium">Image</span>
+                      </>
                     )}
                   </div>
                 )}
@@ -92,10 +98,11 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
 
             <div className={`grid ${gridCols} gap-6`}>
               {content.services?.map((service: any, index: number) => {
-                const IconComponent = iconMap[service.icon] || Umbrella;
                 return (
                   <div key={index} className="p-6 rounded-lg bg-base-200" style={servicesBg ? { backgroundColor: servicesBg } : undefined}>
-                    <IconComponent className="w-12 h-12 mb-4 text-base-content" style={headingStyle} />
+                    <div className="w-12 h-12 mb-4 flex items-center justify-center rounded-xl" data-widget-icon-frame>
+                      {renderIcon(service.icon, 'w-6 h-6 text-base-content', 24) || <Umbrella className="w-6 h-6 text-base-content" />}
+                    </div>
                     <h3 className="text-lg font-bold leading-tight text-base-content" style={headingStyle}>
                       {service.title}
                     </h3>

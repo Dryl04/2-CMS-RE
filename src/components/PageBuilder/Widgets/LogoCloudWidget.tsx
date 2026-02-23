@@ -24,13 +24,16 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 
+  const makePlaceholderLogo = (n: number) =>
+    `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80" viewBox="0 0 200 80"><rect fill="#e5e7eb" width="200" height="80" rx="8"/><text x="100" y="45" text-anchor="middle" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="16" font-weight="600">Logo ${n}</text></svg>`)}`;
+
   const defaultLogos = [
-    { name: 'Company 1', url: 'https://via.placeholder.com/200x80/cccccc/666666?text=Logo+1' },
-    { name: 'Company 2', url: 'https://via.placeholder.com/200x80/cccccc/666666?text=Logo+2' },
-    { name: 'Company 3', url: 'https://via.placeholder.com/200x80/cccccc/666666?text=Logo+3' },
-    { name: 'Company 4', url: 'https://via.placeholder.com/200x80/cccccc/666666?text=Logo+4' },
-    { name: 'Company 5', url: 'https://via.placeholder.com/200x80/cccccc/666666?text=Logo+5' },
-    { name: 'Company 6', url: 'https://via.placeholder.com/200x80/cccccc/666666?text=Logo+6' },
+    { name: 'Company 1', url: makePlaceholderLogo(1) },
+    { name: 'Company 2', url: makePlaceholderLogo(2) },
+    { name: 'Company 3', url: makePlaceholderLogo(3) },
+    { name: 'Company 4', url: makePlaceholderLogo(4) },
+    { name: 'Company 5', url: makePlaceholderLogo(5) },
+    { name: 'Company 6', url: makePlaceholderLogo(6) },
   ];
 
   const renderGrid = () => (

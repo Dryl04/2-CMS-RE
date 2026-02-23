@@ -197,6 +197,7 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-primary/10"
               style={accentColor ? { backgroundColor: `${accentColor}15` } : undefined}
+              data-widget-icon-frame
             >
               <span
                 className="text-xl font-bold text-primary"

@@ -384,10 +384,7 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
     ...(normalizedSection.design.background.type === "image" &&
     normalizedSection.design.background.value
       ? {
-          backgroundImage: `url(${normalizedSection.design.background.value})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
+          "--widget-bg-image": `url(${normalizedSection.design.background.value})`,
           "--widget-bg-opacity": String(
             normalizedSection.design.background.opacity ?? 1,
           ),

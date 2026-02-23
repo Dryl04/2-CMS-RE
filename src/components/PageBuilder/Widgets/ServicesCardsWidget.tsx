@@ -85,7 +85,7 @@ export default function ServicesCardsWidget({ section }: ServicesCardsWidgetProp
                     />
                   )}
                   <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
-                    <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg bg-primary">
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg bg-primary" data-widget-icon-frame>
                       <IconComponent className="w-8 h-8 text-primary-content" />
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ImageIcon } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 import { renderRichText } from '../../../lib/htmlSanitizer';
 
@@ -139,7 +140,10 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
           className="w-full h-48 sm:h-64 object-cover rounded-2xl"
         />
       ) : (
-        <div className="bg-base-300 rounded-2xl h-48 sm:h-64" />
+        <div className="bg-base-300 rounded-2xl h-48 sm:h-64 flex flex-col items-center justify-center text-base-content/30">
+          <ImageIcon className="w-10 h-10 mb-2" />
+          <span className="text-sm font-medium">Image</span>
+        </div>
       )}
     </div>
   );

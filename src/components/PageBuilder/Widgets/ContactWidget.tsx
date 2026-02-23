@@ -46,6 +46,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
             <div className="flex items-start space-x-4">
               <div
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-primary"
+                data-widget-icon-frame
               >
                 <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" />
               </div>
@@ -62,6 +63,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
             <div className="flex items-start space-x-4">
               <div
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-primary"
+                data-widget-icon-frame
               >
                 <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" />
               </div>
@@ -78,6 +80,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
             <div className="flex items-start space-x-4">
               <div
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-primary"
+                data-widget-icon-frame
               >
                 <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-primary-content" />
               </div>

@@ -12,6 +12,9 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   const { title, subtitle, videoUrl, thumbnail, ctaText, ctaLink } = section.content;
   const [isPlaying, setIsPlaying] = useState(false);
   const textPosition = section.content?.textPosition || 'center';
+  const autoplay = section.content?.autoplay !== false;
+  const videoOverlayColor = section.content?.videoOverlayColor || '';
+  const videoOverlayOpacity = section.content?.videoOverlayOpacity ?? 0.5;
 
   const design = section.design || {};
   const hideDecorationsOnVideoPlay = design.media?.hideDecorationsOnVideoPlay === true;
@@ -52,11 +55,11 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
     if (!url) return '';
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
       const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
-      return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      return `https://www.youtube.com/embed/${videoId}?autoplay=${autoplay ? 1 : 0}`;
     }
     if (url.includes('vimeo.com')) {
       const videoId = url.split('/').pop();
-      return `https://player.vimeo.com/video/${videoId}?autoplay=1`;
+      return `https://player.vimeo.com/video/${videoId}?autoplay=${autoplay ? 1 : 0}`;
     }
     return url;
   };
@@ -87,7 +90,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         )}
       </div>
 
-      <div className="absolute inset-0 bg-neutral/50" />
+      <div className="absolute inset-0 bg-neutral/50" style={videoOverlayColor ? { backgroundColor: videoOverlayColor, opacity: videoOverlayOpacity } : undefined} />
 
       <div className={`absolute inset-0 flex ${textPosition === 'top' ? 'items-start' : textPosition === 'bottom' ? 'items-end' : 'items-center'} justify-center py-10 sm:py-16 transition-opacity ${shouldHideDecorations ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <div className="w-full max-w-4xl mx-auto px-4 text-center">
@@ -172,7 +175,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
                 alt="Video thumbnail"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-neutral/30 group-hover:bg-neutral/40 transition-colors flex items-center justify-center">
+              <div className="absolute inset-0 bg-neutral/30 group-hover:bg-neutral/40 transition-colors flex items-center justify-center" style={videoOverlayColor ? { backgroundColor: videoOverlayColor, opacity: videoOverlayOpacity } : undefined}>
                 <div className="w-20 h-20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style={playPauseButtonStyle}>
                   <Play className="w-8 h-8 text-primary-content ml-1" fill="currentColor" />
                 </div>
@@ -255,7 +258,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
                   alt="Video thumbnail"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-neutral/30 group-hover:bg-neutral/40 transition-colors flex items-center justify-center">
+                <div className="absolute inset-0 bg-neutral/30 group-hover:bg-neutral/40 transition-colors flex items-center justify-center" style={videoOverlayColor ? { backgroundColor: videoOverlayColor, opacity: videoOverlayOpacity } : undefined}>
                   <div className="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform" style={playPauseButtonStyle}>
                     <Play className="w-7 h-7 text-primary-content ml-1" fill="currentColor" />
                   </div>
@@ -307,7 +310,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
               alt="Video thumbnail"
               className="w-full max-w-4xl h-auto"
             />
-            <div className="absolute inset-0 bg-neutral/30 group-hover:bg-neutral/40 transition-colors flex items-center justify-center">
+            <div className="absolute inset-0 bg-neutral/30 group-hover:bg-neutral/40 transition-colors flex items-center justify-center" style={videoOverlayColor ? { backgroundColor: videoOverlayColor, opacity: videoOverlayOpacity } : undefined}>
               <div
                 className="w-24 h-24 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform bg-primary"
                 style={accentColor ? { backgroundColor: accentColor } : undefined}

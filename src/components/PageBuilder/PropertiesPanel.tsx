@@ -66,13 +66,21 @@ function RichTextArea({
   rows?: number;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const selectionRef = useRef<{ start: number; end: number }>({ start: 0, end: 0 });
+
+  // Track selection changes so we always have the latest selection even if focus is lost
+  const handleSelect = useCallback(() => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    selectionRef.current = { start: ta.selectionStart, end: ta.selectionEnd };
+  }, []);
 
   const wrapSelection = useCallback(
     (before: string, after: string) => {
       const ta = textareaRef.current;
       if (!ta) return;
-      const start = ta.selectionStart;
-      const end = ta.selectionEnd;
+      const start = selectionRef.current.start;
+      const end = selectionRef.current.end;
       const selected = value.substring(start, end);
 
       // Toggle OFF: check if selection is already wrapped with the tag
@@ -127,8 +135,8 @@ function RichTextArea({
   const handleLink = () => {
     const ta = textareaRef.current;
     if (!ta) return;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
+    const start = selectionRef.current.start;
+    const end = selectionRef.current.end;
     const selected = value.substring(start, end);
     const url = prompt('URL du lien :', 'https://');
     if (!url) return;
@@ -140,20 +148,23 @@ function RichTextArea({
   const btnClass =
     'p-1 rounded hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors';
 
+  // Prevent buttons from stealing focus so textarea keeps its selection
+  const preventFocusLoss = (e: React.MouseEvent) => e.preventDefault();
+
   return (
     <div>
       <label className="block text-xs text-gray-600 mb-1">{label}</label>
       <div className="flex gap-0.5 mb-1">
-        <button type="button" className={btnClass} onClick={handleBold} title="Gras (HTML)">
+        <button type="button" className={btnClass} onClick={handleBold} onMouseDown={preventFocusLoss} title="Gras (HTML)">
           <Bold size={13} />
         </button>
-        <button type="button" className={btnClass} onClick={handleItalic} title="Italique (HTML)">
+        <button type="button" className={btnClass} onClick={handleItalic} onMouseDown={preventFocusLoss} title="Italique (HTML)">
           <Italic size={13} />
         </button>
-        <button type="button" className={btnClass} onClick={handleUnderline} title="Souligné (HTML)">
+        <button type="button" className={btnClass} onClick={handleUnderline} onMouseDown={preventFocusLoss} title="Souligné (HTML)">
           <Underline size={13} />
         </button>
-        <button type="button" className={btnClass} onClick={handleLink} title="Lien (HTML)">
+        <button type="button" className={btnClass} onClick={handleLink} onMouseDown={preventFocusLoss} title="Lien (HTML)">
           <Link2 size={13} />
         </button>
       </div>
@@ -161,6 +172,9 @@ function RichTextArea({
         ref={textareaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onSelect={handleSelect}
+        onKeyUp={handleSelect}
+        onClick={handleSelect}
         rows={rows}
         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono"
       />
