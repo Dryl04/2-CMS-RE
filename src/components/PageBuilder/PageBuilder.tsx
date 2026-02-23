@@ -452,7 +452,7 @@ export default function PageBuilder({
                               className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center space-x-2"
                             >
                               <FileJson className="w-4 h-4 text-blue-500" />
-                              <span>JSON</span>
+                              <span>JSON ultra-compact</span>
                             </button>
                             <button
                               onClick={(e) => {

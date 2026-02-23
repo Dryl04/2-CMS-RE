@@ -14,28 +14,29 @@ Quand vous recevez un export de template, il a cette structure :
 
 ```json
 {
+  "export_version": 4,
+  "export_mode": "maximum-compact",
   "template": {
     "id": "uuid-du-modele",
-    "name": "Nom du modele",
     "daisy_theme_slug": "light",
     "exported_at": "2026-02-20T..."
   },
-  "sections": [ ... tableau de sections ... ],
-  "variables": [
-    {
-      "sectionId": "section-hero-xxx",
-      "sectionType": "hero",
-      "sectionVariant": "default",
-      "fieldPath": "content.headline",
-      "fieldLabel": "Titre principal",
-      "fieldType": "text",
-      "currentValue": "Texte actuel"
-    }
-  ]
+  "editable_sections": [ ... sections + champs editables groupes ... ],
+  "array_cardinality": { ... tailles exactes des tableaux ... },
+  "stats": {
+    "section_count": 6,
+    "variable_count": 42
+  }
 }
 ```
 
-Le tableau `variables` liste tous les champs editables de chaque section. Utilisez-le comme reference pour savoir quels champs `content` modifier dans `sections_data`. Recopiez les sections telles quelles et ne changez que les valeurs `content` listees dans `variables`.
+L'export est maintenant en **mode maximum-compact** (JSON minifie + champs editables groupes + shape compressee des contenus) pour diminuer au maximum la taille du fichier sans perte de rendu final.
+
+`editable_sections` donne la structure par section (id/type/variant/order), les champs editables (`fieldPath`) et une shape de contenu legere. Les tableaux y sont compresses avec `__count` et `__item`.
+
+`array_cardinality` donne la cardinalite exacte des champs de type tableau (ex: `content.features`, `content.testimonials`).
+
+Pour minimiser le JSON de retour, utilisez `content_overrides` (recommande) plutot que recopier tout `sections_data`.
 
 **Important :** Ne modifiez PAS `design`, `variant`, `themeConfig`, ni `advanced` sauf si on vous le demande explicitement — ces proprietes controlent le style visuel et doivent rester intactes.
 
@@ -54,6 +55,32 @@ Le JSON final doit etre un objet avec une cle `"pages"` contenant un tableau de 
   ]
 }
 ```
+
+### Format maximum-compact recommande
+
+```json
+{
+  "template": { "id": "uuid-du-modele", "daisy_theme_slug": "light" },
+  "pages": [
+    {
+      "page_key": "plombier-paris-15",
+      "title": "Plombier Paris 15 - Depannage rapide 24/7",
+      "description": "Intervention rapide de plombiers certifies a Paris 15. Devis gratuit et prix transparents.",
+      "status": "published",
+      "template_id": "uuid-du-modele",
+      "content_overrides": {
+        "section-hero-xxx": {
+          "content.headline": "Plombier Paris 15 : intervention en 30 min",
+          "content.subheadline": "Depannage urgent 24/7, artisans certifies, devis gratuit.",
+          "content.ctaText": "Appeler maintenant"
+        }
+      }
+    }
+  ]
+}
+```
+
+Dans ce format, l'importeur reconstruit automatiquement `sections_data` depuis `template_id`, puis applique les remplacements `content_overrides`.
 
 ---
 
@@ -92,15 +119,18 @@ Chaque page du tableau doit contenir exactement les champs suivants :
 
 ### Champ de contenu visuel
 
-| Champ           | Type  | Description                                                                                                   |
-| --------------- | ----- | ------------------------------------------------------------------------------------------------------------- |
-| `sections_data` | array | Le tableau des sections du modele avec le contenu remplace. Accepte aussi la cle `sections`. Voir ci-dessous. |
+| Champ               | Type   | Description                                                                                                                  |
+| ------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `sections_data`     | array  | Le tableau des sections du modele avec le contenu remplace. Accepte aussi la cle `sections`. Voir ci-dessous.                |
+| `content_overrides` | object | Format compact recommande: `{ [sectionId]: { [fieldPath]: value } }`. Necessite `template_id` si `sections_data` est absent. |
 
 ---
 
 ## Comment remplir `sections_data`
 
 Le `sections_data` est le coeur du travail. C'est le tableau des sections visuelles de la page.
+
+Si vous utilisez `content_overrides`, vous pouvez ignorer cette section: l'importeur reconstruit automatiquement `sections_data` a partir du `template_id`.
 
 ### Regle fondamentale
 

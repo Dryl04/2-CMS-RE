@@ -37,6 +37,38 @@ function normalizeSectionsData(raw: unknown): PageBuilderSection[] {
   return [];
 }
 
+function buildContentSkeleton(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return {
+      __count: value.length,
+      __item: value.length > 0 ? buildContentSkeleton(value[0]) : null,
+    };
+  }
+
+  if (value && typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    const skeleton: Record<string, unknown> = {};
+    Object.keys(obj).forEach((key) => {
+      skeleton[key] = buildContentSkeleton(obj[key]);
+    });
+    return skeleton;
+  }
+
+  if (typeof value === "string") {
+    return "";
+  }
+
+  if (typeof value === "number") {
+    return 0;
+  }
+
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  return null;
+}
+
 export function extractTemplateVariables(
   sections: PageBuilderSection[],
 ): TemplateVariable[] {
@@ -333,90 +365,300 @@ export function extractTemplateVariables(
       case "pricing":
       case "membership-pricing":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.plans", fieldLabel: "Plans tarifaires", fieldType: "array", currentValue: section.content.plans },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.plans",
+            fieldLabel: "Plans tarifaires",
+            fieldType: "array",
+            currentValue: section.content.plans,
+          },
         );
         break;
 
       case "stats":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.stats", fieldLabel: "Statistiques", fieldType: "array", currentValue: section.content.stats },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.stats",
+            fieldLabel: "Statistiques",
+            fieldType: "array",
+            currentValue: section.content.stats,
+          },
         );
         break;
 
       case "team":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.members", fieldLabel: "Membres de l equipe", fieldType: "array", currentValue: section.content.members },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.members",
+            fieldLabel: "Membres de l equipe",
+            fieldType: "array",
+            currentValue: section.content.members,
+          },
         );
         break;
 
       case "faq":
       case "faq-two-columns":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.faqs", fieldLabel: "Questions / Reponses", fieldType: "array", currentValue: section.content.faqs },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.faqs",
+            fieldLabel: "Questions / Reponses",
+            fieldType: "array",
+            currentValue: section.content.faqs,
+          },
         );
         break;
 
       case "logocloud":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.logos", fieldLabel: "Logos partenaires", fieldType: "array", currentValue: section.content.logos },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.logos",
+            fieldLabel: "Logos partenaires",
+            fieldType: "array",
+            currentValue: section.content.logos,
+          },
         );
         break;
 
       case "videohero":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.videoUrl", fieldLabel: "URL de la video", fieldType: "text", currentValue: section.content.videoUrl },
-          { ...baseInfo, fieldPath: "content.thumbnail", fieldLabel: "Vignette", fieldType: "image", currentValue: section.content.thumbnail },
-          { ...baseInfo, fieldPath: "content.ctaText", fieldLabel: "Texte bouton", fieldType: "text", currentValue: section.content.ctaText },
-          { ...baseInfo, fieldPath: "content.ctaLink", fieldLabel: "Lien bouton", fieldType: "text", currentValue: section.content.ctaLink },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.videoUrl",
+            fieldLabel: "URL de la video",
+            fieldType: "text",
+            currentValue: section.content.videoUrl,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.thumbnail",
+            fieldLabel: "Vignette",
+            fieldType: "image",
+            currentValue: section.content.thumbnail,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.ctaText",
+            fieldLabel: "Texte bouton",
+            fieldType: "text",
+            currentValue: section.content.ctaText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.ctaLink",
+            fieldLabel: "Lien bouton",
+            fieldType: "text",
+            currentValue: section.content.ctaLink,
+          },
         );
         break;
 
       case "gallery":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.items", fieldLabel: "Images", fieldType: "array", currentValue: section.content.items },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.items",
+            fieldLabel: "Images",
+            fieldType: "array",
+            currentValue: section.content.items,
+          },
         );
         break;
 
       case "timeline":
       case "timeline-grid":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.events", fieldLabel: "Evenements", fieldType: "array", currentValue: section.content.events },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.events",
+            fieldLabel: "Evenements",
+            fieldType: "array",
+            currentValue: section.content.events,
+          },
         );
         break;
 
       case "newsletter":
       case "newsletter-signup":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.placeholder", fieldLabel: "Placeholder email", fieldType: "text", currentValue: section.content.placeholder },
-          { ...baseInfo, fieldPath: "content.buttonText", fieldLabel: "Texte du bouton", fieldType: "text", currentValue: section.content.buttonText },
-          { ...baseInfo, fieldPath: "content.privacyNote", fieldLabel: "Note confidentialite", fieldType: "text", currentValue: section.content.privacyNote },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.placeholder",
+            fieldLabel: "Placeholder email",
+            fieldType: "text",
+            currentValue: section.content.placeholder,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.buttonText",
+            fieldLabel: "Texte du bouton",
+            fieldType: "text",
+            currentValue: section.content.buttonText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.privacyNote",
+            fieldLabel: "Note confidentialite",
+            fieldType: "text",
+            currentValue: section.content.privacyNote,
+          },
         );
         break;
 
       case "process":
       case "process-steps-cards":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.steps", fieldLabel: "Etapes", fieldType: "array", currentValue: section.content.steps },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.steps",
+            fieldLabel: "Etapes",
+            fieldType: "array",
+            currentValue: section.content.steps,
+          },
         );
         break;
 
@@ -424,62 +666,248 @@ export function extractTemplateVariables(
       case "services-cards":
       case "services-carousel":
         variables.push(
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.description", fieldLabel: "Description", fieldType: "text", currentValue: section.content.description },
-          { ...baseInfo, fieldPath: "content.services", fieldLabel: "Services", fieldType: "array", currentValue: section.content.services },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.description",
+            fieldLabel: "Description",
+            fieldType: "text",
+            currentValue: section.content.description,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.services",
+            fieldLabel: "Services",
+            fieldType: "array",
+            currentValue: section.content.services,
+          },
         );
         break;
 
       case "contact-split":
         variables.push(
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.description", fieldLabel: "Description", fieldType: "text", currentValue: section.content.description },
-          { ...baseInfo, fieldPath: "content.phone", fieldLabel: "Telephone", fieldType: "text", currentValue: section.content.phone },
-          { ...baseInfo, fieldPath: "content.address", fieldLabel: "Adresse", fieldType: "text", currentValue: section.content.address },
-          { ...baseInfo, fieldPath: "content.email", fieldLabel: "Email", fieldType: "text", currentValue: section.content.email },
-          { ...baseInfo, fieldPath: "content.formTitle", fieldLabel: "Titre du formulaire", fieldType: "text", currentValue: section.content.formTitle },
-          { ...baseInfo, fieldPath: "content.buttonText", fieldLabel: "Texte du bouton", fieldType: "text", currentValue: section.content.buttonText },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.description",
+            fieldLabel: "Description",
+            fieldType: "text",
+            currentValue: section.content.description,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.phone",
+            fieldLabel: "Telephone",
+            fieldType: "text",
+            currentValue: section.content.phone,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.address",
+            fieldLabel: "Adresse",
+            fieldType: "text",
+            currentValue: section.content.address,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.email",
+            fieldLabel: "Email",
+            fieldType: "text",
+            currentValue: section.content.email,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.formTitle",
+            fieldLabel: "Titre du formulaire",
+            fieldType: "text",
+            currentValue: section.content.formTitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.buttonText",
+            fieldLabel: "Texte du bouton",
+            fieldType: "text",
+            currentValue: section.content.buttonText,
+          },
         );
         break;
 
       case "feedback-contact":
         variables.push(
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.description", fieldLabel: "Description", fieldType: "text", currentValue: section.content.description },
-          { ...baseInfo, fieldPath: "content.formTitle", fieldLabel: "Titre du formulaire", fieldType: "text", currentValue: section.content.formTitle },
-          { ...baseInfo, fieldPath: "content.buttonText", fieldLabel: "Texte du bouton", fieldType: "text", currentValue: section.content.buttonText },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.description",
+            fieldLabel: "Description",
+            fieldType: "text",
+            currentValue: section.content.description,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.formTitle",
+            fieldLabel: "Titre du formulaire",
+            fieldType: "text",
+            currentValue: section.content.formTitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.buttonText",
+            fieldLabel: "Texte du bouton",
+            fieldType: "text",
+            currentValue: section.content.buttonText,
+          },
         );
         break;
 
       case "editorial-cards-row":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.ctaText", fieldLabel: "Texte voir tout", fieldType: "text", currentValue: section.content.ctaText },
-          { ...baseInfo, fieldPath: "content.ctaLink", fieldLabel: "Lien voir tout", fieldType: "text", currentValue: section.content.ctaLink },
-          { ...baseInfo, fieldPath: "content.cards", fieldLabel: "Cartes editoriales", fieldType: "array", currentValue: section.content.cards },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.ctaText",
+            fieldLabel: "Texte voir tout",
+            fieldType: "text",
+            currentValue: section.content.ctaText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.ctaLink",
+            fieldLabel: "Lien voir tout",
+            fieldType: "text",
+            currentValue: section.content.ctaLink,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.cards",
+            fieldLabel: "Cartes editoriales",
+            fieldType: "array",
+            currentValue: section.content.cards,
+          },
         );
         break;
 
       case "minimal-final-cta":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.primaryText", fieldLabel: "Texte bouton principal", fieldType: "text", currentValue: section.content.primaryText },
-          { ...baseInfo, fieldPath: "content.primaryLink", fieldLabel: "Lien bouton principal", fieldType: "text", currentValue: section.content.primaryLink },
-          { ...baseInfo, fieldPath: "content.secondaryText", fieldLabel: "Texte bouton secondaire", fieldType: "text", currentValue: section.content.secondaryText },
-          { ...baseInfo, fieldPath: "content.secondaryLink", fieldLabel: "Lien bouton secondaire", fieldType: "text", currentValue: section.content.secondaryLink },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.primaryText",
+            fieldLabel: "Texte bouton principal",
+            fieldType: "text",
+            currentValue: section.content.primaryText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.primaryLink",
+            fieldLabel: "Lien bouton principal",
+            fieldType: "text",
+            currentValue: section.content.primaryLink,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.secondaryText",
+            fieldLabel: "Texte bouton secondaire",
+            fieldType: "text",
+            currentValue: section.content.secondaryText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.secondaryLink",
+            fieldLabel: "Lien bouton secondaire",
+            fieldType: "text",
+            currentValue: section.content.secondaryLink,
+          },
         );
         break;
 
       case "cinematic-footer":
         variables.push(
-          { ...baseInfo, fieldPath: "content.brand", fieldLabel: "Nom de marque", fieldType: "text", currentValue: section.content.brand },
-          { ...baseInfo, fieldPath: "content.copyright", fieldLabel: "Copyright", fieldType: "text", currentValue: section.content.copyright },
-          { ...baseInfo, fieldPath: "content.socials", fieldLabel: "Reseaux sociaux", fieldType: "array", currentValue: section.content.socials },
-          { ...baseInfo, fieldPath: "content.columns", fieldLabel: "Colonnes de liens", fieldType: "array", currentValue: section.content.columns },
+          {
+            ...baseInfo,
+            fieldPath: "content.brand",
+            fieldLabel: "Nom de marque",
+            fieldType: "text",
+            currentValue: section.content.brand,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.copyright",
+            fieldLabel: "Copyright",
+            fieldType: "text",
+            currentValue: section.content.copyright,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.socials",
+            fieldLabel: "Reseaux sociaux",
+            fieldType: "array",
+            currentValue: section.content.socials,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.columns",
+            fieldLabel: "Colonnes de liens",
+            fieldType: "array",
+            currentValue: section.content.columns,
+          },
         );
         break;
 
@@ -489,30 +917,108 @@ export function extractTemplateVariables(
       case "hero-with-testimonials":
       case "creative-network-hero":
         variables.push(
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre principal", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.description", fieldLabel: "Description", fieldType: "text", currentValue: section.content.description },
-          { ...baseInfo, fieldPath: "content.ctaText", fieldLabel: "Texte bouton", fieldType: "text", currentValue: section.content.ctaText },
-          { ...baseInfo, fieldPath: "content.ctaLink", fieldLabel: "Lien bouton", fieldType: "text", currentValue: section.content.ctaLink },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre principal",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.description",
+            fieldLabel: "Description",
+            fieldType: "text",
+            currentValue: section.content.description,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.ctaText",
+            fieldLabel: "Texte bouton",
+            fieldType: "text",
+            currentValue: section.content.ctaText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.ctaLink",
+            fieldLabel: "Lien bouton",
+            fieldType: "text",
+            currentValue: section.content.ctaLink,
+          },
         );
         break;
 
       case "clickfunnels-hero":
         variables.push(
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre ligne 1", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Titre ligne 2", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.tagline", fieldLabel: "Tagline", fieldType: "text", currentValue: section.content.tagline },
-          { ...baseInfo, fieldPath: "content.buttonText", fieldLabel: "Texte du bouton", fieldType: "text", currentValue: section.content.buttonText },
-          { ...baseInfo, fieldPath: "content.inputPlaceholder", fieldLabel: "Placeholder email", fieldType: "text", currentValue: section.content.inputPlaceholder },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre ligne 1",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Titre ligne 2",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.tagline",
+            fieldLabel: "Tagline",
+            fieldType: "text",
+            currentValue: section.content.tagline,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.buttonText",
+            fieldLabel: "Texte du bouton",
+            fieldType: "text",
+            currentValue: section.content.buttonText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.inputPlaceholder",
+            fieldLabel: "Placeholder email",
+            fieldType: "text",
+            currentValue: section.content.inputPlaceholder,
+          },
         );
         break;
 
       case "bento-features":
       case "features-carousel":
         variables.push(
-          { ...baseInfo, fieldPath: "content.subtitle", fieldLabel: "Sous-titre", fieldType: "text", currentValue: section.content.subtitle },
-          { ...baseInfo, fieldPath: "content.title", fieldLabel: "Titre", fieldType: "text", currentValue: section.content.title },
-          { ...baseInfo, fieldPath: "content.features", fieldLabel: "Fonctionnalites", fieldType: "array", currentValue: section.content.features },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.features",
+            fieldLabel: "Fonctionnalites",
+            fieldType: "array",
+            currentValue: section.content.features,
+          },
         );
         break;
 
@@ -545,40 +1051,72 @@ export function extractTemplateVariables(
 }
 
 export function exportTemplateAsJSON(template: PageTemplate): string {
-  const normalizedSections = normalizeSectionsData(template.sections_data).map((section) =>
-    normalizeSectionForTheme(section),
+  const normalizedSections = normalizeSectionsData(template.sections_data).map(
+    (section) => normalizeSectionForTheme(section),
   );
   const variables = extractTemplateVariables(normalizedSections);
+  const variablesBySection = variables.reduce(
+    (acc, variable) => {
+      if (!acc[variable.sectionId]) {
+        acc[variable.sectionId] = [];
+      }
+      acc[variable.sectionId].push([variable.fieldPath, variable.fieldType]);
+      return acc;
+    },
+    {} as Record<string, Array<[string, TemplateVariable["fieldType"]]>>,
+  );
+
+  const editable_sections = normalizedSections.map((section) => ({
+    id: section.id,
+    type: section.type,
+    variant: section.variant,
+    order: section.order,
+    fields: variablesBySection[section.id] || [],
+    content_shape: buildContentSkeleton(section.content),
+  }));
+
+  const array_cardinality = variables.reduce(
+    (acc, variable) => {
+      if (variable.fieldType !== "array") {
+        return acc;
+      }
+
+      const currentArray = Array.isArray(variable.currentValue)
+        ? variable.currentValue
+        : [];
+
+      if (!acc[variable.sectionId]) {
+        acc[variable.sectionId] = {};
+      }
+
+      acc[variable.sectionId][variable.fieldPath] = currentArray.length;
+      return acc;
+    },
+    {} as Record<string, Record<string, number>>,
+  );
 
   const exportData = {
+    export_version: 4,
+    export_mode: "maximum-compact",
     template: {
       id: template.id,
-      name: template.name,
-      description: template.description,
       daisy_theme_slug: template.daisy_theme_slug || null,
-      is_public: template.is_public,
-      created_at: template.created_at,
-      updated_at: template.updated_at,
       exported_at: new Date().toISOString(),
     },
-    sections: normalizedSections,
-    variables: variables.map((v) => ({
-      sectionId: v.sectionId,
-      sectionType: v.sectionType,
-      sectionVariant: v.sectionVariant,
-      fieldPath: v.fieldPath,
-      fieldLabel: v.fieldLabel,
-      fieldType: v.fieldType,
-      currentValue: v.currentValue,
-    })),
+    editable_sections,
+    array_cardinality,
+    stats: {
+      section_count: normalizedSections.length,
+      variable_count: variables.length,
+    },
   };
 
-  return JSON.stringify(exportData, null, 2);
+  return JSON.stringify(exportData);
 }
 
 export function exportTemplateAsCSV(template: PageTemplate): string {
-  const normalizedSections = normalizeSectionsData(template.sections_data).map((section) =>
-    normalizeSectionForTheme(section),
+  const normalizedSections = normalizeSectionsData(template.sections_data).map(
+    (section) => normalizeSectionForTheme(section),
   );
   const variables = extractTemplateVariables(normalizedSections);
 
@@ -660,7 +1198,9 @@ export function applyDataToTemplate(
         updatedSection.design = {
           ...updatedSection.design,
           [pathParts[1]]: {
-            ...(updatedSection.design[pathParts[1] as keyof typeof updatedSection.design] as Record<string, any> || {}),
+            ...((updatedSection.design[
+              pathParts[1] as keyof typeof updatedSection.design
+            ] as Record<string, any>) || {}),
             [pathParts[2]]: value,
           },
         };

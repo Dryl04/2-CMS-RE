@@ -25,6 +25,7 @@ interface ImportedPage {
   template_id?: string;
   daisy_theme_slug?: string | null;
   sections_data?: any[];
+  content_overrides?: Record<string, Record<string, any>>;
 }
 
 interface CombinedImportPayload {
@@ -35,6 +36,11 @@ interface CombinedImportPayload {
   sections?: any[];
   sections_data?: any[];
   pages?: ImportedPage[];
+}
+
+interface TemplateSectionsRow {
+  id: string;
+  sections_data: any;
 }
 
 interface ValidationError {
@@ -60,6 +66,65 @@ const SIMPLE_TEMPLATE = `[
     "status": "draft"
   }
 ]`;
+
+function normalizeSectionsData(raw: unknown): any[] {
+  if (Array.isArray(raw)) {
+    return raw;
+  }
+
+  if (typeof raw === 'string') {
+    try {
+      return normalizeSectionsData(JSON.parse(raw));
+    } catch {
+      return [];
+    }
+  }
+
+  if (raw && typeof raw === 'object') {
+    const obj = raw as Record<string, unknown>;
+    if (Array.isArray(obj.sections)) {
+      return obj.sections;
+    }
+    if (Array.isArray(obj.sections_data)) {
+      return obj.sections_data;
+    }
+  }
+
+  return [];
+}
+
+function setNestedValue(target: Record<string, any>, path: string[], value: any) {
+  if (path.length === 0) return;
+
+  let current: Record<string, any> = target;
+  for (let index = 0; index < path.length - 1; index += 1) {
+    const key = path[index];
+    const existing = current[key];
+    if (!existing || typeof existing !== 'object' || Array.isArray(existing)) {
+      current[key] = {};
+    }
+    current = current[key];
+  }
+
+  current[path[path.length - 1]] = value;
+}
+
+function applyContentOverrides(baseSections: any[], overrides: Record<string, Record<string, any>>) {
+  return baseSections.map((rawSection) => {
+    const section = JSON.parse(JSON.stringify(rawSection));
+    const sectionOverrides = overrides?.[section.id];
+
+    if (sectionOverrides && typeof sectionOverrides === 'object') {
+      Object.entries(sectionOverrides).forEach(([fieldPath, value]) => {
+        const pathParts = fieldPath.split('.').filter(Boolean);
+        if (pathParts[0] !== 'content') return;
+        setNestedValue(section, pathParts, value);
+      });
+    }
+
+    return normalizeSectionForTheme(sanitizeSectionUrls(section));
+  });
+}
 
 export default function SEOImporter({ onImportComplete, userId }: SEOImporterProps) {
   const [importMode, setImportMode] = useState<'simple' | 'template'>('template');
@@ -95,6 +160,14 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
 
     if (page.status && !['draft', 'published', 'archived'].includes(page.status)) {
       errors.push({ row, field: 'status', message: 'status doit etre draft, published ou archived' });
+    }
+
+    if (page.content_overrides && typeof page.content_overrides !== 'object') {
+      errors.push({ row, field: 'content_overrides', message: 'content_overrides doit etre un objet' });
+    }
+
+    if (page.content_overrides && !page.template_id && (!page.sections_data || page.sections_data.length === 0)) {
+      errors.push({ row, field: 'template_id', message: 'template_id est obligatoire quand content_overrides est utilise sans sections_data' });
     }
 
     if (page.sections_data && !Array.isArray(page.sections_data)) {
@@ -160,6 +233,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
             template_id: page.template_id || baseTemplateId,
             daisy_theme_slug: page.daisy_theme_slug ?? baseThemeSlug,
             sections_data: normalizeSectionsForImport(pageSections),
+            content_overrides: page.content_overrides,
           };
         });
       }
@@ -185,6 +259,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
         sections_data: Array.isArray(page.sections_data)
           ? normalizeSectionsForImport(page.sections_data)
           : [],
+        content_overrides: page.content_overrides,
         status: autoPublish ? 'published' as const : (page.status || 'draft' as const),
       }));
 
@@ -209,7 +284,69 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
   const handleImport = async () => {
     setIsImporting(true);
     try {
-      const dataToImport = previewData.map(page => {
+      const pagesNeedingTemplateHydration = previewData.filter(
+        (page) =>
+          (!page.sections_data || page.sections_data.length === 0) &&
+          !!page.content_overrides &&
+          !!page.template_id,
+      );
+
+      const templateIds = Array.from(
+        new Set(pagesNeedingTemplateHydration.map((page) => page.template_id).filter(Boolean) as string[]),
+      );
+
+      const templateSectionsById: Record<string, any[]> = {};
+      if (templateIds.length > 0) {
+        const { data: templatesData, error: templatesError } = await supabase
+          .from('page_templates')
+          .select('id, sections_data')
+          .in('id', templateIds);
+
+        if (templatesError) throw templatesError;
+
+        (templatesData as TemplateSectionsRow[] | null)?.forEach((template) => {
+          templateSectionsById[template.id] = normalizeSectionsForImport(normalizeSectionsData(template.sections_data));
+        });
+      }
+
+      const resolvedPreviewData = previewData.map((page) => {
+        const hasSections = Array.isArray(page.sections_data) && page.sections_data.length > 0;
+        if (hasSections) {
+          return {
+            ...page,
+            sections_data: normalizeSectionsForImport(page.sections_data || []),
+          };
+        }
+
+        if (page.content_overrides && page.template_id) {
+          const baseSections = templateSectionsById[page.template_id] || [];
+          return {
+            ...page,
+            sections_data: applyContentOverrides(baseSections, page.content_overrides),
+          };
+        }
+
+        return {
+          ...page,
+          sections_data: [],
+        };
+      });
+
+      const unresolvedPages = resolvedPreviewData
+        .map((page, index) => ({ page, index }))
+        .filter(({ page }) =>
+          !!page.content_overrides &&
+          (!Array.isArray(page.sections_data) || page.sections_data.length === 0),
+        );
+
+      if (unresolvedPages.length > 0) {
+        const details = unresolvedPages
+          .map(({ page, index }) => `page ${index + 1} (${page.page_key || 'sans page_key'})`)
+          .join(', ');
+        throw new Error(`Impossible de reconstruire sections_data pour: ${details}. Verifiez template_id.`);
+      }
+
+      const dataToImport = resolvedPreviewData.map(page => {
         const row: Record<string, any> = {
           page_key: page.page_key,
           title: page.title,
@@ -334,9 +471,9 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
             <div className="flex-1 text-sm">
               <p className="font-semibold text-gray-900 mb-2">Workflow import en masse</p>
               <ol className="list-decimal list-inside space-y-1.5 text-gray-600">
-                <li>Exportez un modele depuis l'onglet <strong>Modeles</strong> (bouton JSON)</li>
+                <li>Exportez un modele depuis l'onglet <strong>Modeles</strong> (bouton JSON ultra-compact)</li>
                 <li>Envoyez le JSON du modele + la documentation a votre IA ou redacteur</li>
-                <li>Recevez le JSON de retour au format <code className="px-1 py-0.5 bg-gray-200 rounded text-xs">{"{ \"pages\": [...] }"}</code> (ou objet combine avec <code className="px-1 py-0.5 bg-gray-200 rounded text-xs">template + sections + pages</code>)</li>
+                <li>Recevez le JSON de retour au format <code className="px-1 py-0.5 bg-gray-200 rounded text-xs">{"{ \"pages\": [...] }"}</code> avec <code className="px-1 py-0.5 bg-gray-200 rounded text-xs">content_overrides</code> (ou format classique avec <code className="px-1 py-0.5 bg-gray-200 rounded text-xs">sections_data</code>)</li>
                 <li>Collez-le ci-dessous ou importez le fichier</li>
               </ol>
             </div>
@@ -356,7 +493,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
 
       <div className="flex items-center justify-between mb-3">
         <label className="block text-sm font-semibold text-gray-900">
-          {importMode === 'template' ? 'JSON des pages (avec sections_data)' : 'JSON des metadonnees SEO'}
+          {importMode === 'template' ? 'JSON des pages (content_overrides ou sections_data)' : 'JSON des metadonnees SEO'}
         </label>
         <div className="flex items-center gap-2">
           {importMode === 'simple' && (
@@ -386,7 +523,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
         value={inputData}
         onChange={(e) => setInputData(e.target.value)}
         placeholder={importMode === 'template'
-          ? '{\n  "template": { "id": "...", "daisy_theme_slug": "light" },\n  "sections": [...],\n  "pages": [\n    {\n      "page_key": "ma-page",\n      "title": "Titre SEO",\n      "description": "...",\n      "status": "published",\n      "template_id": "...",\n      "sections_data": [...]\n    }\n  ]\n}'
+          ? '{\n  "template": { "id": "...", "daisy_theme_slug": "light" },\n  "pages": [\n    {\n      "page_key": "ma-page",\n      "title": "Titre SEO",\n      "description": "...",\n      "status": "published",\n      "template_id": "...",\n      "content_overrides": {\n        "section-hero-xxx": {\n          "content.headline": "Nouveau titre",\n          "content.subheadline": "Nouveau sous-titre"\n        }\n      }\n    }\n  ]\n}'
           : '[{"page_key": "home", "title": "Titre SEO", "description": "Description"}]'
         }
         className="w-full h-72 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 font-mono text-sm bg-gray-50 resize-none transition-colors"

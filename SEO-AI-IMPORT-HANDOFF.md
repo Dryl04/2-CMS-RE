@@ -19,30 +19,46 @@ When you export a template from the builder, you receive a JSON with this struct
 
 ```json
 {
+  "export_version": 4,
+  "export_mode": "maximum-compact",
   "template": {
     "id": "uuid",
-    "name": "Template name",
-    "description": "...",
     "daisy_theme_slug": "light",
-    "is_public": true,
     "exported_at": "2026-02-20T..."
   },
-  "sections": [ ... PageBuilderSection[] ... ],
-  "variables": [
+  "editable_sections": [
     {
-      "sectionId": "section-hero-xxxx",
-      "sectionType": "hero",
-      "sectionVariant": "default",
-      "fieldPath": "content.headline",
-      "fieldLabel": "Titre principal",
-      "fieldType": "text",
-      "currentValue": "Votre titre ici"
+      "id": "section-hero-xxxx",
+      "type": "hero",
+      "variant": "default",
+      "order": 0,
+      "fields": [
+        ["content.headline", "text"],
+        ["content.subheadline", "text"]
+      ],
+      "content_shape": {
+        "headline": "",
+        "subheadline": ""
+      }
     }
+  ],
+  "array_cardinality": {
+    "section-features-xxxx": {
+      "content.features": 6
+    }
+  },
+  "stats": {
+    "section_count": 6,
+    "variable_count": 42
   ]
 }
 ```
 
-The `variables` array lists all editable fields across all sections. Use it as a reference to know which `content` fields to modify in each section. When creating your import payload, copy the `sections` array and only modify the `content` values listed in `variables`.
+The export is now generated in **maximum-compact mode** (single-line minified JSON + grouped editable fields + compressed content shape) to keep files as small as possible.
+
+`editable_sections` gives section order/type plus editable field paths and a lightweight content shape. Arrays are compressed (`__count` + `__item` sample) to avoid huge payloads. `array_cardinality` gives exact array sizes per field path.
+
+When creating your import payload, prefer `content_overrides` (see Format C) to avoid repeating full `sections_data`.
 
 **Important:** Do NOT modify `design`, `variant`, `themeConfig`, or `advanced` properties unless explicitly asked — they control styling and must stay intact for visual fidelity.
 
@@ -98,6 +114,35 @@ With **Format B**, importer auto-fallbacks:
 
 **Note:** Both `sections` and `sections_data` are accepted as key names at both root level and per-page level. The importer handles both transparently.
 
+### Format C (recommended — maximum-compact payload)
+
+```json
+{
+  "template": {
+    "id": "uuid",
+    "daisy_theme_slug": "light"
+  },
+  "pages": [
+    {
+      "page_key": "my-page-slug",
+      "title": "SEO title",
+      "description": "Meta description",
+      "status": "published",
+      "template_id": "uuid",
+      "content_overrides": {
+        "section-hero-xxxx": {
+          "content.headline": "New headline",
+          "content.subheadline": "New subheadline",
+          "content.ctaText": "Contact us"
+        }
+      }
+    }
+  ]
+}
+```
+
+With **Format C**, the importer reconstructs full `sections_data` from `template_id` and applies only your content overrides. This gives the smallest possible JSON while preserving visual quality.
+
 ---
 
 ## Page-Level Rules
@@ -123,6 +168,7 @@ With **Format B**, importer auto-fallbacks:
 - `template_id` (string)
 - `daisy_theme_slug` (string or null)
 - `sections_data` (array)
+- `content_overrides` (object: `{ [sectionId]: { [fieldPath]: value } }`)
 
 ### `page_key` format (strict)
 
