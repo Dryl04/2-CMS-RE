@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface NewsletterSignupWidgetProps {
   section: PageBuilderSection;
@@ -32,17 +33,17 @@ export default function NewsletterSignupWidget({ section }: NewsletterSignupWidg
       }}>
         {content.subtitle && (
           <p className="text-sm font-medium tracking-wider uppercase mb-6 text-neutral-content/70" style={subtitleStyle}>
-            {content.subtitle}
+            {renderRichText(content.subtitle)}
           </p>
         )}
 
         <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight text-neutral-content" style={headingStyle}>
-          {content.title || 'Sign up now for exclusive contents.'}
+          {renderRichText(content.title, 'Sign up now for exclusive contents.')}
         </h2>
 
         {content.description && (
           <p className="text-lg mb-12 max-w-3xl mx-auto text-neutral-content/70" style={textStyle}>
-            {content.description}
+            {renderRichText(content.description)}
           </p>
         )}
 
@@ -64,7 +65,7 @@ export default function NewsletterSignupWidget({ section }: NewsletterSignupWidg
 
         {content.note && (
           <p className="text-sm mt-6 text-neutral-content/70" style={textStyle}>
-            {content.note}
+            {renderRichText(content.note)}
           </p>
         )}
       </div>

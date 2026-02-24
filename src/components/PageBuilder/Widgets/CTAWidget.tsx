@@ -37,7 +37,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
             className="text-2xl sm:text-3xl font-bold mb-2 text-base-content"
             style={headingStyle}
           >
-            {headline || 'Ready to Get Started?'}
+            {renderRichText(headline, 'Ready to Get Started?')}
           </h2>
           <p
             className="text-base sm:text-lg font-normal text-base-content/80"
@@ -73,7 +73,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
         className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
         style={headingStyle}
       >
-        {headline || 'Ready to Get Started?'}
+        {renderRichText(headline, 'Ready to Get Started?')}
       </h2>
       <p
         className="text-lg sm:text-xl mb-8 font-normal text-base-content/80"
@@ -107,7 +107,7 @@ export default function CTAWidget({ section }: CTAWidgetProps) {
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {headline || 'Ready to Get Started?'}
+          {renderRichText(headline, 'Ready to Get Started?')}
         </h2>
         <p
           className="text-lg sm:text-xl mb-8 font-normal text-base-content/80"

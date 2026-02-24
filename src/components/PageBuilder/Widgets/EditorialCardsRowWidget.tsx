@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface EditorialCardsRowWidgetProps {
   section: PageBuilderSection;
@@ -43,10 +44,10 @@ export default function EditorialCardsRowWidget({ section }: EditorialCardsRowWi
         <div className="flex items-end justify-between mb-6">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold" style={headingStyle}>
-              {content.title || 'Stories from creative teams.'}
+              {renderRichText(content.title, 'Stories from creative teams.')}
             </h2>
             <p className="text-sm mt-2 opacity-80" style={subtitleStyle}>
-              {content.subtitle || 'Showcase case studies, press or editorial highlights.'}
+              {renderRichText(content.subtitle, 'Showcase case studies, press or editorial highlights.')}
             </p>
           </div>
           {content.ctaText && <a href={content.ctaLink || '#'} className="btn btn-outline btn-sm" style={linkStyle}>{content.ctaText}</a>}
@@ -57,9 +58,9 @@ export default function EditorialCardsRowWidget({ section }: EditorialCardsRowWi
             <article key={index} className="rounded-2xl border border-base-content/10 overflow-hidden bg-base-200">
               <img src={card.image || ''} alt={card.title || 'card'} className="w-full h-40 object-cover bg-base-300" />
               <div className="p-4">
-                <h3 className="text-lg font-semibold" style={headingStyle}>{card.title || 'Card title'}</h3>
-                <p className="text-sm mt-2 opacity-80" style={textStyle}>{card.description || ''}</p>
-                {card.meta && <p className="text-xs mt-3 opacity-60" style={textStyle}>{card.meta}</p>}
+                <h3 className="text-lg font-semibold" style={headingStyle}>{renderRichText(card.title, 'Card title')}</h3>
+                <p className="text-sm mt-2 opacity-80" style={textStyle}>{renderRichText(card.description)}</p>
+                {card.meta && <p className="text-xs mt-3 opacity-60" style={textStyle}>{renderRichText(card.meta)}</p>}
               </div>
             </article>
           ))}

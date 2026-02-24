@@ -1,5 +1,6 @@
 import { ChevronDown, Facebook, Twitter, Youtube, Mail, Clock, Phone } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface HeaderWithIconsProps {
   section: PageBuilderSection;
@@ -63,7 +64,7 @@ export default function HeaderWithIcons({ section }: HeaderWithIconsProps) {
 
             {content.email && (
               <p className="text-sm text-base-content/70" style={textStyle}>
-                {content.email}
+                {renderRichText(content.email)}
               </p>
             )}
           </div>
@@ -77,16 +78,16 @@ export default function HeaderWithIcons({ section }: HeaderWithIconsProps) {
               <Clock className="w-5 h-5 text-base-content" style={headingStyle} />
               <div>
                 <p className="text-sm font-semibold text-base-content" style={headingStyle}>
-                  {content.openHoursTitle || 'Open Hours'}
+                  {renderRichText(content.openHoursTitle, 'Open Hours')}
                 </p>
                 <p className="text-xs text-base-content/70" style={textStyle}>
-                  {content.openHours || 'Mon - Fri 9:30 - 20:00'}
+                  {renderRichText(content.openHours, 'Mon - Fri 9:30 - 20:00')}
                 </p>
               </div>
             </div>
 
             <div className="text-2xl md:text-3xl font-bold text-base-content" style={headingStyle}>
-              {content.logo || 'KING'}
+              {renderRichText(content.logo, 'KING')}
             </div>
 
             {content.phone && (

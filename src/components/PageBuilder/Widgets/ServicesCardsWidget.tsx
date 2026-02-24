@@ -1,5 +1,6 @@
 import { Umbrella, Layers, CreditCard, ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ServicesCardsWidgetProps {
   section: PageBuilderSection;
@@ -44,21 +45,21 @@ export default function ServicesCardsWidget({ section }: ServicesCardsWidgetProp
               className="text-sm font-medium tracking-wider uppercase mb-4 text-base-content/70"
               style={subtitleStyle}
             >
-              {content.subtitle}
+              {renderRichText(content.subtitle)}
             </p>
           )}
           <h2
             className="text-4xl md:text-5xl font-bold mb-6 text-base-content"
             style={headingStyle}
           >
-            {content.title || 'Registration and Management Assistance'}
+            {renderRichText(content.title, 'Registration and Management Assistance')}
           </h2>
           {content.description && (
             <p
               className="text-lg max-w-3xl mx-auto text-base-content/70"
               style={textStyle}
             >
-              {content.description}
+              {renderRichText(content.description)}
             </p>
           )}
           {content.ctaText && (
@@ -96,13 +97,13 @@ export default function ServicesCardsWidget({ section }: ServicesCardsWidgetProp
                     className="text-2xl font-bold mb-4 text-base-content"
                     style={headingStyle}
                   >
-                    {service.title}
+                    {renderRichText(service.title)}
                   </h3>
                   <p
                     className="text-base leading-relaxed mb-6 text-base-content/70"
                     style={textStyle}
                   >
-                    {service.description}
+                    {renderRichText(service.description)}
                   </p>
                   <a
                     href={service.link || '#'}

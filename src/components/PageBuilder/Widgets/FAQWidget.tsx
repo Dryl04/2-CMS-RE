@@ -64,13 +64,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Frequently Asked Questions'}
+          {renderRichText(title, 'Frequently Asked Questions')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Find answers to common questions'}
+          {renderRichText(subtitle, 'Find answers to common questions')}
         </p>
       </div>
 
@@ -90,7 +90,7 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
                   className="text-base sm:text-lg font-semibold pr-4 sm:pr-8 text-base-content"
                   style={headingStyle}
                 >
-                  {faq.question}
+                  {renderRichText(faq.question)}
                 </span>
                 <ChevronDown
                   className={`w-5 h-5 flex-shrink-0 transition-transform text-primary ${isOpen ? 'rotate-180' : ''}`}
@@ -121,13 +121,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'FAQ'}
+          {renderRichText(title, 'FAQ')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Everything you need to know'}
+          {renderRichText(subtitle, 'Everything you need to know')}
         </p>
       </div>
 
@@ -147,7 +147,7 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
                   className="text-base font-semibold pr-4 text-base-content"
                   style={headingStyle}
                 >
-                  {faq.question}
+                  {renderRichText(faq.question)}
                 </span>
                 <ChevronDown
                   className={`w-5 h-5 flex-shrink-0 transition-transform mt-0.5 text-primary ${isOpen ? 'rotate-180' : ''}`}
@@ -178,13 +178,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Common Questions'}
+          {renderRichText(title, 'Common Questions')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Quick answers to questions you may have'}
+          {renderRichText(subtitle, 'Quick answers to questions you may have')}
         </p>
       </div>
 
@@ -210,7 +210,7 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
               className="text-lg font-bold mb-3 text-base-content"
               style={headingStyle}
             >
-              {faq.question}
+              {renderRichText(faq.question)}
             </h3>
             <p
               className="text-sm leading-relaxed text-base-content/70"
@@ -231,13 +231,13 @@ export default function FAQWidget({ section }: FAQWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Got Questions?'}
+          {renderRichText(title, 'Got Questions?')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'We have answers'}
+          {renderRichText(subtitle, 'We have answers')}
         </p>
       </div>
 

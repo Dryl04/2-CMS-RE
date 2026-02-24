@@ -1,5 +1,6 @@
 import { User } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface HeroWithTestimonialsProps {
   section: PageBuilderSection;
@@ -45,14 +46,14 @@ export default function HeroWithTestimonials({ section }: HeroWithTestimonialsPr
         paddingBottom: content.testimonials?.length ? '180px' : design.spacing.paddingBottom,
       }}>
         <h2 className="text-sm font-medium tracking-wider uppercase mb-4 sm:mb-6 text-neutral-content/70" style={h2Style}>
-          {content.subtitle || 'Trusted by teams that value measurable outcomes'}
+          {renderRichText(content.subtitle, 'Trusted by teams that value measurable outcomes')}
         </h2>
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 sm:mb-8 leading-tight text-neutral-content" style={h1Style}>
-          {content.title || 'Corporate Branding Design Services'}
+          {renderRichText(content.title, 'Corporate Branding Design Services')}
         </h1>
         {content.description && (
           <p className="text-base sm:text-lg max-w-3xl mx-auto mb-8 sm:mb-12 text-neutral-content/70" style={textStyle}>
-            {content.description}
+            {renderRichText(content.description)}
           </p>
         )}
         {content.ctaText && (
@@ -79,7 +80,7 @@ export default function HeroWithTestimonials({ section }: HeroWithTestimonialsPr
                   </div>
                   <div className="flex-1 space-y-2">
                     <p className="text-sm sm:text-base leading-relaxed text-base-content" style={textStyle}>
-                      {testimonial.text}
+                      {renderRichText(testimonial.text)}
                     </p>
                   </div>
                 </div>

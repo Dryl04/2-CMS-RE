@@ -1,6 +1,7 @@
 import React from 'react';
 import { Monitor, Shield, Lock, ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ServicesGridWidgetProps {
   section: PageBuilderSection;
@@ -44,21 +45,21 @@ export default function ServicesGridWidget({ section }: ServicesGridWidgetProps)
             className="text-xs sm:text-sm font-medium tracking-wider uppercase mb-3 md:mb-4 text-base-content/70"
             style={subtitleStyle}
           >
-            {content.subtitle}
+            {renderRichText(content.subtitle)}
           </p>
         )}
         <h2
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-base-content"
           style={headingStyle}
         >
-          {content.title}
+          {renderRichText(content.title)}
         </h2>
         {content.description && (
           <p
             className="text-base md:text-lg mb-6 md:mb-8 lg:mb-12 text-base-content/70"
             style={{ maxWidth: '800px', ...textStyle }}
           >
-            {content.description}
+            {renderRichText(content.description)}
           </p>
         )}
 
@@ -71,13 +72,13 @@ export default function ServicesGridWidget({ section }: ServicesGridWidgetProps)
                   className="text-xl sm:text-2xl font-bold text-base-content"
                   style={headingStyle}
                 >
-                  {service.title}
+                  {renderRichText(service.title)}
                 </h3>
                 <p
                   className="text-sm sm:text-base leading-relaxed text-base-content/70"
                   style={textStyle}
                 >
-                  {service.description}
+                  {renderRichText(service.description)}
                 </p>
                 <a
                   href={service.link || '#'}

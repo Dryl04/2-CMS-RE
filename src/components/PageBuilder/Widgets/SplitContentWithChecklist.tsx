@@ -1,6 +1,7 @@
 import React from 'react';
 import { Check, ImageIcon } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface SplitContentWithChecklistProps {
   section: PageBuilderSection;
@@ -31,11 +32,11 @@ export default function SplitContentWithChecklist({ section }: SplitContentWithC
           <div className="space-y-6 lg:space-y-8">
             <div className="space-y-4 sm:space-y-6">
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-base-content" style={headingStyle}>
-                {content.title || 'Quis autem veleum repreh enderit.'}
+                {renderRichText(content.title, 'Quis autem veleum repreh enderit.')}
               </h2>
               {content.description && (
                 <p className="text-base sm:text-lg leading-relaxed text-base-content/70" style={textStyle}>
-                  {content.description}
+                  {renderRichText(content.description)}
                 </p>
               )}
             </div>
@@ -50,7 +51,7 @@ export default function SplitContentWithChecklist({ section }: SplitContentWithC
                   <div key={index} className="flex items-center space-x-2">
                     <Check className="w-4 h-4 sm:w-5 sm:h-5 text-base-content/70 flex-shrink-0" style={textStyle} />
                     <span className="text-sm sm:text-base text-base-content/70" style={textStyle}>
-                      {item}
+                      {renderRichText(item)}
                     </span>
                   </div>
                 ))}

@@ -1,5 +1,6 @@
 import { Phone, MapPin, AtSign } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ContactSplitWidgetProps {
   section: PageBuilderSection;
@@ -38,21 +39,21 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                 className="text-sm font-medium tracking-wider uppercase text-base-content/70"
                 style={subtitleStyle}
               >
-                {content.subtitle}
+                {renderRichText(content.subtitle)}
               </p>
             )}
             <h2
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-base-content"
               style={headingStyle}
             >
-              {content.title || "Let's talk design and innovation."}
+              {renderRichText(content.title, "Let's talk design and innovation.")}
             </h2>
             {content.description && (
               <p
                 className="text-base md:text-lg text-base-content/70"
                 style={textStyle}
               >
-                {content.description}
+                {renderRichText(content.description)}
               </p>
             )}
 
@@ -139,14 +140,14 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
               className="text-xl sm:text-2xl font-bold mb-4 md:mb-6 text-base-content"
               style={headingStyle}
             >
-              {content.formTitle || 'Ask Us Anything'}
+              {renderRichText(content.formTitle, 'Ask Us Anything')}
             </h3>
             {content.formDescription && (
               <p
                 className="text-sm md:text-base mb-4 md:mb-6 text-base-content/70"
                 style={textStyle}
               >
-                {content.formDescription}
+                {renderRichText(content.formDescription)}
               </p>
             )}
 

@@ -242,9 +242,14 @@ If `sections_data` is provided, each section must contain at least:
 ### Fidelity Rules
 
 - Keep `id`, `type`, `order`, `variant`, `design`, `advanced`, `themeConfig` **exactly as in exported template**.
-- **Only modify `content` values** (text, images, links).
+- Apply a strict scope lock: only edit SEO writing fields (headline, subheadline, section title/subtitle/description, quotes, `seo_h1`, `seo_h2`, long-form `content`).
+- Do not edit UI/navigation/action fields unless explicitly requested: nav labels/links, button labels/links, anchors, social links.
+- Do not edit media URLs (`image`, `backgroundImage`, `thumbnail`, `avatar`, `logo`) unless explicitly requested.
 - Keep same number/order of sections as template.
 - Keep same cardinality in arrays (features, testimonials, nav items, columns) unless explicitly requested.
+- Treat FAQ capacity as strict: for every `content.faqs`, generate exactly the available slot count from `array_cardinality`/`content_shape.__count`.
+- Never draft more FAQ items than template capacity; overflow would be dropped at import.
+- If source brief contains more questions than slots, prioritize highest SEO intent questions and merge overlaps.
 - **Image/media URLs must be plain URLs** — never wrap them in markdown link syntax. See "Image & Media URLs" section below.
 - The `design.typography` object supports: `fontFamily`, `headingFontFamily`, `headingFontWeight`, `headingFontSize`, `h1FontFamily`, `h1FontWeight`, `h1FontSize`, `h2FontFamily`, `h2FontWeight`, `h2FontSize`, `textFontSize`, `buttonFontSize`, `buttonFontFamily`, `headingColor`, `h1Color`, `h2Color`, `textColor`, `linkColor`, `subtitleColor`.
 - The `design.colors` object supports: `buttonBackground`, `buttonText`, `buttonBackgroundHover`, `buttonRadius`, `buttonSize`, `buttonBorderWidth`, `buttonBorderStyle`, `buttonBorderColor`, `buttonShadow`, `iconBackground`, `iconColor`, `iconBorderColor`, `iconBorderWidth`, `iconRadius`, `accent`, `primary`, `secondary`.
@@ -307,7 +312,15 @@ The following fields are used across widgets and must contain plain URLs:
 - `description`: <= 160 chars
 - `seo_h1` should be aligned with hero main headline
 - Use human, local-intent language (service + city/intent where relevant)
-- Keep CTA text/action coherent with links (`tel:`, `mailto:`, anchors, URLs)
+- Keep CTA text/action coherent with links (`tel:`, `mailto:`, anchors, URLs) when CTA edits are explicitly requested
+
+## Text Formatting Rules (Critical)
+
+- Never use markdown emphasis syntax in JSON values: `**word**`, `*word*`, `__word__`.
+- Markdown emphasis is not rendered by the importer and must be treated as invalid output.
+- Inline HTML emphasis is exceptionally allowed only in SEO writing fields (never in navigation/buttons/links).
+- Allowed inline tags in that case: `<strong>`, `<em>`, `<u>`.
+- Do not nest tags and do not introduce any other HTML tags.
 
 ---
 
@@ -321,6 +334,10 @@ Before returning JSON, ensure:
 - Every page has unique `page_key` in payload.
 - Every page has non-empty `title`.
 - Any `sections_data` provided is an array of valid section objects.
+- UI/navigation/action fields are unchanged unless explicitly requested.
+- Media URLs are unchanged unless explicitly requested.
+- For each `content.faqs`, produced item count exactly matches template capacity (no hidden or discarded drafted FAQs).
+- No markdown emphasis markers appear inside JSON string values.
 
 ---
 

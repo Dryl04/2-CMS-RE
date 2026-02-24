@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ProcessAlternatingProps {
   section: PageBuilderSection;
@@ -34,17 +35,17 @@ export default function ProcessAlternating({ section }: ProcessAlternatingProps)
           <div className="max-w-xl">
             {content.subtitle && (
               <p className="text-sm font-medium tracking-wider uppercase mb-3 sm:mb-4 text-base-content/70" style={subtitleStyle}>
-                {content.subtitle}
+                {renderRichText(content.subtitle)}
               </p>
             )}
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-base-content" style={headingStyle}>
-              {content.title || 'See how processes go success.'}
+              {renderRichText(content.title, 'See how processes go success.')}
             </h2>
           </div>
           <div className="lg:flex-shrink-0 lg:max-w-md">
             {content.headerDescription && (
               <p className="text-sm sm:text-base leading-relaxed mb-4 sm:mb-6 text-base-content/70" style={textStyle}>
-                {content.headerDescription}
+                {renderRichText(content.headerDescription)}
               </p>
             )}
             {content.headerCta && (
@@ -68,11 +69,11 @@ export default function ProcessAlternating({ section }: ProcessAlternatingProps)
                   {String(index + 1).padStart(2, '0')}.
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-base-content" style={headingStyle}>
-                  {step.title}
+                  {renderRichText(step.title)}
                 </h3>
                 {step.description && (
                   <p className="text-sm sm:text-base leading-relaxed text-base-content/70" style={textStyle}>
-                    {step.description}
+                    {renderRichText(step.description)}
                   </p>
                 )}
                 {step.ctaText && (

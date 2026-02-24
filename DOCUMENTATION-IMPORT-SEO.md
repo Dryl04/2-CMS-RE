@@ -36,6 +36,8 @@ L'export est maintenant en **mode maximum-compact** (JSON minifie + champs edita
 
 `array_cardinality` donne la cardinalite exacte des champs de type tableau (ex: `content.features`, `content.testimonials`).
 
+Pour les FAQ (`content.faqs`), cette cardinalite est une limite stricte de slots disponibles dans le template.
+
 Pour minimiser le JSON de retour, utilisez `content_overrides` (recommande) plutot que recopier tout `sections_data`.
 
 **Important :** Ne modifiez PAS `design`, `variant`, `themeConfig`, ni `advanced` sauf si on vous le demande explicitement — ces proprietes controlent le style visuel et doivent rester intactes.
@@ -136,9 +138,17 @@ Si vous utilisez `content_overrides`, vous pouvez ignorer cette section: l'impor
 
 **Vous devez reprendre EXACTEMENT la structure du modele** et ne modifier que les champs `content` de chaque section. Les champs `design`, `variant`, `advanced` et les `id` doivent rester IDENTIQUES au modele.
 
+### Cloisonnement strict du Gems (zone d'action)
+
+Le Gems agit uniquement sur la **redaction SEO**.
+
+- Par defaut, vous ne modifiez que les champs textuels de redaction SEO : `headline`, `subheadline`, `title` (hors navigation), `subtitle`, `description`, `quote`, `seo_h1`, `seo_h2`, `content`.
+- Vous ne modifiez jamais les elements d'interface et de structure: navigation, boutons, ancres, liens, URLs de medias, ordre, variante, design.
+- Si une consigne metier demande explicitement une exception (ex: changer un CTA), cette exception doit etre explicite et ciblee champ par champ.
+
 ### Ce que vous DEVEZ modifier
 
-- `content.*` : Tout le contenu textuel et les liens
+- Uniquement les champs de texte de redaction SEO (titre, sous-titre, descriptions, paragraphes, citations)
 
 ### Ce que vous NE DEVEZ PAS modifier
 
@@ -149,6 +159,8 @@ Si vous utilisez `content_overrides`, vous pouvez ignorer cette section: l'impor
 - `variant` : Ne pas changer la variante d'affichage (obligatoire pour le rendu correct)
 - `advanced` : Ne pas toucher aux parametres avances (visibilite)
 - `themeConfig` : Ne pas toucher a la configuration de theme (themeMode, themeRef, customTokens)
+- `content` de navigation et action : ne pas modifier `navItems[*].label`, `navItems[*].link`, `ctaText`, `ctaLink`, `primaryCta`, `primaryLink`, `secondaryCta`, `secondaryLink`, `columns[*].links[*].label`, `columns[*].links[*].url`, `socialLinks[*].url`, `socialLinks[*].platform`
+- URLs de medias : ne pas modifier `image`, `backgroundImage`, `thumbnail`, `avatar`, `logo` sauf consigne explicite
 
 ---
 
@@ -175,11 +187,9 @@ Si vous utilisez `content_overrides`, vous pouvez ignorer cette section: l'impor
 
 **Regles :**
 
-- `logoText` : Nom de l'entreprise / marque
-- `ctaText` : Appel a l'action clair (ex: "Devis gratuit", "Reserver", "Nous contacter")
-- `ctaLink` : Lien vers l'action (tel:, mailto:, #ancre, ou URL)
-- `navItems` : 3 a 6 elements de navigation. Les labels doivent etre courts (1-2 mots). Les links doivent etre des ancres (#) correspondant aux sections de la page
-- `logo` : Laisser vide (`""`)
+- Section **gelee par defaut** pour le Gems
+- Conserver `logoText`, `ctaText`, `ctaLink` et `navItems` exactement comme dans le modele
+- Ne modifier ces champs que si la consigne utilisateur le demande explicitement
 
 ### Section `hero` (Banniere principale)
 
@@ -199,9 +209,9 @@ Si vous utilisez `content_overrides`, vous pouvez ignorer cette section: l'impor
 
 - `headline` : Doit etre identique ou tres proche du `seo_h1`. Inclure le mot-cle principal
 - `subheadline` : 1-2 phrases. Proposition de valeur + elements de confiance (anciennete, nombre clients, certification)
-- `ctaText` : Verbe d'action + benefice (ex: "Obtenez votre devis gratuit")
-- `image` : URL d'une image Pexels pertinente au format paysage (w=1260&h=750). Ne pas inventer d'URL, utiliser uniquement des URLs Pexels valides. **URL brute uniquement, ne PAS utiliser le format lien markdown** (voir section "URLs des images")
-- `ctaLink` : Lien coherent avec l'action (telephone, formulaire, page)
+- `ctaText` : Conserver le texte du modele (champ d'interface)
+- `image` : Conserver l'URL du modele sauf demande explicite
+- `ctaLink` : Conserver le lien du modele sauf demande explicite
 
 ### Section `features` (Fonctionnalites / Services)
 
@@ -286,8 +296,7 @@ Si vous utilisez `content_overrides`, vous pouvez ignorer cette section: l'impor
 **Regles :**
 
 - `headline` : Creer un sentiment d'urgence ou de benefice immediat
-- `primaryCta` : Verbe d'action + benefice
-- Les champs `secondaryCta` et `secondaryLink` sont optionnels
+- `primaryCta`, `primaryLink`, `secondaryCta`, `secondaryLink` : Conserver les valeurs du modele (champs d'interface)
 
 ### Section `contact` (Contact)
 
@@ -334,10 +343,10 @@ Si vous utilisez `content_overrides`, vous pouvez ignorer cette section: l'impor
 
 **Regles :**
 
-- `logoText` : Meme nom de marque que dans le header
+- `logoText` : Conserver la valeur du modele
 - `columns` : Garder le meme nombre de colonnes que dans le modele
-- `links` dans chaque colonne : Adapter les labels au contexte de l'entreprise
-- `socialLinks` : Garder les memes plateformes que dans le modele, adapter les URLs
+- `links` dans chaque colonne : Conserver labels et URLs du modele
+- `socialLinks` : Conserver plateformes et URLs du modele
 - `copyright` : Inclure l'annee, le nom de l'entreprise, et un numero SIRET fictif
 - `logo` : Laisser vide (`""`)
 
@@ -377,6 +386,22 @@ Si vous utilisez `content_overrides`, vous pouvez ignorer cette section: l'impor
 - Inclure des elements de confiance : chiffres, certifications, anciennete
 - Pas de fautes d'orthographe
 - **Pas d'accents dans le contenu** (contrainte technique du systeme)
+
+### Regles de formatage du texte SEO
+
+- N'utilisez jamais la syntaxe markdown `**mot**`, `*mot*` ou `__mot__` dans les valeurs JSON
+- Cette syntaxe n'est pas interpretee visuellement par l'importeur et doit etre consideree comme invalide
+- Les balises HTML inline ne sont autorisees qu'exceptionnellement dans des champs de redaction SEO (pas dans navigation/boutons/liens)
+- Balises autorisees dans ce cadre: `<strong>`, `<em>`, `<u>`
+- Ne pas imbriquer ces balises, ne pas ajouter d'autres balises HTML
+
+### Regle anti-troncature FAQ (critique)
+
+- Pour chaque section contenant `content.faqs`, respecter strictement la cardinalite du template (`array_cardinality` ou `editable_sections.content_shape.__count`).
+- Generer exactement ce nombre de FAQ dans le JSON final: ni moins, ni plus.
+- Ne jamais rediger 20-30 FAQ si la section n'a que 3 slots: l'excedent sera perdu a l'import.
+- Si le brief contient plus de questions que de slots, prioriser les questions a plus forte intention SEO et fusionner les doublons dans les reponses.
+- Interdiction de modifier la structure (ajout de nouveaux tableaux/champs/sections FAQ) sans demande explicite.
 
 ---
 
@@ -432,7 +457,10 @@ Avant de soumettre votre JSON, verifiez :
 - [ ] Les `variant` de section sont identiques au modele (champ obligatoire)
 - [ ] Les champs `design`, `variant`, `advanced`, `themeConfig` sont identiques au modele
 - [ ] Seuls les champs `content` ont ete modifies
-- [ ] Le nombre d'elements dans les tableaux (features, testimonials, navItems, columns) est identique au modele
+- [ ] Les champs d'interface (navigation, boutons, liens) sont restes identiques au modele
+- [ ] Les URLs de medias (images/avatars/logos/thumbnails) sont restees identiques au modele sauf demande explicite
+- [ ] Le nombre d'elements dans les tableaux (features, testimonials, navItems, columns, faqs, services, steps) est identique au modele
+- [ ] Pour chaque `content.faqs`, le nombre de FAQ produites correspond exactement aux slots disponibles du template (aucune FAQ redigee hors JSON final)
 - [ ] Les URLs d'images sont des URLs Pexels valides (format brut `https://...`, pas de markdown)
 - [ ] Les URLs d'images dans les sous-objets (testimonials, features, items) sont aussi en format brut
 - [ ] Le `status` est bien `"published"` pour une publication automatique
@@ -454,6 +482,8 @@ Avant de soumettre votre JSON, verifiez :
 9. **page_key avec espaces/accents** : Uniquement minuscules, chiffres et tirets
 10. **Oublier template_id** : Toujours inclure l'ID du modele
 11. **Status incorrect** : `"published"` pour publication auto, `"draft"` pour brouillon
+12. **Modifier la navigation/les boutons** : Interdit sans demande explicite
+13. **Utiliser la syntaxe markdown de mise en forme dans le JSON** (`**mot**`, `*mot*`, `__mot__`) : Interdit, utiliser eventuellement `<strong>`, `<em>`, `<u>` uniquement dans le texte SEO
 
 ---
 

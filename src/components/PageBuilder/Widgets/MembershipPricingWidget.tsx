@@ -1,5 +1,6 @@
 import { Check, Minus, Umbrella, Layers, PaintBucket } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface MembershipPricingWidgetProps {
   section: PageBuilderSection;
@@ -41,21 +42,21 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
               className="text-sm font-medium tracking-wider uppercase mb-4 text-base-content/70"
               style={subtitleStyle}
             >
-              {content.subtitle}
+              {renderRichText(content.subtitle)}
             </p>
           )}
           <h2
             className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-base-content"
             style={headingStyle}
           >
-            {content.title}
+            {renderRichText(content.title)}
           </h2>
           {content.description && (
             <p
               className="text-lg max-w-3xl mx-auto text-base-content/70"
               style={textStyle}
             >
-              {content.description}
+              {renderRichText(content.description)}
             </p>
           )}
         </div>
@@ -68,33 +69,30 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
             return (
               <div
                 key={index}
-                className={`rounded-2xl p-6 sm:p-8 shadow-lg transition-transform hover:scale-105 ${
-                  isFeatured ? 'bg-neutral text-neutral-content' : 'bg-base-100'
-                }`}
+                className={`rounded-2xl p-6 sm:p-8 shadow-lg transition-transform hover:scale-105 ${isFeatured ? 'bg-neutral text-neutral-content' : 'bg-base-100'
+                  }`}
               >
                 <div className="mb-8">
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto ${
-                    isFeatured ? 'bg-neutral-content/20' : 'bg-primary'
-                  }`}>
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto ${isFeatured ? 'bg-neutral-content/20' : 'bg-primary'
+                    }`}>
                     <IconComponent className={`w-8 h-8 ${isFeatured ? 'text-neutral-content' : 'text-primary-content'}`} />
                   </div>
                   <h3
                     className={`text-2xl font-bold mb-2 text-center ${isFeatured ? '' : 'text-base-content'}`}
                     style={!isFeatured ? headingStyle : undefined}
                   >
-                    {plan.name}
+                    {renderRichText(plan.name)}
                   </h3>
                   <p
                     className={`text-sm text-center ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`}
                     style={!isFeatured ? subtitleStyle : undefined}
                   >
-                    {plan.subtitle || 'Suitable for Beginners'}
+                    {renderRichText(plan.subtitle, 'Suitable for Beginners')}
                   </p>
                 </div>
 
-                <div className={`space-y-3 mb-8 py-8 border-t border-b ${
-                  isFeatured ? 'border-neutral-content/20' : 'border-base-content/10'
-                }`}>
+                <div className={`space-y-3 mb-8 py-8 border-t border-b ${isFeatured ? 'border-neutral-content/20' : 'border-base-content/10'
+                  }`}>
                   {plan.features?.map((feature: any, fIndex: number) => {
                     const isIncluded = feature.included !== false;
                     return (
@@ -112,7 +110,7 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                           className={`text-sm ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`}
                           style={!isFeatured ? textStyle : undefined}
                         >
-                          {typeof feature === 'string' ? feature : feature.text}
+                          {renderRichText(typeof feature === 'string' ? feature : feature.text)}
                         </span>
                       </div>
                     );
@@ -137,11 +135,10 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                 </div>
 
                 <button
-                  className={`w-full py-3 rounded-lg font-semibold transition hover:opacity-90 ${
-                    isFeatured
+                  className={`w-full py-3 rounded-lg font-semibold transition hover:opacity-90 ${isFeatured
                       ? 'bg-neutral-content text-neutral'
                       : 'bg-base-100 text-base-content border border-base-content/10'
-                  }`}
+                    }`}
                 >
                   {plan.ctaText || 'Get Started'}
                 </button>
@@ -150,7 +147,7 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                   <p className={`text-xs text-center mt-4 ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`}
                     style={!isFeatured ? textStyle : undefined}
                   >
-                    {plan.guarantee}
+                    {renderRichText(plan.guarantee)}
                   </p>
                 )}
               </div>

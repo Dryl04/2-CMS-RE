@@ -1,5 +1,6 @@
 import { Facebook, Twitter, Youtube } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface BrandIdentityHeroProps {
   section: PageBuilderSection;
@@ -55,7 +56,7 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
           <div className="space-y-2 sm:space-y-4">
             {content.badge1 && (
               <p className="text-sm sm:text-base md:text-lg font-bold text-base-content" style={textStyle}>
-                {content.badge1}
+                {renderRichText(content.badge1)}
               </p>
             )}
           </div>
@@ -63,7 +64,7 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
           {content.circleText && (
             <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full flex items-center justify-center flex-shrink-0 bg-primary" style={circleBg ? { backgroundColor: circleBg } : undefined}>
               <span className="text-sm sm:text-base md:text-xl font-bold text-center px-3 sm:px-4 text-primary-content" style={circleText ? { color: circleText } : undefined}>
-                {content.circleText}
+                {renderRichText(content.circleText)}
               </span>
             </div>
           )}
@@ -71,7 +72,7 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
           {content.badge2 && (
             <div className="space-y-2 sm:space-y-4">
               <p className="text-sm sm:text-base md:text-lg font-bold text-base-content" style={textStyle}>
-                {content.badge2}
+                {renderRichText(content.badge2)}
               </p>
             </div>
           )}
@@ -79,13 +80,13 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
 
         <div className="text-center mb-8 md:mb-16">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-light leading-tight mb-2 sm:mb-4 text-base-content" style={h1Style}>
-            {content.title1 || 'CORPORATE BRAND'}
+            {renderRichText(content.title1, 'CORPORATE BRAND')}
           </h1>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-bold leading-tight text-base-content" style={h2Style}>
             {content.title2 && content.accent && (
-              <span>{content.accent} </span>
+              <span>{renderRichText(content.accent)} </span>
             )}
-            {content.title2 || 'IDENTITY SERVICES'}
+            {renderRichText(content.title2, 'IDENTITY SERVICES')}
           </h2>
         </div>
 

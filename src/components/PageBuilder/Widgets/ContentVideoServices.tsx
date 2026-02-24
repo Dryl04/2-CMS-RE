@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Play, Pause, Umbrella, Layers, PaintBucket } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ContentVideoServicesProps {
   section: PageBuilderSection;
@@ -60,20 +61,20 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
           <div className={`lg:col-span-3 bg-base-100 rounded-2xl p-6 sm:p-8 shadow-lg transition-all ${shouldHideDecorations ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             {content.subtitle && (
               <p className="text-sm font-medium tracking-wider uppercase mb-3 sm:mb-4 text-base-content/70" style={subtitleStyle}>
-                {content.subtitle}
+                {renderRichText(content.subtitle)}
               </p>
             )}
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 leading-tight text-base-content" style={headingStyle}>
-              {content.title || 'Digital Marketing and Strategy.'}
+              {renderRichText(content.title, 'Digital Marketing and Strategy.')}
             </h2>
             {content.description && (
               <p className="text-sm sm:text-base leading-relaxed mb-4 text-base-content/70" style={textStyle}>
-                {content.description}
+                {renderRichText(content.description)}
               </p>
             )}
             {content.additionalText && (
               <p className="text-sm sm:text-base leading-relaxed mb-6 sm:mb-8 text-base-content/70" style={textStyle}>
-                {content.additionalText}
+                {renderRichText(content.additionalText)}
               </p>
             )}
             {content.ctaText && (
@@ -146,11 +147,11 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
                     </span>
                   </div>
                   <h3 className="text-base sm:text-lg font-bold leading-tight text-base-content" style={headingStyle}>
-                    {service.title}
+                    {renderRichText(service.title)}
                   </h3>
                   {service.description && (
                     <p className="text-xs sm:text-sm text-base-content/70" style={textStyle}>
-                      {service.description}
+                      {renderRichText(service.description)}
                     </p>
                   )}
                 </div>

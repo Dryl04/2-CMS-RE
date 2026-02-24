@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ClickFunnelsHeroProps {
   section: PageBuilderSection;
@@ -96,14 +97,14 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
           className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 leading-tight"
           style={h1Style}
         >
-          {content.title || "You're one funnel away from"}
+          {renderRichText(content.title, "You're one funnel away from")}
         </h1>
 
         <h2
           className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-8 sm:mb-12 leading-tight"
           style={h2Style}
         >
-          {content.subtitle || 'building recurring revenue'}
+          {renderRichText(content.subtitle, 'building recurring revenue')}
         </h2>
 
         {content.tagline && (
@@ -111,7 +112,7 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
             className="text-xl md:text-2xl mb-8 font-medium"
             style={bodyTextStyle}
           >
-            {content.tagline}
+            {renderRichText(content.tagline)}
           </p>
         )}
 
@@ -152,7 +153,7 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
           {content.showSecondaryLink !== false && (
             <div className="text-sm md:text-base">
               <span style={bodyTextStyle}>
-                {content.secondaryLinkPrefix || 'Not ready to get started?'}
+                {renderRichText(content.secondaryLinkPrefix, 'Not ready to get started?')}
               </span>{' '}
               <a
                 href={content.secondaryLink || '#'}
@@ -169,7 +170,7 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
           <div className="mt-12 flex flex-wrap items-center justify-center gap-8 opacity-70">
             {content.trustBadges.map((badge: any, index: number) => (
               <div key={index} className="text-sm" style={bodyTextStyle}>
-                {badge.text}
+                {renderRichText(badge.text)}
               </div>
             ))}
           </div>

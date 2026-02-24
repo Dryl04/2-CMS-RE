@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Menu, X } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 import { useState } from 'react';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface HeaderClickFunnelProps {
   section: PageBuilderSection;
@@ -58,7 +59,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
                   className="text-xl font-bold tracking-wide"
                   style={logoStyle}
                 >
-                  {content.logoText || 'Brand'}
+                  {renderRichText(content.logoText, 'Brand')}
                 </span>
               </>
             )}

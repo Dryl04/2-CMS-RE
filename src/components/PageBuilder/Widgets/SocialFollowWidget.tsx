@@ -1,6 +1,7 @@
 import React from 'react';
 import { Facebook, Twitter, Youtube, Instagram, Linkedin } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface SocialFollowWidgetProps {
   section: PageBuilderSection;
@@ -38,7 +39,7 @@ export default function SocialFollowWidget({ section }: SocialFollowWidgetProps)
       }}>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-content" style={headingStyle}>
-            {content.title || 'Follow Us'}
+            {renderRichText(content.title, 'Follow Us')}
           </h2>
 
           <div className="flex items-center flex-wrap justify-center gap-3 sm:gap-4 sm:space-x-0">
