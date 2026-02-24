@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ContentShowcaseWidgetProps {
   section: PageBuilderSection;
@@ -41,7 +42,7 @@ export default function ContentShowcaseWidget({ section }: ContentShowcaseWidget
           className="text-base leading-relaxed text-base-content/70"
           style={textStyle}
         >
-          {text}
+          {renderRichText(text)}
         </p>
       ))}
     </div>
@@ -88,7 +89,7 @@ export default function ContentShowcaseWidget({ section }: ContentShowcaseWidget
             className="text-base leading-relaxed text-base-content/70"
             style={textStyle}
           >
-            {text}
+            {renderRichText(text)}
           </p>
         ))}
       </div>
@@ -107,22 +108,22 @@ export default function ContentShowcaseWidget({ section }: ContentShowcaseWidget
               className="text-sm font-medium tracking-wider uppercase text-base-content/70"
               style={subtitleStyle}
             >
-              {subtitle}
+              {renderRichText(subtitle)}
             </p>
           )}
           <h2
             className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-base-content"
             style={headingStyle}
           >
-            {headline}
+            {renderRichText(headline)}
           </h2>
         </div>
 
         {section.variant === 'two-column'
           ? renderTwoColumnText()
           : section.variant === 'image-right'
-          ? renderImageRight()
-          : renderImageLeft()}
+            ? renderImageRight()
+            : renderImageLeft()}
       </div>
     </div>
   );

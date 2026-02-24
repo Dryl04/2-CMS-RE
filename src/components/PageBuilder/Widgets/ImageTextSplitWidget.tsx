@@ -52,7 +52,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
             className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
             style={headingStyle}
           >
-            {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione serui nesciunt est dolorem ipsum dolor sit amet consec tetur adipisci velit sed non numsuam modi.'}
+            {renderRichText(headline, 'Nemo enim quia sit asper natur sed magni dolores eos ratione serui nesciunt est dolorem ipsum dolor sit amet consec tetur adipisci velit sed non numsuam modi.')}
           </h2>
 
           <div className="space-y-3 md:space-y-4">
@@ -100,7 +100,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
             className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
             style={headingStyle}
           >
-            {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione serui nesciunt est dolorem ipsum dolor sit amet consec tetur adipisci velit sed non numsuam modi.'}
+            {renderRichText(headline, 'Nemo enim quia sit asper natur sed magni dolores eos ratione serui nesciunt est dolorem ipsum dolor sit amet consec tetur adipisci velit sed non numsuam modi.')}
           </h2>
 
           <div className="space-y-3 md:space-y-4">
@@ -162,7 +162,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
             className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl italic leading-relaxed text-base-content"
             style={headingStyle}
           >
-            {headline || 'Nemo enim quia sit asper natur sed magni dolores eos ratione'}
+            {renderRichText(headline, 'Nemo enim quia sit asper natur sed magni dolores eos ratione')}
           </h2>
 
           <div className="space-y-3 md:space-y-4">

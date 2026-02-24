@@ -161,7 +161,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
             className="text-base-content text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 lg:mb-6 leading-tight"
             style={h1Style}
           >
-            {headline || 'Your Amazing Headline'}
+            {renderRichText(headline, 'Your Amazing Headline')}
           </h1>
           <div
             className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal"
@@ -200,7 +200,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
         className="text-base-content text-3xl sm:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6 leading-tight"
         style={h1Style}
       >
-        {headline || 'Your Amazing Headline'}
+        {renderRichText(headline, 'Your Amazing Headline')}
       </h1>
       <div
         className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal"
@@ -227,7 +227,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
             className="text-base-content text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight"
             style={h1Style}
           >
-            {headline || 'Your Amazing Headline'}
+            {renderRichText(headline, 'Your Amazing Headline')}
           </h1>
           <div className="text-base-content/70 text-lg sm:text-xl mb-8 font-normal" style={subtitleStyle}>
             {renderRichText(subheadline, 'A compelling subheadline that explains your value proposition')}
@@ -265,7 +265,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
         className="text-base-content text-3xl sm:text-4xl font-bold mb-4"
         style={h1Style}
       >
-        {headline || 'Your Amazing Headline'}
+        {renderRichText(headline, 'Your Amazing Headline')}
       </h1>
       <div
         className="text-base-content/70 text-base sm:text-lg mb-6 font-normal"
@@ -313,7 +313,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
               className="text-base-content text-3xl sm:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6 leading-tight drop-shadow-lg"
               style={h1Style}
             >
-              {headline || 'Your Amazing Headline'}
+              {renderRichText(headline, 'Your Amazing Headline')}
             </h1>
             <div
               className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal drop-shadow-md"

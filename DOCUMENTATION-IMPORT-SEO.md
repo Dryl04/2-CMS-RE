@@ -395,13 +395,13 @@ Le Gems agit uniquement sur la **redaction SEO**.
 - Balises autorisees dans ce cadre: `<strong>`, `<em>`, `<u>`
 - Ne pas imbriquer ces balises, ne pas ajouter d'autres balises HTML
 
-### Regle anti-troncature FAQ (critique)
+### Regle FAQ (mode standard + exception controlee)
 
-- Pour chaque section contenant `content.faqs`, respecter strictement la cardinalite du template (`array_cardinality` ou `editable_sections.content_shape.__count`).
-- Generer exactement ce nombre de FAQ dans le JSON final: ni moins, ni plus.
-- Ne jamais rediger 20-30 FAQ si la section n'a que 3 slots: l'excedent sera perdu a l'import.
-- Si le brief contient plus de questions que de slots, prioriser les questions a plus forte intention SEO et fusionner les doublons dans les reponses.
-- Interdiction de modifier la structure (ajout de nouveaux tableaux/champs/sections FAQ) sans demande explicite.
+- Mode standard: pour chaque section contenant `content.faqs`, respecter la cardinalite du template (`array_cardinality` ou `editable_sections.content_shape.__count`).
+- Exception autorisee uniquement sur demande explicite: mode `FAQ_ETENDUE`.
+- En mode `FAQ_ETENDUE`, vous pouvez ajouter des Q/R dans `content.faqs` au-dela de la cardinalite initiale du template, sans modifier `id/type/variant/design/advanced/themeConfig`.
+- Cette exception ne s'applique qu'aux FAQ. Tous les autres tableaux (`features`, `services`, `steps`, `navItems`, `columns`, etc.) restent verrouilles en cardinalite.
+- Interdiction de creer de nouveaux champs ou de nouvelles sections pour contourner cette regle.
 
 ---
 
@@ -459,8 +459,8 @@ Avant de soumettre votre JSON, verifiez :
 - [ ] Seuls les champs `content` ont ete modifies
 - [ ] Les champs d'interface (navigation, boutons, liens) sont restes identiques au modele
 - [ ] Les URLs de medias (images/avatars/logos/thumbnails) sont restees identiques au modele sauf demande explicite
-- [ ] Le nombre d'elements dans les tableaux (features, testimonials, navItems, columns, faqs, services, steps) est identique au modele
-- [ ] Pour chaque `content.faqs`, le nombre de FAQ produites correspond exactement aux slots disponibles du template (aucune FAQ redigee hors JSON final)
+- [ ] Le nombre d'elements dans les tableaux (features, testimonials, navItems, columns, services, steps) est identique au modele
+- [ ] FAQ: par defaut, cardinalite identique au modele; si mode `FAQ_ETENDUE` explicitement demande, `content.faqs` peut etre etendu sans autre changement structurel
 - [ ] Les URLs d'images sont des URLs Pexels valides (format brut `https://...`, pas de markdown)
 - [ ] Les URLs d'images dans les sous-objets (testimonials, features, items) sont aussi en format brut
 - [ ] Le `status` est bien `"published"` pour une publication automatique

@@ -55,7 +55,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
           className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight max-w-4xl mx-auto text-base-content"
           style={headingStyle}
         >
-          {headline || 'Development of Multimedia Interactive Content'}
+          {renderRichText(headline, 'Development of Multimedia Interactive Content')}
         </h2>
       </div>
 
@@ -99,7 +99,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
           className="text-2xl sm:text-3xl lg:text-5xl font-bold leading-tight text-base-content"
           style={headingStyle}
         >
-          {headline || 'Development of Multimedia Interactive Content'}
+          {renderRichText(headline, 'Development of Multimedia Interactive Content')}
         </h2>
       </div>
 
@@ -143,7 +143,7 @@ export default function CenteredContentWidget({ section }: CenteredContentWidget
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight text-base-content"
           style={headingStyle}
         >
-          {headline || 'Development of Multimedia Interactive Content'}
+          {renderRichText(headline, 'Development of Multimedia Interactive Content')}
         </h2>
       </div>
 

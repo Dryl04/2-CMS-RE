@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface SimpleCenteredHeroProps {
   section: PageBuilderSection;
@@ -46,11 +47,11 @@ export default function SimpleCenteredHero({ section }: SimpleCenteredHeroProps)
       }}>
         <div className="inline-block mb-8">
           <h2 className="px-6 py-2 rounded-full text-sm font-medium bg-primary text-primary-content" style={badgeBg || badgeText ? { backgroundColor: badgeBg, color: badgeText, ...h2Style } : h2Style}>
-            {content.subtitle || 'Crafted for high-converting landing pages'}
+            {renderRichText(content.subtitle, 'Crafted for high-converting landing pages')}
           </h2>
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-base-content" style={h1Style}>
-          {content.title || 'Quis autem veleum iure repreh enderit.'}
+          {renderRichText(content.title, 'Quis autem veleum iure repreh enderit.')}
         </h1>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ProviderMasonryWidgetProps {
   section: PageBuilderSection;
@@ -43,10 +44,10 @@ export default function ProviderMasonryWidget({ section }: ProviderMasonryWidget
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold" style={headingStyle}>
-              {content.title || 'One subscription to rule them all.'}
+              {renderRichText(content.title, 'One subscription to rule them all.')}
             </h2>
             <p className="text-sm mt-2 opacity-80" style={subtitleStyle}>
-              {content.subtitle || 'Compare models and providers in one place.'}
+              {renderRichText(content.subtitle, 'Compare models and providers in one place.')}
             </p>
           </div>
           <a href={content.ctaLink || '#'} className="btn btn-outline btn-sm" style={linkStyle}>{content.ctaText || 'View all models'}</a>
@@ -62,9 +63,9 @@ export default function ProviderMasonryWidget({ section }: ProviderMasonryWidget
                 <img src={item.image || ''} alt={item.name || 'provider'} className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-neutral/50" />
                 <div className="relative z-10 p-4 flex h-full flex-col justify-end">
-                  <p className="text-xs uppercase tracking-wider text-neutral-content/80" style={subtitleStyle}>{item.tag || 'Provider'}</p>
-                  <h3 className="text-lg font-semibold text-neutral-content" style={headingStyle}>{item.name || 'Model'}</h3>
-                  <p className="text-xs text-neutral-content/80 mt-1" style={textStyle}>{item.meta || ''}</p>
+                  <p className="text-xs uppercase tracking-wider text-neutral-content/80" style={subtitleStyle}>{renderRichText(item.tag, 'Provider')}</p>
+                  <h3 className="text-lg font-semibold text-neutral-content" style={headingStyle}>{renderRichText(item.name, 'Model')}</h3>
+                  <p className="text-xs text-neutral-content/80 mt-1" style={textStyle}>{renderRichText(item.meta)}</p>
                 </div>
               </div>
             </article>

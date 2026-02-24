@@ -247,9 +247,11 @@ If `sections_data` is provided, each section must contain at least:
 - Do not edit media URLs (`image`, `backgroundImage`, `thumbnail`, `avatar`, `logo`) unless explicitly requested.
 - Keep same number/order of sections as template.
 - Keep same cardinality in arrays (features, testimonials, nav items, columns) unless explicitly requested.
-- Treat FAQ capacity as strict: for every `content.faqs`, generate exactly the available slot count from `array_cardinality`/`content_shape.__count`.
-- Never draft more FAQ items than template capacity; overflow would be dropped at import.
-- If source brief contains more questions than slots, prioritize highest SEO intent questions and merge overlaps.
+- FAQ default mode: for every `content.faqs`, match template capacity from `array_cardinality`/`content_shape.__count`.
+- Explicit exception mode allowed: `FAQ_EXTENDED`.
+- In `FAQ_EXTENDED` mode (only when explicitly requested), `content.faqs` may exceed initial template capacity.
+- `FAQ_EXTENDED` applies only to FAQs; all other arrays keep strict template cardinality.
+- Do not create new sections/fields to bypass this rule.
 - **Image/media URLs must be plain URLs** — never wrap them in markdown link syntax. See "Image & Media URLs" section below.
 - The `design.typography` object supports: `fontFamily`, `headingFontFamily`, `headingFontWeight`, `headingFontSize`, `h1FontFamily`, `h1FontWeight`, `h1FontSize`, `h2FontFamily`, `h2FontWeight`, `h2FontSize`, `textFontSize`, `buttonFontSize`, `buttonFontFamily`, `headingColor`, `h1Color`, `h2Color`, `textColor`, `linkColor`, `subtitleColor`.
 - The `design.colors` object supports: `buttonBackground`, `buttonText`, `buttonBackgroundHover`, `buttonRadius`, `buttonSize`, `buttonBorderWidth`, `buttonBorderStyle`, `buttonBorderColor`, `buttonShadow`, `iconBackground`, `iconColor`, `iconBorderColor`, `iconBorderWidth`, `iconRadius`, `accent`, `primary`, `secondary`.
@@ -336,7 +338,7 @@ Before returning JSON, ensure:
 - Any `sections_data` provided is an array of valid section objects.
 - UI/navigation/action fields are unchanged unless explicitly requested.
 - Media URLs are unchanged unless explicitly requested.
-- For each `content.faqs`, produced item count exactly matches template capacity (no hidden or discarded drafted FAQs).
+- FAQ count rule: default = match template capacity; if `FAQ_EXTENDED` explicitly requested, `content.faqs` may be extended.
 - No markdown emphasis markers appear inside JSON string values.
 
 ---

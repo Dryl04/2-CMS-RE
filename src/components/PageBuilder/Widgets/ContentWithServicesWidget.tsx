@@ -46,11 +46,11 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
           <div className="space-y-6">
             {content.subtitle && (
               <p className="text-sm font-medium tracking-wider uppercase text-base-content/70" style={subtitleStyle}>
-                {content.subtitle}
+                {renderRichText(content.subtitle)}
               </p>
             )}
             <h2 className="text-4xl md:text-5xl font-bold leading-tight text-base-content" style={headingStyle}>
-              {content.title || 'Website Performance and Speed Optimization Techniques'}
+              {renderRichText(content.title, 'Website Performance and Speed Optimization Techniques')}
             </h2>
             {content.description && (
               <p className="text-base leading-relaxed text-base-content/70" style={textStyle}>
@@ -104,7 +104,7 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
                       {renderIcon(service.icon, 'w-6 h-6 text-base-content', 24) || <Umbrella className="w-6 h-6 text-base-content" />}
                     </div>
                     <h3 className="text-lg font-bold leading-tight text-base-content" style={headingStyle}>
-                      {service.title}
+                      {renderRichText(service.title)}
                     </h3>
                     {service.description && (
                       <p className="text-sm mt-2 text-base-content/70" style={textStyle}>
