@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface FAQTwoColumnsWidgetProps {
   section: PageBuilderSection;
@@ -37,14 +38,14 @@ export default function FAQTwoColumnsWidget({ section }: FAQTwoColumnsWidgetProp
               className="text-sm font-medium tracking-wider uppercase mb-4 text-base-content/70"
               style={subtitleStyle}
             >
-              {content.subtitle}
+              {renderRichText(content.subtitle)}
             </p>
           )}
           <h2
             className="text-4xl md:text-5xl font-bold text-base-content"
             style={headingStyle}
           >
-            {content.title || 'Frequently Asked Questions'}
+            {renderRichText(content.title, 'Frequently Asked Questions')}
           </h2>
         </div>
 
@@ -56,13 +57,13 @@ export default function FAQTwoColumnsWidget({ section }: FAQTwoColumnsWidgetProp
                   className="text-xl font-bold mb-4 text-base-content"
                   style={headingStyle}
                 >
-                  {faq.question}
+                  {renderRichText(faq.question)}
                 </h3>
                 <p
                   className="text-base leading-relaxed text-base-content/70"
                   style={textStyle}
                 >
-                  {faq.answer}
+                  {renderRichText(faq.answer)}
                 </p>
               </div>
             ))}
@@ -75,13 +76,13 @@ export default function FAQTwoColumnsWidget({ section }: FAQTwoColumnsWidgetProp
                   className="text-xl font-bold mb-4 text-base-content"
                   style={headingStyle}
                 >
-                  {faq.question}
+                  {renderRichText(faq.question)}
                 </h3>
                 <p
                   className="text-base leading-relaxed text-base-content/70"
                   style={textStyle}
                 >
-                  {faq.answer}
+                  {renderRichText(faq.answer)}
                 </p>
               </div>
             ))}

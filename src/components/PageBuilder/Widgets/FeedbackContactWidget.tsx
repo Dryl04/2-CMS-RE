@@ -1,5 +1,6 @@
 import { Play } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface FeedbackContactWidgetProps {
   section: PageBuilderSection;
@@ -38,21 +39,21 @@ export default function FeedbackContactWidget({ section }: FeedbackContactWidget
                 className="text-sm font-medium tracking-wider uppercase text-base-content/70"
                 style={subtitleStyle}
               >
-                {content.subtitle}
+                {renderRichText(content.subtitle)}
               </p>
             )}
             <h2
               className="text-4xl md:text-6xl font-bold leading-tight text-base-content"
               style={headingStyle}
             >
-              {content.title || 'User feedbacks shapes better designs.'}
+              {renderRichText(content.title, 'User feedbacks shapes better designs.')}
             </h2>
             {content.description && (
               <p
                 className="text-lg leading-relaxed text-base-content/70"
                 style={textStyle}
               >
-                {content.description}
+                {renderRichText(content.description)}
               </p>
             )}
 
@@ -71,14 +72,14 @@ export default function FeedbackContactWidget({ section }: FeedbackContactWidget
               className="text-2xl font-bold mb-6 text-base-content"
               style={headingStyle}
             >
-              {content.formTitle || 'Reach Us Here'}
+              {renderRichText(content.formTitle, 'Reach Us Here')}
             </h3>
             {content.formDescription && (
               <p
                 className="text-base mb-6 text-base-content/70"
                 style={textStyle}
               >
-                {content.formDescription}
+                {renderRichText(content.formDescription)}
               </p>
             )}
 

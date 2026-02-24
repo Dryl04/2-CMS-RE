@@ -1,6 +1,7 @@
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 import { ComponentType } from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface CinematicFooterWidgetProps {
   section: PageBuilderSection;
@@ -61,8 +62,8 @@ export default function CinematicFooterWidget({ section }: CinematicFooterWidget
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
-            <p className="text-xl font-semibold text-neutral-content" style={headingStyle}>{content.brand || 'FLORA'}</p>
-            <p className="text-xs text-neutral-content/80 mt-1" style={textStyle}>{content.copyright || 'Copyright © 2026'}</p>
+            <p className="text-xl font-semibold text-neutral-content" style={headingStyle}>{renderRichText(content.brand, 'FLORA')}</p>
+            <p className="text-xs text-neutral-content/80 mt-1" style={textStyle}>{renderRichText(content.copyright, 'Copyright © 2026')}</p>
           </div>
           <div className="flex items-center gap-3">
             {socials.map((social: SocialItem, index: number) => {
@@ -80,12 +81,12 @@ export default function CinematicFooterWidget({ section }: CinematicFooterWidget
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {columns.map((column: FooterColumn, index: number) => (
             <div key={index}>
-              <h3 className="font-semibold text-neutral-content mb-3" style={headingStyle}>{column.title}</h3>
+              <h3 className="font-semibold text-neutral-content mb-3" style={headingStyle}>{renderRichText(column.title)}</h3>
               <ul className="space-y-2 text-sm">
                 {(column.links || []).map((link: FooterLink, linkIndex: number) => (
                   <li key={linkIndex}>
                     <a href={link.url || '#'} className="text-neutral-content/80 hover:text-neutral-content transition-colors" style={linkStyle}>
-                      {link.label}
+                      {renderRichText(link.label)}
                     </a>
                   </li>
                 ))}

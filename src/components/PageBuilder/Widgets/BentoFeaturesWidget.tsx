@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface BentoFeaturesWidgetProps {
   section: PageBuilderSection;
@@ -33,11 +34,11 @@ export default function BentoFeaturesWidget({ section }: BentoFeaturesWidgetProp
           <div>
             {content.subtitle && (
               <p className="text-xs sm:text-sm font-medium tracking-wider uppercase mb-3 sm:mb-4 text-base-content/70" style={subtitleStyle}>
-                {content.subtitle}
+                {renderRichText(content.subtitle)}
               </p>
             )}
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-base-content" style={headingStyle}>
-              {content.title || 'Discover the benefits of unique features.'}
+              {renderRichText(content.title, 'Discover the benefits of unique features.')}
             </h2>
           </div>
         </div>
@@ -60,15 +61,15 @@ export default function BentoFeaturesWidget({ section }: BentoFeaturesWidgetProp
               >
                 {feature.label && (
                   <p className="text-xs font-medium tracking-wider uppercase mb-2 sm:mb-3 text-neutral-content/80" style={subtitleStyle}>
-                    {feature.label}
+                    {renderRichText(feature.label)}
                   </p>
                 )}
                 <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-neutral-content" style={headingStyle}>
-                  {feature.title}
+                  {renderRichText(feature.title)}
                 </h3>
                 {feature.description && (
                   <p className="text-xs sm:text-sm text-neutral-content/80 mt-1 sm:mt-2" style={textStyle}>
-                    {feature.description}
+                    {renderRichText(feature.description)}
                   </p>
                 )}
               </div>

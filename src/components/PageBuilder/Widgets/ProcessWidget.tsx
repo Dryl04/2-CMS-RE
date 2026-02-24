@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ProcessWidgetProps {
   section: PageBuilderSection;
@@ -61,13 +62,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'How It Works'}
+          {renderRichText(title, 'How It Works')}
         </h2>
         <p
           className="text-base sm:text-lg md:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Get started in four simple steps'}
+          {renderRichText(subtitle, 'Get started in four simple steps')}
         </p>
       </div>
 
@@ -91,13 +92,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
                 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 md:mb-3 text-base-content"
                 style={headingStyle}
               >
-                {step.title}
+                {renderRichText(step.title)}
               </h3>
               <p
                 className="text-sm md:text-base text-base-content/70"
                 style={textStyle}
               >
-                {step.description}
+                {renderRichText(step.description)}
               </p>
             </div>
           ))}
@@ -113,13 +114,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Our Process'}
+          {renderRichText(title, 'Our Process')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Follow these steps to success'}
+          {renderRichText(subtitle, 'Follow these steps to success')}
         </p>
       </div>
 
@@ -152,13 +153,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
                 className="text-2xl font-bold mb-3 text-base-content"
                 style={headingStyle}
               >
-                {step.title}
+                {renderRichText(step.title)}
               </h3>
               <p
                 className="text-base text-base-content/70"
                 style={textStyle}
               >
-                {step.description}
+                {renderRichText(step.description)}
               </p>
             </div>
             {index < (steps || defaultSteps).length - 1 && (
@@ -180,13 +181,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Step by Step'}
+          {renderRichText(title, 'Step by Step')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Your journey to success'}
+          {renderRichText(subtitle, 'Your journey to success')}
         </p>
       </div>
 
@@ -211,13 +212,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
                   className="text-xl sm:text-2xl font-bold mb-2 text-base-content"
                   style={headingStyle}
                 >
-                  {step.title}
+                  {renderRichText(step.title)}
                 </h3>
                 <p
                   className="text-base sm:text-lg text-base-content/70"
                   style={textStyle}
                 >
-                  {step.description}
+                  {renderRichText(step.description)}
                 </p>
               </div>
             </div>
@@ -234,13 +235,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Simple Steps'}
+          {renderRichText(title, 'Simple Steps')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Everything you need to get started'}
+          {renderRichText(subtitle, 'Everything you need to get started')}
         </p>
       </div>
 
@@ -270,13 +271,13 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
                   className="text-xl font-bold mb-2 text-base-content"
                   style={headingStyle}
                 >
-                  {step.title}
+                  {renderRichText(step.title)}
                 </h3>
                 <p
                   className="text-sm text-base-content/70"
                   style={textStyle}
                 >
-                  {step.description}
+                  {renderRichText(step.description)}
                 </p>
               </div>
             </div>

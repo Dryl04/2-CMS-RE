@@ -1,5 +1,6 @@
 import { Umbrella, Layers, PaintBucket, Clock, ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ServicesCarouselWidgetProps {
   section: PageBuilderSection;
@@ -51,12 +52,12 @@ export default function ServicesCarouselWidget({ section }: ServicesCarouselWidg
                 </div>
 
                 <h3 className="text-xl font-bold mb-4 text-base-content" style={headingStyle}>
-                  {service.title}
+                  {renderRichText(service.title)}
                 </h3>
 
                 {service.description && (
                   <p className="text-sm mb-6 text-base-content/70" style={textStyle}>
-                    {service.description}
+                    {renderRichText(service.description)}
                   </p>
                 )}
 
@@ -77,9 +78,8 @@ export default function ServicesCarouselWidget({ section }: ServicesCarouselWidg
             {[0, 1, 2, 3, 4].map((dot, index) => (
               <button
                 key={index}
-                className={`w-2 h-2 rounded-full transition ${
-                  index === 0 ? 'bg-base-content w-3 h-3' : 'bg-base-content/40'
-                }`}
+                className={`w-2 h-2 rounded-full transition ${index === 0 ? 'bg-base-content w-3 h-3' : 'bg-base-content/40'
+                  }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
             ))}

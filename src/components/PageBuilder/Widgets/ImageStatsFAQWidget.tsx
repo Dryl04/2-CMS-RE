@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ImageStatsFAQWidgetProps {
   section: PageBuilderSection;
@@ -87,14 +88,14 @@ export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProp
                 className="text-sm font-medium tracking-wider uppercase text-base-content/70"
                 style={subtitleStyle}
               >
-                {content.subtitle}
+                {renderRichText(content.subtitle)}
               </p>
             )}
             <h2
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-base-content"
               style={headingStyle}
             >
-              {content.title || 'Unique sites give users smooth journeys.'}
+              {renderRichText(content.title, 'Unique sites give users smooth journeys.')}
             </h2>
 
             <div className="space-y-6">
@@ -107,14 +108,14 @@ export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProp
                         style={headingStyle}
                       >
                         <span className="mr-2">{faq.prefix || '\u2014'}</span>
-                        <span>{faq.question}</span>
+                        <span>{renderRichText(faq.question)}</span>
                       </h3>
                       {faq.answer && (
                         <p
                           className="text-base ml-6 text-base-content/70"
                           style={textStyle}
                         >
-                          {faq.answer}
+                          {renderRichText(faq.answer)}
                         </p>
                       )}
                     </div>

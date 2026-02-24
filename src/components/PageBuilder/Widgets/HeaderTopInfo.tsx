@@ -1,5 +1,6 @@
 import { Clock, Menu, Search, ShoppingBag } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface HeaderTopInfoProps {
   section: PageBuilderSection;
@@ -32,16 +33,16 @@ export default function HeaderTopInfo({ section }: HeaderTopInfoProps) {
               <Clock className="w-5 h-5 text-base-content" style={headingStyle} />
               <div>
                 <p className="text-sm font-semibold text-base-content" style={headingStyle}>
-                  {content.openHoursTitle || 'Open Hours'}
+                  {renderRichText(content.openHoursTitle, 'Open Hours')}
                 </p>
                 <p className="text-xs text-base-content/70" style={textStyle}>
-                  {content.openHours || 'Mon - Fri 9:30 - 20:00'}
+                  {renderRichText(content.openHours, 'Mon - Fri 9:30 - 20:00')}
                 </p>
               </div>
             </div>
 
             <div className="text-2xl md:text-3xl font-bold text-base-content" style={headingStyle}>
-              {content.logo || 'KING'}
+              {renderRichText(content.logo, 'KING')}
             </div>
 
             <div className="flex items-center space-x-4">

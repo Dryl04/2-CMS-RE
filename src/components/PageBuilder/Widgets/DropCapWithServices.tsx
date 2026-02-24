@@ -1,5 +1,6 @@
 import { Check } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface DropCapWithServicesProps {
   section: PageBuilderSection;
@@ -34,12 +35,12 @@ export default function DropCapWithServices({ section }: DropCapWithServicesProp
       }}>
         {content.subtitle && (
           <p className="text-sm font-medium tracking-wider uppercase mb-4 sm:mb-6 text-base-content/70" style={subtitleStyle}>
-            {content.subtitle}
+            {renderRichText(content.subtitle)}
           </p>
         )}
 
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 leading-tight text-base-content" style={headingStyle}>
-          {content.title || 'Quis autem veleum iure repreh enderit.'}
+          {renderRichText(content.title, 'Quis autem veleum iure repreh enderit.')}
         </h2>
 
         <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
@@ -50,14 +51,14 @@ export default function DropCapWithServices({ section }: DropCapWithServicesProp
                   {content.dropCap}
                 </span>
                 <p className="text-sm sm:text-base leading-relaxed pt-1 sm:pt-2 text-base-content/70" style={textStyle}>
-                  {content.introText}
+                  {renderRichText(content.introText)}
                 </p>
               </div>
             )}
 
             {content.additionalText && (
               <p className="text-sm sm:text-base leading-relaxed text-base-content/70" style={textStyle}>
-                {content.additionalText}
+                {renderRichText(content.additionalText)}
               </p>
             )}
 
@@ -72,14 +73,14 @@ export default function DropCapWithServices({ section }: DropCapWithServicesProp
             {content.serviceColumns?.map((column: any, index: number) => (
               <div key={index} className="space-y-4 sm:space-y-6">
                 <h3 className="text-xl sm:text-2xl font-bold text-base-content" style={headingStyle}>
-                  {column.title}
+                  {renderRichText(column.title)}
                 </h3>
                 <div className="space-y-2 sm:space-y-3">
                   {column.items?.map((item: string, itemIndex: number) => (
                     <div key={itemIndex} className="flex items-center space-x-3">
                       <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-base-content/70" style={textStyle} />
                       <span className="text-sm sm:text-base text-base-content/70" style={textStyle}>
-                        {item}
+                        {renderRichText(item)}
                       </span>
                     </div>
                   ))}

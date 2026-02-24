@@ -1,6 +1,7 @@
 import React from 'react';
 import { Facebook, Twitter, Instagram, Linkedin, Youtube } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface FooterWidgetProps {
   section: PageBuilderSection;
@@ -50,7 +51,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
             )}
             {description && (
               <p className="text-sm mb-4 opacity-70">
-                {description}
+                {renderRichText(description)}
               </p>
             )}
             {socialLinks && socialLinks.length > 0 && (
@@ -174,7 +175,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
           )}
           {description && (
             <p className="max-w-md mx-auto mb-6 text-sm sm:text-base text-base-content/70" style={textStyle}>
-              {description}
+              {renderRichText(description)}
             </p>
           )}
 

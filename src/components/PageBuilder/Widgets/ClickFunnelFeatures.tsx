@@ -1,6 +1,7 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
 import { Play } from 'lucide-react';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ClickFunnelFeaturesProps {
   section: PageBuilderSection;
@@ -90,13 +91,13 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
             className="text-4xl md:text-5xl font-bold mb-6"
             style={headingStyle}
           >
-            {title}
+            {renderRichText(title)}
           </h2>
           <p
             className="text-lg md:text-xl max-w-4xl mx-auto leading-relaxed"
             style={bodyTextStyle}
           >
-            {subtitle}
+            {renderRichText(subtitle)}
           </p>
         </div>
 
@@ -136,13 +137,13 @@ export default function ClickFunnelFeatures({ section }: ClickFunnelFeaturesProp
                   className="text-lg font-semibold mb-2 leading-tight"
                   style={headingStyle}
                 >
-                  {feature.quote}
+                  {renderRichText(feature.quote)}
                 </p>
                 <p
                   className="text-sm"
                   style={bodyTextStyle}
                 >
-                  {feature.author}
+                  {renderRichText(feature.author)}
                 </p>
               </div>
             </div>

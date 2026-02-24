@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ProcessStepsCardsWidgetProps {
   section: PageBuilderSection;
@@ -36,10 +37,10 @@ export default function ProcessStepsCardsWidget({ section }: ProcessStepsCardsWi
         style={{ paddingTop: design.spacing.paddingTop, paddingBottom: design.spacing.paddingBottom }}
       >
         <h2 className="text-3xl sm:text-4xl font-bold mb-2" style={headingStyle}>
-          {content.title || 'Create at the speed of thought.'}
+          {renderRichText(content.title, 'Create at the speed of thought.')}
         </h2>
         <p className="text-sm opacity-80 mb-8" style={subtitleStyle}>
-          {content.subtitle || 'Move from idea to production with a simple loop.'}
+          {renderRichText(content.subtitle, 'Move from idea to production with a simple loop.')}
         </p>
 
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
@@ -48,8 +49,8 @@ export default function ProcessStepsCardsWidget({ section }: ProcessStepsCardsWi
               <img src={step.image || ''} alt={step.title || 'step'} className="w-full h-44 object-cover bg-base-300" />
               <div className="p-4">
                 <p className="text-sm font-semibold opacity-80" style={textStyle}>{step.number || `0${index + 1}`}</p>
-                <h3 className="text-xl font-bold mt-1" style={headingStyle}>{step.title || 'Step'}</h3>
-                <p className="text-sm mt-2 opacity-80" style={textStyle}>{step.description || ''}</p>
+                <h3 className="text-xl font-bold mt-1" style={headingStyle}>{renderRichText(step.title, 'Step')}</h3>
+                <p className="text-sm mt-2 opacity-80" style={textStyle}>{renderRichText(step.description)}</p>
               </div>
             </article>
           ))}

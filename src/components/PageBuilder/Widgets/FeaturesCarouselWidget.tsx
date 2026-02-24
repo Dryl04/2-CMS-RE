@@ -1,5 +1,6 @@
 import { Umbrella, Layers, PaintBucket, Clock, MessageCircle } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface FeaturesCarouselWidgetProps {
   section: PageBuilderSection;
@@ -50,12 +51,12 @@ export default function FeaturesCarouselWidget({ section }: FeaturesCarouselWidg
                 </div>
 
                 <h3 className="text-2xl font-bold text-base-content" style={headingStyle}>
-                  {feature.title}
+                  {renderRichText(feature.title)}
                 </h3>
 
                 {feature.description && (
                   <p className="text-base leading-relaxed text-base-content/70" style={textStyle}>
-                    {feature.description}
+                    {renderRichText(feature.description)}
                   </p>
                 )}
 

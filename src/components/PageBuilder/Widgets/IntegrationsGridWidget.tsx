@@ -1,5 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface IntegrationsGridWidgetProps {
   section: PageBuilderSection;
@@ -38,21 +39,21 @@ export default function IntegrationsGridWidget({ section }: IntegrationsGridWidg
               className="text-xs sm:text-sm font-medium tracking-wider uppercase mb-3 md:mb-4 text-base-content/70"
               style={subtitleStyle}
             >
-              {content.subtitle}
+              {renderRichText(content.subtitle)}
             </p>
           )}
           <h2
             className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-base-content"
             style={headingStyle}
           >
-            {content.title || 'Integrations'}
+            {renderRichText(content.title, 'Integrations')}
           </h2>
           {content.description && (
             <p
               className="text-base md:text-lg max-w-3xl mx-auto text-base-content/70"
               style={textStyle}
             >
-              {content.description}
+              {renderRichText(content.description)}
             </p>
           )}
         </div>
@@ -81,13 +82,13 @@ export default function IntegrationsGridWidget({ section }: IntegrationsGridWidg
                     className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-base-content"
                     style={headingStyle}
                   >
-                    {integration.name}
+                    {renderRichText(integration.name)}
                   </h3>
                   <p
                     className="text-xs sm:text-sm mb-3 sm:mb-4 text-base-content/70"
                     style={textStyle}
                   >
-                    {integration.description}
+                    {renderRichText(integration.description)}
                   </p>
                   <a
                     href={integration.link || '#'}

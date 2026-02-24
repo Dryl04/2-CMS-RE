@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Facebook, Twitter, Youtube, Search, Phone, Menu, X } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface HeaderAccountBarProps {
   section: PageBuilderSection;
@@ -54,7 +55,7 @@ export default function HeaderAccountBar({ section }: HeaderAccountBarProps) {
 
             {content.description && (
               <p className="hidden sm:block text-xs sm:text-sm text-base-content/70" style={textStyle}>
-                {content.description}
+                {renderRichText(content.description)}
               </p>
             )}
 
@@ -69,7 +70,7 @@ export default function HeaderAccountBar({ section }: HeaderAccountBarProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex items-center justify-between">
             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content" style={headingStyle}>
-              {content.logo || 'KING'}
+              {renderRichText(content.logo, 'KING')}
             </div>
 
             <nav className="hidden lg:flex items-center gap-6 xl:gap-8">

@@ -1,5 +1,6 @@
 import { Clock, Mail, MapPin, Facebook, Twitter, Youtube, Phone } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface HeaderFullContactProps {
   section: PageBuilderSection;
@@ -41,7 +42,7 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
               {content.openHours && (
                 <div className="flex items-center space-x-2">
                   <Clock className="w-4 h-4 text-base-content" style={headingStyle} />
-                  <span className="text-base-content/70" style={textStyle}>{content.openHours}</span>
+                  <span className="text-base-content/70" style={textStyle}>{renderRichText(content.openHours)}</span>
                 </div>
               )}
               {content.email && (
@@ -53,7 +54,7 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
               {content.address && (
                 <div className="flex items-center space-x-2">
                   <MapPin className="w-4 h-4 text-base-content" style={headingStyle} />
-                  <span className="text-base-content/70" style={textStyle}>{content.address}</span>
+                  <span className="text-base-content/70" style={textStyle}>{renderRichText(content.address)}</span>
                 </div>
               )}
             </div>
@@ -78,7 +79,7 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="text-3xl md:text-4xl font-bold text-base-content" style={headingStyle}>
-              {content.logo || 'KING'}
+              {renderRichText(content.logo, 'KING')}
             </div>
 
             <nav className="hidden lg:flex items-center space-x-8">

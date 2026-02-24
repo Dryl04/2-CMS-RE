@@ -56,7 +56,7 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
           className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-base-content"
           style={headingStyle}
         >
-          {intro}
+          {renderRichText(intro)}
         </h2>
         <a href={ctaLink} className="btn btn-primary btn-sm rounded-full" style={linkStyle}>
           {ctaText}
@@ -84,7 +84,7 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
           className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-base-content"
           style={headingStyle}
         >
-          {intro}
+          {renderRichText(intro)}
         </h2>
       </div>
 
@@ -112,7 +112,7 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
         className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-base-content"
         style={headingStyle}
       >
-        {intro}
+        {renderRichText(intro)}
       </h2>
 
       <div className="grid md:grid-cols-3 gap-6">

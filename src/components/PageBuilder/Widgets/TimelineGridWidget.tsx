@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface TimelineGridWidgetProps {
   section: PageBuilderSection;
@@ -31,11 +32,11 @@ export default function TimelineGridWidget({ section }: TimelineGridWidgetProps)
       }}>
         {content.subtitle && (
           <p className="text-sm font-medium tracking-wider uppercase mb-4 text-base-content/70" style={subtitleStyle}>
-            {content.subtitle}
+            {renderRichText(content.subtitle)}
           </p>
         )}
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-12 lg:mb-16 text-base-content" style={headingStyle}>
-          {content.title || "Find out about our company's background."}
+          {renderRichText(content.title, "Find out about our company's background.")}
         </h2>
 
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
@@ -51,11 +52,11 @@ export default function TimelineGridWidget({ section }: TimelineGridWidgetProps)
                 </p>
 
                 <h3 className="text-2xl font-bold mb-4 text-base-content" style={headingStyle}>
-                  {event.title || 'This is heading'}
+                  {renderRichText(event.title, 'This is heading')}
                 </h3>
 
                 <p className="text-base leading-relaxed text-base-content/70" style={textStyle}>
-                  {event.description || 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et aliqua exceur sante.'}
+                  {renderRichText(event.description, 'Lorem ipsum dolor sit amet consec tetur adipis cing elit sed do eiusmod tempor ut labore et aliqua exceur sante.')}
                 </p>
               </div>
             </div>

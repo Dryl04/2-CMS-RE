@@ -1,5 +1,6 @@
 import { Umbrella, Layers, PaintBucket, Clock } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface HeroWithServicesWidgetProps {
   section: PageBuilderSection;
@@ -56,20 +57,20 @@ export default function HeroWithServicesWidget({ section }: HeroWithServicesWidg
               className="text-sm font-medium tracking-wider uppercase text-base-content/70"
               style={h2Style}
             >
-              {content.subtitle || 'Service excellence for growth-focused teams'}
+              {renderRichText(content.subtitle, 'Service excellence for growth-focused teams')}
             </h2>
             <h1
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-base-content"
               style={h1Style}
             >
-              {content.title || 'Website Performance and Speed Optimization Techniques'}
+              {renderRichText(content.title, 'Website Performance and Speed Optimization Techniques')}
             </h1>
             {content.description && (
               <p
                 className="text-base sm:text-lg leading-relaxed text-base-content/70"
                 style={textStyle}
               >
-                {content.description}
+                {renderRichText(content.description)}
               </p>
             )}
 
@@ -104,14 +105,14 @@ export default function HeroWithServicesWidget({ section }: HeroWithServicesWidg
                   className="text-lg sm:text-xl font-bold text-base-content"
                   style={headingStyle}
                 >
-                  {service.title}
+                  {renderRichText(service.title)}
                 </h3>
                 {service.description && (
                   <p
                     className="text-sm text-base-content/70"
                     style={textStyle}
                   >
-                    {service.description}
+                    {renderRichText(service.description)}
                   </p>
                 )}
               </div>

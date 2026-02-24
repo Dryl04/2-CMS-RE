@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface CenteredTestimonialProps {
   section: PageBuilderSection;
@@ -32,18 +33,18 @@ export default function CenteredTestimonial({ section }: CenteredTestimonialProp
       }}>
         {content.subtitle && (
           <p className="text-sm font-medium tracking-wider uppercase mb-6 text-base-content/70" style={subtitleStyle}>
-            {content.subtitle}
+            {renderRichText(content.subtitle)}
           </p>
         )}
 
         <h2 className="text-5xl md:text-6xl font-bold mb-12 leading-tight text-base-content" style={headingStyle}>
-          {content.title || 'Why Choose Us'}
+          {renderRichText(content.title, 'Why Choose Us')}
         </h2>
 
         <div className="grid md:grid-cols-2 gap-12 text-left mb-12">
           {content.textBlocks?.map((block: string, index: number) => (
             <p key={index} className="text-lg leading-relaxed text-base-content/70" style={textStyle}>
-              {block}
+              {renderRichText(block)}
             </p>
           ))}
         </div>
