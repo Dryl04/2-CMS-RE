@@ -241,6 +241,12 @@ If `sections_data` is provided, each section must contain at least:
 
 ### Fidelity Rules
 
+> **⛔ CRITICAL — ABSOLUTE PROHIBITIONS (violation = broken page):**
+>
+> 1. **NEVER modify the `design` block** (or any `design.*` sub-field) of any section — not `design.background`, not `design.colors`, not `design.typography`, not `design.spacing`. Copy it verbatim from the template.
+> 2. **NEVER modify image/media URLs** — this includes top-level fields (`image`, `avatar`, `logo`, `backgroundImage`, etc.) AND fields inside array items (`testimonials[].avatar`, `features[].thumbnailUrl`, `members[].avatar`, `items[].image`, `steps[].image`, etc.).
+> 3. **NEVER modify icon identifiers** — this includes `icon`, `features[].icon`, `services[].icon`, `steps[].icon`, `stats[].icon`, `plans[].icon`, `socialLinks[].icon` and any `*.icon` inside array items.
+
 - Keep `id`, `type`, `order`, `variant`, `design`, `advanced`, `themeConfig` **exactly as in exported template**.
 - Do not edit media URLs (`image`, `backgroundImage`, `thumbnail`, `avatar`, `logo`) unless explicitly requested.
 - Keep same number/order of sections as template.
@@ -258,13 +264,15 @@ This section defines **exactly** which fields the SEO agent **MUST modify** to a
 
 1. **EDITABLE fields** (marked ✏️): The agent **MUST** rewrite these fields to produce SEO-optimized copy adapted to the target project. If the template text is generic/placeholder, the agent should replace it entirely with project-relevant text. If it already contains relevant text structure, adapt it while keeping the tone aligned.
 2. **CONDITIONALLY EDITABLE fields** (marked 🔄): The agent SHOULD adapt these if the current template content is not relevant to the target project. For example, FAQ questions/answers about a completely different industry should be rewritten for the target project.
-3. **FROZEN fields** (marked 🔒): Never modify these unless the user explicitly requests it. These include: buttons, CTA text, links, navigation, images, icons, contact info, form labels, config values.
-4. **Array cardinality**: Keep the same number of items in arrays by default. Exception: in `FAQ_EXTENDED` mode (only when explicitly requested), `content.faqs` may exceed template capacity.
+3. **FROZEN fields** (marked 🔒): Never modify these unless the user explicitly requests it. These include: buttons, CTA text, links, navigation, images, icons, contact info, form labels, config values. This applies to ALL occurrences — both top-level fields AND fields inside array items (e.g., `testimonials[].avatar`, `features[].icon`).
+4. **DESIGN BLOCK IS ALWAYS FROZEN**: The entire `design` block of every section must be copied verbatim from the template. Do not change any `design.*` field under any circumstances, even if you believe it would improve the visual result.
+5. **Array cardinality**: Keep the same number of items in arrays by default. Exception: in `FAQ_EXTENDED` mode (only when explicitly requested), `content.faqs` may exceed template capacity.
 
 ### Field Classification Reference
 
 | Category               | Fields                                                                                                                                                                                                                                                                                                                                             | Rule   |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| ⛔ Design block        | `design`, `design.background`, `design.spacing`, `design.typography`, `design.colors`, `design.media` — **ALL sub-fields included**                                                                                                                                                                                                                | FROZEN |
 | 🔒 Button/CTA text     | `ctaText`, `primaryCta`, `secondaryCta`, `buttonText`, `primaryText`, `secondaryText`, `submitLabel`, `headerCta`, `topCtaText`, `cardCtaText`                                                                                                                                                                                                     | FROZEN |
 | 🔒 Links/URLs          | `ctaLink`, `primaryLink`, `secondaryLink`, `link`, `linkText`, `topCtaLink`, `cardCtaLink`, `searchLink`, `cartLink`, `accountLink`                                                                                                                                                                                                                | FROZEN |
 | 🔒 Navigation          | `navItems[].label`, `navItems[].link`, `content.logoText`, `content.brand`                                                                                                                                                                                                                                                                         | FROZEN |
@@ -278,6 +286,11 @@ This section defines **exactly** which fields the SEO agent **MUST modify** to a
 ---
 
 ### Per-Widget Editable Fields
+
+> **⛔ REMINDER — applies to EVERY widget below:**
+>
+> - The `design` block is **NEVER listed** in per-widget tables because it is **ALWAYS FROZEN** for every section. Copy it verbatim from the template without any modification.
+> - Images and icons inside array items (e.g. `testimonials[].avatar`, `features[].icon`) are **ALWAYS FROZEN** even when the array item itself is editable.
 
 #### `hero`
 

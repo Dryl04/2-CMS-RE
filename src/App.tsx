@@ -114,9 +114,17 @@ function AppContent() {
         page={seoPage}
         isPublic={!user}
         onEdit={() => {
-          setSeoPage(null);
-          setCurrentView('pages');
-          window.history.pushState({}, '', '/');
+          if (seoPage) {
+            const sections = Array.isArray(seoPage.sections_data)
+              ? seoPage.sections_data
+              : (typeof seoPage.sections_data === 'string'
+                ? (() => { try { return JSON.parse(seoPage.sections_data as string); } catch { return []; } })()
+                : []);
+            const pageId = seoPage.id;
+            setSeoPage(null);
+            window.history.pushState({}, '', '/');
+            handleOpenPageBuilder(pageId, sections as any[]);
+          }
         }}
         onBack={() => {
           setSeoPage(null);

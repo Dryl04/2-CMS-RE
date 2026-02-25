@@ -80,13 +80,13 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
                   className="font-semibold text-sm sm:text-base text-base-content"
                   style={headingStyle}
                 >
-                  {testimonial.name}
+                  {renderRichText(testimonial.name)}
                 </div>
                 <div
                   className="text-xs sm:text-sm text-base-content/50"
                   style={textStyle}
                 >
-                  {testimonial.title}
+                  {renderRichText(testimonial.title)}
                 </div>
               </div>
             </div>
@@ -130,13 +130,13 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
               className="font-semibold text-base sm:text-lg text-base-content"
               style={headingStyle}
             >
-              {testimonial.name}
+              {renderRichText(testimonial.name)}
             </div>
             <div
               className="text-sm sm:text-base text-base-content/50"
               style={textStyle}
             >
-              {testimonial.title}
+              {renderRichText(testimonial.title)}
             </div>
           </div>
         </div>
@@ -181,14 +181,14 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
                 className="font-semibold text-base-content"
                 style={headingStyle}
               >
-                {testimonial.name}
+                {renderRichText(testimonial.name)}
               </span>
               {testimonial.title && (
                 <span
                   className="text-base-content/50"
                   style={textStyle}
                 >
-                  {' '}&mdash; {testimonial.title}
+                  {' '}&mdash; {renderRichText(testimonial.title)}
                 </span>
               )}
             </div>
