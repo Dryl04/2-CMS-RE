@@ -252,19 +252,14 @@ export default function SectionRenderer({
   return (
     <div
       ref={setNodeRef}
-      style={{
-        ...style,
-        // Elevate only while hovered so the action bar can pass sticky/overlay
-        // headers (z-index 40/50) without keeping the section above app modals.
-        ...(!previewMode && isHovered ? { zIndex: 60 } : {}),
-      }}
+      style={style}
       className={previewMode ? 'relative' : 'relative group'}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onSelect}
     >
       {!previewMode && (isHovered || isSelected) && (
-        <div className="absolute -top-11 left-0 right-0 z-[70] flex items-center justify-between bg-white rounded-t-lg shadow-lg border border-gray-200 px-3 py-2 mx-0.5">
+        <div className="absolute -top-11 left-0 right-0 z-[55] flex items-center justify-between bg-white rounded-t-lg shadow-lg border border-gray-200 px-3 py-2 mx-0.5">
           <div className="flex items-center space-x-2">
             {isSelected && (
               <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded font-medium">
