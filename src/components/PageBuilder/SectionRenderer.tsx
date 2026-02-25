@@ -259,7 +259,7 @@ export default function SectionRenderer({
       onClick={onSelect}
     >
       {!previewMode && (isHovered || isSelected) && (
-        <div className="absolute -top-11 left-0 right-0 z-[55] flex items-center justify-between bg-white rounded-t-lg shadow-lg border border-gray-200 px-3 py-2 mx-0.5">
+        <div className={`absolute -top-11 left-0 right-0 ${isHovered ? 'z-[51]' : 'z-[45]'} flex items-center justify-between bg-white rounded-t-lg shadow-lg border border-gray-200 px-3 py-2 mx-0.5`}>
           <div className="flex items-center space-x-2">
             {isSelected && (
               <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded font-medium">
