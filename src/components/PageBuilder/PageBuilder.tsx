@@ -455,7 +455,7 @@ export default function PageBuilder({
   }, [showPreview, device, buildPreviewPayload, postPreviewPayload]);
 
   const renderTemplateListView = () => (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 overflow-y-auto">
       {toastMessage && (
         <div className="fixed top-20 right-6 z-50 px-4 py-3 rounded-xl shadow-lg border bg-emerald-50 border-emerald-200 text-emerald-800 text-sm font-medium flex items-center space-x-2">
           <CheckCircle className="w-4 h-4" />

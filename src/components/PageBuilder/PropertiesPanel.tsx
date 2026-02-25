@@ -1259,7 +1259,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               <select
                 value={section.design.background?.type || 'color'}
                 onChange={(e) => {
-                  const newType = e.target.value as 'color' | 'gradient' | 'image' | 'video';
+                  const newType = e.target.value as 'color' | 'gradient' | 'image' | 'video' | 'transparent';
                   onUpdateSection({
                     design: {
                       ...section.design,
@@ -1273,8 +1273,54 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                 <option value="gradient">Dégradé</option>
                 <option value="image">Image</option>
                 <option value="video">Vidéo</option>
+                {['header', 'header-top-info', 'header-with-icons', 'header-account-bar', 'header-full-contact', 'header-clickfunnel'].includes(section.type) && (
+                  <option value="transparent">Transparent (backdrop blur)</option>
+                )}
               </select>
             </div>
+
+            {section.design.background?.type === 'transparent' && (
+              <>
+                <ColorOverrideField
+                  label="Couleur du fond transparent"
+                  value={section.design.background?.backdropColor || undefined}
+                  fallback="#ffffff"
+                  onChange={(v) => updateDesign('background', 'backdropColor', v)}
+                  onClear={() => updateDesign('background', 'backdropColor', '')}
+                />
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">
+                    Opacité du fond ({Math.round((section.design.background?.backdropOpacity ?? 0.75) * 100)}%)
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={Math.round((section.design.background?.backdropOpacity ?? 0.75) * 100)}
+                    onChange={(e) => updateDesign('background', 'backdropOpacity', parseInt(e.target.value) / 100)}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">
+                    Intensité du flou ({section.design.background?.backdropBlur || '12px'})
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="40"
+                    step="2"
+                    value={parseInt((section.design.background?.backdropBlur || '12px').replace('px', ''), 10) || 12}
+                    onChange={(e) => updateDesign('background', 'backdropBlur', `${e.target.value}px`)}
+                    className="w-full"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 italic">
+                  Le header se superposera au widget suivant avec un effet de transparence et de flou.
+                </p>
+              </>
+            )}
 
             {section.design.background?.type === 'color' && (
               <ColorOverrideField
@@ -1987,7 +2033,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             <select
               value={section.design.background?.type || 'color'}
               onChange={(e) => {
-                const newType = e.target.value as 'color' | 'gradient' | 'image' | 'video';
+                const newType = e.target.value as 'color' | 'gradient' | 'image' | 'video' | 'transparent';
                 onUpdateSection({
                   design: {
                     ...section.design,
@@ -2001,8 +2047,54 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               <option value="gradient">Dégradé</option>
               <option value="image">Image</option>
               <option value="video">Vidéo</option>
+              {['header', 'header-top-info', 'header-with-icons', 'header-account-bar', 'header-full-contact', 'header-clickfunnel'].includes(section.type) && (
+                <option value="transparent">Transparent (backdrop blur)</option>
+              )}
             </select>
           </div>
+
+          {section.design.background?.type === 'transparent' && (
+            <>
+              <ColorOverrideField
+                label="Couleur du fond transparent"
+                value={section.design.background?.backdropColor || undefined}
+                fallback="#ffffff"
+                onChange={(v) => updateDesign('background', 'backdropColor', v)}
+                onClear={() => updateDesign('background', 'backdropColor', '')}
+              />
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">
+                  Opacité du fond ({Math.round((section.design.background?.backdropOpacity ?? 0.75) * 100)}%)
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="5"
+                  value={Math.round((section.design.background?.backdropOpacity ?? 0.75) * 100)}
+                  onChange={(e) => updateDesign('background', 'backdropOpacity', parseInt(e.target.value) / 100)}
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">
+                  Intensité du flou ({section.design.background?.backdropBlur || '12px'})
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="40"
+                  step="2"
+                  value={parseInt((section.design.background?.backdropBlur || '12px').replace('px', ''), 10) || 12}
+                  onChange={(e) => updateDesign('background', 'backdropBlur', `${e.target.value}px`)}
+                  className="w-full"
+                />
+              </div>
+              <p className="text-xs text-gray-500 italic">
+                Le header se superposera au widget suivant avec un effet de transparence et de flou.
+              </p>
+            </>
+          )}
 
           {section.design.background?.type === 'color' && (
             <ColorOverrideField

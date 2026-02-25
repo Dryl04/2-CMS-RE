@@ -72,15 +72,40 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
       data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
       data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
     >
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 overflow-hidden">
         {isPlaying ? (
-          <iframe
-            src={getEmbedUrl(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
-            className="w-full h-full bg-neutral"
-            frameBorder="0"
-            allow="autoplay; fullscreen"
-            allowFullScreen
-          />
+          (() => {
+            const url = videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+            const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
+            const isDirectVideo = url.match(/\.(mp4|webm|ogg)(\?|$)/i);
+            if (isDirectVideo) {
+              return (
+                <video
+                  src={url}
+                  autoPlay={autoplay}
+                  muted
+                  loop
+                  playsInline
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full object-cover"
+                />
+              );
+            }
+            return (
+              <iframe
+                src={getEmbedUrl(url)}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                style={{
+                  width: '177.78vh',
+                  height: '100vh',
+                  minWidth: '100%',
+                  minHeight: '100%',
+                  border: 'none',
+                }}
+                allow="autoplay; fullscreen"
+                allowFullScreen
+              />
+            );
+          })()
         ) : (
           <div
             className="w-full h-full bg-cover bg-center"

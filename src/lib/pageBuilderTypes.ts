@@ -6,7 +6,7 @@ export interface PageBuilderSection {
   content: Record<string, any>;
   design: {
     background: {
-      type: "color" | "gradient" | "image" | "video";
+      type: "color" | "gradient" | "image" | "video" | "transparent";
       value: string;
       opacity?: number;
       overlayColor?: string;
@@ -14,6 +14,9 @@ export interface PageBuilderSection {
       videoAutoplay?: boolean;
       videoNoBranding?: boolean;
       videoFullWidth?: boolean;
+      backdropBlur?: string;
+      backdropColor?: string;
+      backdropOpacity?: number;
     };
     spacing: {
       paddingTop: string;

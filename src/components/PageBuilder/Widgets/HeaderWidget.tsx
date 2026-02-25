@@ -48,7 +48,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
   };
 
   const renderDefault = () => (
-    <header className="bg-base-100 border-b border-base-content/10">
+    <header className="border-b border-base-content/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -123,7 +123,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
   );
 
   const renderCentered = () => (
-    <header className="bg-base-100 border-b border-base-content/10">
+    <header className="border-b border-base-content/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex flex-col items-center space-y-4">
           <div className="flex items-center">
@@ -195,7 +195,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
   );
 
   const renderTransparent = () => (
-    <header className="absolute top-0 left-0 right-0 z-50 bg-base-100/75 backdrop-blur-md border-b border-base-content/10">
+    <header className="border-b border-base-content/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">
@@ -246,7 +246,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden bg-base-100 border-t border-base-300">
+        <div className="md:hidden border-t border-base-content/10">
           <div className="px-4 py-3 space-y-3">
             {(navItems || []).map((item: any, index: number) => (
               <a
@@ -272,7 +272,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
   );
 
   const renderMinimal = () => (
-    <header className="bg-base-100">
+    <header>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 border-b border-base-content/5">
           <div className="flex items-center">
@@ -312,7 +312,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
   );
 
   const renderCreativePremium = () => (
-    <header className="bg-neutral text-neutral-content border-b border-neutral-content/10">
+    <header className="border-b border-base-content/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="h-16 flex items-center justify-between gap-4">
           <div className="flex items-center min-w-[120px]">
@@ -377,13 +377,13 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-neutral-content/10 bg-neutral">
+        <div className="md:hidden border-t border-base-content/10">
           <div className="px-4 py-4 space-y-3">
             {(navItems || []).map((item: any, index: number) => (
               <a
                 key={index}
                 href={item.link || '#'}
-                className="block text-sm font-medium py-1 text-neutral-content/90"
+                className="block text-sm font-medium py-1 text-base-content/90"
               >
                 {item.label}
               </a>

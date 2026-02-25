@@ -38,7 +38,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
   };
 
   const renderDefault = () => (
-    <footer className="bg-base-200 text-base-content">
+    <footer className="text-base-content">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div className="sm:col-span-2 lg:col-span-1">
@@ -105,7 +105,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
   );
 
   const renderMinimal = () => (
-    <footer className="bg-base-100 border-t border-base-content/10">
+    <footer className="border-t border-base-content/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center">
@@ -163,7 +163,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
   );
 
   const renderCentered = () => (
-    <footer className="bg-base-200">
+    <footer>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         <div className="text-center mb-8">
           {logo ? (

@@ -19,7 +19,7 @@ export default function SimpleHeaderDivider({ section }: SimpleHeaderDividerProp
   const dividerColor = design.colors?.dividerColor;
 
   return (
-    <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
+    <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,

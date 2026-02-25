@@ -36,7 +36,7 @@ export default function ProviderMasonryWidget({ section }: ProviderMasonryWidget
   };
 
   return (
-    <section className="bg-base-100">
+    <section>
       <div
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         style={{ paddingTop: design.spacing.paddingTop, paddingBottom: design.spacing.paddingBottom }}

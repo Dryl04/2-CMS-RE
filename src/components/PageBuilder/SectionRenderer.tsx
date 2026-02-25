@@ -101,7 +101,7 @@ export default function SectionRenderer({
     transition,
   };
 
-  const { normalizedSection, className: wrapperClassName, dataTheme, style: wrapperStyle } = getWidgetWrapperProps(section);
+  const { normalizedSection, className: wrapperClassName, dataTheme, style: wrapperStyle, isOverlayHeader } = getWidgetWrapperProps(section);
 
   const renderWidget = () => {
     const props = {
@@ -313,7 +313,7 @@ export default function SectionRenderer({
       )}
 
       <div
-        className={`relative overflow-hidden transition-all ${!previewMode && isSelected
+        className={`relative ${isOverlayHeader ? 'overflow-visible' : 'overflow-hidden'} transition-all ${!previewMode && isSelected
           ? 'ring-2 ring-black shadow-lg'
           : !previewMode && isHovered
             ? 'ring-2 ring-gray-300'

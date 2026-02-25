@@ -36,7 +36,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
   const buttonText = design?.colors?.buttonText;
 
   return (
-    <header className="bg-base-100 text-base-content" style={bgColor ? { backgroundColor: bgColor } : undefined}>
+    <header className="text-base-content">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-2">

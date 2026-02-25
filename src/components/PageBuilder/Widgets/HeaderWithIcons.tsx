@@ -32,7 +32,7 @@ export default function HeaderWithIcons({ section }: HeaderWithIconsProps) {
   };
 
   return (
-    <header className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
+    <header>
       <div className="bg-base-200" style={topBg ? { backgroundColor: topBg } : undefined}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">

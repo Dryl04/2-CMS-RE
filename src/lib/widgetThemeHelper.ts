@@ -176,6 +176,15 @@ export function normalizeSectionForTheme(
       section.design?.background?.value ??
       defaultDesign?.background?.value ??
       "",
+    ...(section.design?.background?.backdropBlur !== undefined
+      ? { backdropBlur: section.design.background.backdropBlur }
+      : {}),
+    ...(section.design?.background?.backdropColor !== undefined
+      ? { backdropColor: section.design.background.backdropColor }
+      : {}),
+    ...(section.design?.background?.backdropOpacity !== undefined
+      ? { backdropOpacity: section.design.background.backdropOpacity }
+      : {}),
   };
 
   const safeSpacing = {
@@ -350,10 +359,17 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
   const hasUserPaddingTop = userPaddingTop && userPaddingTop !== "0px";
   const hasUserPaddingBottom = userPaddingBottom && userPaddingBottom !== "0px";
 
+  const isTransparentBg =
+    normalizedSection.design?.background?.type === "transparent";
+  const isOverlay =
+    isTransparentBg ||
+    (HEADER_TYPES.has(normalizedSection.type) &&
+      normalizedSection.variant === "transparent");
+
   const className = [
     "widget-design-scope",
     "text-base-content",
-    "bg-base-100",
+    isOverlay ? "" : "bg-base-100",
     hasHeadingColor ? "wds-heading-color" : "",
     hasH1Color ? "wds-h1-color" : "",
     hasH2Color ? "wds-h2-color" : "",
@@ -541,16 +557,23 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
     !isOverlayHeader && HEADER_TYPES.has(normalizedSection.type);
 
   if (isOverlayHeader) {
+    const bg = normalizedSection.design?.background;
+    const backdropColor = bg?.backdropColor || "#ffffff";
+    const backdropOpacity = bg?.backdropOpacity ?? 0.75;
+    const backdropBlur = bg?.backdropBlur || "12px";
+
     style.position = "absolute";
     style.top = "0";
     style.left = "0";
     style.right = "0";
-    style.zIndex = 50;
-    style.backgroundColor = "transparent";
+    style.zIndex = "50";
+    style.backgroundColor = `color-mix(in srgb, ${backdropColor} ${Math.round(backdropOpacity * 100)}%, transparent)`;
+    style.backdropFilter = `blur(${backdropBlur})`;
+    style.WebkitBackdropFilter = `blur(${backdropBlur})`;
   } else if (isStickyHeader) {
     style.position = "sticky";
     style.top = "0";
-    style.zIndex = 40;
+    style.zIndex = "40";
   }
 
   return {
@@ -649,5 +672,9 @@ const HEADER_TYPES = new Set([
 export function isTransparentHeaderOverlay(
   section: PageBuilderSection,
 ): boolean {
-  return HEADER_TYPES.has(section.type) && section.variant === "transparent";
+  return (
+    HEADER_TYPES.has(section.type) &&
+    (section.variant === "transparent" ||
+      section.design?.background?.type === "transparent")
+  );
 }

@@ -25,7 +25,7 @@ export default function HeaderTopInfo({ section }: HeaderTopInfoProps) {
   };
 
   return (
-    <header className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
+    <header>
       <div className="border-b border-base-content/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
