@@ -252,7 +252,13 @@ export default function SectionRenderer({
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={{
+        ...style,
+        // When hovered or selected, elevate z-index so the action bar
+        // (positioned at -top-11) renders above header widgets that have
+        // z-index 40/50.
+        ...(!previewMode && (isHovered || isSelected) ? { zIndex: 60 } : {}),
+      }}
       className={previewMode ? 'relative' : 'relative group'}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

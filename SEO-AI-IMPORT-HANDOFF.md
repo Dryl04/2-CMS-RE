@@ -242,21 +242,598 @@ If `sections_data` is provided, each section must contain at least:
 ### Fidelity Rules
 
 - Keep `id`, `type`, `order`, `variant`, `design`, `advanced`, `themeConfig` **exactly as in exported template**.
-- Apply a strict scope lock: only edit SEO writing fields (headline, subheadline, section title/subtitle/description, quotes, `seo_h1`, `seo_h2`, long-form `content`).
-- Do not edit UI/navigation/action fields unless explicitly requested: nav labels/links, button labels/links, anchors, social links.
-- Keep all action/button/input text frozen by default: `ctaText`, `primaryCta`, `secondaryCta`, `buttonText`, `primaryText`, `secondaryText`, `submitLabel`, `placeholder`, `inputPlaceholder`.
-- Keep non-SEO operational/contact fields frozen by default: `email`, `phone`, `address`, `openHours`, `openHoursTitle`, `logoText`, `content.logoText`.
 - Do not edit media URLs (`image`, `backgroundImage`, `thumbnail`, `avatar`, `logo`) unless explicitly requested.
 - Keep same number/order of sections as template.
-- Keep same cardinality in arrays (features, testimonials, nav items, columns) unless explicitly requested.
-- FAQ default mode: for every `content.faqs`, match template capacity from `array_cardinality`/`content_shape.__count`.
-- Explicit exception mode allowed: `FAQ_EXTENDED`.
-- In `FAQ_EXTENDED` mode (only when explicitly requested), `content.faqs` may exceed initial template capacity.
-- `FAQ_EXTENDED` applies only to FAQs; all other arrays keep strict template cardinality.
-- Do not create new sections/fields to bypass this rule.
 - **Image/media URLs must be plain URLs** — never wrap them in markdown link syntax. See "Image & Media URLs" section below.
 - The `design.typography` object supports: `fontFamily`, `headingFontFamily`, `headingFontWeight`, `headingFontSize`, `h1FontFamily`, `h1FontWeight`, `h1FontSize`, `h2FontFamily`, `h2FontWeight`, `h2FontSize`, `textFontSize`, `buttonFontSize`, `buttonFontFamily`, `headingColor`, `h1Color`, `h2Color`, `textColor`, `linkColor`, `subtitleColor`.
 - The `design.colors` object supports: `buttonBackground`, `buttonText`, `buttonBackgroundHover`, `buttonRadius`, `buttonSize`, `buttonBorderWidth`, `buttonBorderStyle`, `buttonBorderColor`, `buttonShadow`, `iconBackground`, `iconColor`, `iconBorderColor`, `iconBorderWidth`, `iconRadius`, `accent`, `primary`, `secondary`.
+
+---
+
+## SEO Editorial Scope — Per-Widget Field Guide
+
+This section defines **exactly** which fields the SEO agent **MUST modify** to adapt content to the target project/keyword, and which fields are **FROZEN** (must be kept as-is from the template).
+
+### General Principles
+
+1. **EDITABLE fields** (marked ✏️): The agent **MUST** rewrite these fields to produce SEO-optimized copy adapted to the target project. If the template text is generic/placeholder, the agent should replace it entirely with project-relevant text. If it already contains relevant text structure, adapt it while keeping the tone aligned.
+2. **CONDITIONALLY EDITABLE fields** (marked 🔄): The agent SHOULD adapt these if the current template content is not relevant to the target project. For example, FAQ questions/answers about a completely different industry should be rewritten for the target project.
+3. **FROZEN fields** (marked 🔒): Never modify these unless the user explicitly requests it. These include: buttons, CTA text, links, navigation, images, icons, contact info, form labels, config values.
+4. **Array cardinality**: Keep the same number of items in arrays by default. Exception: in `FAQ_EXTENDED` mode (only when explicitly requested), `content.faqs` may exceed template capacity.
+
+### Field Classification Reference
+
+| Category               | Fields                                                                                                                                                                                                                                                                                                                                             | Rule   |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| 🔒 Button/CTA text     | `ctaText`, `primaryCta`, `secondaryCta`, `buttonText`, `primaryText`, `secondaryText`, `submitLabel`, `headerCta`, `topCtaText`, `cardCtaText`                                                                                                                                                                                                     | FROZEN |
+| 🔒 Links/URLs          | `ctaLink`, `primaryLink`, `secondaryLink`, `link`, `linkText`, `topCtaLink`, `cardCtaLink`, `searchLink`, `cartLink`, `accountLink`                                                                                                                                                                                                                | FROZEN |
+| 🔒 Navigation          | `navItems[].label`, `navItems[].link`, `content.logoText`, `content.brand`                                                                                                                                                                                                                                                                         | FROZEN |
+| 🔒 Media               | `image`, `backgroundImage`, `thumbnail`, `avatar`, `logo`, `signature`, `cardImage`, `leftCardImage`, `rightCardImage`, `items[].image`, `steps[].image`, `cards[].image`, `services[].image`, `events[].image`, `features[].thumbnailUrl`, `members[].avatar`, `testimonials[].avatar`, `logos[].url`, `integrations[].logo`, `providers[].image` | FROZEN |
+| 🔒 Icons               | `icon`, `features[].icon`, `services[].icon`, `steps[].icon`, `stats[].icon`, `plans[].icon`, `socialLinks[].icon`                                                                                                                                                                                                                                 | FROZEN |
+| 🔒 Contact/Operational | `email`, `phone`, `address`, `openHours`, `openHoursTitle`                                                                                                                                                                                                                                                                                         | FROZEN |
+| 🔒 Form/Input          | `placeholder`, `inputPlaceholder`, `privacyNote`, `note`                                                                                                                                                                                                                                                                                           | FROZEN |
+| 🔒 Config/Layout       | `autoplay`, `textPosition`, `videoOverlayColor`, `videoOverlayOpacity`, `showDots`, `showForm`, `showSearch`, `showCart`, `divider`, `popular`, `featured`, `tall`, `wide`, `size`, `height`, `expandable`, `rating`                                                                                                                               | FROZEN |
+| 🔒 Social              | `socials[].platform`, `socials[].url`, `socialLinks[].url`, `social.linkedin`, `social.twitter`, `social.email`                                                                                                                                                                                                                                    | FROZEN |
+
+---
+
+### Per-Widget Editable Fields
+
+#### `hero`
+
+| Field         | Status | Notes                                                                 |
+| ------------- | ------ | --------------------------------------------------------------------- |
+| `headline`    | ✏️     | Main H1 — primary SEO target. Must match `seo_h1`.                    |
+| `subheadline` | ✏️     | Supporting text for the hero. Optimize for the target keyword/intent. |
+| `ctaText`     | 🔒     |                                                                       |
+| `ctaLink`     | 🔒     |                                                                       |
+| `image`       | 🔒     |                                                                       |
+
+#### `clickfunnels-hero`
+
+| Field                      | Status | Notes             |
+| -------------------------- | ------ | ----------------- |
+| `headline`                 | ✏️     | Main H1           |
+| `subheadline`              | ✏️     | Supporting copy   |
+| `description`              | ✏️     | Longer text block |
+| `ctaText`, `secondaryCta`  | 🔒     |                   |
+| `ctaLink`, `secondaryLink` | 🔒     |                   |
+| `image`                    | 🔒     |                   |
+
+#### `clickfunnel-center-card`
+
+| Field                                | Status | Notes                                |
+| ------------------------------------ | ------ | ------------------------------------ |
+| `title`                              | ✏️     |                                      |
+| `subtitle`                           | ✏️     |                                      |
+| `description`                        | ✏️     |                                      |
+| `cards[].title`                      | 🔄     | Adapt if not relevant to the project |
+| `cards[].description`                | 🔄     |                                      |
+| `cards[].image`, `cards[].mediaType` | 🔒     |                                      |
+
+#### `clickfunnel-features`
+
+| Field                     | Status | Notes                                              |
+| ------------------------- | ------ | -------------------------------------------------- |
+| `title`                   | ✏️     |                                                    |
+| `subtitle`                | ✏️     |                                                    |
+| `features[].quote`        | 🔄     | Testimonial-like quotes — adapt to project context |
+| `features[].author`       | 🔄     | Author/source — adapt if placeholder               |
+| `features[].thumbnailUrl` | 🔒     |                                                    |
+
+#### `click-funnel-testimonials`
+
+| Field                   | Status | Notes                                |
+| ----------------------- | ------ | ------------------------------------ |
+| `title`                 | ✏️     |                                      |
+| `testimonials[].quote`  | 🔄     | Adapt testimonial quotes to project  |
+| `testimonials[].name`   | 🔄     | Adapt if placeholder                 |
+| `testimonials[].title`  | 🔄     | Role/position — adapt if placeholder |
+| `testimonials[].avatar` | 🔒     |                                      |
+
+#### `features`
+
+| Field                    | Status | Notes                                         |
+| ------------------------ | ------ | --------------------------------------------- |
+| `title`                  | ✏️     | Section heading                               |
+| `subtitle`               | ✏️     | Section subheading                            |
+| `features[].title`       | 🔄     | Adapt feature name if not relevant to project |
+| `features[].description` | 🔄     | Adapt feature description if not relevant     |
+| `features[].icon`        | 🔒     |                                               |
+
+#### `cta`
+
+| Field           | Status | Notes               |
+| --------------- | ------ | ------------------- |
+| `headline`      | ✏️     | CTA section heading |
+| `description`   | ✏️     | CTA supporting text |
+| `primaryCta`    | 🔒     |                     |
+| `primaryLink`   | 🔒     |                     |
+| `secondaryCta`  | 🔒     |                     |
+| `secondaryLink` | 🔒     |                     |
+| `image`         | 🔒     |                     |
+
+#### `testimonials`
+
+| Field                   | Status | Notes                                                                    |
+| ----------------------- | ------ | ------------------------------------------------------------------------ |
+| `title`                 | ✏️     | Section heading                                                          |
+| `subtitle`              | ✏️     | Section subheading                                                       |
+| `testimonials[].quote`  | 🔄     | Adapt testimonial to project/industry. Write realistic, relevant quotes. |
+| `testimonials[].name`   | 🔄     | Change if current names are clearly placeholder                          |
+| `testimonials[].title`  | 🔄     | Role/company — adapt if placeholder                                      |
+| `testimonials[].rating` | 🔒     |                                                                          |
+| `testimonials[].avatar` | 🔒     |                                                                          |
+
+#### `faq` / `faq-two-columns`
+
+| Field             | Status | Notes                                                                                          |
+| ----------------- | ------ | ---------------------------------------------------------------------------------------------- |
+| `title`           | ✏️     | Section heading                                                                                |
+| `subtitle`        | ✏️     | Section subheading                                                                             |
+| `faqs[].question` | ✏️     | **MUST** be rewritten for the target project/keyword. Write relevant, SEO-optimized questions. |
+| `faqs[].answer`   | ✏️     | **MUST** be rewritten with accurate, helpful answers for the target project.                   |
+
+> **FAQ Special Rule:** FAQ content is always fully editable because it directly targets search intent. The agent should write questions that real users would ask about the service/product + location. Answers should be detailed, informative, and naturally include relevant keywords.
+
+#### `image-stats-faq`
+
+| Field              | Status | Notes                                              |
+| ------------------ | ------ | -------------------------------------------------- |
+| `title`            | ✏️     |                                                    |
+| `subtitle`         | ✏️     |                                                    |
+| `badge`            | 🔄     | Rotating badge text — adapt if not relevant        |
+| `stats[].value`    | 🔄     | Adapt stat numbers if they don't match the project |
+| `stats[].label`    | 🔄     | Adapt stat labels                                  |
+| `stats[].subtitle` | 🔄     |                                                    |
+| `faqs[].question`  | ✏️     | Same as FAQ rule                                   |
+| `faqs[].answer`    | ✏️     | Same as FAQ rule                                   |
+| `faqs[].prefix`    | 🔒     |                                                    |
+| `image`            | 🔒     |                                                    |
+
+#### `process` / `process-alternating` / `process-steps-cards`
+
+| Field                 | Status | Notes                                                                        |
+| --------------------- | ------ | ---------------------------------------------------------------------------- |
+| `title`               | ✏️     | Section heading                                                              |
+| `subtitle`            | ✏️     | Section subheading                                                           |
+| `headerDescription`   | ✏️     | (process-alternating only)                                                   |
+| `steps[].title`       | 🔄     | Adapt step titles if not relevant to project. Keep the logical process flow. |
+| `steps[].description` | 🔄     | Adapt step descriptions to describe the project's actual process.            |
+| `steps[].number`      | 🔒     |                                                                              |
+| `steps[].icon`        | 🔒     |                                                                              |
+| `steps[].image`       | 🔒     |                                                                              |
+| `steps[].ctaText`     | 🔒     |                                                                              |
+| `steps[].ctaLink`     | 🔒     |                                                                              |
+| `headerCta`           | 🔒     |                                                                              |
+
+#### `team`
+
+| Field                | Status | Notes                                                |
+| -------------------- | ------ | ---------------------------------------------------- |
+| `title`              | ✏️     | Section heading                                      |
+| `subtitle`           | ✏️     | Section subheading                                   |
+| `members[].name`     | 🔄     | Keep if realistic; adapt only if clearly placeholder |
+| `members[].role`     | 🔄     | Adapt job titles to project context                  |
+| `members[].bio`      | 🔄     | Adapt bios to be relevant to the project/industry    |
+| `members[].avatar`   | 🔒     |                                                      |
+| `members[].social.*` | 🔒     |                                                      |
+
+#### `pricing` / `membership-pricing`
+
+| Field                          | Status | Notes                                               |
+| ------------------------------ | ------ | --------------------------------------------------- |
+| `title`                        | ✏️     | Section heading                                     |
+| `subtitle`                     | ✏️     |                                                     |
+| `description`                  | ✏️     | (membership-pricing only)                           |
+| `plans[].name`                 | 🔄     | Adapt plan names if not relevant                    |
+| `plans[].subtitle`             | 🔄     |                                                     |
+| `plans[].price`                | 🔒     | **Never change pricing**                            |
+| `plans[].period`               | 🔒     |                                                     |
+| `plans[].features[]`           | 🔄     | Adapt feature list items if not relevant to project |
+| `plans[].guarantee`            | 🔄     |                                                     |
+| `plans[].popular` / `featured` | 🔒     |                                                     |
+| `plans[].ctaText`              | 🔒     |                                                     |
+| `plans[].icon`                 | 🔒     |                                                     |
+
+#### `stats`
+
+| Field            | Status | Notes                                    |
+| ---------------- | ------ | ---------------------------------------- |
+| `title`          | ✏️     |                                          |
+| `subtitle`       | ✏️     |                                          |
+| `stats[].number` | 🔄     | Adapt numbers if not relevant to project |
+| `stats[].label`  | 🔄     | Adapt labels to match project metrics    |
+| `stats[].suffix` | 🔄     |                                          |
+| `stats[].icon`   | 🔒     |                                          |
+
+#### `services-grid` / `services-cards` / `services-carousel`
+
+| Field                    | Status | Notes                                          |
+| ------------------------ | ------ | ---------------------------------------------- |
+| `title`                  | ✏️     |                                                |
+| `subtitle`               | ✏️     |                                                |
+| `description`            | ✏️     |                                                |
+| `services[].title`       | 🔄     | Adapt service names to match project offerings |
+| `services[].description` | 🔄     | Adapt descriptions to project services         |
+| `services[].icon`        | 🔒     |                                                |
+| `services[].image`       | 🔒     |                                                |
+| `services[].link`        | 🔒     |                                                |
+| `services[].linkText`    | 🔒     |                                                |
+| `ctaText`                | 🔒     |                                                |
+
+#### `content-showcase`
+
+| Field                              | Status | Notes                                |
+| ---------------------------------- | ------ | ------------------------------------ |
+| `subtitle`                         | ✏️     |                                      |
+| `headline` / `title`               | ✏️     |                                      |
+| `text` / `column1` / `description` | ✏️     | Main content text — adapt to project |
+| `column2`, `column3`               | ✏️     | Additional columns                   |
+| `image`                            | 🔒     |                                      |
+
+#### `image-text-split`
+
+| Field        | Status | Notes |
+| ------------ | ------ | ----- |
+| `subtitle`   | ✏️     |       |
+| `headline`   | ✏️     |       |
+| `paragraph1` | ✏️     |       |
+| `paragraph2` | ✏️     |       |
+| `paragraph3` | ✏️     |       |
+| `ctaText`    | 🔒     |       |
+| `ctaLink`    | 🔒     |       |
+| `image`      | 🔒     |       |
+
+#### `centered-content`
+
+| Field         | Status | Notes |
+| ------------- | ------ | ----- |
+| `subtitle`    | ✏️     |       |
+| `headline`    | ✏️     |       |
+| `description` | ✏️     |       |
+| `ctaText`     | 🔒     |       |
+| `ctaLink`     | 🔒     |       |
+| `image`       | 🔒     |       |
+
+#### `text-columns`
+
+| Field                    | Status | Notes                              |
+| ------------------------ | ------ | ---------------------------------- |
+| `introduction` / `title` | ✏️     | Main intro text                    |
+| `column1`                | ✏️     |                                    |
+| `column2`                | ✏️     |                                    |
+| `column3`                | ✏️     |                                    |
+| `columns[]`              | ✏️     | Legacy format — adapt text content |
+| `ctaText`                | 🔒     |                                    |
+| `ctaLink`                | 🔒     |                                    |
+
+#### `timeline` / `timeline-grid`
+
+| Field                      | Status | Notes                                           |
+| -------------------------- | ------ | ----------------------------------------------- |
+| `title`                    | ✏️     |                                                 |
+| `subtitle`                 | ✏️     |                                                 |
+| `events[].title`           | 🔄     | Adapt if milestones don't match project history |
+| `events[].description`     | 🔄     | Adapt descriptions                              |
+| `events[].date` / `period` | 🔄     | Adapt dates/periods if needed                   |
+| `events[].image`           | 🔒     |                                                 |
+
+#### `contact` / `contact-split`
+
+| Field             | Status | Notes |
+| ----------------- | ------ | ----- |
+| `title`           | ✏️     |       |
+| `subtitle`        | ✏️     |       |
+| `description`     | ✏️     |       |
+| `formTitle`       | ✏️     |       |
+| `formDescription` | ✏️     |       |
+| `email`           | 🔒     |       |
+| `phone`           | 🔒     |       |
+| `address`         | 🔒     |       |
+
+#### `feedback-contact`
+
+| Field             | Status | Notes |
+| ----------------- | ------ | ----- |
+| `title`           | ✏️     |       |
+| `subtitle`        | ✏️     |       |
+| `description`     | ✏️     |       |
+| `formTitle`       | ✏️     |       |
+| `formDescription` | ✏️     |       |
+| `ctaText`         | 🔒     |       |
+| `buttonText`      | 🔒     |       |
+
+#### `newsletter` / `newsletter-signup`
+
+| Field                  | Status | Notes               |
+| ---------------------- | ------ | ------------------- |
+| `title`                | ✏️     |                     |
+| `subtitle`             | ✏️     |                     |
+| `description`          | ✏️     | (newsletter-signup) |
+| `placeholder`          | 🔒     |                     |
+| `buttonText`           | 🔒     |                     |
+| `privacyNote` / `note` | 🔒     |                     |
+| `image`                | 🔒     |                     |
+
+#### `videohero`
+
+| Field       | Status | Notes |
+| ----------- | ------ | ----- |
+| `title`     | ✏️     |       |
+| `subtitle`  | ✏️     |       |
+| `ctaText`   | 🔒     |       |
+| `ctaLink`   | 🔒     |       |
+| `videoUrl`  | 🔒     |       |
+| `thumbnail` | 🔒     |       |
+
+#### `gallery`
+
+| Field              | Status | Notes                 |
+| ------------------ | ------ | --------------------- |
+| `title`            | ✏️     |                       |
+| `subtitle`         | ✏️     |                       |
+| `items[].title`    | 🔄     | Adapt if not relevant |
+| `items[].category` | 🔄     |                       |
+| `items[].image`    | 🔒     |                       |
+| `items[].link`     | 🔒     |                       |
+
+#### `logocloud`
+
+| Field          | Status | Notes                       |
+| -------------- | ------ | --------------------------- |
+| `title`        | ✏️     |                             |
+| `subtitle`     | ✏️     |                             |
+| `logos[].name` | 🔒     | Brand names — do not change |
+| `logos[].url`  | 🔒     |                             |
+
+#### `bento-features`
+
+| Field                       | Status | Notes |
+| --------------------------- | ------ | ----- |
+| `title`                     | ✏️     |       |
+| `subtitle`                  | ✏️     |       |
+| `features[].label`          | 🔄     |       |
+| `features[].title`          | 🔄     |       |
+| `features[].description`    | 🔄     |       |
+| `features[].size`, `height` | 🔒     |       |
+
+#### `features-carousel`
+
+| Field                    | Status | Notes |
+| ------------------------ | ------ | ----- |
+| `features[].title`       | 🔄     |       |
+| `features[].description` | 🔄     |       |
+| `features[].icon`        | 🔒     |       |
+| `features[].ctaText`     | 🔒     |       |
+| `features[].featured`    | 🔒     |       |
+
+#### `content-with-services`
+
+| Field                    | Status | Notes |
+| ------------------------ | ------ | ----- |
+| `title`                  | ✏️     |       |
+| `subtitle`               | ✏️     |       |
+| `description`            | ✏️     |       |
+| `additionalText`         | ✏️     |       |
+| `imageLabel`             | 🔄     |       |
+| `services[].title`       | 🔄     |       |
+| `services[].description` | 🔄     |       |
+| `services[].icon`        | 🔒     |       |
+| `ctaText`                | 🔒     |       |
+| `image`                  | 🔒     |       |
+
+#### `split-content-checklist`
+
+| Field         | Status | Notes                                            |
+| ------------- | ------ | ------------------------------------------------ |
+| `title`       | ✏️     |                                                  |
+| `description` | ✏️     |                                                  |
+| `checklist[]` | 🔄     | Adapt checklist items if not relevant to project |
+| `image`       | 🔒     |                                                  |
+
+#### `dropcap-services`
+
+| Field                      | Status | Notes                    |
+| -------------------------- | ------ | ------------------------ |
+| `title`                    | ✏️     |                          |
+| `subtitle`                 | ✏️     |                          |
+| `introText`                | ✏️     |                          |
+| `additionalText`           | ✏️     |                          |
+| `dropCap`                  | 🔒     | Single decorative letter |
+| `signature`                | 🔒     |                          |
+| `serviceColumns[].title`   | 🔄     |                          |
+| `serviceColumns[].items[]` | 🔄     | Adapt service list items |
+| `serviceColumns[].ctaText` | 🔒     |                          |
+| `serviceColumns[].ctaLink` | 🔒     |                          |
+
+#### `centered-testimonial`
+
+| Field          | Status | Notes                                    |
+| -------------- | ------ | ---------------------------------------- |
+| `title`        | ✏️     |                                          |
+| `subtitle`     | ✏️     |                                          |
+| `textBlocks[]` | ✏️     | Main content paragraphs — fully editable |
+| `signature`    | 🔒     |                                          |
+
+#### `content-video-services`
+
+| Field                    | Status | Notes |
+| ------------------------ | ------ | ----- |
+| `title`                  | ✏️     |       |
+| `subtitle`               | ✏️     |       |
+| `description`            | ✏️     |       |
+| `additionalText`         | ✏️     |       |
+| `services[].title`       | 🔄     |       |
+| `services[].description` | 🔄     |       |
+| `services[].icon`        | 🔒     |       |
+| `ctaText`                | 🔒     |       |
+| `videoUrl`               | 🔒     |       |
+| `thumbnail`              | 🔒     |       |
+
+#### `hero-with-services`
+
+| Field                    | Status | Notes |
+| ------------------------ | ------ | ----- |
+| `title`                  | ✏️     |       |
+| `subtitle`               | ✏️     |       |
+| `description`            | ✏️     |       |
+| `services[].title`       | 🔄     |       |
+| `services[].description` | 🔄     |       |
+| `services[].icon`        | 🔒     |       |
+| `ctaText`                | 🔒     |       |
+| `phone`                  | 🔒     |       |
+
+#### `hero-with-testimonials`
+
+| Field                   | Status | Notes                   |
+| ----------------------- | ------ | ----------------------- |
+| `title`                 | ✏️     |                         |
+| `subtitle`              | ✏️     |                         |
+| `description`           | ✏️     |                         |
+| `testimonials[].text`   | 🔄     | Adapt quotes to project |
+| `testimonials[].name`   | 🔄     |                         |
+| `testimonials[].avatar` | 🔒     |                         |
+| `ctaText`               | 🔒     |                         |
+
+#### `integrations-grid`
+
+| Field                        | Status | Notes |
+| ---------------------------- | ------ | ----- |
+| `title`                      | ✏️     |       |
+| `subtitle`                   | ✏️     |       |
+| `description`                | ✏️     |       |
+| `integrations[].name`        | 🔄     |       |
+| `integrations[].description` | 🔄     |       |
+| `integrations[].logo`        | 🔒     |       |
+| `integrations[].link`        | 🔒     |       |
+| `integrations[].linkText`    | 🔒     |       |
+
+#### `social-follow`
+
+| Field       | Status | Notes                         |
+| ----------- | ------ | ----------------------------- |
+| `title`     | ✏️     |                               |
+| `ctaText`   | 🔒     |                               |
+| `socials[]` | 🔒     | Platform + URL — never change |
+
+#### `brand-identity-hero`
+
+| Field           | Status | Notes              |
+| --------------- | ------ | ------------------ |
+| `title1`        | ✏️     |                    |
+| `title2`        | ✏️     |                    |
+| `accent`        | ✏️     | Accent word/phrase |
+| `badge1`        | 🔄     |                    |
+| `badge2`        | 🔄     |                    |
+| `circleText`    | 🔄     |                    |
+| `ctaLinks[]`    | 🔒     |                    |
+| `socialLinks[]` | 🔒     |                    |
+
+#### `simple-centered-hero`
+
+| Field      | Status | Notes |
+| ---------- | ------ | ----- |
+| `title`    | ✏️     |       |
+| `subtitle` | ✏️     |       |
+
+#### `creative-network-hero`
+
+| Field                                        | Status | Notes       |
+| -------------------------------------------- | ------ | ----------- |
+| `eyebrow`                                    | ✏️     |             |
+| `title`                                      | ✏️     |             |
+| `subtitle`                                   | ✏️     |             |
+| `leftCardLabel`                              | 🔄     |             |
+| `rightCardLabel`                             | 🔄     |             |
+| `logos[]`                                    | 🔒     | Brand names |
+| `brand`                                      | 🔒     |             |
+| `navItems[]`                                 | 🔒     |             |
+| `primaryText`, `secondaryText`, `topCtaText` | 🔒     |             |
+| `primaryLink`, `secondaryLink`, `topCtaLink` | 🔒     |             |
+| `leftCardImage`, `rightCardImage`            | 🔒     |             |
+
+#### `immersive-split-showcase`
+
+| Field                          | Status | Notes                            |
+| ------------------------------ | ------ | -------------------------------- |
+| `eyebrow`                      | ✏️     |                                  |
+| `title`                        | ✏️     |                                  |
+| `leftLines[]`                  | ✏️     | Content lines — adapt to project |
+| `cardTitle`                    | ✏️     |                                  |
+| `cardDescription`              | ✏️     |                                  |
+| `backgroundImage`, `cardImage` | 🔒     |                                  |
+| `cardCtaText`                  | 🔒     |                                  |
+| `cardCtaLink`                  | 🔒     |                                  |
+
+#### `provider-masonry`
+
+| Field                      | Status | Notes |
+| -------------------------- | ------ | ----- |
+| `title`                    | ✏️     |       |
+| `subtitle`                 | ✏️     |       |
+| `providers[].name`         | 🔄     |       |
+| `providers[].tag`          | 🔄     |       |
+| `providers[].meta`         | 🔄     |       |
+| `providers[].image`        | 🔒     |       |
+| `providers[].tall`, `wide` | 🔒     |       |
+| `ctaText`                  | 🔒     |       |
+| `ctaLink`                  | 🔒     |       |
+
+#### `editorial-cards-row`
+
+| Field                 | Status | Notes |
+| --------------------- | ------ | ----- |
+| `title`               | ✏️     |       |
+| `subtitle`            | ✏️     |       |
+| `cards[].title`       | 🔄     |       |
+| `cards[].description` | 🔄     |       |
+| `cards[].meta`        | 🔄     |       |
+| `cards[].image`       | 🔒     |       |
+| `ctaText`             | 🔒     |       |
+| `ctaLink`             | 🔒     |       |
+
+#### `minimal-final-cta`
+
+| Field           | Status | Notes |
+| --------------- | ------ | ----- |
+| `title`         | ✏️     |       |
+| `primaryText`   | 🔒     |       |
+| `primaryLink`   | 🔒     |       |
+| `secondaryText` | 🔒     |       |
+| `secondaryLink` | 🔒     |       |
+
+#### `cinematic-footer` / `footer` / `clickfunnel-footer`
+
+All footer fields are **🔒 FROZEN**. Do not modify any footer content — it contains brand, legal, navigation, and contact information.
+
+#### Header widgets (`header`, `header-top-info`, `header-with-icons`, `header-account-bar`, `header-full-contact`, `header-clickfunnel`, `simple-header-divider`)
+
+All header fields are **🔒 FROZEN**. Do not modify any header content — it contains branding, navigation, and UI elements.
+
+---
+
+### Understanding ✏️ vs 🔄
+
+- **✏️ EDITABLE (always rewrite):** These are the primary SEO targets. Section headings (`title`, `subtitle`), hero headlines, main descriptive paragraphs, FAQ questions/answers. The agent **must** adapt these to produce relevant, optimized copy.
+
+- **🔄 CONDITIONALLY EDITABLE (adapt when needed):** These are secondary content items, typically inside arrays (feature titles, testimonial quotes, step descriptions, etc.). The agent should evaluate whether the current template content is relevant to the target project:
+  - If the template describes "web development services" but the project is about "plumbing in Paris", the agent **must** rewrite these fields.
+  - If the template fields already align with the project topic, the agent may keep them as-is or refine them.
+  - When adapting array items, maintain the same structure and tone as the template.
+
+### Decision Flowchart for ✏️ / 🔄 Fields
+
+```
+Is the field a primary heading/title/subtitle of a section?
+  → YES: Always rewrite (✏️)
+Is the field a FAQ question or answer?
+  → YES: Always rewrite (✏️)
+Is the field inside an array (features, services, steps, testimonials, etc.)?
+  → Does the current text relate to the target project?
+    → NO: Rewrite to match project (🔄)
+    → YES: Refine for SEO optimization or keep as-is (🔄)
+```
 
 ---
 
@@ -338,12 +915,16 @@ Before returning JSON, ensure:
 - Every page has unique `page_key` in payload.
 - Every page has non-empty `title`.
 - Any `sections_data` provided is an array of valid section objects.
-- UI/navigation/action fields are unchanged unless explicitly requested.
-- Button/action/input text fields are unchanged unless explicitly requested.
+- All ✏️ fields have been adapted to the target project — do not leave template placeholder text.
+- All 🔄 fields have been evaluated: rewritten if irrelevant to the project, refined or kept if relevant.
+- All 🔒 fields are strictly unchanged from the template.
+- Header and footer sections are completely untouched.
 - Media URLs are unchanged unless explicitly requested.
-- Contact/non-SEO operational fields (`email`, `phone`, `address`, `openHours*`, `logoText`) are unchanged unless explicitly requested.
-- FAQ count rule: default = match template capacity; if `FAQ_EXTENDED` explicitly requested, `content.faqs` may be extended.
+- Contact/operational fields (`email`, `phone`, `address`, `openHours*`, `logoText`) are unchanged.
+- FAQ questions and answers are fully rewritten for the target project.
+- Array cardinality is preserved (same number of items); exception: `FAQ_EXTENDED` mode when explicitly requested.
 - No markdown emphasis markers appear inside JSON string values.
+- No new sections or fields have been created.
 
 ---
 

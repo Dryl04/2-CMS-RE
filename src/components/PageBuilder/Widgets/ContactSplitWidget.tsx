@@ -102,7 +102,7 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                       className="text-sm md:text-base text-base-content/70"
                       style={textStyle}
                     >
-                      {content.address}
+                      {renderRichText(content.address)}
                     </p>
                   </div>
                 </div>
@@ -127,7 +127,7 @@ export default function ContactSplitWidget({ section }: ContactSplitWidgetProps)
                       className="text-sm md:text-base text-base-content/70"
                       style={textStyle}
                     >
-                      {content.email}
+                      {renderRichText(content.email)}
                     </p>
                   </div>
                 </div>

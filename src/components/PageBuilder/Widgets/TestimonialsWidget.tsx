@@ -45,14 +45,14 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'What Our Customers Say'}
+          {renderRichText(title, 'What Our Customers Say')}
         </h2>
         {subtitle && (
           <p
             className="text-lg sm:text-xl font-normal text-base-content/70"
             style={subtitleStyle}
           >
-            {subtitle}
+            {renderRichText(subtitle)}
           </p>
         )}
       </div>
@@ -102,7 +102,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
         className="text-3xl sm:text-4xl font-bold mb-12 text-base-content"
         style={headingStyle}
       >
-        {title || 'What Our Customers Say'}
+        {renderRichText(title, 'What Our Customers Say')}
       </h2>
 
       {(testimonials || []).slice(0, 1).map((testimonial: any, index: number) => (
@@ -151,14 +151,14 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
           className="text-2xl sm:text-3xl font-bold mb-2 text-base-content"
           style={headingStyle}
         >
-          {title || 'What Our Customers Say'}
+          {renderRichText(title, 'What Our Customers Say')}
         </h2>
         {subtitle && (
           <p
             className="text-base sm:text-lg font-normal text-base-content/70"
             style={subtitleStyle}
           >
-            {subtitle}
+            {renderRichText(subtitle)}
           </p>
         )}
       </div>

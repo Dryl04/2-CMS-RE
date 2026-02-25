@@ -1,6 +1,7 @@
 import React from 'react';
 import { Menu, X, Search, ShoppingBag, User } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 import { useState } from 'react';
 
 interface HeaderWidgetProps {
@@ -56,7 +57,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               <img src={logo} alt={logoText || 'Logo'} className="h-8 w-auto" />
             ) : (
               <span className="text-xl font-bold text-base-content" style={headingStyle}>
-                {logoText || 'Brand'}
+                {renderRichText(logoText, 'Brand')}
               </span>
             )}
           </div>
@@ -131,7 +132,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               <img src={logo} alt={logoText || 'Logo'} className="h-10 w-auto" />
             ) : (
               <span className="text-2xl font-bold text-base-content" style={headingStyle}>
-                {logoText || 'Brand'}
+                {renderRichText(logoText, 'Brand')}
               </span>
             )}
           </div>
@@ -206,7 +207,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 className="text-xl font-bold text-base-content"
                 style={headingStyle}
               >
-                {logoText || 'Brand'}
+                {renderRichText(logoText, 'Brand')}
               </span>
             )}
           </div>
@@ -280,7 +281,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               <img src={logo} alt={logoText || 'Logo'} className="h-6 w-auto" />
             ) : (
               <span className="text-lg font-semibold text-base-content" style={headingStyle}>
-                {logoText || 'Brand'}
+                {renderRichText(logoText, 'Brand')}
               </span>
             )}
           </div>
@@ -320,7 +321,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
               <img src={logo} alt={logoText || 'Logo'} className="h-7 w-auto" />
             ) : (
               <span className="text-lg font-semibold tracking-wide" style={headingStyle}>
-                {logoText || 'FLORA'}
+                {renderRichText(logoText, 'FLORA')}
               </span>
             )}
           </div>

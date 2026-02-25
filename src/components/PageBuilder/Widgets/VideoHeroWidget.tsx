@@ -180,7 +180,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
       </div>
 
       <div
-        className="relative group rounded-3xl overflow-hidden shadow-2xl bg-neutral"
+        className="relative group overflow-hidden shadow-2xl bg-neutral"
         data-widget-media-frame
         data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
         data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
@@ -263,7 +263,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         </div>
 
         <div
-          className="relative group rounded-2xl overflow-hidden shadow-2xl bg-neutral"
+          className="relative group overflow-hidden shadow-2xl bg-neutral"
           data-widget-media-frame
           data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
           data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
@@ -325,7 +325,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
           </h2>
 
           <div
-            className="relative inline-block rounded-3xl overflow-hidden shadow-2xl cursor-pointer group"
+            className="relative inline-block overflow-hidden shadow-2xl cursor-pointer group"
             onClick={() => setIsPlaying(true)}
             data-widget-media-frame
             data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
