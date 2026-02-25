@@ -309,6 +309,11 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
   const hasBtnBg = !!colors.buttonBackground;
   const hasBtnText = !!colors.buttonText;
   const hasBtnHover = !!colors.buttonBackgroundHover;
+  const hasIconBg = !!colors.iconBackground;
+  const hasIconColor = !!colors.iconColor;
+  const hasIconBorder = !!(colors.iconBorderColor || colors.iconBorderWidth);
+  const hasIconRadius = !!colors.iconRadius;
+  const hasIconSize = !!colors.iconSize;
 
   // Typography conditional flags — only activate CSS overrides when custom values are set
   const hasFontFamily = !!typo.fontFamily;
@@ -333,7 +338,6 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
       ? "transparent"
       : colors.buttonBorderColor || "currentColor";
   const buttonShadow = colors.buttonShadow || "none";
-  const iconRadius = normalizeRadius(colors.iconRadius) || "0.75rem";
   const mediaRadius =
     normalizeRadius(normalizedSection.design?.media?.imageRadius) || "12px";
 
@@ -369,6 +373,11 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
     hasH2FontWeight ? "wds-h2-font-weight" : "",
     hasH2FontSize ? "wds-h2-font-size" : "",
     hasTextFontSize ? "wds-text-font-size" : "",
+    hasIconBg ? "wds-icon-bg" : "",
+    hasIconColor ? "wds-icon-color" : "",
+    hasIconBorder ? "wds-icon-border" : "",
+    hasIconRadius ? "wds-icon-radius" : "",
+    hasIconSize ? "wds-icon-size" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -451,7 +460,9 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
     "--widget-btn-border-color": buttonBorderColor,
     "--widget-btn-shadow": buttonShadow,
     ...(colors.accent ? { "--widget-accent-color": colors.accent } : {}),
-    "--widget-icon-bg": colors.iconBackground || "oklch(var(--b2))",
+    ...(colors.iconBackground
+      ? { "--widget-icon-bg": colors.iconBackground }
+      : {}),
     ...(colors.iconColor ? { "--widget-icon-color": colors.iconColor } : {}),
     ...(colors.iconBorderColor
       ? { "--widget-icon-border-color": colors.iconBorderColor }
@@ -459,7 +470,12 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
     ...(colors.iconBorderWidth
       ? { "--widget-icon-border-width": colors.iconBorderWidth }
       : {}),
-    "--widget-icon-radius": iconRadius,
+    ...(colors.iconRadius
+      ? {
+          "--widget-icon-radius":
+            normalizeRadius(colors.iconRadius) || colors.iconRadius,
+        }
+      : {}),
     ...(colors.iconSize ? { "--widget-icon-size": colors.iconSize } : {}),
     ...(typo.fontFamily ? { "--widget-font-family": typo.fontFamily } : {}),
     ...(typo.headingFontFamily

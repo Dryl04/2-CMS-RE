@@ -141,40 +141,38 @@
     ) !important;
   }
 
-  .widget-design-scope svg {
-    color: var(--widget-icon-color, inherit);
+  .widget-design-scope.wds-icon-color svg {
+    color: var(--widget-icon-color);
   }
 
-  .widget-design-scope [data-widget-icon-frame] {
-    background-color: var(--widget-icon-bg, oklch(var(--b2)));
+  /* Icon frame: only override properties when explicitly set via conditional classes */
+  .widget-design-scope.wds-icon-bg [data-widget-icon-frame],
+  .widget-design-scope.wds-icon-bg .widget-icon-container {
+    background-color: var(--widget-icon-bg);
+  }
+
+  .widget-design-scope.wds-icon-border [data-widget-icon-frame],
+  .widget-design-scope.wds-icon-border .widget-icon-container {
     border-color: var(--widget-icon-border-color, transparent);
-    border-width: var(--widget-icon-border-width, 0px);
+    border-width: var(--widget-icon-border-width, 1px);
     border-style: solid;
-    border-radius: var(--widget-icon-radius, 0.75rem);
-    width: var(--widget-icon-size, auto);
-    height: var(--widget-icon-size, auto);
-    min-width: var(--widget-icon-size, auto);
-    min-height: var(--widget-icon-size, auto);
   }
 
-  .widget-design-scope [data-widget-icon-frame] svg {
-    width: calc(var(--widget-icon-size) * 0.55);
-    height: calc(var(--widget-icon-size) * 0.55);
+  .widget-design-scope.wds-icon-radius [data-widget-icon-frame],
+  .widget-design-scope.wds-icon-radius .widget-icon-container {
+    border-radius: var(--widget-icon-radius);
   }
 
-  .widget-design-scope .widget-icon-container {
-    background-color: var(--widget-icon-bg, oklch(var(--b2)));
-    border-color: var(--widget-icon-border-color, transparent);
-    border-width: var(--widget-icon-border-width, 0px);
-    border-style: solid;
-    border-radius: var(--widget-icon-radius, 0.75rem);
-    width: var(--widget-icon-size, auto);
-    height: var(--widget-icon-size, auto);
-    min-width: var(--widget-icon-size, auto);
-    min-height: var(--widget-icon-size, auto);
+  .widget-design-scope.wds-icon-size [data-widget-icon-frame],
+  .widget-design-scope.wds-icon-size .widget-icon-container {
+    width: var(--widget-icon-size);
+    height: var(--widget-icon-size);
+    min-width: var(--widget-icon-size);
+    min-height: var(--widget-icon-size);
   }
 
-  .widget-design-scope .widget-icon-container svg {
+  .widget-design-scope.wds-icon-size [data-widget-icon-frame] svg,
+  .widget-design-scope.wds-icon-size .widget-icon-container svg {
     width: calc(var(--widget-icon-size) * 0.55);
     height: calc(var(--widget-icon-size) * 0.55);
   }
