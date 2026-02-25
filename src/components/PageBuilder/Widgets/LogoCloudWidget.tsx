@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface LogoCloudWidgetProps {
   section: PageBuilderSection;
@@ -45,7 +46,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-base-content"
               style={headingStyle}
             >
-              {title}
+              {renderRichText(title)}
             </h2>
           )}
           {subtitle && (
@@ -53,7 +54,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
               className="text-sm sm:text-base md:text-lg text-base-content/70"
               style={subtitleStyle}
             >
-              {subtitle}
+              {renderRichText(subtitle)}
             </p>
           )}
         </div>
@@ -85,7 +86,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-base-content"
               style={headingStyle}
             >
-              {title}
+              {renderRichText(title)}
             </h2>
           )}
           {subtitle && (
@@ -93,7 +94,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
               className="text-sm sm:text-base md:text-lg text-base-content/70"
               style={subtitleStyle}
             >
-              {subtitle}
+              {renderRichText(subtitle)}
             </p>
           )}
         </div>
@@ -142,7 +143,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-base-content"
               style={headingStyle}
             >
-              {title}
+              {renderRichText(title)}
             </h2>
           )}
           {subtitle && (
@@ -150,7 +151,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
               className="text-sm sm:text-base md:text-lg text-base-content/70"
               style={subtitleStyle}
             >
-              {subtitle}
+              {renderRichText(subtitle)}
             </p>
           )}
         </div>
@@ -199,7 +200,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
               className="text-lg sm:text-xl md:text-2xl font-bold mb-3 md:mb-4 text-base-content"
               style={headingStyle}
             >
-              {title}
+              {renderRichText(title)}
             </h2>
           )}
           {subtitle && (
@@ -207,7 +208,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
               className="text-xs sm:text-sm md:text-base text-base-content/70"
               style={subtitleStyle}
             >
-              {subtitle}
+              {renderRichText(subtitle)}
             </p>
           )}
         </div>

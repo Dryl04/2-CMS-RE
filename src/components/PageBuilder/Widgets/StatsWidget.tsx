@@ -1,6 +1,7 @@
 import React from 'react';
 import { TrendingUp } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface StatsWidgetProps {
   section: PageBuilderSection;
@@ -44,7 +45,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
               className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
               style={headingStyle}
             >
-              {title}
+              {renderRichText(title)}
             </h2>
           )}
           {subtitle && (
@@ -52,7 +53,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
               className="text-lg sm:text-xl text-base-content/70"
               style={subtitleStyle}
             >
-              {subtitle}
+              {renderRichText(subtitle)}
             </p>
           )}
         </div>
@@ -71,7 +72,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
               className="text-base sm:text-lg font-medium text-base-content/70"
               style={textStyle}
             >
-              {stat.label}
+              {renderRichText(stat.label)}
             </div>
           </div>
         ))}
@@ -88,7 +89,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
               className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
               style={headingStyle}
             >
-              {title}
+              {renderRichText(title)}
             </h2>
           )}
           {subtitle && (
@@ -96,7 +97,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
               className="text-lg sm:text-xl text-base-content/70"
               style={subtitleStyle}
             >
-              {subtitle}
+              {renderRichText(subtitle)}
             </p>
           )}
         </div>
@@ -122,7 +123,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
                 {stat.number}
               </div>
               <div className="text-sm sm:text-base opacity-90">
-                {stat.label}
+                {renderRichText(stat.label)}
               </div>
             </div>
           );
@@ -140,7 +141,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
               className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
               style={headingStyle}
             >
-              {title}
+              {renderRichText(title)}
             </h2>
           )}
           {subtitle && (
@@ -148,7 +149,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
               className="text-lg text-base-content/70"
               style={subtitleStyle}
             >
-              {subtitle}
+              {renderRichText(subtitle)}
             </p>
           )}
         </div>
@@ -171,7 +172,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
               className="text-lg font-medium text-base-content/70"
               style={textStyle}
             >
-              {stat.label}
+              {renderRichText(stat.label)}
             </div>
           </div>
         ))}
@@ -188,7 +189,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
               className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-base-content"
               style={headingStyle}
             >
-              {title}
+              {renderRichText(title)}
             </h2>
           )}
           {subtitle && (
@@ -196,7 +197,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
               className="text-lg sm:text-xl mb-8 text-base-content/70"
               style={subtitleStyle}
             >
-              {subtitle}
+              {renderRichText(subtitle)}
             </p>
           )}
           <button
@@ -223,7 +224,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
                 className="text-sm sm:text-base font-medium text-base-content/70"
                 style={textStyle}
               >
-                {stat.label}
+                {renderRichText(stat.label)}
               </div>
             </div>
           ))}

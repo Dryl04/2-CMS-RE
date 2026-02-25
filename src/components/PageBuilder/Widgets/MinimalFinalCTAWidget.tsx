@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface MinimalFinalCTAWidgetProps {
   section: PageBuilderSection;
@@ -25,7 +26,7 @@ export default function MinimalFinalCTAWidget({ section }: MinimalFinalCTAWidget
       >
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border border-base-content/10 rounded-2xl px-6 py-5 bg-base-200">
           <h2 className="text-xl sm:text-2xl font-semibold" style={headingStyle}>
-            {content.title || 'A new medium needs a new canvas.'}
+            {renderRichText(content.title, 'A new medium needs a new canvas.')}
           </h2>
           <div className="flex items-center gap-2">
             <a href={content.primaryLink || '#'} className="btn btn-primary btn-sm" style={linkStyle}>{content.primaryText || 'Contact sales'}</a>

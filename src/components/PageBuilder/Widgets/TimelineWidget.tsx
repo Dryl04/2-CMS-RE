@@ -1,6 +1,7 @@
 import React from 'react';
 import { Calendar, CheckCircle } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface TimelineWidgetProps {
   section: PageBuilderSection;
@@ -67,13 +68,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Our Journey'}
+          {renderRichText(title, 'Our Journey')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Milestones that shaped our story'}
+          {renderRichText(subtitle, 'Milestones that shaped our story')}
         </p>
       </div>
 
@@ -87,9 +88,8 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
           {(events || defaultEvents).map((event: any, index: number) => (
             <div
               key={index}
-              className={`relative flex items-center ${
-                index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-              }`}
+              className={`relative flex items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                }`}
             >
               <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'} pl-14 sm:pl-20 md:pl-0`}>
                 <div
@@ -102,13 +102,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
                   className="text-2xl font-bold mb-2 text-base-content"
                   style={headingStyle}
                 >
-                  {event.title}
+                  {renderRichText(event.title)}
                 </h3>
                 <p
                   className="text-base-content/70"
                   style={textStyle}
                 >
-                  {event.description}
+                  {renderRichText(event.description)}
                 </p>
               </div>
 
@@ -142,13 +142,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Timeline'}
+          {renderRichText(title, 'Timeline')}
         </h2>
         <p
           className="text-base sm:text-lg md:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Our story over the years'}
+          {renderRichText(subtitle, 'Our story over the years')}
         </p>
       </div>
 
@@ -178,13 +178,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
                   className="text-lg sm:text-xl font-bold mb-1.5 sm:mb-2 text-base-content"
                   style={headingStyle}
                 >
-                  {event.title}
+                  {renderRichText(event.title)}
                 </h3>
                 <p
                   className="text-xs sm:text-sm text-base-content/70"
                   style={textStyle}
                 >
-                  {event.description}
+                  {renderRichText(event.description)}
                 </p>
               </div>
             </div>
@@ -201,13 +201,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Our Evolution'}
+          {renderRichText(title, 'Our Evolution')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Key moments in our history'}
+          {renderRichText(subtitle, 'Key moments in our history')}
         </p>
       </div>
 
@@ -241,13 +241,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
                 className="text-xl font-bold mb-2 text-base-content"
                 style={headingStyle}
               >
-                {event.title}
+                {renderRichText(event.title)}
               </h3>
               <p
                 className="text-sm text-base-content/70"
                 style={textStyle}
               >
-                {event.description}
+                {renderRichText(event.description)}
               </p>
             </div>
           </div>
@@ -263,13 +263,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'History'}
+          {renderRichText(title, 'History')}
         </h2>
         <p
           className="text-lg text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Our journey so far'}
+          {renderRichText(subtitle, 'Our journey so far')}
         </p>
       </div>
 
@@ -297,13 +297,13 @@ export default function TimelineWidget({ section }: TimelineWidgetProps) {
                 className="text-2xl font-bold mb-2 text-base-content"
                 style={headingStyle}
               >
-                {event.title}
+                {renderRichText(event.title)}
               </h3>
               <p
                 className="text-base-content/70"
                 style={textStyle}
               >
-                {event.description}
+                {renderRichText(event.description)}
               </p>
             </div>
           </div>

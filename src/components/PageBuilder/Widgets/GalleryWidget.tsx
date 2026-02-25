@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface GalleryWidgetProps {
   section: PageBuilderSection;
@@ -71,13 +72,13 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Our Work'}
+          {renderRichText(title, 'Our Work')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'A showcase of our latest projects'}
+          {renderRichText(subtitle, 'A showcase of our latest projects')}
         </p>
       </div>
 
@@ -102,7 +103,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
                 >
                   {item.category}
                 </p>
-                <h3 className="text-xl font-bold text-neutral-content">{item.title}</h3>
+                <h3 className="text-xl font-bold text-neutral-content">{renderRichText(item.title)}</h3>
               </div>
             </a>
           );
@@ -118,13 +119,13 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Portfolio'}
+          {renderRichText(title, 'Portfolio')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Explore our creative work'}
+          {renderRichText(subtitle, 'Explore our creative work')}
         </p>
       </div>
 
@@ -147,7 +148,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               >
                 {item.category}
               </p>
-              <h3 className="text-xl font-bold text-neutral-content">{item.title}</h3>
+              <h3 className="text-xl font-bold text-neutral-content">{renderRichText(item.title)}</h3>
             </div>
           </a>
         ))}
@@ -162,13 +163,13 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Featured Projects'}
+          {renderRichText(title, 'Featured Projects')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Our best work'}
+          {renderRichText(subtitle, 'Our best work')}
         </p>
       </div>
 
@@ -191,7 +192,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               >
                 {item.category}
               </p>
-              <h3 className="text-4xl lg:text-5xl font-bold text-neutral-content mb-4">{item.title}</h3>
+              <h3 className="text-4xl lg:text-5xl font-bold text-neutral-content mb-4">{renderRichText(item.title)}</h3>
               <button
                 className="self-start px-8 py-3 rounded-xl font-semibold transition-all hover:shadow-xl bg-primary text-primary-content"
                 style={accentColor ? { backgroundColor: accentColor } : undefined}
@@ -221,7 +222,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
                 >
                   {item.category}
                 </p>
-                <h3 className="text-lg font-bold text-neutral-content">{item.title}</h3>
+                <h3 className="text-lg font-bold text-neutral-content">{renderRichText(item.title)}</h3>
               </div>
             </a>
           ))}
@@ -237,13 +238,13 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Latest Work'}
+          {renderRichText(title, 'Latest Work')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Swipe to explore'}
+          {renderRichText(subtitle, 'Swipe to explore')}
         </p>
       </div>
 
@@ -262,7 +263,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               >
                 {item.category}
               </div>
-              <h3 className="text-3xl lg:text-5xl font-bold text-neutral-content mb-6">{item.title}</h3>
+              <h3 className="text-3xl lg:text-5xl font-bold text-neutral-content mb-6">{renderRichText(item.title)}</h3>
               <a
                 href={item.link}
                 className="self-start px-8 py-4 rounded-xl font-semibold bg-base-100 transition-all hover:shadow-xl text-primary"

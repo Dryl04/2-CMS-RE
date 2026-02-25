@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ClickFunnelFooterProps {
   section: PageBuilderSection;
@@ -119,7 +120,7 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
                 className="text-xl font-bold"
                 style={headingStyle}
               >
-                {logoText}
+                {renderRichText(logoText)}
               </span>
             </div>
           )}
@@ -132,7 +133,7 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
                 className="font-bold text-lg mb-4"
                 style={headingStyle}
               >
-                {column.title}
+                {renderRichText(column.title)}
               </h3>
               <ul className="space-y-3">
                 {column.links.map((link, linkIndex) => (
@@ -148,7 +149,7 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
                         (e.target as HTMLElement).style.color = '';
                       }}
                     >
-                      {link.label}
+                      {renderRichText(link.label)}
                     </a>
                   </li>
                 ))}
@@ -163,7 +164,7 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
             <span style={linkTextStyle}>
-              {privacyChoicesText}
+              {renderRichText(privacyChoicesText)}
             </span>
           </div>
         )}

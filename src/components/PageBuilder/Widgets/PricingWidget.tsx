@@ -35,7 +35,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Simple, Transparent Pricing'}
+          {renderRichText(title, 'Simple, Transparent Pricing')}
         </h2>
         <p className="text-lg sm:text-xl text-base-content/70" style={subtitleStyle}>
           {renderRichText(subtitle, 'Choose the perfect plan for your needs')}
@@ -64,7 +64,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
             )}
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold mb-2 text-base-content" style={headingStyle}>
-                {plan.name}
+                {renderRichText(plan.name)}
               </h3>
               <div className="flex items-baseline justify-center">
                 <span className="text-5xl font-bold text-primary" style={accentColor ? { color: accentColor } : undefined}>
@@ -77,7 +77,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
               {plan.features.map((feature: string, idx: number) => (
                 <li key={idx} className="flex items-start">
                   <Check className="w-5 h-5 mr-3 flex-shrink-0 text-primary" style={accentColor ? { color: accentColor } : undefined} />
-                  <span className="text-base-content/70" style={textStyle}>{feature}</span>
+                  <span className="text-base-content/70" style={textStyle}>{renderRichText(feature)}</span>
                 </li>
               ))}
             </ul>
@@ -105,7 +105,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Compare Plans'}
+          {renderRichText(title, 'Compare Plans')}
         </h2>
         <p className="text-lg sm:text-xl text-base-content/70" style={subtitleStyle}>
           {renderRichText(subtitle, 'Find the perfect fit for your business')}
@@ -123,7 +123,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
                 { name: 'Enterprise' },
               ]).map((plan: any, index: number) => (
                 <th key={index} className="px-6 py-4 text-center font-semibold">
-                  {plan.name}
+                  {renderRichText(plan.name)}
                 </th>
               ))}
             </tr>
@@ -158,7 +158,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Flexible Pricing'}
+          {renderRichText(title, 'Flexible Pricing')}
         </h2>
         <p className="text-lg sm:text-xl mb-6 text-base-content/70" style={subtitleStyle}>
           {renderRichText(subtitle, 'Save 20% with annual billing')}
@@ -180,7 +180,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
         ]).slice(0, 2).map((plan: any, index: number) => (
           <div key={index} className="bg-base-100 rounded-2xl shadow-xl p-8 border-2 border-base-content/5 hover:border-base-content/20 transition-all">
             <h3 className="text-2xl font-bold mb-2 text-base-content" style={headingStyle}>
-              {plan.name}
+              {renderRichText(plan.name)}
             </h3>
             <div className="flex items-baseline mb-6">
               <span className="text-5xl font-bold text-primary" style={accentColor ? { color: accentColor } : undefined}>
@@ -192,7 +192,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
               {plan.features.map((feature: string, idx: number) => (
                 <li key={idx} className="flex items-center">
                   <Check className="w-5 h-5 mr-3 text-primary" style={accentColor ? { color: accentColor } : undefined} />
-                  <span className="text-base-content/70" style={textStyle}>{feature}</span>
+                  <span className="text-base-content/70" style={textStyle}>{renderRichText(feature)}</span>
                 </li>
               ))}
             </ul>
@@ -215,7 +215,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'One Simple Price'}
+          {renderRichText(title, 'One Simple Price')}
         </h2>
         <p className="text-lg text-base-content/70" style={subtitleStyle}>
           {renderRichText(subtitle, "Everything you need, nothing you don't")}
@@ -244,7 +244,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           ].map((feature, idx) => (
             <div key={idx} className="flex items-center">
               <Check className="w-5 h-5 mr-3 text-primary" style={accentColor ? { color: accentColor } : undefined} />
-              <span className="text-base-content/70" style={textStyle}>{feature}</span>
+              <span className="text-base-content/70" style={textStyle}>{renderRichText(feature)}</span>
             </div>
           ))}
         </div>

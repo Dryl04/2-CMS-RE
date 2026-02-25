@@ -1,194 +1,144 @@
 {
     "template": {
-        "id": "6a6fe707-6ebe-4b67-9d73-9bb4ae36290d",
-        "daisy_theme_slug": null
+        "id": "6a6fe707-6ebe-4b67-9d73-9bb4ae36290d"
     },
     "pages": [
         {
-            "page_key": "gestion-contact-efficace",
-            "title": "Gestion de contact efficace | Maximisez votre réseau pro",
-            "description": "Adoptez une gestion de contact efficace pour transformer vos rencontres en clients. Ne perdez plus aucune opportunité business grâce à notre suivi stratégique.",
+            "page_key": "application-scan-carte-de-visite",
+            "title": "Application scan carte de visite : Gérez vos contacts pro",
+            "description": "Transformez chaque carte de visite en opportunité avec notre application scan carte de visite. OCR haute précision, suivi d'objectifs et synchronisation CRM.",
             "status": "published",
-            "language": "fr",
-            "seo_h1": "Votre réseau est une mine d'or, ne le laissez plus s'éteindre par négligence",
+            "template_id": "6a6fe707-6ebe-4b67-9d73-9bb4ae36290d",
             "content_overrides": {
                 "section-1771740560305": {
-                    "content.headline": "Votre réseau est une mine d'or, ne le laissez plus s'éteindre par négligence",
-                    "content.subheadline": "Adoptez dès aujourd'hui la stratégie de <strong>gestion de contact efficace</strong> qui transforme chaque rencontre fortuite en un contrat signé."
+                    "content.headline": "L'<strong>application scan carte de visite</strong> qui pilote votre croissance commerciale sans saisie",
+                    "content.subheadline": "L'<strong>application scan carte de visite</strong> transforme chaque rencontre en une opportunité de vente concrète grâce à une technologie OCR ultra-performante et une interface de gestion d'objectifs révolutionnaire intégrée."
                 },
                 "section-1771741678521": {
-                    "content.title": "Visualisez votre succès : du carnet saturé au pipeline automatisé",
-                    "content.description": "La <strong>gestion de contact efficace</strong> n'est pas une simple option pour le professionnel moderne, c'est le moteur de votre croissance. En utilisant notre plateforme, vous éliminez la confusion et l'oubli pour laisser place à un processus de suivi chirurgical.",
+                    "content.title": "Ne laissez plus vos opportunités de business s'évaporer avec l'<strong>application scan carte de visite</strong>",
+                    "content.description": "Le chaos des salons professionnels appartient enfin au passé grâce à votre nouvelle stratégie de capture. Votre succès ne dépend plus de votre capacité à recopier des emails, mais de la vitesse à laquelle votre <strong>application scan carte de visite</strong> injecte ces données dans votre pipeline de vente. En automatisant l'extraction de coordonnées, vous éliminez les erreurs de saisie.",
                     "content.checklist": [
-                        "Un flux de travail limpide et centralisé",
-                        "Une sérénité totale avec des rappels intelligents",
-                        "Un actif business dynamique qui produit des contrats"
+                        "Scannez instantanément chaque carte de visite avec une précision chirurgicale.",
+                        "Synchronisez vos nouveaux contacts avec votre CRM favori en un clic.",
+                        "Relancez vos prospects dès la sortie du rendez-vous grâce aux rappels."
                     ]
                 },
                 "section-1771751403903": {
-                    "content.title": "L'épuisement mental de la désorganisation relationnelle",
-                    "content.subtitle": "Chaque oubli de relance est une insulte à votre travail acharné. La <strong>gestion de contact efficace</strong> réduit votre charge mentale de 80%."
-                },
-                "section-1771740503487": {
-                    "content.navItems": [
+                    "content.title": "Performance de l'<strong>application scan carte de visite</strong>",
+                    "content.subtitle": "Le tracking de votre ROI n'a jamais été aussi simple et intuitif pour votre stratégie.",
+                    "content.stats": [
                         {
-                            "title": "Capture Instantanée",
-                            "subtitle": "Enregistrez le contexte et l'émotion de la rencontre en 10 secondes pour une <strong>gestion de contact efficace</strong>."
+                            "label": "Seconde pour scanner",
+                            "number": "1",
+                            "suffix": ""
                         },
                         {
-                            "title": "Segmentation Prédictive",
-                            "subtitle": "Classez vos relations par potentiel et par chaleur immédiatement grâce à notre stratégie."
+                            "label": "Précision OCR",
+                            "number": "99",
+                            "suffix": "%"
                         },
                         {
-                            "title": "Activation de la Relance",
-                            "subtitle": "Laissez le système planifier les points de contact optimaux pour votre <strong>gestion de contact efficace</strong>."
+                            "label": "Temps gagné / semaine",
+                            "number": "5",
+                            "suffix": "h"
                         },
                         {
-                            "title": "Transformation Finale",
-                            "subtitle": "Convertissez votre capital social en chiffre d'affaires prévisible et mesurable."
-                        },
-                        {
-                            "title": "Mapping Relationnel",
-                            "subtitle": "Identifiez graphiquement les zones de croissance au sein de votre écosystème social."
+                            "label": "Langues reconnues",
+                            "number": "50",
+                            "suffix": "+"
                         }
                     ]
                 },
                 "section-1771743068973": {
-                    "content.title": "Les fonctionnalités clés de votre nouvelle puissance business",
-                    "content.description": "La <strong>gestion de contact efficace</strong> est l'investissement le plus rentable de votre carrière. Le suivi systématique est la seule différence entre un amateur et un leader.",
+                    "content.title": "Pourquoi l'élite choisit notre <strong>application scan carte de visite</strong>",
+                    "content.description": "Cette <strong>application scan carte de visite</strong> n'est pas qu'un simple gadget, c'est un connecteur d'élite pour les professionnels qui visent l'excellence commerciale. Cette méthode de travail fluide garantit que plus aucun prospect ne passe entre les mailles du filet pour votre prospection.",
                     "content.checklist": [
-                        "Historique Contextuel complet",
-                        "Notifications de Chaleur intelligentes",
-                        "Synchronisation Multi-Appareils fluide",
-                        "Tags Stratégiques de segmentation"
+                        "Vitesse d'exécution : capture photo en 1 seconde.",
+                        "Zéro erreur : reconnaissance optique de texte supérieure.",
+                        "Suivi sans faille : notifications intelligentes de relance.",
+                        "Mobilité totale : accès à la base de données partout."
                     ]
                 },
                 "section-1771751890794": {
-                    "content.title": "Pourquoi les meilleurs choisissent notre méthode ?",
-                    "content.subtitle": "Devenez le connecteur d'élite de votre secteur avec une <strong>gestion de contact efficace</strong>.",
-                    "content.description": "En maîtrisant votre réseau, vous changez d'identité. Vous n'êtes plus celui qui cherche des clients, vous êtes celui qui gère un écosystème.",
+                    "content.title": "Fonctionnalités de l'<strong>application scan carte de visite</strong>",
+                    "content.description": "15 fonctionnalités majeures pour dominer votre marché et optimiser votre gestion de contacts.",
                     "content.services": [
                         {
-                            "title": "Intuitivité Redoutable",
-                            "description": "Pas de formation complexe, l'outil est opérationnel en 2 minutes pour votre <strong>gestion de contact efficace</strong>."
+                            "title": "Scan OCR Haute Précision",
+                            "description": "Notre <strong>application scan carte de visite</strong> utilise des algorithmes de reconnaissance optique de dernière génération pour extraire noms et emails."
                         },
                         {
-                            "title": "Sécurité Infaillible",
-                            "description": "Vos données sont votre actif le plus précieux, nous protégeons votre <strong>gestion de contact efficace</strong>."
+                            "title": "Gestion d'Objectifs",
+                            "description": "Fixez vos paliers de vente mensuels directement dans votre <strong>application scan carte de visite</strong> et suivez l'avancement en temps réel."
                         },
                         {
-                            "title": "Agilité Totale",
-                            "description": "S'adapte à votre manière de travailler pour un pilotage relationnel fluide."
+                            "title": "Synchronisation CRM",
+                            "description": "L'<strong>application scan carte de visite</strong> s'intègre nativement avec les logiciels les plus populaires pour exporter vos contacts sans erreur."
                         },
                         {
-                            "title": "ROI Mesurable",
-                            "description": "Multipliez vos résultats par le nombre de contacts que vous n'ignorerez plus."
+                            "title": "Système de Tagging",
+                            "description": "Classez vos prospects par événement ou par potentiel au sein de votre <strong>application scan carte de visite</strong> personnalisable."
                         }
                     ]
                 },
                 "section-1771741660353": {
-                    "content.introduction": "Ne ratez plus aucun événement majeur avec une <strong>gestion de contact efficace</strong>.",
-                    "content.column1": "Chaque salon, conférence ou cocktail devient une source de revenus garantie. Vous savez exactement qui vous avez rencontré.",
-                    "content.column2": "Imaginez votre situation dans six mois : un réseau florissant, des clients qui vous recommandent et un pipeline plein.",
-                    "content.column3": "Tout cela commence par une décision simple : adopter une <strong>gestion de contact efficace</strong> dès aujourd'hui."
+                    "content.introduction": "Découvrez la puissance technologique de l'<strong>application scan carte de visite</strong>.",
+                    "content.column1": "L'<strong>application scan carte de visite</strong> permet de générer des rapports complets en format Excel, PDF ou VCF. Transmettez vos listes de contacts à vos équipes marketing ou à vos collaborateurs en un seul geste sécurisé. C'est la solution flexible par excellence pour la circulation fluide de l'information.",
+                    "content.column2": "Visualisez votre taux de conversion et l'efficacité de vos canaux de prospection grâce à l'<strong>application scan carte de visite</strong> analytique. Identifiez quels salons rapportent le plus de leads qualifiés pour optimiser vos futurs investissements marketing et commerciaux stratégiques.",
+                    "content.column3": "L'<strong>application scan carte de visite</strong> identifie les profils sociaux et permet de s'y connecter directement d'un simple clic. Soyez moderne et écologique tout en garantissant que vos interlocuteurs enregistrent votre profil correctement dans leur téléphone."
                 },
                 "section-1771746516886": {
-                    "content.title": "Le coût exorbitant de l'inaction",
-                    "content.subtitle": "Le chaos relationnel est une taxe invisible sur votre succès.",
+                    "content.title": "Processus de l'<strong>application scan carte de visite</strong>",
+                    "content.subtitle": "Le processus intelligent pour transformer un contact en client fidèle et rentable.",
                     "content.steps": [
                         {
-                            "number": "1",
-                            "title": "Importez vos contacts",
-                            "description": "Centralisez votre base pour démarrer votre <strong>gestion de contact efficace</strong> en un clic."
+                            "title": "Capture",
+                            "number": "01",
+                            "description": "Photographiez la carte avec l'<strong>application scan carte de visite</strong> en une seconde."
                         },
                         {
-                            "number": "2",
-                            "title": "Configurez vos alertes",
-                            "description": "Activez les rappels de suivi automatique pour ne plus rien laisser au hasard."
+                            "title": "Extraction",
+                            "number": "02",
+                            "description": "L'IA de l'<strong>application scan carte de visite</strong> extrait les données critiques sans erreur."
                         },
                         {
-                            "number": "3",
-                            "title": "Ressentez la clarté",
-                            "description": "Libérez votre esprit pour vous concentrer sur l'humain et la signature de contrats."
+                            "title": "Conversion",
+                            "number": "03",
+                            "description": "Liez le contact à un objectif et lancez votre stratégie de relance automatique."
                         }
                     ]
                 },
                 "section-1771742847008": {
-                    "content.headline": "Zéro risque, tout à gagner avec la <strong>gestion de contact efficace</strong>",
-                    "content.description": "Si vous ne ressentez pas une augmentation de votre productivité et une meilleure maîtrise de votre réseau, vous ne nous devez rien."
+                    "content.headline": "Prêt à tester l'<strong>application scan carte de visite</strong> ?",
+                    "content.description": "Rejoignez l'élite des commerciaux qui utilisent l'<strong>application scan carte de visite</strong> pour automatiser leur croissance.",
+                    "content.primaryCta": "Démarrer gratuitement"
                 },
-                "section-1771741864190": {
-                    "content.title": "Fonctionnalités avancées pour une domination totale",
-                    "content.description": "Allez plus loin dans votre <strong>gestion de contact efficace</strong> avec nos outils experts.",
-                    "content.services": [
-                        {
-                            "title": "Rappel Intelligent",
-                            "description": "L'algorithme analyse la fréquence idéale de contact pour chaque profil."
-                        },
-                        {
-                            "title": "Segmentation Valeur",
-                            "description": "Identifiez les opportunités à forte valeur ajoutée pour une <strong>gestion de contact efficace</strong>."
-                        },
-                        {
-                            "title": "Centralisation Totale",
-                            "description": "Emails, appels, rencontres : tout est consigné au même endroit."
-                        },
-                        {
-                            "title": "Effet Wow",
-                            "description": "Reprenez une conversation exactement là où vous l'avez laissée."
-                        },
-                        {
-                            "title": "Priorisation Flux",
-                            "description": "Concentrez votre énergie là où les résultats sont garantis."
-                        }
-                    ]
-                },
-                "section-1771741921089": {
-                    "content.title": "Cas d'usage : Ils ont transformé leur quotidien",
-                    "content.subtitle": "Découvrez comment la <strong>gestion de contact efficace</strong> change la donne.",
-                    "content.dropCap": "C",
-                    "content.introText": "Ces professionnels ont arrêté de subir leur réseau pour enfin le piloter.",
-                    "content.serviceColumns": [
-                        {
-                            "title": "Freelances & Indépendants",
-                            "items": [
-                                "Thomas a stabilisé son revenu mensuel en 90 jours.",
-                                "Réactivation stratégique d'anciens clients.",
-                                "Fin de la prospection subie.",
-                                "Sérénité financière retrouvée."
-                            ]
-                        },
-                        {
-                            "title": "Entrepreneurs & Commerciaux",
-                            "items": [
-                                "Sarah a dépassé ses objectifs de 40%.",
-                                "Marc transforme 15% de ses rencontres en partenaires.",
-                                "Organisation chirurgicale des journées.",
-                                "Domination du marché local."
-                            ]
-                        }
-                    ]
+                "section-1771746086872": {
+                    "content.introduction": "Une <strong>application scan carte de visite</strong> conçue pour chaque profil professionnel.",
+                    "content.column1": "<strong>Le Commercial Terrain</strong> : L'<strong>application scan carte de visite</strong> devient votre assistant personnel pour enregistrer vos nouveaux contacts entre deux visites sans perdre une minute de votre temps précieux de prospection.",
+                    "content.column2": "<strong>L'Entrepreneur</strong> : Pour vous, chaque poignée de main compte. L'<strong>application scan carte de visite</strong> vous permet de garder une trace structurée de toutes vos rencontres pour bâtir un réseau solide.",
+                    "content.column3": "<strong>Le Responsable Marketing</strong> : Collectez des données qualifiées depuis le terrain. L'<strong>application scan carte de visite</strong> assure la remontée d'informations fiables pour alimenter vos campagnes de lead nurturing."
                 },
                 "section-1771747291252": {
-                    "content.title": "Foire Aux Questions",
-                    "content.subtitle": "Tout savoir sur la <strong>gestion de contact efficace</strong>",
+                    "content.title": "FAQ <strong>application scan carte de visite</strong>",
                     "content.faqs": [
                         {
-                            "question": "Qu'est-ce qu'une gestion de contact efficace ?",
-                            "answer": "C'est un système structuré qui permet de suivre l'évolution d'une relation de la rencontre à la conversion finale sans oubli grâce à une <strong>gestion de contact efficace</strong>."
+                            "question": "L'<strong>application scan carte de visite</strong> fonctionne-t-elle avec les écritures manuscrites ?",
+                            "answer": "L'OCR est optimisé pour les textes imprimés, mais notre <strong>application scan carte de visite</strong> parvient à déchiffrer les notes claires grâce à son moteur IA."
                         },
                         {
-                            "question": "Pourquoi est-ce vital pour mon business ?",
-                            "answer": "Sans une <strong>gestion de contact efficace</strong>, vous perdez environ 70% des opportunités générées lors de vos rencontres professionnelles quotidiennes."
+                            "question": "Mes données sont-elles en sécurité avec l'<strong>application scan carte de visite</strong> ?",
+                            "answer": "Oui, l'<strong>application scan carte de visite</strong> respecte scrupuleusement les normes de protection des données pour garantir une confidentialité totale à vos prospects."
                         },
                         {
-                            "question": "L'application est-elle difficile à prendre en main ?",
-                            "answer": "Non, elle a été conçue pour une <strong>gestion de contact efficace</strong> immédiate avec une interface intuitive et épurée pour tous les profils."
+                            "question": "L'<strong>application scan carte de visite</strong> est-elle utilisable sans connexion ?",
+                            "answer": "Absolument, l'<strong>application scan carte de visite</strong> dispose d'un mode offline complet qui synchronise vos données dès que le réseau est disponible."
                         }
                     ]
                 },
                 "section-1771743565790": {
-                    "content.description": "Spécialiste de la <strong>gestion de contact efficace</strong> pour les professionnels ambitieux. Transformez votre réseau en moteur de croissance dès maintenant."
+                    "content.description": "L'<strong>application scan carte de visite</strong> : transformez vos rencontres en chiffres d'affaires.",
+                    "content.copyright": "© 2026 Application Scan Carte de Visite. Tous droits réservés."
                 }
             }
         }

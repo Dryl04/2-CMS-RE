@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Play, Pause, X } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface VideoHeroWidgetProps {
   section: PageBuilderSection;
@@ -98,13 +99,13 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
             className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-neutral-content"
             style={h1Style}
           >
-            {title || 'Watch Our Story'}
+            {renderRichText(title, 'Watch Our Story')}
           </h1>
           <h2
             className="text-lg sm:text-xl lg:text-2xl mb-8 text-neutral-content/90"
             style={h2Style}
           >
-            {subtitle || 'Discover what makes us different'}
+            {renderRichText(subtitle, 'Discover what makes us different')}
           </h2>
           <button
             onClick={() => setIsPlaying((prev) => !prev)}
@@ -143,13 +144,13 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={h1Style}
         >
-          {title || 'See It In Action'}
+          {renderRichText(title, 'See It In Action')}
         </h1>
         <h2
           className="text-lg sm:text-xl max-w-3xl mx-auto text-base-content/70"
           style={h2Style}
         >
-          {subtitle || 'Watch how our product can transform your workflow'}
+          {renderRichText(subtitle, 'Watch how our product can transform your workflow')}
         </h2>
       </div>
 
@@ -217,13 +218,13 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
             className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-base-content"
             style={h1Style}
           >
-            {title || 'Experience the Difference'}
+            {renderRichText(title, 'Experience the Difference')}
           </h1>
           <h2
             className="text-lg sm:text-xl mb-8 text-base-content/70"
             style={h2Style}
           >
-            {subtitle || 'See why thousands of customers trust us with their business'}
+            {renderRichText(subtitle, 'See why thousands of customers trust us with their business')}
           </h2>
           {ctaText && (
             <a
@@ -289,13 +290,13 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
             className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-base-content"
             style={h1Style}
           >
-            {title || 'See How It Works'}
+            {renderRichText(title, 'See How It Works')}
           </h1>
           <h2
             className="text-lg sm:text-xl mb-8 max-w-3xl mx-auto text-base-content/70"
             style={h2Style}
           >
-            {subtitle || 'Watch our product demo and discover all the features'}
+            {renderRichText(subtitle, 'Watch our product demo and discover all the features')}
           </h2>
 
           <div

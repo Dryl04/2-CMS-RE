@@ -1,6 +1,7 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ContactWidgetProps {
   section: PageBuilderSection;
@@ -29,11 +30,11 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
         <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-base-content" style={headingStyle}>
-          {title || 'Get in Touch'}
+          {renderRichText(title, 'Get in Touch')}
         </h2>
         {subtitle && (
           <p className="text-lg sm:text-xl font-normal text-base-content/70" style={subtitleStyle}>
-            {subtitle}
+            {renderRichText(subtitle)}
           </p>
         )}
       </div>
@@ -86,7 +87,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
               </div>
               <div>
                 <div className="font-semibold mb-1 text-sm sm:text-base text-base-content" style={headingStyle}>Address</div>
-                <p className="text-sm sm:text-base text-base-content/70" style={textStyle}>{address}</p>
+                <p className="text-sm sm:text-base text-base-content/70" style={textStyle}>{renderRichText(address)}</p>
               </div>
             </div>
           )}
@@ -142,11 +143,11 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
   const renderCentered = () => (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-base-content" style={headingStyle}>
-        {title || 'Get in Touch'}
+        {renderRichText(title, 'Get in Touch')}
       </h2>
       {subtitle && (
         <p className="text-lg sm:text-xl mb-12 font-normal text-base-content/70" style={subtitleStyle}>
-          {subtitle}
+          {renderRichText(subtitle)}
         </p>
       )}
 
@@ -172,7 +173,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
         {address && (
           <div className="flex items-center justify-center space-x-3 text-base-content/70">
             <MapPin className="w-5 h-5" />
-            <span className="text-sm sm:text-base" style={textStyle}>{address}</span>
+            <span className="text-sm sm:text-base" style={textStyle}>{renderRichText(address)}</span>
           </div>
         )}
       </div>
@@ -210,7 +211,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
   const renderMinimal = () => (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-base-content" style={headingStyle}>
-        {title || 'Get in Touch'}
+        {renderRichText(title, 'Get in Touch')}
       </h2>
 
       <div className="flex flex-col sm:flex-row flex-wrap gap-6 sm:gap-8">
@@ -231,7 +232,7 @@ export default function ContactWidget({ section }: ContactWidgetProps) {
         {address && (
           <div className="flex items-center space-x-2 text-base-content/70" style={textStyle}>
             <MapPin className="w-5 h-5 flex-shrink-0" />
-            <span className="text-sm sm:text-base">{address}</span>
+            <span className="text-sm sm:text-base">{renderRichText(address)}</span>
           </div>
         )}
       </div>

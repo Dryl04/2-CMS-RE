@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface CreativeNetworkHeroWidgetProps {
   section: PageBuilderSection;
@@ -50,7 +51,7 @@ export default function CreativeNetworkHeroWidget({ section }: CreativeNetworkHe
       >
         <div className="flex items-center justify-between mb-8 sm:mb-10 gap-4">
           <p className="text-lg sm:text-xl font-semibold" style={headingStyle}>
-            {content.brand || 'FLORA'}
+            {renderRichText(content.brand, 'FLORA')}
           </p>
           <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm">
             {navItems.map((item: string, index: number) => (
@@ -68,19 +69,19 @@ export default function CreativeNetworkHeroWidget({ section }: CreativeNetworkHe
           <div className="bg-base-200 rounded-2xl p-4 border border-base-content/10">
             <img src={content.leftCardImage || ''} alt="left" className="w-full h-40 object-cover rounded-xl bg-base-300" />
             <p className="text-sm mt-3 opacity-80" style={textStyle}>
-              {content.leftCardLabel || 'Style Transfer'}
+              {renderRichText(content.leftCardLabel, 'Style Transfer')}
             </p>
           </div>
 
           <div className="text-center px-2">
             <p className="text-xs uppercase tracking-widest mb-3 opacity-70" style={subtitleStyle}>
-              {content.eyebrow || 'New'}
+              {renderRichText(content.eyebrow, 'New')}
             </p>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight" style={h1Style}>
-              {content.title || 'Your creative environment.'}
+              {renderRichText(content.title, 'Your creative environment.')}
             </h1>
             <h2 className="mt-4 text-sm sm:text-base opacity-80" style={h2Style}>
-              {content.subtitle || 'Bring your ideas to life faster than ever before.'}
+              {renderRichText(content.subtitle, 'Bring your ideas to life faster than ever before.')}
             </h2>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <a href={content.primaryLink || '#'} className="btn btn-primary btn-sm" style={linkStyle}>{content.primaryText || 'Contact sales'}</a>
@@ -91,7 +92,7 @@ export default function CreativeNetworkHeroWidget({ section }: CreativeNetworkHe
           <div className="bg-base-200 rounded-2xl p-4 border border-base-content/10">
             <img src={content.rightCardImage || ''} alt="right" className="w-full h-40 object-cover rounded-xl bg-base-300" />
             <p className="text-sm mt-3 opacity-80" style={textStyle}>
-              {content.rightCardLabel || 'Fashion Campaign'}
+              {renderRichText(content.rightCardLabel, 'Fashion Campaign')}
             </p>
           </div>
         </div>

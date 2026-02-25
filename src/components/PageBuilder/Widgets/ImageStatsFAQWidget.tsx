@@ -70,10 +70,10 @@ export default function ImageStatsFAQWidget({ section }: ImageStatsFAQWidgetProp
                       key={index}
                       className="bg-neutral text-neutral-content p-4 sm:p-6 rounded-lg flex-1 min-w-[140px] sm:min-w-[180px] max-w-[220px]"
                     >
-                      <p className="text-xs sm:text-sm font-medium mb-1 sm:mb-2">{stat.label}</p>
+                      <p className="text-xs sm:text-sm font-medium mb-1 sm:mb-2">{renderRichText(stat.label)}</p>
                       <p className="text-2xl sm:text-4xl font-bold">{stat.value}</p>
                       {stat.subtitle && (
-                        <p className="text-xs mt-1 sm:mt-2 uppercase tracking-wider">{stat.subtitle}</p>
+                        <p className="text-xs mt-1 sm:mt-2 uppercase tracking-wider">{renderRichText(stat.subtitle)}</p>
                       )}
                     </div>
                   ))}

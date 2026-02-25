@@ -1,6 +1,7 @@
 import React from 'react';
 import { Linkedin, Twitter, Mail } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface TeamWidgetProps {
   section: PageBuilderSection;
@@ -66,13 +67,13 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Meet Our Team'}
+          {renderRichText(title, 'Meet Our Team')}
         </h2>
         <p
           className="text-lg sm:text-xl max-w-3xl mx-auto text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Talented individuals working together to create something amazing'}
+          {renderRichText(subtitle, 'Talented individuals working together to create something amazing')}
         </p>
       </div>
 
@@ -127,19 +128,19 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
               className="text-xl font-bold mb-1 text-base-content"
               style={headingStyle}
             >
-              {member.name}
+              {renderRichText(member.name)}
             </h3>
             <p
               className="text-sm font-medium mb-2 text-primary"
               style={accentStyle}
             >
-              {member.role}
+              {renderRichText(member.role)}
             </p>
             <p
               className="text-sm text-base-content/70"
               style={textStyle}
             >
-              {member.bio}
+              {renderRichText(member.bio)}
             </p>
           </div>
         ))}
@@ -154,13 +155,13 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Leadership Team'}
+          {renderRichText(title, 'Leadership Team')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'The people behind our success'}
+          {renderRichText(subtitle, 'The people behind our success')}
         </p>
       </div>
 
@@ -179,19 +180,19 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
                 className="text-3xl font-bold mb-2 text-base-content"
                 style={headingStyle}
               >
-                {member.name}
+                {renderRichText(member.name)}
               </h3>
               <p
                 className="text-xl font-medium mb-4 text-primary"
                 style={accentStyle}
               >
-                {member.role}
+                {renderRichText(member.role)}
               </p>
               <p
                 className="text-lg mb-6 text-base-content/70"
                 style={textStyle}
               >
-                {member.bio}
+                {renderRichText(member.bio)}
               </p>
               <div className="flex space-x-3">
                 {member.social?.linkedin && (
@@ -233,13 +234,13 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Our Team'}
+          {renderRichText(title, 'Our Team')}
         </h2>
         <p
           className="text-lg sm:text-xl text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Meet the people making it happen'}
+          {renderRichText(subtitle, 'Meet the people making it happen')}
         </p>
       </div>
 
@@ -249,20 +250,18 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
           return (
             <div
               key={index}
-              className={`group relative overflow-hidden rounded-2xl ${
-                isLarge ? 'col-span-2 row-span-2' : 'col-span-1'
-              }`}
+              className={`group relative overflow-hidden rounded-2xl ${isLarge ? 'col-span-2 row-span-2' : 'col-span-1'
+                }`}
             >
               <img
                 src={member.avatar}
                 alt={member.name}
-                className={`w-full object-cover ${
-                  isLarge ? 'h-96' : 'h-48'
-                } group-hover:scale-110 transition-transform`}
+                className={`w-full object-cover ${isLarge ? 'h-96' : 'h-48'
+                  } group-hover:scale-110 transition-transform`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/40 to-transparent flex flex-col justify-end p-6">
-                <h3 className="text-neutral-content text-xl font-bold mb-1">{member.name}</h3>
-                <p className="text-neutral-content/90 text-sm">{member.role}</p>
+                <h3 className="text-neutral-content text-xl font-bold mb-1">{renderRichText(member.name)}</h3>
+                <p className="text-neutral-content/90 text-sm">{renderRichText(member.role)}</p>
               </div>
             </div>
           );
@@ -278,13 +277,13 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Team'}
+          {renderRichText(title, 'Team')}
         </h2>
         <p
           className="text-lg text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'The people behind our work'}
+          {renderRichText(subtitle, 'The people behind our work')}
         </p>
       </div>
 
@@ -301,19 +300,19 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
                 className="text-2xl font-bold mb-1 text-base-content"
                 style={headingStyle}
               >
-                {member.name}
+                {renderRichText(member.name)}
               </h3>
               <p
                 className="text-base font-medium mb-2 text-primary"
                 style={accentStyle}
               >
-                {member.role}
+                {renderRichText(member.role)}
               </p>
               <p
                 className="text-sm text-base-content/70"
                 style={textStyle}
               >
-                {member.bio}
+                {renderRichText(member.bio)}
               </p>
             </div>
             <div className="flex flex-col space-y-2">

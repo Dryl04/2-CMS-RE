@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface Testimonial {
   quote: string;
@@ -20,7 +21,7 @@ interface ClickFunnelTestimonialsProps {
 
 const LogoPlaceholder = ({ name }: { name: string }) => (
   <div className="px-6 py-2 text-base-content/60 font-bold text-xl tracking-tight">
-    {name}
+    {renderRichText(name)}
   </div>
 );
 
@@ -154,10 +155,10 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
                       className="flex-shrink-0 w-[380px] h-[280px] rounded-2xl bg-gradient-to-br from-base-200 via-base-100 to-base-200 p-8 flex flex-col items-center justify-center shadow-xl"
                     >
                       <div className="text-7xl font-black text-base-content mb-4 leading-none" style={headingStyle}>
-                        {statNumber}
+                        {renderRichText(statNumber)}
                       </div>
                       <div className="text-xl font-bold text-base-content text-center" style={textStyle}>
-                        {statLabel}
+                        {renderRichText(statLabel)}
                       </div>
                     </div>
                   );
@@ -169,7 +170,7 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
                     className="flex-shrink-0 w-[380px] h-[280px] rounded-2xl bg-base-200 p-8 flex flex-col justify-between shadow-xl hover:shadow-2xl transition-shadow"
                   >
                     <p className="text-base-content text-lg font-bold leading-relaxed line-clamp-6" style={textStyle}>
-                      "{testimonial.quote}"
+                      "{renderRichText(testimonial.quote)}"
                     </p>
 
                     <div className="flex items-center gap-4 mt-4">
@@ -192,10 +193,10 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
                       )}
                       <div className="min-w-0">
                         <div className="text-base-content font-bold text-base truncate" style={headingStyle}>
-                          {testimonial.name}
+                          {renderRichText(testimonial.name)}
                         </div>
                         <div className="text-base-content/70 text-sm truncate" style={subtitleStyle}>
-                          {testimonial.badge}
+                          {renderRichText(testimonial.badge)}
                         </div>
                       </div>
                     </div>

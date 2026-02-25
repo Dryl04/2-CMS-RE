@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface ClickFunnelCenterCardProps {
   section: PageBuilderSection;
@@ -175,18 +176,18 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
                 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 sm:mb-6 transition-all duration-300"
                 style={headingStyle}
               >
-                {activeTab.title || 'Your Funnel'}
+                {renderRichText(activeTab.title, 'Your Funnel')}
               </h2>
               <p
                 className="text-base sm:text-lg mb-2 transition-all duration-300"
                 style={bodyTextStyle}
               >
-                {activeTab.subtitle || 'Convert your online visitors into paying customers with the'}{' '}
+                {renderRichText(activeTab.subtitle, 'Convert your online visitors into paying customers with the')}{' '}
                 <span className="font-bold" style={highlightStyle}>
-                  {activeTab.highlight || 'best funnel builder on the planet'}
+                  {renderRichText(activeTab.highlight, 'best funnel builder on the planet')}
                 </span>
                 .{' '}
-                {activeTab.description || 'Easy to use, incredibly fast, and optimized to turn clicks into cash.'}
+                {renderRichText(activeTab.description, 'Easy to use, incredibly fast, and optimized to turn clicks into cash.')}
               </p>
               <div className="mt-6 sm:mt-8">
                 <button

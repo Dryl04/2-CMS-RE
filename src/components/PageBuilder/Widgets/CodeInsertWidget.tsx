@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface CodeInsertWidgetProps {
     section: PageBuilderSection;
@@ -42,7 +43,7 @@ export default function CodeInsertWidget({ section }: CodeInsertWidgetProps) {
         <section className="py-12 px-6">
             <div className="max-w-4xl mx-auto">
                 {title && (
-                    <h2 className="text-2xl font-bold text-base-content mb-4">{title}</h2>
+                    <h2 className="text-2xl font-bold text-base-content mb-4">{renderRichText(title)}</h2>
                 )}
                 <div className="relative rounded-xl overflow-hidden bg-gray-900 shadow-lg">
                     <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">

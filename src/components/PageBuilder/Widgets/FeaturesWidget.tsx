@@ -41,7 +41,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Amazing Features'}
+          {renderRichText(title, 'Amazing Features')}
         </h2>
         <p
           className="text-lg sm:text-xl font-normal text-base-content/70"
@@ -65,7 +65,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
                 className="text-lg sm:text-xl font-bold mb-2 text-base-content"
                 style={headingStyle}
               >
-                {feature.title}
+                {renderRichText(feature.title)}
               </h3>
               <p
                 className="text-sm sm:text-base text-base-content/70"
@@ -87,7 +87,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Amazing Features'}
+          {renderRichText(title, 'Amazing Features')}
         </h2>
         <p
           className="text-lg sm:text-xl font-normal text-base-content/70"
@@ -118,7 +118,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
                   className="text-xl sm:text-2xl font-bold mb-4 text-base-content"
                   style={headingStyle}
                 >
-                  {feature.title}
+                  {renderRichText(feature.title)}
                 </h3>
                 <p
                   className="text-base sm:text-lg text-base-content/70"

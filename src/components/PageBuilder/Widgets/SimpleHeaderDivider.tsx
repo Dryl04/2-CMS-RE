@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface SimpleHeaderDividerProps {
   section: PageBuilderSection;
@@ -24,7 +25,7 @@ export default function SimpleHeaderDivider({ section }: SimpleHeaderDividerProp
         paddingBottom: design.spacing.paddingBottom,
       }}>
         <h2 className="text-4xl md:text-5xl font-bold mb-4 text-base-content" style={headingStyle}>
-          {content.title || 'Sample Header Text'}
+          {renderRichText(content.title, 'Sample Header Text')}
         </h2>
         <div className="flex justify-center">
           <div className="w-16 h-1 bg-base-content" style={dividerColor ? { backgroundColor: dividerColor } : undefined} />

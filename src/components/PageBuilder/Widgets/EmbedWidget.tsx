@@ -1,4 +1,5 @@
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface EmbedWidgetProps {
     section: PageBuilderSection;
@@ -26,7 +27,7 @@ export default function EmbedWidget({ section }: EmbedWidgetProps) {
         <section className="py-12 px-6">
             <div className="mx-auto" style={{ maxWidth }}>
                 {title && (
-                    <h2 className="text-2xl font-bold text-base-content mb-6 text-center">{title}</h2>
+                    <h2 className="text-2xl font-bold text-base-content mb-6 text-center">{renderRichText(title)}</h2>
                 )}
                 <div
                     className="embed-container w-full overflow-hidden rounded-xl"

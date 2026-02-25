@@ -1,6 +1,7 @@
 import React from 'react';
 import { Mail, Send } from 'lucide-react';
 import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { renderRichText } from '../../../lib/htmlSanitizer';
 
 interface NewsletterWidgetProps {
   section: PageBuilderSection;
@@ -36,13 +37,13 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
           style={headingStyle}
         >
-          {title || 'Stay Updated'}
+          {renderRichText(title, 'Stay Updated')}
         </h2>
         <p
           className="text-lg sm:text-xl mb-8 text-base-content/70"
           style={subtitleStyle}
         >
-          {subtitle || 'Subscribe to our newsletter for the latest updates and exclusive content'}
+          {renderRichText(subtitle, 'Subscribe to our newsletter for the latest updates and exclusive content')}
         </p>
 
         <form className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto mb-4">
@@ -65,7 +66,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
             className="text-xs text-base-content/70"
             style={textStyle}
           >
-            {privacyNote}
+            {renderRichText(privacyNote)}
           </p>
         )}
       </div>
@@ -80,13 +81,13 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
             className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-base-content"
             style={headingStyle}
           >
-            {title || 'Get Exclusive Updates'}
+            {renderRichText(title, 'Get Exclusive Updates')}
           </h2>
           <p
             className="text-lg sm:text-xl mb-8 text-base-content/70"
             style={subtitleStyle}
           >
-            {subtitle || 'Join our newsletter and be the first to know about new features, tips, and special offers'}
+            {renderRichText(subtitle, 'Join our newsletter and be the first to know about new features, tips, and special offers')}
           </p>
 
           <form className="space-y-4 mb-4">
@@ -109,7 +110,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
               className="text-sm text-base-content/70"
               style={textStyle}
             >
-              {privacyNote}
+              {renderRichText(privacyNote)}
             </p>
           )}
         </div>
@@ -137,13 +138,13 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
               className="text-2xl sm:text-3xl font-bold mb-2 text-base-content"
               style={headingStyle}
             >
-              {title || 'Newsletter'}
+              {renderRichText(title, 'Newsletter')}
             </h2>
             <p
               className="text-base sm:text-lg text-base-content/70"
               style={subtitleStyle}
             >
-              {subtitle || 'Get the latest news delivered to your inbox'}
+              {renderRichText(subtitle, 'Get the latest news delivered to your inbox')}
             </p>
           </div>
 
@@ -181,13 +182,13 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
             className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
             style={headingStyle}
           >
-            {title || 'Join Our Community'}
+            {renderRichText(title, 'Join Our Community')}
           </h2>
           <p
             className="text-base sm:text-lg text-base-content/70"
             style={subtitleStyle}
           >
-            {subtitle || 'Subscribe to receive exclusive content and updates'}
+            {renderRichText(subtitle, 'Subscribe to receive exclusive content and updates')}
           </p>
         </div>
 
@@ -220,7 +221,7 @@ export default function NewsletterWidget({ section }: NewsletterWidgetProps) {
             className="text-xs text-center mt-6 text-base-content/70"
             style={textStyle}
           >
-            {privacyNote}
+            {renderRichText(privacyNote)}
           </p>
         )}
       </div>
