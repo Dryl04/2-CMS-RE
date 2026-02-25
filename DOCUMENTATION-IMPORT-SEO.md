@@ -74,7 +74,7 @@ Le JSON final doit etre un objet avec une cle `"pages"` contenant un tableau de 
         "section-hero-xxx": {
           "content.headline": "Plombier Paris 15 : intervention en 30 min",
           "content.subheadline": "Depannage urgent 24/7, artisans certifies, devis gratuit.",
-          "content.ctaText": "Appeler maintenant"
+          "content.description": "Intervention rapide, tarif transparent, artisans verifies."
         }
       }
     }
@@ -160,6 +160,8 @@ Le Gems agit uniquement sur la **redaction SEO**.
 - `advanced` : Ne pas toucher aux parametres avances (visibilite)
 - `themeConfig` : Ne pas toucher a la configuration de theme (themeMode, themeRef, customTokens)
 - `content` de navigation et action : ne pas modifier `navItems[*].label`, `navItems[*].link`, `ctaText`, `ctaLink`, `primaryCta`, `primaryLink`, `secondaryCta`, `secondaryLink`, `columns[*].links[*].label`, `columns[*].links[*].url`, `socialLinks[*].url`, `socialLinks[*].platform`
+- `content` de boutons/actions (gel strict) : ne pas modifier `buttonText`, `primaryText`, `secondaryText`, `headerCta`, `formCta`, `submitLabel`, `inputPlaceholder`, `placeholder`, `note`, ni aucun texte associe a une action
+- Coordonnees et donnees non SEO : ne pas modifier `email`, `phone`, `address`, `openHours`, `openHoursTitle`, `logoText`, `logo`, sauf consigne explicite
 - URLs de medias : ne pas modifier `image`, `backgroundImage`, `thumbnail`, `avatar`, `logo` sauf consigne explicite
 
 ---
@@ -314,8 +316,9 @@ Le Gems agit uniquement sur la **redaction SEO**.
 
 **Regles :**
 
-- Utiliser des coordonnees fictives mais realistes
-- Le format telephone doit etre francais (01/02/03/04/05 XX XX XX XX)
+- Section gelee par defaut pour le Gems
+- Conserver `email`, `phone` et `address` exactement comme dans le modele
+- Ne modifier ces champs que si la consigne utilisateur l'exige explicitement
 
 ### Section `footer` (Pied de page)
 
@@ -458,7 +461,9 @@ Avant de soumettre votre JSON, verifiez :
 - [ ] Les champs `design`, `variant`, `advanced`, `themeConfig` sont identiques au modele
 - [ ] Seuls les champs `content` ont ete modifies
 - [ ] Les champs d'interface (navigation, boutons, liens) sont restes identiques au modele
+- [ ] Les champs de boutons/actions (`cta*`, `button*`, `primary*`, `secondary*`, `*Placeholder`, `submit*`) sont restes identiques au modele
 - [ ] Les URLs de medias (images/avatars/logos/thumbnails) sont restees identiques au modele sauf demande explicite
+- [ ] Les champs non SEO de coordination (`email`, `phone`, `address`, `openHours*`) sont restes identiques au modele
 - [ ] Le nombre d'elements dans les tableaux (features, testimonials, navItems, columns, services, steps) est identique au modele
 - [ ] FAQ: par defaut, cardinalite identique au modele; si mode `FAQ_ETENDUE` explicitement demande, `content.faqs` peut etre etendu sans autre changement structurel
 - [ ] Les URLs d'images sont des URLs Pexels valides (format brut `https://...`, pas de markdown)

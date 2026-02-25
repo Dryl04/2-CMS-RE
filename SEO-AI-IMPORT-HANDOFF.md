@@ -133,7 +133,7 @@ With **Format B**, importer auto-fallbacks:
         "section-hero-xxxx": {
           "content.headline": "New headline",
           "content.subheadline": "New subheadline",
-          "content.ctaText": "Contact us"
+          "content.description": "New supporting SEO copy"
         }
       }
     }
@@ -244,6 +244,8 @@ If `sections_data` is provided, each section must contain at least:
 - Keep `id`, `type`, `order`, `variant`, `design`, `advanced`, `themeConfig` **exactly as in exported template**.
 - Apply a strict scope lock: only edit SEO writing fields (headline, subheadline, section title/subtitle/description, quotes, `seo_h1`, `seo_h2`, long-form `content`).
 - Do not edit UI/navigation/action fields unless explicitly requested: nav labels/links, button labels/links, anchors, social links.
+- Keep all action/button/input text frozen by default: `ctaText`, `primaryCta`, `secondaryCta`, `buttonText`, `primaryText`, `secondaryText`, `submitLabel`, `placeholder`, `inputPlaceholder`.
+- Keep non-SEO operational/contact fields frozen by default: `email`, `phone`, `address`, `openHours`, `openHoursTitle`, `logoText`, `content.logoText`.
 - Do not edit media URLs (`image`, `backgroundImage`, `thumbnail`, `avatar`, `logo`) unless explicitly requested.
 - Keep same number/order of sections as template.
 - Keep same cardinality in arrays (features, testimonials, nav items, columns) unless explicitly requested.
@@ -314,7 +316,7 @@ The following fields are used across widgets and must contain plain URLs:
 - `description`: <= 160 chars
 - `seo_h1` should be aligned with hero main headline
 - Use human, local-intent language (service + city/intent where relevant)
-- Keep CTA text/action coherent with links (`tel:`, `mailto:`, anchors, URLs) when CTA edits are explicitly requested
+- CTA/button text is frozen by default; only if explicitly requested, keep text/action coherent with links (`tel:`, `mailto:`, anchors, URLs)
 
 ## Text Formatting Rules (Critical)
 
@@ -337,7 +339,9 @@ Before returning JSON, ensure:
 - Every page has non-empty `title`.
 - Any `sections_data` provided is an array of valid section objects.
 - UI/navigation/action fields are unchanged unless explicitly requested.
+- Button/action/input text fields are unchanged unless explicitly requested.
 - Media URLs are unchanged unless explicitly requested.
+- Contact/non-SEO operational fields (`email`, `phone`, `address`, `openHours*`, `logoText`) are unchanged unless explicitly requested.
 - FAQ count rule: default = match template capacity; if `FAQ_EXTENDED` explicitly requested, `content.faqs` may be extended.
 - No markdown emphasis markers appear inside JSON string values.
 
