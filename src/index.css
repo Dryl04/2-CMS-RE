@@ -158,8 +158,8 @@
   }
 
   .widget-design-scope [data-widget-icon-frame] svg {
-    width: calc(var(--widget-icon-size, 28px) * 0.55) !important;
-    height: calc(var(--widget-icon-size, 28px) * 0.55) !important;
+    width: calc(var(--widget-icon-size) * 0.55);
+    height: calc(var(--widget-icon-size) * 0.55);
   }
 
   .widget-design-scope .widget-icon-container {
@@ -175,8 +175,8 @@
   }
 
   .widget-design-scope .widget-icon-container svg {
-    width: calc(var(--widget-icon-size, 28px) * 0.55) !important;
-    height: calc(var(--widget-icon-size, 28px) * 0.55) !important;
+    width: calc(var(--widget-icon-size) * 0.55);
+    height: calc(var(--widget-icon-size) * 0.55);
   }
 
   .widget-design-scope.wds-font-family {

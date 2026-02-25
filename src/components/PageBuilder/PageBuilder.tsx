@@ -86,6 +86,8 @@ export default function PageBuilder({
   const [templateDescription, setTemplateDescription] = useState('');
   const [templateFolder, setTemplateFolder] = useState<string>('');
   const [filterFolder, setFilterFolder] = useState<string>('');
+  const [showNewTemplateFolderInput, setShowNewTemplateFolderInput] = useState(false);
+  const [newTemplateFolderName, setNewTemplateFolderName] = useState('');
   const [daisyThemeSlug, setDaisyThemeSlug] = useState<string | null>(null);
   const [showDaisyThemeManager, setShowDaisyThemeManager] = useState(false);
   const [showAssetManager, setShowAssetManager] = useState(false);
@@ -358,6 +360,53 @@ export default function PageBuilder({
     setBuilderView('editor');
   };
 
+  const handleAddNewTemplateFolder = () => {
+    const trimmed = newTemplateFolderName.trim();
+    if (!trimmed) return;
+    // Case-insensitive duplicate check
+    const alreadyExists = templateFolders.some(f => f.toLowerCase() === trimmed.toLowerCase());
+    if (alreadyExists) {
+      showToast(`Un dossier "${trimmed}" existe deja`);
+      return;
+    }
+    setTemplateFolder(trimmed);
+    setNewTemplateFolderName('');
+    setShowNewTemplateFolderInput(false);
+  };
+
+  const [movingTemplateId, setMovingTemplateId] = useState<string | null>(null);
+  const [newListFolderName, setNewListFolderName] = useState('');
+  const [showNewListFolderInput, setShowNewListFolderInput] = useState(false);
+
+  const handleMoveTemplateToFolder = async (templateId: string, folderName: string | null) => {
+    try {
+      const { error } = await supabase
+        .from('page_templates')
+        .update({ folder: folderName, updated_at: new Date().toISOString() })
+        .eq('id', templateId);
+      if (error) throw error;
+      showToast(folderName ? `Deplace dans "${folderName}"` : 'Retire du dossier');
+      setMovingTemplateId(null);
+      loadTemplates();
+    } catch (error) {
+      console.error('Error moving template to folder:', error);
+      showToast('Erreur lors du deplacement');
+    }
+  };
+
+  const handleCreateListFolderAndMove = (templateId: string) => {
+    const trimmed = newListFolderName.trim();
+    if (!trimmed) return;
+    const alreadyExists = templateFolders.some(f => f.toLowerCase() === trimmed.toLowerCase());
+    if (alreadyExists) {
+      showToast(`Un dossier "${trimmed}" existe deja`);
+      return;
+    }
+    handleMoveTemplateToFolder(templateId, trimmed);
+    setNewListFolderName('');
+    setShowNewListFolderInput(false);
+  };
+
   const previewContainerRef = useRef<HTMLDivElement>(null);
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const previewIframeRef = useRef<HTMLIFrameElement>(null);
@@ -574,8 +623,82 @@ export default function PageBuilder({
                         >
                           <Trash2 className="w-4 h-4 text-red-400" />
                         </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMovingTemplateId(movingTemplateId === template.id ? null : template.id);
+                            setShowNewListFolderInput(false);
+                            setNewListFolderName('');
+                          }}
+                          className={`p-2 rounded-lg transition-colors ${movingTemplateId === template.id ? 'bg-purple-100' : 'hover:bg-purple-50'}`}
+                          title="Gerer le dossier"
+                        >
+                          <FolderOpen className="w-4 h-4 text-purple-500" />
+                        </button>
                       </div>
                     </div>
+                    {movingTemplateId === template.id && (
+                      <div
+                        className="mt-3 pt-3 border-t border-purple-200 bg-purple-50 -mx-5 -mb-5 px-5 pb-4 rounded-b-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <select
+                            value={template.folder || ''}
+                            onChange={(e) => handleMoveTemplateToFolder(template.id, e.target.value || null)}
+                            className="px-3 py-1.5 border border-purple-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          >
+                            <option value="">Sans dossier</option>
+                            {templateFolders.map(f => (
+                              <option key={f} value={f}>{f}</option>
+                            ))}
+                          </select>
+                          {!showNewListFolderInput ? (
+                            <button
+                              onClick={() => setShowNewListFolderInput(true)}
+                              className="flex items-center gap-1 px-2 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-medium transition-colors"
+                            >
+                              <FolderPlus className="w-3 h-3" />
+                              <span>Nouveau</span>
+                            </button>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="text"
+                                value={newListFolderName}
+                                onChange={(e) => setNewListFolderName(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleCreateListFolderAndMove(template.id); } if (e.key === 'Escape') { setShowNewListFolderInput(false); setNewListFolderName(''); } }}
+                                placeholder="Nom..."
+                                className="px-2 py-1.5 border border-purple-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 w-28"
+                                autoFocus
+                              />
+                              <button
+                                onClick={() => handleCreateListFolderAndMove(template.id)}
+                                disabled={!newListFolderName.trim()}
+                                className="px-2 py-1.5 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white rounded-lg text-xs font-medium"
+                              >
+                                OK
+                              </button>
+                              <button
+                                onClick={() => { setShowNewListFolderInput(false); setNewListFolderName(''); }}
+                                className="p-1 hover:bg-purple-200 rounded"
+                              >
+                                <X className="w-3 h-3 text-purple-600" />
+                              </button>
+                            </div>
+                          )}
+                          {template.folder && (
+                            <button
+                              onClick={() => handleMoveTemplateToFolder(template.id, null)}
+                              className="flex items-center gap-1 px-2 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-xs font-medium transition-colors"
+                            >
+                              <X className="w-3 h-3" />
+                              <span>Retirer</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -676,19 +799,64 @@ export default function PageBuilder({
               />
             )}
             {mode === 'template' && (
-              <div className="flex items-center gap-1">
-                <FolderPlus className="w-3 h-3 text-gray-400" />
-                <input
-                  type="text"
+              <div className="flex items-center gap-1 relative">
+                <FolderOpen className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                <select
                   value={templateFolder}
                   onChange={(e) => setTemplateFolder(e.target.value)}
-                  className="text-xs text-gray-500 bg-transparent border-none focus:outline-none focus:ring-1 focus:ring-gray-300 rounded px-2 py-0.5 w-32"
-                  placeholder="Dossier (optionnel)"
-                  list="template-folders-list"
-                />
-                <datalist id="template-folders-list">
-                  {templateFolders.map(f => <option key={f} value={f} />)}
-                </datalist>
+                  className="text-xs text-gray-600 bg-transparent border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-400 rounded px-2 py-0.5 w-36"
+                >
+                  <option value="">Sans dossier</option>
+                  {[...new Set([...templateFolders, ...(templateFolder && !templateFolders.some(f => f.toLowerCase() === templateFolder.toLowerCase()) ? [templateFolder] : [])])].sort().map(f => (
+                    <option key={f} value={f}>{f}</option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setShowNewTemplateFolderInput(!showNewTemplateFolderInput)}
+                  className="p-0.5 hover:bg-gray-200 rounded transition-colors"
+                  title="Creer un nouveau dossier"
+                >
+                  <FolderPlus className="w-3.5 h-3.5 text-gray-500" />
+                </button>
+                {templateFolder && (
+                  <button
+                    type="button"
+                    onClick={() => setTemplateFolder('')}
+                    className="p-0.5 hover:bg-red-100 rounded transition-colors"
+                    title="Retirer du dossier"
+                  >
+                    <X className="w-3.5 h-3.5 text-red-400" />
+                  </button>
+                )}
+                {showNewTemplateFolderInput && (
+                  <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-50 flex items-center gap-1">
+                    <input
+                      type="text"
+                      value={newTemplateFolderName}
+                      onChange={(e) => setNewTemplateFolderName(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddNewTemplateFolder(); } if (e.key === 'Escape') { setShowNewTemplateFolderInput(false); setNewTemplateFolderName(''); } }}
+                      placeholder="Nom du dossier..."
+                      className="text-xs border border-gray-300 rounded px-2 py-1 w-32 focus:outline-none focus:ring-1 focus:ring-gray-400"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddNewTemplateFolder}
+                      disabled={!newTemplateFolderName.trim()}
+                      className="text-xs px-2 py-1 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 text-white rounded font-medium"
+                    >
+                      OK
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setShowNewTemplateFolderInput(false); setNewTemplateFolderName(''); }}
+                      className="p-1 hover:bg-gray-100 rounded"
+                    >
+                      <X className="w-3 h-3 text-gray-400" />
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

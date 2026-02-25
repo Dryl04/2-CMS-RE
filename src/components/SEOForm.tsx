@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, Layout, ChevronRight } from 'lucide-react';
+import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, Layout, ChevronRight, FolderPlus, X } from 'lucide-react';
 import { supabase, PageTemplate } from '../lib/supabase';
 import { PageBuilderSection } from '../lib/pageBuilderTypes';
 
@@ -54,10 +54,14 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
   const [showHelp, setShowHelp] = useState(true);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [folder, setFolder] = useState('');
+  const [existingPageFolders, setExistingPageFolders] = useState<string[]>([]);
+  const [showNewFolderInput, setShowNewFolderInput] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
 
   useEffect(() => {
     loadTemplates();
     loadAvailablePages();
+    loadExistingPageFolders();
   }, []);
 
   useEffect(() => {
@@ -131,6 +135,35 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
     } catch (error) {
       console.error('Error loading pages:', error);
     }
+  };
+
+  const loadExistingPageFolders = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('seo_metadata')
+        .select('folder')
+        .not('folder', 'is', null);
+      if (error) throw error;
+      const uniqueFolders = Array.from(new Set((data || []).map((d: any) => d.folder).filter(Boolean))) as string[];
+      setExistingPageFolders(uniqueFolders.sort());
+    } catch (error) {
+      console.error('Error loading page folders:', error);
+    }
+  };
+
+  const handleAddNewFolder = () => {
+    const trimmed = newFolderName.trim();
+    if (!trimmed) return;
+    // Case-insensitive duplicate check
+    const alreadyExists = existingPageFolders.some(f => f.toLowerCase() === trimmed.toLowerCase());
+    if (alreadyExists) {
+      alert(`Un dossier portant le nom "${trimmed}" existe deja (la casse est ignoree).`);
+      return;
+    }
+    setExistingPageFolders(prev => [...prev, trimmed].sort());
+    setFolder(trimmed);
+    setNewFolderName('');
+    setShowNewFolderInput(false);
   };
 
   const applyTemplate = (template: PageTemplate) => {
@@ -681,14 +714,65 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
             </svg>
             <h4 className="font-bold text-gray-900">Dossier (optionnel)</h4>
           </div>
-          <input
-            type="text"
-            value={folder}
-            onChange={(e) => setFolder(e.target.value)}
-            placeholder="Ex: Blog, Produits, Landing pages..."
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-600"
-          />
-          <p className="text-xs text-gray-500 mt-1">Organisez vos pages dans des dossiers</p>
+          <div className="flex items-center gap-2">
+            <select
+              value={folder}
+              onChange={(e) => setFolder(e.target.value)}
+              className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-600 bg-white"
+            >
+              <option value="">Sans dossier</option>
+              {existingPageFolders.map(f => (
+                <option key={f} value={f}>{f}</option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={() => setShowNewFolderInput(!showNewFolderInput)}
+              className="p-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors flex-shrink-0"
+              title="Creer un nouveau dossier"
+            >
+              <FolderPlus className="w-5 h-5" />
+            </button>
+            {folder && (
+              <button
+                type="button"
+                onClick={() => setFolder('')}
+                className="p-3 bg-red-100 hover:bg-red-200 text-red-600 rounded-xl transition-colors flex-shrink-0"
+                title="Retirer du dossier"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+          {showNewFolderInput && (
+            <div className="flex items-center gap-2 mt-3">
+              <input
+                type="text"
+                value={newFolderName}
+                onChange={(e) => setNewFolderName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddNewFolder(); } }}
+                placeholder="Nom du nouveau dossier..."
+                className="flex-1 px-4 py-2.5 border-2 border-purple-300 rounded-xl focus:outline-none focus:border-purple-600"
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={handleAddNewFolder}
+                disabled={!newFolderName.trim()}
+                className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white rounded-xl font-medium transition-colors text-sm"
+              >
+                Ajouter
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowNewFolderInput(false); setNewFolderName(''); }}
+                className="px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl font-medium transition-colors text-sm"
+              >
+                Annuler
+              </button>
+            </div>
+          )}
+          <p className="text-xs text-gray-500 mt-2">Organisez vos pages dans des dossiers</p>
         </div>
 
         <button

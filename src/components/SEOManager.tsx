@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Edit, Trash2, Eye, FileUp, FormInput, ExternalLink, ArrowLeft, Copy, Layout, FolderOpen } from 'lucide-react';
+import { Search, Edit, Trash2, Eye, FileUp, FormInput, ExternalLink, ArrowLeft, Copy, Layout, FolderOpen, FolderPlus, X } from 'lucide-react';
 import { supabase, SEOMetadata } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import SEOImporter from './SEOImporter';
@@ -25,10 +25,42 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
   const [editingPage, setEditingPage] = useState<SEOMetadata | undefined>(undefined);
   const [viewingPage, setViewingPage] = useState<SEOMetadata | undefined>(undefined);
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [movingPageId, setMovingPageId] = useState<string | null>(null);
+  const [newFolderName, setNewFolderName] = useState('');
+  const [showNewFolderInput, setShowNewFolderInput] = useState(false);
 
   const showToast = (text: string, type: 'success' | 'error' = 'success') => {
     setToastMessage({ text, type });
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleMoveToFolder = async (pageId: string, folderName: string | null) => {
+    try {
+      const { error } = await supabase
+        .from('seo_metadata')
+        .update({ folder: folderName, updated_at: new Date().toISOString() })
+        .eq('id', pageId);
+      if (error) throw error;
+      showToast(folderName ? `Deplace dans "${folderName}"` : 'Retire du dossier');
+      setMovingPageId(null);
+      loadMetadata();
+    } catch (error) {
+      console.error('Error moving page to folder:', error);
+      showToast('Erreur lors du deplacement', 'error');
+    }
+  };
+
+  const handleCreateFolderAndMove = (pageId: string) => {
+    const trimmed = newFolderName.trim();
+    if (!trimmed) return;
+    const alreadyExists = folders.some(f => f.toLowerCase() === trimmed.toLowerCase());
+    if (alreadyExists) {
+      showToast(`Un dossier "${trimmed}" existe deja`, 'error');
+      return;
+    }
+    handleMoveToFolder(pageId, trimmed);
+    setNewFolderName('');
+    setShowNewFolderInput(false);
   };
 
   const loadMetadata = async () => {
@@ -448,8 +480,79 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
                         >
                           <Trash2 className="w-4 h-4 text-red-400" />
                         </button>
+                        <button
+                          onClick={() => setMovingPageId(movingPageId === item.id ? null : item.id)}
+                          className={`p-2 rounded-lg transition-colors ${movingPageId === item.id ? 'bg-purple-100' : 'hover:bg-purple-50'}`}
+                          title="Gerer le dossier"
+                        >
+                          <FolderOpen className="w-4 h-4 text-purple-500" />
+                        </button>
                       </div>
                     </div>
+
+                    {movingPageId === item.id && (
+                      <div className="mt-3 pt-3 border-t border-purple-200 bg-purple-50 -mx-5 -mb-5 px-5 pb-5 rounded-b-2xl">
+                        <div className="flex items-center gap-2 mb-2">
+                          <FolderOpen className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                          <span className="text-sm font-medium text-purple-800">Dossier :</span>
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <select
+                            value={(item as any).folder || ''}
+                            onChange={(e) => handleMoveToFolder(item.id, e.target.value || null)}
+                            className="px-3 py-1.5 border border-purple-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          >
+                            <option value="">Sans dossier</option>
+                            {folders.map(f => (
+                              <option key={f} value={f}>{f}</option>
+                            ))}
+                          </select>
+                          {!showNewFolderInput ? (
+                            <button
+                              onClick={() => setShowNewFolderInput(true)}
+                              className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors"
+                            >
+                              <FolderPlus className="w-3.5 h-3.5" />
+                              <span>Nouveau</span>
+                            </button>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="text"
+                                value={newFolderName}
+                                onChange={(e) => setNewFolderName(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleCreateFolderAndMove(item.id); } if (e.key === 'Escape') { setShowNewFolderInput(false); setNewFolderName(''); } }}
+                                placeholder="Nom du dossier..."
+                                className="px-3 py-1.5 border border-purple-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 w-36"
+                                autoFocus
+                              />
+                              <button
+                                onClick={() => handleCreateFolderAndMove(item.id)}
+                                disabled={!newFolderName.trim()}
+                                className="px-2 py-1.5 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white rounded-lg text-sm font-medium"
+                              >
+                                OK
+                              </button>
+                              <button
+                                onClick={() => { setShowNewFolderInput(false); setNewFolderName(''); }}
+                                className="p-1.5 hover:bg-purple-200 rounded-lg"
+                              >
+                                <X className="w-3.5 h-3.5 text-purple-600" />
+                              </button>
+                            </div>
+                          )}
+                          {(item as any).folder && (
+                            <button
+                              onClick={() => handleMoveToFolder(item.id, null)}
+                              className="flex items-center gap-1 px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm font-medium transition-colors"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                              <span>Retirer</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
                     <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
                       <div className="flex items-center space-x-3">
