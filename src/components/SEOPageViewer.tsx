@@ -149,6 +149,8 @@ function canRenderSectionType(type?: string): boolean {
     case 'editorial-cards-row':
     case 'minimal-final-cta':
     case 'cinematic-footer':
+    case 'embed':
+    case 'code-insert':
       return true;
     default:
       return false;

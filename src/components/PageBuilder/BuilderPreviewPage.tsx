@@ -65,6 +65,8 @@ import ProcessStepsCardsWidget from './Widgets/ProcessStepsCardsWidget';
 import EditorialCardsRowWidget from './Widgets/EditorialCardsRowWidget';
 import MinimalFinalCTAWidget from './Widgets/MinimalFinalCTAWidget';
 import CinematicFooterWidget from './Widgets/CinematicFooterWidget';
+import EmbedWidget from './Widgets/EmbedWidget';
+import CodeInsertWidget from './Widgets/CodeInsertWidget';
 
 export interface BuilderPreviewData {
   sections: PageBuilderSection[];
@@ -159,6 +161,8 @@ function renderWidget(section: PageBuilderSection) {
     case 'editorial-cards-row': return <EditorialCardsRowWidget {...props} />;
     case 'minimal-final-cta': return <MinimalFinalCTAWidget {...props} />;
     case 'cinematic-footer': return <CinematicFooterWidget {...props} />;
+    case 'embed': return <EmbedWidget {...props} />;
+    case 'code-insert': return <CodeInsertWidget {...props} />;
     default: return null;
   }
 }
@@ -200,6 +204,13 @@ export default function BuilderPreviewPage() {
 
   const themeVars = data.themeTokens ? getThemeInlineVars(data.themeTokens) : {};
 
+  // Pre-compute overlay header indices for grouping with next section
+  const overlayHeaderIndices = new Set<number>();
+  data.sections.forEach((section, i) => {
+    const { isOverlayHeader } = getWidgetWrapperProps(section);
+    if (isOverlayHeader) overlayHeaderIndices.add(i);
+  });
+
   return (
     <div
       className="min-h-screen bg-base-100 text-base-content page-themed"
@@ -207,17 +218,102 @@ export default function BuilderPreviewPage() {
       style={themeVars}
     >
       {data.sections.map((section, index) => {
-        const { normalizedSection, className, dataTheme, style } = getWidgetWrapperProps(section);
-        return (
+        if (!section?.type) return null;
+        const { normalizedSection, className, dataTheme, style, isOverlayHeader } = getWidgetWrapperProps(section);
+
+        // Skip rendering overlay headers standalone — they render inside the next section's wrapper
+        if (isOverlayHeader) return null;
+
+        const isAfterOverlayHeader = overlayHeaderIndices.has(index - 1);
+
+        const sectionEl = (
           <div
             key={normalizedSection.id || `section-${index}`}
             className={className}
             data-theme={dataTheme || data.daisyThemeSlug || 'light'}
+            data-widget-type={normalizedSection.type}
+            data-widget-overlay={normalizedSection.design?.media?.overlayImage ? 'on' : undefined}
+            data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'bottom-right'}
             style={style as React.CSSProperties}
           >
-            {renderWidget(normalizedSection)}
+            {/* Background image layer with opacity */}
+            {normalizedSection.design?.background?.type === 'image' && normalizedSection.design.background.value && (
+              <div
+                className="absolute inset-0 z-0 pointer-events-none"
+                style={{
+                  backgroundImage: `url(${normalizedSection.design.background.value})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  opacity: normalizedSection.design.background.opacity ?? 1,
+                }}
+              />
+            )}
+            {/* Background overlay for images/videos */}
+            {normalizedSection.design?.background?.overlayColor && ['image', 'video'].includes(normalizedSection.design.background.type) && (
+              <div
+                className="absolute inset-0 z-0 pointer-events-none"
+                style={{
+                  backgroundColor: normalizedSection.design.background.overlayColor,
+                  opacity: normalizedSection.design.background.overlayOpacity ?? 0.5,
+                }}
+              />
+            )}
+            {/* Video background */}
+            {normalizedSection.design?.background?.type === 'video' && normalizedSection.design.background.value && (
+              <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                {normalizedSection.design.background.value.includes('youtube') || normalizedSection.design.background.value.includes('youtu.be') ? (
+                  <iframe
+                    src={`${normalizedSection.design.background.value.replace('watch?v=', 'embed/')}?autoplay=1&mute=1&loop=1&controls=0&modestbranding=1&showinfo=0&rel=0&playlist=${normalizedSection.design.background.value.split(/[=/]/).pop()}`}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                    style={{
+                      width: normalizedSection.design.background.videoFullWidth ? '100vw' : '177.78vh',
+                      height: normalizedSection.design.background.videoFullWidth ? '56.25vw' : '100vh',
+                      minWidth: '100%',
+                      minHeight: '100%',
+                      border: 'none',
+                    }}
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    src={normalizedSection.design.background.value}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full object-cover"
+                  />
+                )}
+              </div>
+            )}
+            <div className={['image', 'video'].includes(normalizedSection.design?.background?.type) ? 'relative z-10' : ''}>
+              {renderWidget(normalizedSection)}
+            </div>
           </div>
         );
+
+        // Wrap section with the preceding overlay header
+        if (isAfterOverlayHeader) {
+          const headerSection = data.sections[index - 1];
+          const headerProps = getWidgetWrapperProps(headerSection);
+          return (
+            <div key={`overlay-group-${index}`} className="relative">
+              <div
+                className={headerProps.className}
+                data-theme={headerProps.dataTheme || data.daisyThemeSlug || 'light'}
+                data-widget-type={headerProps.normalizedSection.type}
+                style={headerProps.style as React.CSSProperties}
+              >
+                {renderWidget(headerProps.normalizedSection)}
+              </div>
+              {sectionEl}
+            </div>
+          );
+        }
+
+        return sectionEl;
       })}
     </div>
   );

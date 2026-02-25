@@ -346,6 +346,15 @@ const HERO_SEO_WIDGET_TYPES = new Set([
   'creative-network-hero',
 ]);
 
+const HEADER_WIDGET_TYPES = new Set([
+  'header',
+  'header-top-info',
+  'header-with-icons',
+  'header-account-bar',
+  'header-full-contact',
+  'header-clickfunnel',
+]);
+
 const TITLE_FIELD_KEYS = [
   'headline',
   'title',
@@ -524,6 +533,29 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
   };
 
   const updateVariant = (newVariant: string) => {
+    // Sync background type for header widgets: "transparent" variant ↔ "transparent" background
+    if (HEADER_WIDGET_TYPES.has(section.type)) {
+      if (newVariant === 'transparent' && section.design?.background?.type !== 'transparent') {
+        onUpdateSection({
+          variant: newVariant,
+          design: {
+            ...section.design,
+            background: { ...section.design.background, type: 'transparent' as const },
+          },
+        });
+        return;
+      }
+      if (newVariant !== 'transparent' && section.design?.background?.type === 'transparent') {
+        onUpdateSection({
+          variant: newVariant,
+          design: {
+            ...section.design,
+            background: { ...section.design.background, type: 'color' as const },
+          },
+        });
+        return;
+      }
+    }
     onUpdateSection({ variant: newVariant });
   };
 
@@ -1273,13 +1305,13 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                 <option value="gradient">Dégradé</option>
                 <option value="image">Image</option>
                 <option value="video">Vidéo</option>
-                {['header', 'header-top-info', 'header-with-icons', 'header-account-bar', 'header-full-contact', 'header-clickfunnel'].includes(section.type) && (
+                {HEADER_WIDGET_TYPES.has(section.type) && (
                   <option value="transparent">Transparent (backdrop blur)</option>
                 )}
               </select>
             </div>
 
-            {section.design.background?.type === 'transparent' && (
+            {(section.design.background?.type === 'transparent' || (HEADER_WIDGET_TYPES.has(section.type) && section.variant === 'transparent')) && (
               <>
                 <ColorOverrideField
                   label="Couleur du fond transparent"
@@ -2027,13 +2059,36 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           </label>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Arrière-plan" defaultOpen={false}>
+        <CollapsibleSection title="Arrière-plan" defaultOpen={HEADER_WIDGET_TYPES.has(section.type)}>
           <div>
             <label className="block text-xs text-gray-600 mb-1">Type d'arrière-plan</label>
             <select
               value={section.design.background?.type || 'color'}
               onChange={(e) => {
                 const newType = e.target.value as 'color' | 'gradient' | 'image' | 'video' | 'transparent';
+                // Sync variant for header widgets: transparent background ↔ transparent variant
+                if (HEADER_WIDGET_TYPES.has(section.type)) {
+                  if (newType === 'transparent' && section.variant !== 'transparent') {
+                    onUpdateSection({
+                      variant: 'transparent',
+                      design: {
+                        ...section.design,
+                        background: { ...section.design.background, type: newType },
+                      },
+                    });
+                    return;
+                  }
+                  if (newType !== 'transparent' && section.variant === 'transparent') {
+                    onUpdateSection({
+                      variant: 'default',
+                      design: {
+                        ...section.design,
+                        background: { ...section.design.background, type: newType },
+                      },
+                    });
+                    return;
+                  }
+                }
                 onUpdateSection({
                   design: {
                     ...section.design,
@@ -2047,13 +2102,13 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               <option value="gradient">Dégradé</option>
               <option value="image">Image</option>
               <option value="video">Vidéo</option>
-              {['header', 'header-top-info', 'header-with-icons', 'header-account-bar', 'header-full-contact', 'header-clickfunnel'].includes(section.type) && (
+              {HEADER_WIDGET_TYPES.has(section.type) && (
                 <option value="transparent">Transparent (backdrop blur)</option>
               )}
             </select>
           </div>
 
-          {section.design.background?.type === 'transparent' && (
+          {(section.design.background?.type === 'transparent' || (HEADER_WIDGET_TYPES.has(section.type) && section.variant === 'transparent')) && (
             <>
               <ColorOverrideField
                 label="Couleur du fond transparent"
