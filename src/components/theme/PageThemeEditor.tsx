@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Save, X, Trash2, Plus, Copy, Palette, Type, Ruler, Weight, Upload, Download } from 'lucide-react';
-import { PageTheme } from '../lib/pageThemes';
-import { createEmptyTheme, isCustomTheme } from '../lib/pageThemesStorage';
-import { usePageTheme } from '../contexts/PageThemeContext';
-import { supabase } from '../lib/supabase';
+import { PageTheme } from '@/lib/pageThemes';
+import { createEmptyTheme, isCustomTheme } from '@/lib/pageThemesStorage';
+import { usePageTheme } from '@/contexts/PageThemeContext';
+import { supabase } from '@/lib/supabase';
 import FontImporter from './FontImporter';
 
 interface PageThemeEditorProps {

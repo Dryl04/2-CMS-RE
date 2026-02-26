@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, Layout, ChevronRight, FolderPlus, X } from 'lucide-react';
-import { supabase, PageTemplate } from '../lib/supabase';
-import { PageBuilderSection } from '../lib/pageBuilderTypes';
+import { supabase, PageTemplate } from '@/lib/supabase';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 
 interface SEOFormProps {
   onSaveComplete: () => void;

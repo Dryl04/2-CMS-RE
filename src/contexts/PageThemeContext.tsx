@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { PageTheme } from '../lib/pageThemes';
-import { loadAllThemes, saveCustomTheme, deleteCustomTheme, migrateLocalStorageThemes } from '../lib/pageThemesStorage';
+import { PageTheme } from '@/lib/pageThemes';
+import { loadAllThemes, saveCustomTheme, deleteCustomTheme, migrateLocalStorageThemes } from '@/lib/pageThemesStorage';
 import { useAuth } from './AuthContext';
 
 interface PageThemeContextType {

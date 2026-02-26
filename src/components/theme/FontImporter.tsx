@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Search, Download, Check } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 interface FontImporterProps {
   onClose: () => void;

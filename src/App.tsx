@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { DaisyThemeProvider } from './contexts/DaisyThemeContext';
-import { PageThemeProvider } from './contexts/PageThemeContext';
-import Auth from './components/Auth';
-import Dashboard from './components/Dashboard';
-import SEOManager from './components/SEOManager';
-import SEOPageViewer from './components/SEOPageViewer';
-import MediaLibrary from './components/MediaLibrary';
-import PageBuilder from './components/PageBuilder/PageBuilder';
-import Analytics from './components/Analytics';
-import DaisyThemeManager from './components/DaisyThemeManager';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import VisualPageBuilder from './components/VisualPageBuilder';
-import BuilderPreviewPage from './components/PageBuilder/BuilderPreviewPage';
-import { supabase, SEOMetadata } from './lib/supabase';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { DaisyThemeProvider } from '@/contexts/DaisyThemeContext';
+import { PageThemeProvider } from '@/contexts/PageThemeContext';
+import Auth from '@/components/Auth';
+import Dashboard from '@/components/Dashboard';
+import SEOManager from '@/components/seo/SEOManager';
+import SEOPageViewer from '@/components/seo/SEOPageViewer';
+import MediaLibrary from '@/components/MediaLibrary';
+import PageBuilder from '@/components/PageBuilder/PageBuilder';
+import Analytics from '@/components/Analytics';
+import DaisyThemeManager from '@/components/theme/DaisyThemeManager';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import VisualPageBuilder from '@/components/VisualPageBuilder';
+import BuilderPreviewPage from '@/components/PageBuilder/BuilderPreviewPage';
+import { supabase, SEOMetadata } from '@/lib/supabase';
 
 type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder' | 'page-builder';
 

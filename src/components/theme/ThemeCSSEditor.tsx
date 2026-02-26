@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Theme } from '../lib/themeTypes';
+import { Theme } from '@/lib/themeTypes';
 import { X, Save, Code, AlertCircle } from 'lucide-react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ThemeCSSEditorProps {
   theme: Theme;

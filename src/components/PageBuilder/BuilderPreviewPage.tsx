@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { PageBuilderSection } from '../../lib/pageBuilderTypes';
-import { getWidgetWrapperProps } from '../../lib/widgetThemeHelper';
-import { getThemeInlineVars, type DaisyThemeTokens } from '../../lib/daisyThemes';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { getWidgetWrapperProps } from '@/lib/widgetThemeHelper';
+import { getThemeInlineVars, type DaisyThemeTokens } from '@/lib/daisyThemes';
 import HeaderWidget from './Widgets/HeaderWidget';
 import HeroWidget from './Widgets/HeroWidget';
 import FeaturesWidget from './Widgets/FeaturesWidget';

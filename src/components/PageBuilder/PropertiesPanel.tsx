@@ -1,8 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Settings, Palette, Code, ChevronDown, ChevronRight, Bold, Italic, Link2, Underline } from 'lucide-react';
-import { PageBuilderSection } from '../../lib/pageBuilderTypes';
-import { widgetLibrary } from '../../lib/widgetLibrary';
-import { supabase } from '../../lib/supabase';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { widgetLibrary } from '@/lib/widgetLibrary';
+import { supabase } from '@/lib/supabase';
 import WidgetThemeSelector from './WidgetThemeSelector';
 import {
   HeroContentEditor,

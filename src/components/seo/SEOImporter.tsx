@@ -4,9 +4,9 @@ import {
   Sparkles, FileUp, Eye, ChevronDown, ChevronUp, Rocket,
   X, Layers
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { normalizeSectionForTheme } from '../lib/widgetThemeHelper';
-import { sanitizeSectionUrls, extractPlainUrl } from '../lib/contentSanitizer';
+import { supabase } from '@/lib/supabase';
+import { normalizeSectionForTheme } from '@/lib/widgetThemeHelper';
+import { sanitizeSectionUrls, extractPlainUrl } from '@/lib/contentSanitizer';
 
 interface ImportedPage {
   page_key: string;

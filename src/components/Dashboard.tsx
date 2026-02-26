@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FileText, Layout, Image, Settings, TrendingUp, Clock, CheckCircle, Paintbrush, Palette, Sparkles } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
 
 interface Stats {
   totalPages: number;

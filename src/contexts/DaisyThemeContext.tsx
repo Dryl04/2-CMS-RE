@@ -12,7 +12,7 @@ import {
   ThemeError,
   ThemeUsage,
   generateCustomThemeCSS,
-} from '../lib/daisyThemes';
+} from '@/lib/daisyThemes';
 import { useAuth } from './AuthContext';
 
 interface DaisyThemeContextType {

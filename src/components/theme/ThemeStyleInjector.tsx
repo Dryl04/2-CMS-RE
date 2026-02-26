@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export const ThemeStyleInjector: React.FC = () => {
   const { currentTheme } = useTheme();

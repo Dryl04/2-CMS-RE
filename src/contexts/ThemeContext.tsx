@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Theme } from '../lib/themeTypes';
-import { supabase } from '../lib/supabase';
-import { defaultThemes } from '../lib/defaultThemes';
+import { Theme } from '@/lib/themeTypes';
+import { supabase } from '@/lib/supabase';
+import { defaultThemes } from '@/lib/defaultThemes';
 
 interface ThemeContextType {
   currentTheme: Theme | null;

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
-import { Theme, ThemeColors } from '../lib/themeTypes';
+import { useTheme } from '@/contexts/ThemeContext';
+import { Theme, ThemeColors } from '@/lib/themeTypes';
 import { Palette, Plus, Trash2, Copy, Check, Eye, AlertCircle, Download, ExternalLink, ClipboardCopy, Code } from 'lucide-react';
-import { getSQLScript } from '../lib/setupThemes';
+import { getSQLScript } from '@/lib/setupThemes';
 import { ThemeCSSEditor } from './ThemeCSSEditor';
 
 export const ThemeManager: React.FC = () => {

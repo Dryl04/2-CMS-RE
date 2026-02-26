@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { generateThemeCSS, getPageThemeById } from '../lib/pageThemes';
-import { usePageTheme } from '../contexts/PageThemeContext';
+import { generateThemeCSS, getPageThemeById } from '@/lib/pageThemes';
+import { usePageTheme } from '@/contexts/PageThemeContext';
 
 interface PageThemeInjectorProps {
   themeId?: string | null;

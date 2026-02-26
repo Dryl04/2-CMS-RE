@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Plus, Eye, Save, ArrowLeft, Sparkles, X, Check } from 'lucide-react';
-import { widgetLibrary } from '../lib/widgetLibrary';
-import { PageBuilderSection } from '../lib/pageBuilderTypes';
-import { supabase } from '../lib/supabase';
+import { widgetLibrary } from '@/lib/widgetLibrary';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { supabase } from '@/lib/supabase';
 import SectionRenderer from './PageBuilder/SectionRenderer';
 
 interface VisualPageBuilderProps {

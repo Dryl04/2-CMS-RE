@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Edit, Trash2, Eye, FileUp, FormInput, ExternalLink, ArrowLeft, Copy, Layout, FolderOpen, FolderPlus, X } from 'lucide-react';
-import { supabase, SEOMetadata } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
+import { supabase, SEOMetadata } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 import SEOImporter from './SEOImporter';
 import SEOForm from './SEOForm';
 import SEOPageViewer from './SEOPageViewer';

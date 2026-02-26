@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Layout, LogOut, User, FileText, Image, TrendingUp, Paintbrush, Menu, X, Sparkles } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {
   onNavigate?: (view: string) => void;

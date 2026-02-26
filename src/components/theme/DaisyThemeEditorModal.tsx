@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
-import { useDaisyTheme } from '../contexts/DaisyThemeContext';
-import { supabase } from '../lib/supabase';
+import { useDaisyTheme } from '@/contexts/DaisyThemeContext';
+import { supabase } from '@/lib/supabase';
 import FontImporter from './FontImporter';
 import {
   DaisyTheme,
@@ -11,7 +11,7 @@ import {
   TOKEN_LABELS,
   createEmptyTokens,
   slugify,
-} from '../lib/daisyThemes';
+} from '@/lib/daisyThemes';
 
 interface Props {
   theme: DaisyTheme | null;
