@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layout, LogOut, User, FileText, Image, TrendingUp, Paintbrush, Menu, X, Sparkles } from 'lucide-react';
+import { Layout, LogOut, User, FileText, Image, TrendingUp, Paintbrush, Menu, X, Sparkles, Link as LinkIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { key: 'pages', label: 'Pages', icon: FileText },
   { key: 'visual-builder', label: 'Createur Visuel', icon: Sparkles, highlight: true },
   { key: 'templates', label: 'Editeur Avance', icon: Paintbrush },
+  { key: 'links', label: 'Liens', icon: LinkIcon },
   { key: 'media', label: 'Medias', icon: Image },
   { key: 'analytics', label: 'Stats', icon: TrendingUp },
 ];

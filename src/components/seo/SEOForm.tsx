@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, Layout, ChevronRight, FolderPlus, X } from 'lucide-react';
 import { supabase, PageTemplate } from '@/lib/supabase';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { propagateSlugChange } from '@/lib/linkRegistry';
 
 interface SEOFormProps {
   onSaveComplete: () => void;
@@ -253,6 +254,13 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
         .upsert(data, { onConflict: 'page_key' });
 
       if (error) throw error;
+
+      // If slug changed on an existing page, propagate the change across all pages
+      const oldPageKey = editingPage?.page_key;
+      if (editingPage?.id && oldPageKey && oldPageKey !== pageKey) {
+        await propagateSlugChange(oldPageKey, pageKey);
+      }
+
       onSaveComplete();
     } catch (error: any) {
       console.error('Save error:', error);

@@ -15,9 +15,11 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import VisualPageBuilder from '@/components/VisualPageBuilder';
 import BuilderPreviewPage from '@/components/PageBuilder/BuilderPreviewPage';
+import LinkManager from '@/components/LinkManager';
 import { supabase, SEOMetadata } from '@/lib/supabase';
+import { resolveRedirect } from '@/lib/linkRegistry';
 
-type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder' | 'page-builder';
+type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'analytics' | 'themes' | 'settings' | 'links' | 'page-view' | 'visual-builder' | 'page-builder';
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -60,6 +62,14 @@ function AppContent() {
       if (data) {
         setSeoPage(data);
         setCurrentView('page-view');
+      } else {
+        // Check for a 301 redirect
+        const redirectedKey = await resolveRedirect(pageKey);
+        if (redirectedKey) {
+          window.history.replaceState({}, '', `/${redirectedKey}`);
+          await loadPublicSEOPage(redirectedKey);
+          return;
+        }
       }
     } catch (error) {
       console.error('Error loading SEO page:', error);
@@ -222,6 +232,10 @@ function AppContent() {
           <div className="max-w-7xl mx-auto px-6 py-8 w-full">
             <Analytics onNavigate={handleNavigate} />
           </div>
+        )}
+
+        {currentView === 'links' && (
+          <LinkManager onNavigate={handleNavigate} />
         )}
 
         {currentView === 'settings' && (

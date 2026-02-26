@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FileText, Layout, Image, Settings, TrendingUp, Clock, CheckCircle, Paintbrush, Palette, Sparkles } from 'lucide-react';
+import { FileText, Layout, Image, Settings, TrendingUp, Clock, CheckCircle, Paintbrush, Palette, Sparkles, Link as LinkIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 
@@ -214,6 +214,21 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
               </h3>
               <p className="text-gray-600">
                 Analyser les performances de vos pages
+              </p>
+            </button>
+
+            <button
+              onClick={() => onNavigate('links')}
+              className="bg-white p-8 rounded-3xl border border-gray-200 hover:border-gray-300 transition-all text-left group"
+            >
+              <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <LinkIcon className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                Gérer les liens
+              </h3>
+              <p className="text-gray-600">
+                Liens internes, redirections 301 et cohérence de navigation
               </p>
             </button>
 
