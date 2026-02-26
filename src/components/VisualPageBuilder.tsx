@@ -77,10 +77,6 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
     setSelectedSections([...selectedSections, newSection]);
   };
 
-  const removeSection = (id: string) => {
-    setSelectedSections(selectedSections.filter(s => s.id !== id));
-  };
-
   const generateSlug = (name: string) => {
     return name
       .toLowerCase()

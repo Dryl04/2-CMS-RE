@@ -1,4 +1,4 @@
-import { Umbrella, Layers, CreditCard, ArrowRight } from 'lucide-react';
+import { Umbrella, Layers, CreditCard } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
 

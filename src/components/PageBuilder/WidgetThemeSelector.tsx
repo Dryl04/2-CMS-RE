@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Palette, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { useDaisyTheme } from '@/contexts/DaisyThemeContext';
-import { DaisyThemeTokens, TOKEN_GROUPS } from '@/lib/daisyThemes';
+import { DaisyThemeTokens } from '@/lib/daisyThemes';
 
 interface WidgetThemeSelectorProps {
   section: PageBuilderSection;

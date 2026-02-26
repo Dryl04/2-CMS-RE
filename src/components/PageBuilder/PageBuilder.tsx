@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, Edit3, FolderOpen, FolderPlus, Download, FileJson, FileSpreadsheet, X, Palette, Settings, Copy, Link2, Image } from 'lucide-react';
+import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, Edit3, FolderOpen, FolderPlus, Download, FileJson, FileSpreadsheet, X, Palette, Settings, Copy, Link2 } from 'lucide-react';
 import { PageBuilderSection, DeviceType } from '@/lib/pageBuilderTypes';
 import { supabase, PageTemplate, SEOMetadata } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';

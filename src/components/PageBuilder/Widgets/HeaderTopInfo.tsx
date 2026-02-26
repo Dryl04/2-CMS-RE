@@ -8,7 +8,7 @@ interface HeaderTopInfoProps {
 
 export default function HeaderTopInfo({ section }: HeaderTopInfoProps) {
   const { content, design } = section;
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
+  const _bg = design.background.type === 'color' ? design.background.value : undefined;
 
   const typo = design.typography || {};
   const headingStyle: React.CSSProperties = {

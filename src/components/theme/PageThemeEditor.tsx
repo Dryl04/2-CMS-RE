@@ -11,6 +11,7 @@ interface PageThemeEditorProps {
   initialThemeId?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const GOOGLE_FONTS = [
   'Inter',
   'Roboto',
@@ -127,7 +128,7 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
       } else {
         showToast(`Erreur: ${result.message}`);
       }
-    } catch (error) {
+    } catch (_error) {
       showToast('Erreur lors de la migration');
     } finally {
       setMigrating(false);
@@ -167,7 +168,7 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
       await saveTheme(editingTheme);
       showToast('Thème enregistré');
       setEditingTheme(null);
-    } catch (error) {
+    } catch (_error) {
       showToast('Erreur lors de l\'enregistrement');
     }
   };
@@ -181,7 +182,7 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
       if (editingTheme?.id === themeId) {
         setEditingTheme(null);
       }
-    } catch (error) {
+    } catch (_error) {
       showToast('Erreur lors de la suppression');
     }
   };

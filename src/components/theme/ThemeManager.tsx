@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Theme, ThemeColors } from '@/lib/themeTypes';
-import { Palette, Plus, Trash2, Copy, Check, Eye, AlertCircle, Download, ExternalLink, ClipboardCopy, Code } from 'lucide-react';
+import { Palette, Trash2, Copy, Check, Eye, AlertCircle, Download, ExternalLink, ClipboardCopy, Code } from 'lucide-react';
 import { getSQLScript } from '@/lib/setupThemes';
 import { ThemeCSSEditor } from './ThemeCSSEditor';
 
@@ -10,7 +10,7 @@ export const ThemeManager: React.FC = () => {
   const [initializing, setInitializing] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingCSSTheme, setEditingCSSTheme] = useState<Theme | null>(null);
-  const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
+  const [_selectedTheme, _setSelectedTheme] = useState<Theme | null>(null);
   const [newThemeName, setNewThemeName] = useState('');
   const [newThemeDescription, setNewThemeDescription] = useState('');
   const [baseTheme, setBaseTheme] = useState<Theme | null>(null);

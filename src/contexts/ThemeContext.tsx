@@ -92,7 +92,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         is_default: theme.is_default,
       }));
 
-      const { data, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('themes')
         .insert(themesToInsert)
         .select();

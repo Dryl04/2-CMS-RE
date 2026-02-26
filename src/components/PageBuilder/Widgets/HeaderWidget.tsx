@@ -40,10 +40,10 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
     ...(typo.linkColor ? { color: typo.linkColor } : {}),
   };
-  const subtitleStyle: React.CSSProperties = {
+  const _subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
-  const linkStyle: React.CSSProperties = {
+  const _linkStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.linkColor ? { color: typo.linkColor } : {}),
   };

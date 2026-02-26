@@ -42,7 +42,7 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
   const subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
-  const linkStyle: React.CSSProperties = {
+  const _linkStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 

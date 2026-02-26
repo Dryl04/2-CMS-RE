@@ -15,7 +15,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
 
   const typo = design?.typography || {};
 
-  const bgColor = design?.background?.type === 'color' ? design.background.value : undefined;
+  const _bgColor = design?.background?.type === 'color' ? design.background.value : undefined;
   const fontFamily = typo.fontFamily || undefined;
 
   const navStyle: React.CSSProperties = {

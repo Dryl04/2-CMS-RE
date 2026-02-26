@@ -17,7 +17,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
     ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
   };
-  const textStyle: React.CSSProperties = {
+  const _textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };

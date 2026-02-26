@@ -9,7 +9,7 @@ interface ImageTextSplitWidgetProps {
 
 export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetProps) {
   const {
-    subtitle,
+    _subtitle,
     headline,
     paragraph1,
     paragraph2,
@@ -30,7 +30,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
-  const subtitleStyle: React.CSSProperties = {
+  const _subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
   const linkStyle: React.CSSProperties = {

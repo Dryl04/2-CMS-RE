@@ -15,7 +15,7 @@ export default function SimpleHeaderDivider({ section }: SimpleHeaderDividerProp
     ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
   };
 
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
+  const _bg = design.background.type === 'color' ? design.background.value : undefined;
   const dividerColor = design.colors?.dividerColor;
 
   return (

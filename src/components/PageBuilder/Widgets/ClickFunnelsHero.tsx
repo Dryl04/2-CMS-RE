@@ -14,7 +14,7 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
   const typo = design?.typography || {};
 
   const bgColor = design?.background?.type === 'color' ? design.background.value : undefined;
-  const fontFamily = typo.headingFontFamily || typo.fontFamily || undefined;
+  const _fontFamily = typo.headingFontFamily || typo.fontFamily || undefined;
 
   const h1Style: React.CSSProperties = {
     ...(typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),

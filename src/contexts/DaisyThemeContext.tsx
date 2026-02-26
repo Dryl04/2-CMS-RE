@@ -4,7 +4,6 @@ import {
   DaisyThemeTokens,
   DaisyFontConfig,
   loadAllDaisyThemes,
-  loadActiveTheme,
   setActiveTheme as setActiveThemeDB,
   createCustomThemeWithValidation,
   updateCustomThemeWithValidation,

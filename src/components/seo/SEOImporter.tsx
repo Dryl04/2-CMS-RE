@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import {
-  Upload, FileJson, FileText, CheckCircle, AlertCircle,
+  Upload, FileJson, CheckCircle, AlertCircle,
   Sparkles, FileUp, Eye, ChevronDown, ChevronUp, Rocket,
   X, Layers
 } from 'lucide-react';

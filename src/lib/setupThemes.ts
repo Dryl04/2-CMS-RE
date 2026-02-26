@@ -3,6 +3,7 @@ import { defaultThemes } from './defaultThemes';
 
 export async function createThemesTable(): Promise<{ success: boolean; message: string }> {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const createTableSQL = `
       CREATE TABLE IF NOT EXISTS themes (
         id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -19,6 +20,7 @@ export async function createThemesTable(): Promise<{ success: boolean; message: 
       );
     `;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const addThemeIdSQL = `
       DO $$
       BEGIN
@@ -31,8 +33,10 @@ export async function createThemesTable(): Promise<{ success: boolean; message: 
       END $$;
     `;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const enableRLSSQL = `ALTER TABLE themes ENABLE ROW LEVEL SECURITY;`;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const createPoliciesSQL = [
       `DROP POLICY IF EXISTS "Authenticated users can read all themes" ON themes;`,
       `CREATE POLICY "Authenticated users can read all themes" ON themes FOR SELECT TO authenticated USING (true);`,

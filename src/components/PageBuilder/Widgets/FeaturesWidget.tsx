@@ -2,8 +2,7 @@ import React from 'react';
 import { ImageIcon } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
-import { renderIcon, ICON_MAP } from '@/lib/iconLibrary';
-import { Zap } from 'lucide-react';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface FeaturesWidgetProps {
   section: PageBuilderSection;
