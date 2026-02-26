@@ -185,6 +185,24 @@ export function normalizeSectionForTheme(
     ...(section.design?.background?.backdropOpacity !== undefined
       ? { backdropOpacity: section.design.background.backdropOpacity }
       : {}),
+    ...(section.design?.background?.opacity !== undefined
+      ? { opacity: section.design.background.opacity }
+      : {}),
+    ...(section.design?.background?.overlayColor !== undefined
+      ? { overlayColor: section.design.background.overlayColor }
+      : {}),
+    ...(section.design?.background?.overlayOpacity !== undefined
+      ? { overlayOpacity: section.design.background.overlayOpacity }
+      : {}),
+    ...(section.design?.background?.videoAutoplay !== undefined
+      ? { videoAutoplay: section.design.background.videoAutoplay }
+      : {}),
+    ...(section.design?.background?.videoNoBranding !== undefined
+      ? { videoNoBranding: section.design.background.videoNoBranding }
+      : {}),
+    ...(section.design?.background?.videoFullWidth !== undefined
+      ? { videoFullWidth: section.design.background.videoFullWidth }
+      : {}),
   };
 
   const safeSpacing = {
