@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Edit, Settings, X, ChevronUp } from 'lucide-react';
+import {
+  getBackgroundContentClassName,
+  renderBackgroundLayers,
+} from '@/lib/backgroundLayers';
 import { SEOMetadata } from '@/lib/supabase';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import PageThemeInjector from '@/components/theme/PageThemeInjector';
@@ -353,59 +357,8 @@ function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
             data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'bottom-right'}
             style={style as React.CSSProperties}
           >
-            {/* Background image layer with opacity */}
-            {normalizedSection.design?.background?.type === 'image' && normalizedSection.design.background.value && (
-              <div
-                className="absolute inset-0 z-0 pointer-events-none"
-                style={{
-                  backgroundImage: `url(${normalizedSection.design.background.value})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
-                  opacity: normalizedSection.design.background.opacity ?? 1,
-                }}
-              />
-            )}
-            {/* Background overlay for images/videos */}
-            {normalizedSection.design?.background?.overlayColor && ['image', 'video'].includes(normalizedSection.design.background.type) && (
-              <div
-                className="absolute inset-0 z-0 pointer-events-none"
-                style={{
-                  backgroundColor: normalizedSection.design.background.overlayColor,
-                  opacity: normalizedSection.design.background.overlayOpacity ?? 0.5,
-                }}
-              />
-            )}
-            {/* Video background */}
-            {normalizedSection.design?.background?.type === 'video' && normalizedSection.design.background.value && (
-              <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                {normalizedSection.design.background.value.includes('youtube') || normalizedSection.design.background.value.includes('youtu.be') ? (
-                  <iframe
-                    src={`${normalizedSection.design.background.value.replace('watch?v=', 'embed/')}?autoplay=1&mute=1&loop=1&controls=0&modestbranding=1&showinfo=0&rel=0&playlist=${normalizedSection.design.background.value.split(/[=/]/).pop()}`}
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                    style={{
-                      width: normalizedSection.design.background.videoFullWidth ? '100vw' : '177.78vh',
-                      height: normalizedSection.design.background.videoFullWidth ? '56.25vw' : '100vh',
-                      minWidth: '100%',
-                      minHeight: '100%',
-                      border: 'none',
-                    }}
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                  />
-                ) : (
-                  <video
-                    src={normalizedSection.design.background.value}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full object-cover"
-                  />
-                )}
-              </div>
-            )}
-            <div className={['image', 'video'].includes(normalizedSection.design?.background?.type) ? 'relative z-10' : ''}>
+            {renderBackgroundLayers(normalizedSection.design?.background)}
+            <div className={getBackgroundContentClassName(normalizedSection.design?.background)}>
               <SectionRenderer section={normalizedSection} />
             </div>
           </div>
