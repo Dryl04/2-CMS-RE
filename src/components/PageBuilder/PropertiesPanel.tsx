@@ -509,11 +509,12 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
 
   const renderUniformQuickEdit = () => {
     const content = section.content || {};
+    const ownedKeys = new Set(EDITOR_OWNED_BUTTON_KEYS[section.type] || []);
 
     const titleFields = TITLE_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
     const paragraphFields = PARAGRAPH_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
-    const buttonTextFields = BUTTON_TEXT_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
-    const buttonLinkFields = BUTTON_LINK_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
+    const buttonTextFields = BUTTON_TEXT_FIELD_KEYS.filter((key) => typeof content[key] === 'string' && !ownedKeys.has(key));
+    const buttonLinkFields = BUTTON_LINK_FIELD_KEYS.filter((key) => typeof content[key] === 'string' && !ownedKeys.has(key));
 
     const hasAnyField =
       titleFields.length > 0 ||
