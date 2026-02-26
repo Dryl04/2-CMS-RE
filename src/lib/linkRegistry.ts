@@ -11,6 +11,34 @@ export interface InternalLinkReplacementResult {
   updatedCount: number;
 }
 
+/** Classification d'un lien (indépendante de window.location.host) */
+export type LinkKind = 'internal' | 'external' | 'anchor' | 'protocol' | 'unknown';
+
+/**
+ * Classifie un lien.
+ * @param value - valeur brute du lien
+ * @param siteHost - hostname du site (ex: "example.com"). Si omis, les URLs absolues identiques au site ne sont pas détectées.
+ */
+export function classifyLink(value: string, siteHost?: string): LinkKind {
+  const raw = value.trim();
+  if (!raw) return 'unknown';
+  if (raw.startsWith('#')) return 'anchor';
+  if (raw.startsWith('mailto:') || raw.startsWith('tel:') || raw.startsWith('javascript:') || raw.startsWith('data:')) {
+    return 'protocol';
+  }
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      const parsed = new URL(raw);
+      if (siteHost && parsed.host === siteHost) return 'internal';
+      return 'external';
+    } catch {
+      return 'unknown';
+    }
+  }
+  // Relative paths (/ or plain slug) → always internal
+  return 'internal';
+}
+
 const HTML_HREF_REGEX = /href="([^"]+)"/g;
 
 export function normalizeInternalPath(value: string): string {
@@ -182,6 +210,75 @@ export function replaceInternalLinksInSections(
   newPath: string,
 ): InternalLinkReplacementResult {
   const mapped = deepMapLinks(sections, oldPath, newPath);
+  return {
+    sections: mapped.value as PageBuilderSection[],
+    updatedCount: mapped.updatedCount,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Literal (exact-string) link replacement — used for external links
+// ---------------------------------------------------------------------------
+
+function deepMapLiteral(
+  value: unknown,
+  oldValue: string,
+  newValue: string,
+  currentKey?: string,
+): { value: unknown; updatedCount: number } {
+  if (typeof value === 'string') {
+    let updatedCount = 0;
+    let nextValue = value;
+
+    if (nextValue.includes('<a ') && nextValue.includes('href="')) {
+      nextValue = nextValue.replace(HTML_HREF_REGEX, (full, hrefValue: string) => {
+        if (hrefValue !== oldValue) return full;
+        updatedCount += 1;
+        return `href="${newValue}"`;
+      });
+    }
+
+    if (currentKey && shouldInspectKey(currentKey) && nextValue === oldValue) {
+      updatedCount += 1;
+      nextValue = newValue;
+    }
+
+    return { value: nextValue, updatedCount };
+  }
+
+  if (Array.isArray(value)) {
+    let updatedCount = 0;
+    const nextArray = value.map((item) => {
+      const mapped = deepMapLiteral(item, oldValue, newValue, currentKey);
+      updatedCount += mapped.updatedCount;
+      return mapped.value;
+    });
+    return { value: nextArray, updatedCount };
+  }
+
+  if (value && typeof value === 'object') {
+    let updatedCount = 0;
+    const nextRecord: Record<string, unknown> = {};
+    for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+      const mapped = deepMapLiteral(item, oldValue, newValue, key);
+      updatedCount += mapped.updatedCount;
+      nextRecord[key] = mapped.value;
+    }
+    return { value: nextRecord, updatedCount };
+  }
+
+  return { value, updatedCount: 0 };
+}
+
+/**
+ * Remplace un lien par correspondance exacte de chaîne (utile pour les liens externes).
+ */
+export function replaceLiteralLinkInSections(
+  sections: PageBuilderSection[],
+  oldValue: string,
+  newValue: string,
+): InternalLinkReplacementResult {
+  const mapped = deepMapLiteral(sections, oldValue, newValue);
   return {
     sections: mapped.value as PageBuilderSection[],
     updatedCount: mapped.updatedCount,
