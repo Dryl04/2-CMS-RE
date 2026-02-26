@@ -397,7 +397,7 @@ const EDITOR_OWNED_BUTTON_KEYS: Readonly<Record<string, ReadonlyArray<string>>> 
   header: ['ctaText', 'ctaLink'],
   'clickfunnel-features': ['buttonText', 'buttonUrl'],
   videohero: ['ctaText', 'ctaLink'],
-  'clickfunnels-hero': ['buttonText', 'secondaryLink'],
+  'clickfunnels-hero': ['buttonText'],
 };
 
 const UNIFORM_FIELD_LABELS: Record<string, string> = {
