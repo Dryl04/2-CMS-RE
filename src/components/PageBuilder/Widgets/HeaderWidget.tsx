@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu, X, Search, ShoppingBag, User } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 import { useState } from 'react';
 
 interface HeaderWidgetProps {

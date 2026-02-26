@@ -1,6 +1,6 @@
 import { Check, Minus, Umbrella, Layers, PaintBucket } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface MembershipPricingWidgetProps {
   section: PageBuilderSection;

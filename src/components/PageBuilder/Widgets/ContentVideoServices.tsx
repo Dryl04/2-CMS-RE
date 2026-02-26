@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Play, Pause, Umbrella, Layers, PaintBucket } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface ContentVideoServicesProps {
   section: PageBuilderSection;

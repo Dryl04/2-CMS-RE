@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Facebook, Twitter, Youtube, Search, Phone, Menu, X } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface HeaderAccountBarProps {
   section: PageBuilderSection;

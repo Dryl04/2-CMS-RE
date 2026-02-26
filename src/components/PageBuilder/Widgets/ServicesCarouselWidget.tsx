@@ -1,6 +1,6 @@
 import { Umbrella, Layers, PaintBucket, Clock, ArrowRight } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface ServicesCarouselWidgetProps {
   section: PageBuilderSection;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ImageIcon } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface CTAWidgetProps {
   section: PageBuilderSection;
