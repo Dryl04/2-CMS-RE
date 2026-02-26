@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
-import { ICON_LIST, ICON_MAP } from '../../lib/iconLibrary';
+import { ICON_LIST, ICON_MAP } from '@/lib/iconLibrary';
 
 interface IconPickerProps {
     value: string;

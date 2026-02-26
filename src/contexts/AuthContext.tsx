@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase, UserProfile } from '../lib/supabase';
+import { supabase, UserProfile } from '@/lib/supabase';
 
 interface AuthContextType {
   user: User | null;
@@ -80,8 +80,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const loadUserProfile = async (userId: string) => {
     try {
-      console.log('[AuthContext] Loading profile for user:', userId);
-
       const { data, error } = await supabase
         .from('user_profiles')
         .select('*')
@@ -90,7 +88,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (error) {
         console.error('[AuthContext] Error loading user profile:', error);
-        console.error('[AuthContext] Error details:', JSON.stringify(error, null, 2));
         setProfile(null);
         return;
       }
@@ -119,16 +116,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         if (createError) {
           console.error('[AuthContext] Error creating user profile:', createError);
-          console.error('[AuthContext] Error details:', JSON.stringify(createError, null, 2));
           setProfile(null);
         } else {
-          console.log('[AuthContext] Profile created successfully:', newProfile);
           setProfile(newProfile);
         }
         return;
       }
 
-      console.log('[AuthContext] Profile loaded successfully:', data);
       setProfile(data);
     } catch (error) {
       console.error('[AuthContext] Unexpected error loading user profile:', error);

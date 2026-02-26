@@ -1,7 +1,7 @@
 import React from 'react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { Play } from 'lucide-react';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface ClickFunnelFeaturesProps {
   section: PageBuilderSection;

@@ -1,6 +1,6 @@
 import { Facebook, Twitter, Youtube } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface BrandIdentityHeroProps {
   section: PageBuilderSection;
@@ -37,7 +37,7 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
-  const subtitleStyle = {
+  const _subtitleStyle = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
   const linkStyle = {

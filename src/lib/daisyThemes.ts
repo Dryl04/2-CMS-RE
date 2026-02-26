@@ -463,7 +463,7 @@ export async function getThemeUsage(themeSlug: string): Promise<ThemeUsage> {
   const pageThemesCount = pageThemesData?.length || 0;
   
   // Check page_templates for usage (if theme_id column exists)
-  let pageTemplatesCount = 0;
+  const pageTemplatesCount = 0;
   // This would require joining with daisyui_themes table
   // For now, we'll implement a basic check
   

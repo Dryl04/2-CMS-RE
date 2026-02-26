@@ -4,7 +4,6 @@ import {
   DaisyThemeTokens,
   DaisyFontConfig,
   loadAllDaisyThemes,
-  loadActiveTheme,
   setActiveTheme as setActiveThemeDB,
   createCustomThemeWithValidation,
   updateCustomThemeWithValidation,
@@ -12,7 +11,7 @@ import {
   ThemeError,
   ThemeUsage,
   generateCustomThemeCSS,
-} from '../lib/daisyThemes';
+} from '@/lib/daisyThemes';
 import { useAuth } from './AuthContext';
 
 interface DaisyThemeContextType {

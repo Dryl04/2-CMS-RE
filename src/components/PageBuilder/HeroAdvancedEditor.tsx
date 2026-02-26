@@ -1,4 +1,4 @@
-import { PageBuilderSection } from '../../lib/pageBuilderTypes';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 
 interface HeroAdvancedEditorProps {
   section: PageBuilderSection;

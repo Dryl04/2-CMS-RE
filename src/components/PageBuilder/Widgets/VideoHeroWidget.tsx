@@ -1,8 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
 import { Play, Pause, X } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface VideoHeroWidgetProps {
   section: PageBuilderSection;
@@ -33,16 +33,16 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
     ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
     ...(typo.h2Color || typo.subtitleColor || typo.headingColor ? { color: typo.h2Color || typo.subtitleColor || typo.headingColor } : {}),
   };
-  const headingStyle: React.CSSProperties = {
+  const _headingStyle: React.CSSProperties = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
     ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
   };
-  const textStyle: React.CSSProperties = {
+  const _textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
-  const subtitleStyle: React.CSSProperties = {
+  const _subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 
@@ -76,7 +76,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         {isPlaying ? (
           (() => {
             const url = videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-            const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
+            const _isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
             const isDirectVideo = url.match(/\.(mp4|webm|ogg)(\?|$)/i);
             if (isDirectVideo) {
               return (

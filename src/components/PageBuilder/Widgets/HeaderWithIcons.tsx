@@ -1,6 +1,6 @@
-import { ChevronDown, Facebook, Twitter, Youtube, Mail, Clock, Phone } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { ChevronDown, Facebook, Twitter, Youtube, Clock, Phone } from 'lucide-react';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface HeaderWithIconsProps {
   section: PageBuilderSection;
@@ -14,7 +14,7 @@ const socialIconMap: { [key: string]: any } = {
 
 export default function HeaderWithIcons({ section }: HeaderWithIconsProps) {
   const { content, design } = section;
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
+  const _bg = design.background.type === 'color' ? design.background.value : undefined;
   const topBg = design.colors?.topBarBg;
 
   const typo = design.typography || {};

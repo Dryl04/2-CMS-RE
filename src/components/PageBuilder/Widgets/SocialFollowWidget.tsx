@@ -1,7 +1,7 @@
 import React from 'react';
 import { Facebook, Twitter, Youtube, Instagram, Linkedin } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface SocialFollowWidgetProps {
   section: PageBuilderSection;

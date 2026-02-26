@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FileText, Globe, Archive, Clock, TrendingUp, BarChart3, ArrowLeft } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 interface Stats {
   total: number;
