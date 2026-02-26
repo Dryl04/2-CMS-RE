@@ -81,6 +81,7 @@ export function savePreviewData(data: BuilderPreviewData) {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch {
+    // Silently ignore storage errors (e.g., quota exceeded)
   }
 }
 
