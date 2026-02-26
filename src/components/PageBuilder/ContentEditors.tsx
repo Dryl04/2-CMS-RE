@@ -44,42 +44,6 @@ const SOCIAL_PLATFORMS = [
 export function HeroContentEditor({ section, updateContent }: ContentEditorProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Titre principal (H1)</label>
-        <input
-          type="text"
-          value={section.content.headline || ''}
-          onChange={(e) => updateContent('headline', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
-        <textarea
-          value={section.content.subheadline || ''}
-          onChange={(e) => updateContent('subheadline', e.target.value)}
-          rows={3}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Texte du bouton</label>
-        <input
-          type="text"
-          value={section.content.ctaText || ''}
-          onChange={(e) => updateContent('ctaText', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Lien du bouton</label>
-        <input
-          type="text"
-          value={section.content.ctaLink || ''}
-          onChange={(e) => updateContent('ctaLink', e.target.value)}
-          className={inputClass}
-        />
-      </div>
       <ImageUploadField
         label="Image"
         value={section.content.image || ''}
@@ -93,58 +57,6 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
 export function CTAContentEditor({ section, updateContent }: ContentEditorProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Titre</label>
-        <input
-          type="text"
-          value={section.content.headline || ''}
-          onChange={(e) => updateContent('headline', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Description (H2)</label>
-        <textarea
-          value={section.content.description || ''}
-          onChange={(e) => updateContent('description', e.target.value)}
-          rows={3}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Bouton principal</label>
-        <input
-          type="text"
-          value={section.content.primaryCta || ''}
-          onChange={(e) => updateContent('primaryCta', e.target.value)}
-          className={`${inputClass} mb-2`}
-          placeholder="Texte"
-        />
-        <input
-          type="text"
-          value={section.content.primaryLink || ''}
-          onChange={(e) => updateContent('primaryLink', e.target.value)}
-          className={inputClass}
-          placeholder="Lien"
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Bouton secondaire</label>
-        <input
-          type="text"
-          value={section.content.secondaryCta || ''}
-          onChange={(e) => updateContent('secondaryCta', e.target.value)}
-          className={`${inputClass} mb-2`}
-          placeholder="Texte"
-        />
-        <input
-          type="text"
-          value={section.content.secondaryLink || ''}
-          onChange={(e) => updateContent('secondaryLink', e.target.value)}
-          className={inputClass}
-          placeholder="Lien"
-        />
-      </div>
       <ImageUploadField
         label="Image (variante split)"
         value={section.content.image || ''}
@@ -181,16 +93,6 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
         onChange={(url) => updateContent('logo', url)}
         placeholder="URL du logo"
       />
-      <div>
-        <label className={labelClass}>Texte du logo</label>
-        <input
-          type="text"
-          value={section.content.logoText || ''}
-          onChange={(e) => updateContent('logoText', e.target.value)}
-          className={inputClass}
-          placeholder="Nom de la marque"
-        />
-      </div>
 
       <div>
         <label className={labelClass}>Navigation</label>
@@ -230,24 +132,6 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
           <Plus className="w-4 h-4" />
           <span>Ajouter un lien</span>
         </button>
-      </div>
-
-      <div>
-        <label className={labelClass}>Bouton CTA</label>
-        <input
-          type="text"
-          value={section.content.ctaText || ''}
-          onChange={(e) => updateContent('ctaText', e.target.value)}
-          className={`${inputClass} mb-2`}
-          placeholder="Texte du bouton"
-        />
-        <input
-          type="text"
-          value={section.content.ctaLink || ''}
-          onChange={(e) => updateContent('ctaLink', e.target.value)}
-          className={inputClass}
-          placeholder="Lien du bouton"
-        />
       </div>
 
       <div>
@@ -337,24 +221,6 @@ export function ContactContentEditor({ section, updateContent }: ContentEditorPr
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre</label>
-        <input
-          type="text"
-          value={section.content.title || ''}
-          onChange={(e) => updateContent('title', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
         <label className={labelClass}>Email</label>
         <input
           type="email"
@@ -419,24 +285,6 @@ export function FeaturesContentEditor({ section, updateContent }: ContentEditorP
 
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Titre</label>
-        <input
-          type="text"
-          value={section.content.title || ''}
-          onChange={(e) => updateContent('title', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
 
       <div>
         <label className={labelClass}>Fonctionnalites</label>
@@ -513,24 +361,6 @@ export function TestimonialsContentEditor({ section, updateContent }: ContentEdi
 
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Titre</label>
-        <input
-          type="text"
-          value={section.content.title || ''}
-          onChange={(e) => updateContent('title', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
 
       <div>
         <label className={labelClass}>Temoignages</label>
@@ -670,25 +500,6 @@ export function FooterContentEditor({ section, updateContent }: ContentEditorPro
         onChange={(url) => updateContent('logo', url)}
         placeholder="URL du logo"
       />
-      <div>
-        <label className={labelClass}>Texte du logo</label>
-        <input
-          type="text"
-          value={section.content.logoText || ''}
-          onChange={(e) => updateContent('logoText', e.target.value)}
-          className={inputClass}
-          placeholder="Nom de la marque"
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Description</label>
-        <textarea
-          value={section.content.description || ''}
-          onChange={(e) => updateContent('description', e.target.value)}
-          rows={2}
-          className={inputClass}
-        />
-      </div>
 
       <div>
         <label className={labelClass}>Colonnes de liens</label>
@@ -815,24 +626,6 @@ export function ImageTextSplitContentEditor({ section, updateContent }: ContentE
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Sous-titre (optionnel)</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Titre principal</label>
-        <textarea
-          value={section.content.headline || ''}
-          onChange={(e) => updateContent('headline', e.target.value)}
-          rows={3}
-          className={inputClass}
-        />
-      </div>
-      <div>
         <label className={labelClass}>Paragraphe 1</label>
         <textarea
           value={section.content.paragraph1 || ''}
@@ -859,24 +652,6 @@ export function ImageTextSplitContentEditor({ section, updateContent }: ContentE
           className={inputClass}
         />
       </div>
-      <div>
-        <label className={labelClass}>Texte du lien</label>
-        <input
-          type="text"
-          value={section.content.ctaText || ''}
-          onChange={(e) => updateContent('ctaText', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Lien</label>
-        <input
-          type="text"
-          value={section.content.ctaLink || ''}
-          onChange={(e) => updateContent('ctaLink', e.target.value)}
-          className={inputClass}
-        />
-      </div>
       <ImageUploadField
         label="Image"
         value={section.content.image || ''}
@@ -889,24 +664,6 @@ export function ImageTextSplitContentEditor({ section, updateContent }: ContentE
 export function ContentShowcaseContentEditor({ section, updateContent }: ContentEditorProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Sous-titre</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Titre principal</label>
-        <textarea
-          value={section.content.headline || ''}
-          onChange={(e) => updateContent('headline', e.target.value)}
-          rows={2}
-          className={inputClass}
-        />
-      </div>
       <div>
         <label className={labelClass}>Colonne 1</label>
         <textarea
@@ -946,56 +703,11 @@ export function ContentShowcaseContentEditor({ section, updateContent }: Content
 export function CenteredContentContentEditor({ section, updateContent }: ContentEditorProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Sous-titre</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Titre principal</label>
-        <textarea
-          value={section.content.headline || ''}
-          onChange={(e) => updateContent('headline', e.target.value)}
-          rows={2}
-          className={inputClass}
-        />
-      </div>
       <ImageUploadField
         label="Image"
         value={section.content.image || ''}
         onChange={(value) => updateContent('image', value)}
       />
-      <div>
-        <label className={labelClass}>Description</label>
-        <textarea
-          value={section.content.description || ''}
-          onChange={(e) => updateContent('description', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Texte du bouton</label>
-        <input
-          type="text"
-          value={section.content.ctaText || ''}
-          onChange={(e) => updateContent('ctaText', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Lien du bouton</label>
-        <input
-          type="text"
-          value={section.content.ctaLink || ''}
-          onChange={(e) => updateContent('ctaLink', e.target.value)}
-          className={inputClass}
-        />
-      </div>
     </div>
   );
 }
@@ -1009,24 +721,6 @@ export function TextColumnsContentEditor({ section, updateContent }: ContentEdit
           value={section.content.introduction || ''}
           onChange={(e) => updateContent('introduction', e.target.value)}
           rows={4}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Texte du bouton</label>
-        <input
-          type="text"
-          value={section.content.ctaText || ''}
-          onChange={(e) => updateContent('ctaText', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Lien du bouton</label>
-        <input
-          type="text"
-          value={section.content.ctaLink || ''}
-          onChange={(e) => updateContent('ctaLink', e.target.value)}
           className={inputClass}
         />
       </div>
@@ -1495,28 +1189,6 @@ export function ClickFunnelFeaturesContentEditor({ section, updateContent }: Con
   return (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Titre</label>
-        <input
-          type="text"
-          value={section.content.title || ''}
-          onChange={(e) => updateContent('title', e.target.value)}
-          placeholder="Build a funnel-based business"
-          className={inputClass}
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Sous-titre</label>
-        <textarea
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          placeholder="Description complète"
-          className={inputClass}
-          rows={3}
-        />
-      </div>
-
-      <div>
         <div className="flex items-center justify-between mb-3">
           <label className="text-sm font-medium text-gray-700">Témoignages vidéo</label>
           <button
@@ -1582,27 +1254,6 @@ export function ClickFunnelFeaturesContentEditor({ section, updateContent }: Con
         </div>
       </div>
 
-      <div className="border-t pt-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Texte du bouton</label>
-        <input
-          type="text"
-          value={section.content.buttonText || ''}
-          onChange={(e) => updateContent('buttonText', e.target.value)}
-          placeholder="Try ClickFunnels For Free"
-          className={inputClass}
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Lien du bouton</label>
-        <input
-          type="text"
-          value={section.content.buttonUrl || ''}
-          onChange={(e) => updateContent('buttonUrl', e.target.value)}
-          placeholder="#"
-          className={inputClass}
-        />
-      </div>
     </div>
   );
 }
@@ -1660,17 +1311,6 @@ export function ClickFunnelFooterContentEditor({ section, updateContent }: Conte
 
   return (
     <div className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Texte du logo</label>
-        <input
-          type="text"
-          value={section.content.logoText || ''}
-          onChange={(e) => updateContent('logoText', e.target.value)}
-          placeholder="ClickFunnels"
-          className={inputClass}
-        />
-      </div>
-
       <ImageUploadField
         label="Logo (optionnel)"
         value={section.content.logo || ''}
