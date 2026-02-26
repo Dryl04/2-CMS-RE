@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "ci-check": "npm run lint && npm run build",
     "setup:themes": "node setup-themes-simple.js",
     "db:push": "bash ./scripts/supabase-db-push-smart.sh",
     "db:bundle": "bash ./scripts/build-migrations-bundle.sh"
