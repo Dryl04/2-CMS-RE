@@ -1,11 +1,19 @@
 import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { getWidgetFieldLabel } from '@/lib/widgetFieldLabels';
 import ImageUploadField from './ImageUploadField';
 import IconPicker from './IconPicker';
 
 const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent';
 const labelClass = 'block text-sm font-medium text-gray-700 mb-2';
+const LABELS = {
+  title: getWidgetFieldLabel('title') || 'Titre principal',
+  subtitle: getWidgetFieldLabel('subtitle') || 'Sous-titre',
+  headline: getWidgetFieldLabel('headline') || 'Titre principal',
+  ctaText: getWidgetFieldLabel('ctaText') || 'Texte bouton principal',
+  ctaLink: getWidgetFieldLabel('ctaLink') || 'Lien bouton principal',
+};
 
 const SOCIAL_PLATFORMS = [
   { id: 'facebook', label: 'Facebook' },
@@ -60,11 +68,11 @@ export function PricingContentEditor({ section, updateContent }: ContentEditorPr
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre</label>
+        <label className={labelClass}>{LABELS.title}</label>
         <input type="text" value={section.content.title || ''} onChange={(e) => updateContent('title', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre</label>
+        <label className={labelClass}>{LABELS.subtitle}</label>
         <textarea value={section.content.subtitle || ''} onChange={(e) => updateContent('subtitle', e.target.value)} rows={2} className={inputClass} />
       </div>
 
@@ -133,11 +141,11 @@ export function StatsContentEditor({ section, updateContent }: ContentEditorProp
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre</label>
+        <label className={labelClass}>{LABELS.title}</label>
         <input type="text" value={section.content.title || ''} onChange={(e) => updateContent('title', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre</label>
+        <label className={labelClass}>{LABELS.subtitle}</label>
         <input type="text" value={section.content.subtitle || ''} onChange={(e) => updateContent('subtitle', e.target.value)} className={inputClass} />
       </div>
       <div>
@@ -190,11 +198,11 @@ export function TeamContentEditor({ section, updateContent }: ContentEditorProps
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre</label>
+        <label className={labelClass}>{LABELS.title}</label>
         <input type="text" value={section.content.title || ''} onChange={(e) => updateContent('title', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre</label>
+        <label className={labelClass}>{LABELS.subtitle}</label>
         <textarea value={section.content.subtitle || ''} onChange={(e) => updateContent('subtitle', e.target.value)} rows={2} className={inputClass} />
       </div>
       <div>
@@ -249,11 +257,11 @@ export function FAQContentEditor({ section, updateContent }: ContentEditorProps)
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre</label>
+        <label className={labelClass}>{LABELS.title}</label>
         <input type="text" value={section.content.title || ''} onChange={(e) => updateContent('title', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre</label>
+        <label className={labelClass}>{LABELS.subtitle}</label>
         <input type="text" value={section.content.subtitle || ''} onChange={(e) => updateContent('subtitle', e.target.value)} className={inputClass} />
       </div>
       <div>
@@ -300,11 +308,11 @@ export function LogoCloudContentEditor({ section, updateContent }: ContentEditor
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre</label>
+        <label className={labelClass}>{LABELS.title}</label>
         <input type="text" value={section.content.title || ''} onChange={(e) => updateContent('title', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre</label>
+        <label className={labelClass}>{LABELS.subtitle}</label>
         <input type="text" value={section.content.subtitle || ''} onChange={(e) => updateContent('subtitle', e.target.value)} className={inputClass} />
       </div>
       <div>
@@ -335,11 +343,11 @@ export function VideoHeroContentEditor({ section, updateContent }: ContentEditor
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre principal</label>
+        <label className={labelClass}>{LABELS.headline}</label>
         <textarea value={section.content.title || ''} onChange={(e) => updateContent('title', e.target.value)} rows={2} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre</label>
+        <label className={labelClass}>{LABELS.subtitle}</label>
         <textarea value={section.content.subtitle || ''} onChange={(e) => updateContent('subtitle', e.target.value)} rows={2} className={inputClass} />
       </div>
       <div>
@@ -410,11 +418,11 @@ export function VideoHeroContentEditor({ section, updateContent }: ContentEditor
         />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>{LABELS.ctaText}</label>
         <input type="text" value={section.content.ctaText || ''} onChange={(e) => updateContent('ctaText', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Lien du bouton</label>
+        <label className={labelClass}>{LABELS.ctaLink}</label>
         <input type="text" value={section.content.ctaLink || ''} onChange={(e) => updateContent('ctaLink', e.target.value)} className={inputClass} />
       </div>
     </div>
@@ -441,11 +449,11 @@ export function GalleryContentEditor({ section, updateContent }: ContentEditorPr
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre</label>
+        <label className={labelClass}>{LABELS.title}</label>
         <input type="text" value={section.content.title || ''} onChange={(e) => updateContent('title', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre</label>
+        <label className={labelClass}>{LABELS.subtitle}</label>
         <input type="text" value={section.content.subtitle || ''} onChange={(e) => updateContent('subtitle', e.target.value)} className={inputClass} />
       </div>
       <div>

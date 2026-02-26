@@ -1,4 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react';
+import { getWidgetFieldLabelNormalized } from '@/lib/widgetFieldLabels';
 import ImageUploadField from './ImageUploadField';
 
 type JsonPrimitive = string | number | boolean | null;
@@ -20,7 +21,7 @@ const FRIENDLY_FIELD_LABELS: Record<string, string> = {
   title: 'Titre',
   subtitle: 'Sous-titre',
   headline: 'Titre principal',
-  subheadline: 'Sous-titre principal',
+  subheadline: 'Sous-titre',
   description: 'Description',
   content: 'Contenu',
   image: 'Image',
@@ -131,6 +132,16 @@ const prettifyLabel = (label?: string, path?: string) => {
 
   const normalizedPath = normalizeLabelKey(rawPath);
   const normalizedLabel = normalizeLabelKey(rawLabel);
+
+  const canonicalPathLabel = normalizedPath ? getWidgetFieldLabelNormalized(normalizedPath) : undefined;
+  if (canonicalPathLabel) {
+    return canonicalPathLabel;
+  }
+
+  const canonicalLabel = normalizedLabel ? getWidgetFieldLabelNormalized(normalizedLabel) : undefined;
+  if (canonicalLabel) {
+    return canonicalLabel;
+  }
 
   if (normalizedPath && FRIENDLY_FIELD_LABELS[normalizedPath]) {
     return FRIENDLY_FIELD_LABELS[normalizedPath];

@@ -1,11 +1,23 @@
 import React from 'react';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { getWidgetFieldLabel } from '@/lib/widgetFieldLabels';
 import ImageUploadField from './ImageUploadField';
 import IconPicker from './IconPicker';
 
 const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent';
 const labelClass = 'block text-sm font-medium text-gray-700 mb-2';
+const LABELS = {
+  headline: getWidgetFieldLabel('headline') || 'Titre principal',
+  subheadline: getWidgetFieldLabel('subheadline') || 'Sous-titre',
+  title: getWidgetFieldLabel('title') || 'Titre principal',
+  ctaText: getWidgetFieldLabel('ctaText') || 'Texte bouton principal',
+  ctaLink: getWidgetFieldLabel('ctaLink') || 'Lien bouton principal',
+  primaryCta: getWidgetFieldLabel('primaryCta') || 'Texte bouton principal',
+  primaryLink: getWidgetFieldLabel('primaryLink') || 'Lien bouton principal',
+  secondaryCta: getWidgetFieldLabel('secondaryCta') || 'Texte bouton secondaire',
+  secondaryLink: getWidgetFieldLabel('secondaryLink') || 'Lien bouton secondaire',
+};
 
 interface ContentEditorProps {
   section: PageBuilderSection;
@@ -45,7 +57,7 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre principal (H1)</label>
+        <label className={labelClass}>{LABELS.headline}</label>
         <input
           type="text"
           value={section.content.headline || ''}
@@ -54,7 +66,7 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
         />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
+        <label className={labelClass}>{LABELS.subheadline}</label>
         <textarea
           value={section.content.subheadline || ''}
           onChange={(e) => updateContent('subheadline', e.target.value)}
@@ -63,7 +75,7 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
         />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>{LABELS.ctaText}</label>
         <input
           type="text"
           value={section.content.ctaText || ''}
@@ -72,7 +84,7 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
         />
       </div>
       <div>
-        <label className={labelClass}>Lien du bouton</label>
+        <label className={labelClass}>{LABELS.ctaLink}</label>
         <input
           type="text"
           value={section.content.ctaLink || ''}
@@ -94,7 +106,7 @@ export function CTAContentEditor({ section, updateContent }: ContentEditorProps)
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre</label>
+        <label className={labelClass}>{LABELS.headline}</label>
         <input
           type="text"
           value={section.content.headline || ''}
@@ -118,14 +130,14 @@ export function CTAContentEditor({ section, updateContent }: ContentEditorProps)
           value={section.content.primaryCta || ''}
           onChange={(e) => updateContent('primaryCta', e.target.value)}
           className={`${inputClass} mb-2`}
-          placeholder="Texte"
+          placeholder={LABELS.primaryCta}
         />
         <input
           type="text"
           value={section.content.primaryLink || ''}
           onChange={(e) => updateContent('primaryLink', e.target.value)}
           className={inputClass}
-          placeholder="Lien"
+          placeholder={LABELS.primaryLink}
         />
       </div>
       <div>
@@ -135,14 +147,14 @@ export function CTAContentEditor({ section, updateContent }: ContentEditorProps)
           value={section.content.secondaryCta || ''}
           onChange={(e) => updateContent('secondaryCta', e.target.value)}
           className={`${inputClass} mb-2`}
-          placeholder="Texte"
+          placeholder={LABELS.secondaryCta}
         />
         <input
           type="text"
           value={section.content.secondaryLink || ''}
           onChange={(e) => updateContent('secondaryLink', e.target.value)}
           className={inputClass}
-          placeholder="Lien"
+          placeholder={LABELS.secondaryLink}
         />
       </div>
       <ImageUploadField
@@ -239,14 +251,14 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
           value={section.content.ctaText || ''}
           onChange={(e) => updateContent('ctaText', e.target.value)}
           className={`${inputClass} mb-2`}
-          placeholder="Texte du bouton"
+          placeholder={LABELS.ctaText}
         />
         <input
           type="text"
           value={section.content.ctaLink || ''}
           onChange={(e) => updateContent('ctaLink', e.target.value)}
           className={inputClass}
-          placeholder="Lien du bouton"
+          placeholder={LABELS.ctaLink}
         />
       </div>
 
@@ -257,14 +269,14 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
           value={section.content.secondaryCtaText || ''}
           onChange={(e) => updateContent('secondaryCtaText', e.target.value)}
           className={`${inputClass} mb-2`}
-          placeholder="Texte bouton secondaire"
+          placeholder={LABELS.secondaryCta}
         />
         <input
           type="text"
           value={section.content.secondaryCtaLink || ''}
           onChange={(e) => updateContent('secondaryCtaLink', e.target.value)}
           className={inputClass}
-          placeholder="Lien bouton secondaire"
+          placeholder={LABELS.secondaryLink}
         />
       </div>
 

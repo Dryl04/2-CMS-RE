@@ -3,6 +3,7 @@ import { Settings, Palette, Code, ChevronDown, ChevronRight, Bold, Italic, Link2
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { widgetLibrary } from '@/lib/widgetLibrary';
 import { supabase } from '@/lib/supabase';
+import { getWidgetFieldLabel } from '@/lib/widgetFieldLabels';
 import WidgetThemeSelector from './WidgetThemeSelector';
 import {
   HeroContentEditor,
@@ -400,31 +401,6 @@ const EDITOR_OWNED_BUTTON_KEYS: Readonly<Record<string, ReadonlyArray<string>>> 
   'clickfunnels-hero': ['buttonText'],
 };
 
-const UNIFORM_FIELD_LABELS: Record<string, string> = {
-  headline: 'Titre principal',
-  title: 'Titre',
-  logoText: 'Nom de marque',
-  formTitle: 'Titre du formulaire',
-  tagline: 'Accroche',
-  subheadline: 'Sous-titre',
-  subtitle: 'Sous-titre',
-  description: 'Description',
-  additionalText: 'Texte additionnel',
-  privacyNote: 'Note de confidentialité',
-  content: 'Contenu texte',
-  ctaText: 'Texte bouton principal',
-  buttonText: 'Texte bouton',
-  primaryCta: 'Texte bouton principal',
-  secondaryCta: 'Texte bouton secondaire',
-  primaryText: 'Texte bouton principal',
-  secondaryText: 'Texte bouton secondaire',
-  ctaLink: 'Lien bouton principal',
-  buttonUrl: 'Lien bouton',
-  primaryLink: 'Lien bouton principal',
-  secondaryLink: 'Lien bouton secondaire',
-  link: 'Lien',
-};
-
 function ColorOverrideField({
   label,
   value,
@@ -600,7 +576,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             <h4 className="text-xs font-semibold tracking-wide text-gray-700 uppercase">Titres</h4>
             {titleFields.map((key) => (
               <div key={key}>
-                <label className="block text-xs text-gray-600 mb-1">{UNIFORM_FIELD_LABELS[key] || key}</label>
+                <label className="block text-xs text-gray-600 mb-1">{getWidgetFieldLabel(key) || key}</label>
                 <input
                   type="text"
                   value={section.content[key] || ''}
@@ -619,7 +595,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             {paragraphFields.map((key) => (
               <RichTextArea
                 key={key}
-                label={UNIFORM_FIELD_LABELS[key] || key}
+                label={getWidgetFieldLabel(key) || key}
                 value={section.content[key] || ''}
                 onChange={(val) => updateContent(key, val)}
                 rows={key === 'description' || key === 'content' ? 3 : 2}
@@ -633,7 +609,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             <h4 className="text-xs font-semibold tracking-wide text-gray-700 uppercase">Boutons & liens</h4>
             {buttonTextFields.map((key) => (
               <div key={key}>
-                <label className="block text-xs text-gray-600 mb-1">{UNIFORM_FIELD_LABELS[key] || key}</label>
+                <label className="block text-xs text-gray-600 mb-1">{getWidgetFieldLabel(key) || key}</label>
                 <input
                   type="text"
                   value={section.content[key] || ''}
@@ -645,7 +621,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             {buttonLinkFields.map((key) => (
               <LinkAutosuggestInput
                 key={key}
-                label={UNIFORM_FIELD_LABELS[key] || key}
+                label={getWidgetFieldLabel(key) || key}
                 value={section.content[key] || ''}
                 onChange={(val) => updateContent(key, val)}
               />
