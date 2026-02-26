@@ -402,6 +402,22 @@ const EDITOR_OWNED_BUTTON_KEYS: Readonly<Record<string, ReadonlyArray<string>>> 
   'clickfunnels-hero': ['buttonText'],
 };
 
+// Title / paragraph keys already handled by each widget's specific content editor.
+// These are excluded from the uniform quick-edit section to avoid duplicates.
+// Rule: one text field = one editing location. The specific editor is authoritative.
+const EDITOR_OWNED_TEXT_KEYS: Readonly<Record<string, ReadonlyArray<string>>> = {
+  hero:                  ['headline', 'subheadline'],
+  features:              ['title', 'subtitle'],
+  cta:                   ['headline', 'description'],
+  header:                ['logoText'],
+  contact:               ['title', 'subtitle'],
+  testimonials:          ['title', 'subtitle'],
+  footer:                ['logoText', 'description'],
+  'clickfunnel-features': ['title', 'subtitle'],
+  videohero:             ['title', 'subtitle'],
+  'clickfunnels-hero':   ['title', 'tagline', 'subtitle'],
+};
+
 function ColorOverrideField({
   label,
   value,
@@ -552,16 +568,17 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
   const renderUniformQuickEdit = () => {
     const content = section.content || {};
     const ownedKeys = new Set(EDITOR_OWNED_BUTTON_KEYS[section.type] || []);
+    const ownedTextKeys = new Set(EDITOR_OWNED_TEXT_KEYS[section.type] || []);
     const allowedTitleKeys = new Set(capabilities.quickEdit.titleKeys);
     const allowedParagraphKeys = new Set(capabilities.quickEdit.paragraphKeys);
     const allowedButtonTextKeys = new Set(capabilities.quickEdit.buttonTextKeys);
     const allowedButtonLinkKeys = new Set(capabilities.quickEdit.buttonLinkKeys);
 
     const titleFields = TITLE_FIELD_KEYS.filter((key) =>
-      allowedTitleKeys.has(key) && typeof content[key] === 'string',
+      allowedTitleKeys.has(key) && typeof content[key] === 'string' && !ownedTextKeys.has(key),
     );
     const paragraphFields = PARAGRAPH_FIELD_KEYS.filter((key) =>
-      allowedParagraphKeys.has(key) && typeof content[key] === 'string',
+      allowedParagraphKeys.has(key) && typeof content[key] === 'string' && !ownedTextKeys.has(key),
     );
     const buttonTextFields = BUTTON_TEXT_FIELD_KEYS.filter(
       (key) => allowedButtonTextKeys.has(key) && typeof content[key] === 'string' && !ownedKeys.has(key),

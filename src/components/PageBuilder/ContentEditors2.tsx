@@ -1272,15 +1272,15 @@ export function ClickFunnelsHeroContentEditor({ section, updateContent }: Conten
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre (ligne 1)</label>
+        <label className={labelClass}>Titre principal</label>
         <input type="text" value={section.content.title || ''} onChange={(e) => updateContent('title', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre (ligne 2)</label>
+        <label className={labelClass}>Sous-titre</label>
         <input type="text" value={section.content.subtitle || ''} onChange={(e) => updateContent('subtitle', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Tagline</label>
+        <label className={labelClass}>Accroche</label>
         <input type="text" value={section.content.tagline || ''} onChange={(e) => updateContent('tagline', e.target.value)} className={inputClass} placeholder="Start for free today." />
       </div>
       <div>

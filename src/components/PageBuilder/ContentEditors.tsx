@@ -115,7 +115,7 @@ export function CTAContentEditor({ section, updateContent }: ContentEditorProps)
         />
       </div>
       <div>
-        <label className={labelClass}>Description (H2)</label>
+        <label className={labelClass}>Description</label>
         <textarea
           value={section.content.description || ''}
           onChange={(e) => updateContent('description', e.target.value)}
@@ -194,7 +194,7 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
         placeholder="URL du logo"
       />
       <div>
-        <label className={labelClass}>Texte du logo</label>
+        <label className={labelClass}>Nom de marque</label>
         <input
           type="text"
           value={section.content.logoText || ''}
@@ -349,7 +349,7 @@ export function ContactContentEditor({ section, updateContent }: ContentEditorPr
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre</label>
+        <label className={labelClass}>Titre principal</label>
         <input
           type="text"
           value={section.content.title || ''}
@@ -358,7 +358,7 @@ export function ContactContentEditor({ section, updateContent }: ContentEditorPr
         />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
+        <label className={labelClass}>Sous-titre</label>
         <input
           type="text"
           value={section.content.subtitle || ''}
@@ -432,7 +432,7 @@ export function FeaturesContentEditor({ section, updateContent }: ContentEditorP
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre</label>
+        <label className={labelClass}>Titre principal</label>
         <input
           type="text"
           value={section.content.title || ''}
@@ -441,7 +441,7 @@ export function FeaturesContentEditor({ section, updateContent }: ContentEditorP
         />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
+        <label className={labelClass}>Sous-titre</label>
         <input
           type="text"
           value={section.content.subtitle || ''}
@@ -526,7 +526,7 @@ export function TestimonialsContentEditor({ section, updateContent }: ContentEdi
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre</label>
+        <label className={labelClass}>Titre principal</label>
         <input
           type="text"
           value={section.content.title || ''}
@@ -535,7 +535,7 @@ export function TestimonialsContentEditor({ section, updateContent }: ContentEdi
         />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
+        <label className={labelClass}>Sous-titre</label>
         <input
           type="text"
           value={section.content.subtitle || ''}
@@ -683,7 +683,7 @@ export function FooterContentEditor({ section, updateContent }: ContentEditorPro
         placeholder="URL du logo"
       />
       <div>
-        <label className={labelClass}>Texte du logo</label>
+        <label className={labelClass}>Nom de marque</label>
         <input
           type="text"
           value={section.content.logoText || ''}
@@ -1507,7 +1507,7 @@ export function ClickFunnelFeaturesContentEditor({ section, updateContent }: Con
   return (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Titre</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Titre principal</label>
         <input
           type="text"
           value={section.content.title || ''}
