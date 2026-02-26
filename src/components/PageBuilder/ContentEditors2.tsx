@@ -410,11 +410,11 @@ export function VideoHeroContentEditor({ section, updateContent }: ContentEditor
         />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>Texte bouton principal</label>
         <input type="text" value={section.content.ctaText || ''} onChange={(e) => updateContent('ctaText', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Lien du bouton</label>
+        <label className={labelClass}>Lien bouton principal</label>
         <input type="text" value={section.content.ctaLink || ''} onChange={(e) => updateContent('ctaLink', e.target.value)} className={inputClass} />
       </div>
     </div>
@@ -543,7 +543,7 @@ export function NewsletterContentEditor({ section, updateContent }: ContentEdito
         <input type="text" value={section.content.placeholder || ''} onChange={(e) => updateContent('placeholder', e.target.value)} className={inputClass} placeholder="Entrez votre email" />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>Texte bouton</label>
         <input type="text" value={section.content.buttonText || ''} onChange={(e) => updateContent('buttonText', e.target.value)} className={inputClass} />
       </div>
       <div>
@@ -709,7 +709,7 @@ export function ContactSplitContentEditor({ section, updateContent }: ContentEdi
         <textarea value={section.content.formDescription || ''} onChange={(e) => updateContent('formDescription', e.target.value)} rows={2} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>Texte bouton</label>
         <input type="text" value={section.content.buttonText || ''} onChange={(e) => updateContent('buttonText', e.target.value)} className={inputClass} />
       </div>
     </div>
@@ -732,7 +732,7 @@ export function FeedbackContactContentEditor({ section, updateContent }: Content
         <textarea value={section.content.description || ''} onChange={(e) => updateContent('description', e.target.value)} rows={3} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Texte du lien CTA</label>
+        <label className={labelClass}>Texte bouton principal</label>
         <input type="text" value={section.content.ctaText || ''} onChange={(e) => updateContent('ctaText', e.target.value)} className={inputClass} />
       </div>
       <div>
@@ -744,7 +744,7 @@ export function FeedbackContactContentEditor({ section, updateContent }: Content
         <textarea value={section.content.formDescription || ''} onChange={(e) => updateContent('formDescription', e.target.value)} rows={2} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>Texte bouton</label>
         <input type="text" value={section.content.buttonText || ''} onChange={(e) => updateContent('buttonText', e.target.value)} className={inputClass} />
       </div>
     </div>
@@ -783,7 +783,7 @@ export function ServicesCardsContentEditor({ section, updateContent }: ContentEd
         <textarea value={section.content.description || ''} onChange={(e) => updateContent('description', e.target.value)} rows={2} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton CTA</label>
+        <label className={labelClass}>Texte bouton principal</label>
         <input type="text" value={section.content.ctaText || ''} onChange={(e) => updateContent('ctaText', e.target.value)} className={inputClass} />
       </div>
       <div>
@@ -836,7 +836,7 @@ export function EditorialCardsContentEditor({ section, updateContent }: ContentE
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre de la section</label>
+        <label className={labelClass}>Titre</label>
         <input type="text" value={section.content.title || ''} onChange={(e) => updateContent('title', e.target.value)} className={inputClass} />
       </div>
       <div>
@@ -844,7 +844,7 @@ export function EditorialCardsContentEditor({ section, updateContent }: ContentE
         <input type="text" value={section.content.subtitle || ''} onChange={(e) => updateContent('subtitle', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton "Voir tout"</label>
+        <label className={labelClass}>Texte bouton principal</label>
         <input type="text" value={section.content.ctaText || ''} onChange={(e) => updateContent('ctaText', e.target.value)} className={inputClass} />
       </div>
       <div>
@@ -1092,7 +1092,7 @@ export function NewsletterSignupContentEditor({ section, updateContent }: Conten
         <input type="text" value={section.content.placeholder || ''} onChange={(e) => updateContent('placeholder', e.target.value)} className={inputClass} placeholder="Votre adresse email" />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>Texte bouton</label>
         <input type="text" value={section.content.buttonText || ''} onChange={(e) => updateContent('buttonText', e.target.value)} className={inputClass} />
       </div>
       <div>
@@ -1164,7 +1164,7 @@ export function HeroWithTestimonialsContentEditor({ section, updateContent }: Co
         <textarea value={section.content.description || ''} onChange={(e) => updateContent('description', e.target.value)} rows={3} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>Texte bouton principal</label>
         <input type="text" value={section.content.ctaText || ''} onChange={(e) => updateContent('ctaText', e.target.value)} className={inputClass} />
       </div>
       <div>
@@ -1280,7 +1280,7 @@ export function ClickFunnelsHeroContentEditor({ section, updateContent }: Conten
         <input type="text" value={section.content.inputPlaceholder || ''} onChange={(e) => updateContent('inputPlaceholder', e.target.value)} className={inputClass} />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>Texte bouton</label>
         <input type="text" value={section.content.buttonText || ''} onChange={(e) => updateContent('buttonText', e.target.value)} className={inputClass} />
       </div>
       <label className="flex items-center space-x-2 cursor-pointer">

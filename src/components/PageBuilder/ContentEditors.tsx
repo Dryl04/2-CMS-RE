@@ -45,7 +45,7 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Titre principal (H1)</label>
+        <label className={labelClass}>Titre principal</label>
         <input
           type="text"
           value={section.content.headline || ''}
@@ -54,7 +54,7 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
         />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
+        <label className={labelClass}>Sous-titre</label>
         <textarea
           value={section.content.subheadline || ''}
           onChange={(e) => updateContent('subheadline', e.target.value)}
@@ -63,7 +63,7 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
         />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>Texte bouton principal</label>
         <input
           type="text"
           value={section.content.ctaText || ''}
@@ -72,7 +72,7 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
         />
       </div>
       <div>
-        <label className={labelClass}>Lien du bouton</label>
+        <label className={labelClass}>Lien bouton principal</label>
         <input
           type="text"
           value={section.content.ctaLink || ''}
@@ -182,7 +182,7 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
         placeholder="URL du logo"
       />
       <div>
-        <label className={labelClass}>Texte du logo</label>
+        <label className={labelClass}>Nom de marque</label>
         <input
           type="text"
           value={section.content.logoText || ''}
@@ -233,20 +233,20 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
       </div>
 
       <div>
-        <label className={labelClass}>Bouton CTA</label>
+        <label className={labelClass}>Bouton principal</label>
         <input
           type="text"
           value={section.content.ctaText || ''}
           onChange={(e) => updateContent('ctaText', e.target.value)}
           className={`${inputClass} mb-2`}
-          placeholder="Texte du bouton"
+          placeholder="Texte"
         />
         <input
           type="text"
           value={section.content.ctaLink || ''}
           onChange={(e) => updateContent('ctaLink', e.target.value)}
           className={inputClass}
-          placeholder="Lien du bouton"
+          placeholder="Lien"
         />
       </div>
 
@@ -346,7 +346,7 @@ export function ContactContentEditor({ section, updateContent }: ContentEditorPr
         />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
+        <label className={labelClass}>Sous-titre</label>
         <input
           type="text"
           value={section.content.subtitle || ''}
@@ -429,7 +429,7 @@ export function FeaturesContentEditor({ section, updateContent }: ContentEditorP
         />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
+        <label className={labelClass}>Sous-titre</label>
         <input
           type="text"
           value={section.content.subtitle || ''}
@@ -523,7 +523,7 @@ export function TestimonialsContentEditor({ section, updateContent }: ContentEdi
         />
       </div>
       <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
+        <label className={labelClass}>Sous-titre</label>
         <input
           type="text"
           value={section.content.subtitle || ''}
@@ -671,7 +671,7 @@ export function FooterContentEditor({ section, updateContent }: ContentEditorPro
         placeholder="URL du logo"
       />
       <div>
-        <label className={labelClass}>Texte du logo</label>
+        <label className={labelClass}>Nom de marque</label>
         <input
           type="text"
           value={section.content.logoText || ''}
@@ -860,7 +860,7 @@ export function ImageTextSplitContentEditor({ section, updateContent }: ContentE
         />
       </div>
       <div>
-        <label className={labelClass}>Texte du lien</label>
+        <label className={labelClass}>Texte bouton principal</label>
         <input
           type="text"
           value={section.content.ctaText || ''}
@@ -869,7 +869,7 @@ export function ImageTextSplitContentEditor({ section, updateContent }: ContentE
         />
       </div>
       <div>
-        <label className={labelClass}>Lien</label>
+        <label className={labelClass}>Lien bouton principal</label>
         <input
           type="text"
           value={section.content.ctaLink || ''}
@@ -979,7 +979,7 @@ export function CenteredContentContentEditor({ section, updateContent }: Content
         />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>Texte bouton principal</label>
         <input
           type="text"
           value={section.content.ctaText || ''}
@@ -988,7 +988,7 @@ export function CenteredContentContentEditor({ section, updateContent }: Content
         />
       </div>
       <div>
-        <label className={labelClass}>Lien du bouton</label>
+        <label className={labelClass}>Lien bouton principal</label>
         <input
           type="text"
           value={section.content.ctaLink || ''}
@@ -1013,7 +1013,7 @@ export function TextColumnsContentEditor({ section, updateContent }: ContentEdit
         />
       </div>
       <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>Texte bouton principal</label>
         <input
           type="text"
           value={section.content.ctaText || ''}
@@ -1022,7 +1022,7 @@ export function TextColumnsContentEditor({ section, updateContent }: ContentEdit
         />
       </div>
       <div>
-        <label className={labelClass}>Lien du bouton</label>
+        <label className={labelClass}>Lien bouton principal</label>
         <input
           type="text"
           value={section.content.ctaLink || ''}
@@ -1190,7 +1190,7 @@ export function ClickFunnelCenterCardContentEditor({ section, updateContent }: C
             </div>
 
             <div>
-              <label className={labelClass}>Texte du bouton</label>
+              <label className={labelClass}>Texte bouton</label>
               <input
                 type="text"
                 value={selectedTab.buttonText || ''}
@@ -1583,7 +1583,7 @@ export function ClickFunnelFeaturesContentEditor({ section, updateContent }: Con
       </div>
 
       <div className="border-t pt-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Texte du bouton</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Texte bouton</label>
         <input
           type="text"
           value={section.content.buttonText || ''}
@@ -1594,7 +1594,7 @@ export function ClickFunnelFeaturesContentEditor({ section, updateContent }: Con
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Lien du bouton</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Lien bouton</label>
         <input
           type="text"
           value={section.content.buttonUrl || ''}
@@ -1661,7 +1661,7 @@ export function ClickFunnelFooterContentEditor({ section, updateContent }: Conte
   return (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Texte du logo</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Nom de marque</label>
         <input
           type="text"
           value={section.content.logoText || ''}
