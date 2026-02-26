@@ -37,7 +37,6 @@ import {
   FeedbackContactContentEditor,
   ServicesCardsContentEditor,
   EditorialCardsContentEditor,
-  MinimalCTAContentEditor,
   CinematicFooterContentEditor,
   SocialFollowContentEditor,
   NewsletterSignupContentEditor,
@@ -665,93 +664,84 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       case 'footer':
         return <div className="space-y-5">{quickEdit}<FooterContentEditor {...editorProps} /></div>;
       case 'image-text-split':
-        return <ImageTextSplitContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ImageTextSplitContentEditor {...editorProps} /></div>;
       case 'content-showcase':
-        return <ContentShowcaseContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ContentShowcaseContentEditor {...editorProps} /></div>;
       case 'centered-content':
-        return <CenteredContentContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<CenteredContentContentEditor {...editorProps} /></div>;
       case 'text-columns':
-        return <TextColumnsContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<TextColumnsContentEditor {...editorProps} /></div>;
       case 'clickfunnel-center-card':
-        return <ClickFunnelCenterCardContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ClickFunnelCenterCardContentEditor {...editorProps} /></div>;
       case 'click-funnel-testimonials':
-        return <ClickFunnelTestimonialsContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ClickFunnelTestimonialsContentEditor {...editorProps} /></div>;
       case 'clickfunnel-features':
         return <div className="space-y-5">{quickEdit}<ClickFunnelFeaturesContentEditor {...editorProps} /></div>;
       case 'clickfunnel-footer':
-        return <ClickFunnelFooterContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ClickFunnelFooterContentEditor {...editorProps} /></div>;
       case 'pricing':
-        return <PricingContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<PricingContentEditor {...editorProps} /></div>;
       case 'stats':
-        return <StatsContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<StatsContentEditor {...editorProps} /></div>;
       case 'team':
-        return <TeamContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<TeamContentEditor {...editorProps} /></div>;
       case 'faq':
       case 'faq-two-columns':
-        return <FAQContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<FAQContentEditor {...editorProps} /></div>;
       case 'logocloud':
-        return <LogoCloudContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<LogoCloudContentEditor {...editorProps} /></div>;
       case 'videohero':
         return <div className="space-y-5">{quickEdit}<VideoHeroContentEditor {...editorProps} /></div>;
       case 'gallery':
-        return <GalleryContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<GalleryContentEditor {...editorProps} /></div>;
       case 'timeline':
       case 'timeline-grid':
-        return <TimelineContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<TimelineContentEditor {...editorProps} /></div>;
       case 'newsletter':
-        return <NewsletterContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<NewsletterContentEditor {...editorProps} /></div>;
       case 'process':
       case 'process-steps-cards':
-        return <ProcessContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ProcessContentEditor {...editorProps} /></div>;
       case 'services-grid':
-        return <ServicesGridContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ServicesGridContentEditor {...editorProps} /></div>;
       case 'contact-split':
-        return <ContactSplitContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ContactSplitContentEditor {...editorProps} /></div>;
       case 'feedback-contact':
-        return <FeedbackContactContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<FeedbackContactContentEditor {...editorProps} /></div>;
       case 'services-cards':
       case 'services-carousel':
-        return <ServicesCardsContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<ServicesCardsContentEditor {...editorProps} /></div>;
       case 'editorial-cards-row':
-        return <EditorialCardsContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<EditorialCardsContentEditor {...editorProps} /></div>;
       case 'minimal-final-cta':
-        return <MinimalCTAContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}</div>;
       case 'cinematic-footer':
-        return <CinematicFooterContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<CinematicFooterContentEditor {...editorProps} /></div>;
       case 'social-follow':
-        return <SocialFollowContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<SocialFollowContentEditor {...editorProps} /></div>;
       case 'newsletter-signup':
-        return <NewsletterSignupContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<NewsletterSignupContentEditor {...editorProps} /></div>;
       case 'simple-centered-hero':
       case 'brand-identity-hero':
-        return <SimpleHeroContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<SimpleHeroContentEditor {...editorProps} /></div>;
       case 'hero-with-testimonials':
       case 'centered-testimonial':
-        return <HeroWithTestimonialsContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<HeroWithTestimonialsContentEditor {...editorProps} /></div>;
       case 'hero-with-services':
       case 'content-with-services':
-        return <HeroWithServicesContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<HeroWithServicesContentEditor {...editorProps} /></div>;
       case 'clickfunnels-hero':
         return <div className="space-y-5">{quickEdit}<ClickFunnelsHeroContentEditor {...editorProps} /></div>;
       case 'membership-pricing':
-        return <MembershipPricingContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<MembershipPricingContentEditor {...editorProps} /></div>;
       case 'bento-features':
-        return <BentoFeaturesContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<BentoFeaturesContentEditor {...editorProps} /></div>;
       case 'features-carousel':
-        return <FeaturesCarouselContentEditor {...editorProps} />;
+        return <div className="space-y-5">{quickEdit}<FeaturesCarouselContentEditor {...editorProps} /></div>;
       case 'embed':
         return (
           <div className="space-y-4">
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Titre (optionnel)</label>
-              <input
-                type="text"
-                value={section.content?.title || ''}
-                onChange={(e) => updateContent('title', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                placeholder="Titre au-dessus du contenu intégré"
-              />
-            </div>
+            {quickEdit}
             <div>
               <label className="block text-xs text-gray-600 mb-1">Code d'intégration (HTML/iframe)</label>
               <textarea
@@ -777,15 +767,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       case 'code-insert':
         return (
           <div className="space-y-4">
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Titre (optionnel)</label>
-              <input
-                type="text"
-                value={section.content?.title || ''}
-                onChange={(e) => updateContent('title', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              />
-            </div>
+            {quickEdit}
             <div>
               <label className="block text-xs text-gray-600 mb-1">Langage</label>
               <select
