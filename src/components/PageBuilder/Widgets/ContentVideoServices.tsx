@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Play, Pause, Umbrella, Layers, PaintBucket } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface ContentVideoServicesProps {
   section: PageBuilderSection;
@@ -33,7 +33,7 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
   const subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
-  const linkStyle: React.CSSProperties = {
+  const _linkStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 

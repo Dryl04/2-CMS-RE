@@ -1,6 +1,6 @@
 import { Umbrella, Layers, PaintBucket, Clock, ArrowRight } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface ServicesCarouselWidgetProps {
   section: PageBuilderSection;
@@ -26,7 +26,7 @@ export default function ServicesCarouselWidget({ section }: ServicesCarouselWidg
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
-  const subtitleStyle: React.CSSProperties = {
+  const _subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
   const linkStyle: React.CSSProperties = {

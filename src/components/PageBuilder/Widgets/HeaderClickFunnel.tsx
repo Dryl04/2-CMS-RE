@@ -1,8 +1,8 @@
 import React from 'react';
 import { ArrowRight, Menu, X } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { useState } from 'react';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface HeaderClickFunnelProps {
   section: PageBuilderSection;
@@ -15,7 +15,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
 
   const typo = design?.typography || {};
 
-  const bgColor = design?.background?.type === 'color' ? design.background.value : undefined;
+  const _bgColor = design?.background?.type === 'color' ? design.background.value : undefined;
   const fontFamily = typo.fontFamily || undefined;
 
   const navStyle: React.CSSProperties = {

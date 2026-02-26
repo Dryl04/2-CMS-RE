@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Upload, Link as LinkIcon, X } from 'lucide-react';
-import MediaLibrary from '../MediaLibrary';
+import MediaLibrary from '@/components/MediaLibrary';
 
 interface ImageUploadFieldProps {
   label: string;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface ClickFunnelCenterCardProps {
   section: PageBuilderSection;

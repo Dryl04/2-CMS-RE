@@ -1,6 +1,6 @@
 import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { PageBuilderSection } from '../../lib/pageBuilderTypes';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import ImageUploadField from './ImageUploadField';
 import IconPicker from './IconPicker';
 

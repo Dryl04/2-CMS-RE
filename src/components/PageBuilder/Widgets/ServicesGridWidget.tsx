@@ -1,7 +1,7 @@
 import React from 'react';
 import { Monitor, Shield, Lock, ArrowRight } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface ServicesGridWidgetProps {
   section: PageBuilderSection;
@@ -65,7 +65,7 @@ export default function ServicesGridWidget({ section }: ServicesGridWidgetProps)
 
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mt-6 md:mt-8 lg:mt-12">
           {content.services?.map((service: any, index: number) => {
-            const IconComponent = iconMap[service.icon] || Monitor;
+            const _IconComponent = iconMap[service.icon] || Monitor;
             return (
               <div key={index} className="space-y-3 md:space-y-4">
                 <h3

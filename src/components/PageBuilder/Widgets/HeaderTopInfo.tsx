@@ -1,6 +1,6 @@
 import { Clock, Menu, Search, ShoppingBag } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface HeaderTopInfoProps {
   section: PageBuilderSection;
@@ -8,7 +8,7 @@ interface HeaderTopInfoProps {
 
 export default function HeaderTopInfo({ section }: HeaderTopInfoProps) {
   const { content, design } = section;
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
+  const _bg = design.background.type === 'color' ? design.background.value : undefined;
 
   const typo = design.typography || {};
   const headingStyle: React.CSSProperties = {

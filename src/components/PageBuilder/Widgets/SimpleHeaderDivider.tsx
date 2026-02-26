@@ -1,6 +1,6 @@
 import React from 'react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface SimpleHeaderDividerProps {
   section: PageBuilderSection;
@@ -15,7 +15,7 @@ export default function SimpleHeaderDivider({ section }: SimpleHeaderDividerProp
     ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
   };
 
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
+  const _bg = design.background.type === 'color' ? design.background.value : undefined;
   const dividerColor = design.colors?.dividerColor;
 
   return (

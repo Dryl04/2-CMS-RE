@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
-import { X, Link2, Image, Search, ExternalLink, Replace, Check, ChevronDown, ChevronRight } from 'lucide-react';
-import { PageBuilderSection } from '../../lib/pageBuilderTypes';
+import { X, Link2, Image, Search, ExternalLink, Replace, Check } from 'lucide-react';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import ImageUploadField from './ImageUploadField';
 
 interface PageAssetManagerProps {

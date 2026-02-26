@@ -1,5 +1,5 @@
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface SimpleCenteredHeroProps {
   section: PageBuilderSection;
@@ -21,19 +21,19 @@ export default function SimpleCenteredHero({ section }: SimpleCenteredHeroProps)
     ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
     ...(typo.h2Color || typo.subtitleColor || typo.headingColor ? { color: typo.h2Color || typo.subtitleColor || typo.headingColor } : {}),
   };
-  const headingStyle = {
+  const _headingStyle = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
     ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
   };
-  const textStyle = {
+  const _textStyle = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
-  const subtitleStyle = {
+  const _subtitleStyle = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
-  const linkStyle = {
+  const _linkStyle = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
   const badgeBg = design.colors?.badgeBg;

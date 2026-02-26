@@ -1,7 +1,7 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface ContactWidgetProps {
   section: PageBuilderSection;
