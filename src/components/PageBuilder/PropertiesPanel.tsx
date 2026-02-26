@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { Settings, Palette, Code, ChevronDown, ChevronRight, Bold, Italic, Link2, Underline } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { widgetLibrary } from '@/lib/widgetLibrary';
+import { getWidgetCapabilities } from '@/lib/widgetCapabilities';
 import { supabase } from '@/lib/supabase';
 import WidgetThemeSelector from './WidgetThemeSelector';
 import {
@@ -1613,6 +1614,8 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
       });
     };
 
+    const caps = getWidgetCapabilities(section.type);
+
     return (
       <div className="space-y-2">
         <WidgetThemeSelector section={section} onUpdateSection={onUpdateSection} />
@@ -1631,7 +1634,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           </div>
         )}
 
-        <CollapsibleSection title="Palette globale" defaultOpen={false}>
+        {caps.supportsPalette && <CollapsibleSection title="Palette globale" defaultOpen={false}>
           <div className="mb-3">
             <label className="block text-xs text-gray-600 mb-2">Palettes prédéfinies</label>
             <div className="grid grid-cols-4 gap-1.5">
@@ -1675,9 +1678,9 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             onChange={(v) => updateDesign('colors', 'accent', v)}
             onClear={() => clearDesign('colors', 'accent')}
           />
-        </CollapsibleSection>
+        </CollapsibleSection>}
 
-        <CollapsibleSection title="Typographie" defaultOpen={false}>
+        {caps.supportsTypography && <CollapsibleSection title="Typographie" defaultOpen={false}>
           <div>
             <label className="block text-xs text-gray-600 mb-1">Police globale</label>
             <select
@@ -1773,9 +1776,9 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               <option value="900">Noir (900)</option>
             </select>
           </div>
-        </CollapsibleSection>
+        </CollapsibleSection>}
 
-        <CollapsibleSection title="Boutons" defaultOpen={false}>
+        {caps.supportsButtons && <CollapsibleSection title="Boutons" defaultOpen={false}>
           <ColorOverrideField
             label="Couleur bouton"
             value={section.design.colors?.buttonBackground}
@@ -1912,9 +1915,9 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             onChange={(v) => updateDesign('colors', 'buttonBorderColor', v)}
             onClear={() => clearDesign('colors', 'buttonBorderColor')}
           />
-        </CollapsibleSection>
+        </CollapsibleSection>}
 
-        <CollapsibleSection title="Icônes" defaultOpen={false}>
+        {caps.supportsIcons && <CollapsibleSection title="Icônes" defaultOpen={false}>
           <ColorOverrideField
             label="Couleur contenu icône"
             value={section.design.colors?.iconColor}
@@ -1990,9 +1993,9 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               />
             </div>
           </div>
-        </CollapsibleSection>
+        </CollapsibleSection>}
 
-        <CollapsibleSection title="Images & vidéos" defaultOpen={false}>
+        {caps.supportsMedia && <CollapsibleSection title="Images & vidéos" defaultOpen={false}>
           <div>
             <label className="block text-xs text-gray-600 mb-1">Arrondi des médias</label>
             <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
@@ -2057,7 +2060,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             />
             <span>Masquer textes/icônes pendant lecture vidéo</span>
           </label>
-        </CollapsibleSection>
+        </CollapsibleSection>}
 
         <CollapsibleSection title="Arrière-plan" defaultOpen={HEADER_WIDGET_TYPES.has(section.type)}>
           <div>
