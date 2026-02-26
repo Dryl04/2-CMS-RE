@@ -327,6 +327,15 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
                   <FileUp className="w-4 h-4" />
                   <span className="hidden sm:inline">Importer</span>
                 </button>
+
+                {onNavigate && (
+                  <button
+                    onClick={() => onNavigate('links')}
+                    className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl font-medium transition-colors text-sm"
+                  >
+                    Liens
+                  </button>
+                )}
               </div>
             </div>
           </div>

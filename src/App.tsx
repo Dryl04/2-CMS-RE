@@ -6,6 +6,7 @@ import { PageThemeProvider } from '@/contexts/PageThemeContext';
 import Auth from '@/components/Auth';
 import Dashboard from '@/components/Dashboard';
 import SEOManager from '@/components/seo/SEOManager';
+import LinkManager from '@/components/seo/LinkManager';
 import SEOPageViewer from '@/components/seo/SEOPageViewer';
 import MediaLibrary from '@/components/MediaLibrary';
 import PageBuilder from '@/components/PageBuilder/PageBuilder';
@@ -16,8 +17,9 @@ import Footer from '@/components/layout/Footer';
 import VisualPageBuilder from '@/components/VisualPageBuilder';
 import BuilderPreviewPage from '@/components/PageBuilder/BuilderPreviewPage';
 import { supabase, SEOMetadata } from '@/lib/supabase';
+import { normalizeInternalPath } from '@/lib/linkRegistry';
 
-type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder' | 'page-builder';
+type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'links' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder' | 'page-builder';
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -45,13 +47,15 @@ function AppContent() {
     };
   }, []);
 
-  const loadPublicSEOPage = async (pageKey: string) => {
+  const loadPublicSEOPage = async (pageKey: string, allowRedirectLookup = true) => {
     setIsLoadingPage(true);
     try {
+      const normalizedPageKey = normalizeInternalPath(pageKey);
+
       const { data, error } = await supabase
         .from('seo_metadata')
         .select('*')
-        .eq('page_key', pageKey)
+        .eq('page_key', normalizedPageKey)
         .eq('status', 'published')
         .maybeSingle();
 
@@ -60,6 +64,26 @@ function AppContent() {
       if (data) {
         setSeoPage(data);
         setCurrentView('page-view');
+        return;
+      }
+
+      if (allowRedirectLookup && normalizedPageKey) {
+        const { data: redirectData, error: redirectError } = await supabase
+          .from('seo_redirects')
+          .select('target_path')
+          .eq('source_path', normalizedPageKey)
+          .eq('is_active', true)
+          .maybeSingle();
+
+        if (redirectError) throw redirectError;
+
+        if (redirectData?.target_path) {
+          const targetPath = normalizeInternalPath(redirectData.target_path);
+          if (targetPath && targetPath !== normalizedPageKey) {
+            window.history.replaceState({}, '', `/${targetPath}`);
+            await loadPublicSEOPage(targetPath, false);
+          }
+        }
       }
     } catch (error) {
       console.error('Error loading SEO page:', error);
@@ -215,6 +239,12 @@ function AppContent() {
         {currentView === 'media' && (
           <div className="max-w-7xl mx-auto px-6 py-8 w-full">
             <MediaLibrary onNavigate={handleNavigate} />
+          </div>
+        )}
+
+        {currentView === 'links' && (
+          <div className="max-w-7xl mx-auto px-6 py-8 w-full">
+            <LinkManager onNavigate={handleNavigate} />
           </div>
         )}
 

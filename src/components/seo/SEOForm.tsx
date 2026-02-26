@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, Layout, ChevronRight, FolderPlus, X } from 'lucide-react';
 import { supabase, PageTemplate } from '@/lib/supabase';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { normalizeInternalPath, replaceInternalLinksInSections } from '@/lib/linkRegistry';
 
 interface SEOFormProps {
   onSaveComplete: () => void;
@@ -244,15 +245,89 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
         data.user_id = editingPage.user_id;
       }
 
+      let savedPageId = editingPage?.id || '';
+
       if (editingPage?.id) {
-        data.id = editingPage.id;
+        const { error } = await supabase
+          .from('seo_metadata')
+          .update({ ...data, updated_at: new Date().toISOString() })
+          .eq('id', editingPage.id);
+
+        if (error) throw error;
+        savedPageId = editingPage.id;
+      } else {
+        const { data: insertedPage, error } = await supabase
+          .from('seo_metadata')
+          .insert(data)
+          .select('id')
+          .single();
+
+        if (error) throw error;
+        savedPageId = insertedPage.id;
       }
 
-      const { error } = await supabase
-        .from('seo_metadata')
-        .upsert(data, { onConflict: 'page_key' });
+      const previousPageKey = editingPage?.page_key ? normalizeInternalPath(editingPage.page_key) : '';
+      const nextPageKey = normalizeInternalPath(pageKey);
 
-      if (error) throw error;
+      if (previousPageKey && nextPageKey && previousPageKey !== nextPageKey) {
+        const { data: allPages, error: pagesError } = await supabase
+          .from('seo_metadata')
+          .select('id, sections_data');
+
+        if (pagesError) throw pagesError;
+
+        for (const page of allPages || []) {
+          const pageSections = Array.isArray((page as any).sections_data)
+            ? ((page as any).sections_data as PageBuilderSection[])
+            : [];
+
+          if (pageSections.length === 0) continue;
+
+          const replacement = replaceInternalLinksInSections(pageSections, previousPageKey, nextPageKey);
+
+          if (replacement.updatedCount > 0) {
+            const { error: updateSectionsError } = await supabase
+              .from('seo_metadata')
+              .update({ sections_data: replacement.sections, updated_at: new Date().toISOString() })
+              .eq('id', (page as any).id);
+
+            if (updateSectionsError) throw updateSectionsError;
+          }
+        }
+
+        const redirectPayload: Record<string, unknown> = {
+          source_path: previousPageKey,
+          target_path: nextPageKey,
+          source_page_id: savedPageId,
+          target_page_id: savedPageId,
+          reason: 'slug_change',
+          is_active: true,
+          created_by: userId || editingPage?.user_id || null,
+        };
+
+        const { data: existingRedirect, error: existingRedirectError } = await supabase
+          .from('seo_redirects')
+          .select('id')
+          .eq('source_path', previousPageKey)
+          .maybeSingle();
+
+        if (existingRedirectError) throw existingRedirectError;
+
+        if (existingRedirect?.id) {
+          const { error: updateRedirectError } = await supabase
+            .from('seo_redirects')
+            .update({ ...redirectPayload, updated_at: new Date().toISOString() })
+            .eq('id', existingRedirect.id);
+
+          if (updateRedirectError) throw updateRedirectError;
+        } else {
+          const { error: insertRedirectError } = await supabase
+            .from('seo_redirects')
+            .insert(redirectPayload);
+
+          if (insertRedirectError) throw insertRedirectError;
+        }
+      }
       onSaveComplete();
     } catch (error: any) {
       console.error('Save error:', error);
