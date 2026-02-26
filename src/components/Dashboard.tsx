@@ -30,24 +30,17 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
 
   const loadStats = async () => {
     try {
-      console.log('[Dashboard] Loading stats...');
-
       const [pagesResult, templatesResult] = await Promise.all([
         supabase.from('seo_metadata').select('status', { count: 'exact' }),
         supabase.from('page_templates').select('id', { count: 'exact' }),
       ]);
 
-      console.log('[Dashboard] Pages result:', pagesResult);
-      console.log('[Dashboard] Templates result:', templatesResult);
-
       if (pagesResult.error) {
         console.error('[Dashboard] Error loading pages:', pagesResult.error);
-        console.error('[Dashboard] Error details:', JSON.stringify(pagesResult.error, null, 2));
       }
 
       if (templatesResult.error) {
         console.error('[Dashboard] Error loading templates:', templatesResult.error);
-        console.error('[Dashboard] Error details:', JSON.stringify(templatesResult.error, null, 2));
       }
 
       const pages = pagesResult.data || [];
@@ -56,7 +49,6 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       const draftPages = pages.filter((p) => p.status === 'draft').length;
       const templates = templatesResult.count || 0;
 
-      console.log('[Dashboard] Stats:', { totalPages, publishedPages, draftPages, templates });
       setStats({ totalPages, publishedPages, draftPages, templates });
     } catch (error) {
       console.error('[Dashboard] Error loading stats:', error);

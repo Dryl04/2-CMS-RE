@@ -66,21 +66,15 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
   const loadMetadata = async () => {
     setIsLoading(true);
     try {
-      console.log('[SEOManager] Loading metadata...');
-
       const { data, error } = await supabase
         .from('seo_metadata')
         .select('*')
         .order('created_at', { ascending: false });
 
-      console.log('[SEOManager] Query result:', { data, error });
-
       if (error) {
-        console.error('[SEOManager] Error details:', JSON.stringify(error, null, 2));
         throw error;
       }
 
-      console.log('[SEOManager] Loaded', data?.length || 0, 'pages');
       setMetadata(data || []);
     } catch (error) {
       console.error('[SEOManager] Error loading metadata:', error);

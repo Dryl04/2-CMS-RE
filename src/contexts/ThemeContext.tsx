@@ -103,7 +103,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         throw insertError;
       }
 
-      console.log('Default themes initialized successfully');
       await fetchThemes();
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
