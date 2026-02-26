@@ -389,6 +389,17 @@ const BUTTON_LINK_FIELD_KEYS = [
   'link',
 ] as const;
 
+// Button keys already handled by each widget's specific content editor.
+// These are excluded from the uniform quick-edit section to avoid duplicates.
+const EDITOR_OWNED_BUTTON_KEYS: Readonly<Record<string, ReadonlyArray<string>>> = {
+  hero: ['ctaText', 'ctaLink'],
+  cta: ['primaryCta', 'primaryLink', 'secondaryCta', 'secondaryLink'],
+  header: ['ctaText', 'ctaLink'],
+  'clickfunnel-features': ['buttonText', 'buttonUrl'],
+  videohero: ['ctaText', 'ctaLink'],
+  'clickfunnels-hero': ['buttonText', 'secondaryLink'],
+};
+
 const UNIFORM_FIELD_LABELS: Record<string, string> = {
   headline: 'Titre principal',
   title: 'Titre',
@@ -561,11 +572,12 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
 
   const renderUniformQuickEdit = () => {
     const content = section.content || {};
+    const ownedKeys = new Set(EDITOR_OWNED_BUTTON_KEYS[section.type] || []);
 
     const titleFields = TITLE_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
     const paragraphFields = PARAGRAPH_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
-    const buttonTextFields = BUTTON_TEXT_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
-    const buttonLinkFields = BUTTON_LINK_FIELD_KEYS.filter((key) => typeof content[key] === 'string');
+    const buttonTextFields = BUTTON_TEXT_FIELD_KEYS.filter((key) => typeof content[key] === 'string' && !ownedKeys.has(key));
+    const buttonLinkFields = BUTTON_LINK_FIELD_KEYS.filter((key) => typeof content[key] === 'string' && !ownedKeys.has(key));
 
     const hasAnyField =
       titleFields.length > 0 ||
