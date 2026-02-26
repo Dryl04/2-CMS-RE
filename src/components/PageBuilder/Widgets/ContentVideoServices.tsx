@@ -88,7 +88,7 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
             <div
               className="relative group min-h-[260px] sm:min-h-[360px] lg:min-h-[450px] bg-neutral shadow-xl"
               data-widget-media-frame
-              data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+              data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
               data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
             >
               {content.videoUrl && isPlaying ? (

@@ -84,6 +84,7 @@ export interface PageBuilderSection {
     media?: {
       imageRadius?: string;
       overlayImage?: string;
+      overlayTarget?: "section" | "media";
       overlayPosition?:
         | "top-left"
         | "top-right"
@@ -91,6 +92,11 @@ export interface PageBuilderSection {
         | "bottom-right"
         | "center";
       overlaySize?: string;
+      overlayOpacity?: number;
+      overlayBrightness?: number;
+      overlayContrast?: number;
+      overlaySaturate?: number;
+      overlayBlur?: string;
       hideDecorationsOnVideoPlay?: boolean;
       [key: string]: any;
     };

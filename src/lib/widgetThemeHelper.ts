@@ -550,6 +550,40 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
             normalizedSection.design.media.overlaySize,
         }
       : {}),
+    ...(normalizedSection.design?.media?.overlayOpacity !== undefined
+      ? {
+          "--widget-media-overlay-opacity": String(
+            normalizedSection.design.media.overlayOpacity
+          ),
+        }
+      : {}),
+    ...(normalizedSection.design?.media?.overlayBrightness !== undefined
+      ? {
+          "--widget-media-overlay-brightness": String(
+            normalizedSection.design.media.overlayBrightness
+          ),
+        }
+      : {}),
+    ...(normalizedSection.design?.media?.overlayContrast !== undefined
+      ? {
+          "--widget-media-overlay-contrast": String(
+            normalizedSection.design.media.overlayContrast
+          ),
+        }
+      : {}),
+    ...(normalizedSection.design?.media?.overlaySaturate !== undefined
+      ? {
+          "--widget-media-overlay-saturate": String(
+            normalizedSection.design.media.overlaySaturate
+          ),
+        }
+      : {}),
+    ...(normalizedSection.design?.media?.overlayBlur
+      ? {
+          "--widget-media-overlay-blur":
+            normalizedSection.design.media.overlayBlur,
+        }
+      : {}),
     "--widget-btn-radius": buttonRadius,
     ...buttonSizeVars,
     ...(typo.buttonFontSize

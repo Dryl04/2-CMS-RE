@@ -329,7 +329,7 @@ export default function SectionRenderer({
           className={wrapperClassName}
           data-theme={dataTheme || canvasThemeSlug || undefined}
           data-widget-type={normalizedSection.type}
-          data-widget-overlay={normalizedSection.design?.media?.overlayImage ? 'on' : undefined}
+          data-widget-overlay={(normalizedSection.design?.media?.overlayImage && normalizedSection.design?.media?.overlayTarget !== 'media') ? 'on' : undefined}
           data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'bottom-right'}
           style={wrapperStyle as React.CSSProperties}
         >

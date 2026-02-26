@@ -69,7 +69,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
     <div
       className="relative group w-full min-h-[360px] sm:min-h-[500px] lg:min-h-[640px] overflow-hidden bg-neutral"
       data-widget-media-frame
-      data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+      data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
       data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
     >
       <div className="absolute inset-0 overflow-hidden">
@@ -182,7 +182,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
       <div
         className="relative group overflow-hidden shadow-2xl bg-neutral"
         data-widget-media-frame
-        data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+        data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
         data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
       >
         <div className="aspect-video">
@@ -265,7 +265,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         <div
           className="relative group overflow-hidden shadow-2xl bg-neutral"
           data-widget-media-frame
-          data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+          data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
           data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
         >
           <div className="aspect-video">
@@ -328,7 +328,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
             className="relative inline-block overflow-hidden shadow-2xl cursor-pointer group"
             onClick={() => setIsPlaying(true)}
             data-widget-media-frame
-            data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+            data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
             data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
           >
             <img

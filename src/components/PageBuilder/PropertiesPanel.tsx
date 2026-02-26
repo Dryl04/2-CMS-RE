@@ -1325,6 +1325,19 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               placeholder="URL du logo à superposer"
               mediaType="image"
             />
+            {section.design.media?.overlayImage && (
+            <>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Cible de l'overlay</label>
+              <select
+                value={section.design.media?.overlayTarget || 'section'}
+                onChange={(e) => updateDesign('media', 'overlayTarget', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+              >
+                <option value="section">Section (wrapper)</option>
+                <option value="media">Média (frame image/vidéo)</option>
+              </select>
+            </div>
             <div>
               <label className="block text-xs text-gray-600 mb-1">Position overlay</label>
               <select
@@ -1349,6 +1362,52 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
                 placeholder="ex: 84px"
               />
             </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Opacité overlay ({Math.round((section.design.media?.overlayOpacity ?? 1) * 100)}%)</label>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={Math.round((section.design.media?.overlayOpacity ?? 1) * 100)}
+                onChange={(e) => updateDesign('media', 'overlayOpacity', parseInt(e.target.value) / 100)}
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Luminosité overlay ({Math.round((section.design.media?.overlayBrightness ?? 1) * 100)}%)</label>
+              <input
+                type="range"
+                min={0}
+                max={200}
+                value={Math.round((section.design.media?.overlayBrightness ?? 1) * 100)}
+                onChange={(e) => updateDesign('media', 'overlayBrightness', parseInt(e.target.value) / 100)}
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Contraste overlay ({Math.round((section.design.media?.overlayContrast ?? 1) * 100)}%)</label>
+              <input
+                type="range"
+                min={0}
+                max={200}
+                value={Math.round((section.design.media?.overlayContrast ?? 1) * 100)}
+                onChange={(e) => updateDesign('media', 'overlayContrast', parseInt(e.target.value) / 100)}
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Saturation overlay ({Math.round((section.design.media?.overlaySaturate ?? 1) * 100)}%)</label>
+              <input
+                type="range"
+                min={0}
+                max={200}
+                value={Math.round((section.design.media?.overlaySaturate ?? 1) * 100)}
+                onChange={(e) => updateDesign('media', 'overlaySaturate', parseInt(e.target.value) / 100)}
+                className="w-full"
+              />
+            </div>
+            </>
+            )}
             <label className="flex items-center space-x-2 cursor-pointer text-sm text-gray-700">
               <input
                 type="checkbox"
@@ -2168,6 +2227,20 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             mediaType="image"
           />
 
+          {section.design.media?.overlayImage && (
+          <>
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Cible de l'overlay</label>
+            <select
+              value={section.design.media?.overlayTarget || 'section'}
+              onChange={(e) => updateDesign('media', 'overlayTarget', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
+            >
+              <option value="section">Section (wrapper)</option>
+              <option value="media">Média (frame image/vidéo)</option>
+            </select>
+          </div>
+
           <div>
             <label className="block text-xs text-gray-600 mb-1">Position overlay</label>
             <select
@@ -2193,6 +2266,56 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               placeholder="ex: 84px"
             />
           </div>
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Opacité overlay ({Math.round((section.design.media?.overlayOpacity ?? 1) * 100)}%)</label>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={Math.round((section.design.media?.overlayOpacity ?? 1) * 100)}
+              onChange={(e) => updateDesign('media', 'overlayOpacity', parseInt(e.target.value) / 100)}
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Luminosité overlay ({Math.round((section.design.media?.overlayBrightness ?? 1) * 100)}%)</label>
+            <input
+              type="range"
+              min={0}
+              max={200}
+              value={Math.round((section.design.media?.overlayBrightness ?? 1) * 100)}
+              onChange={(e) => updateDesign('media', 'overlayBrightness', parseInt(e.target.value) / 100)}
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Contraste overlay ({Math.round((section.design.media?.overlayContrast ?? 1) * 100)}%)</label>
+            <input
+              type="range"
+              min={0}
+              max={200}
+              value={Math.round((section.design.media?.overlayContrast ?? 1) * 100)}
+              onChange={(e) => updateDesign('media', 'overlayContrast', parseInt(e.target.value) / 100)}
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600 mb-1">Saturation overlay ({Math.round((section.design.media?.overlaySaturate ?? 1) * 100)}%)</label>
+            <input
+              type="range"
+              min={0}
+              max={200}
+              value={Math.round((section.design.media?.overlaySaturate ?? 1) * 100)}
+              onChange={(e) => updateDesign('media', 'overlaySaturate', parseInt(e.target.value) / 100)}
+              className="w-full"
+            />
+          </div>
+          </>
+          )}
 
           <label className="flex items-center space-x-2 cursor-pointer text-sm text-gray-700">
             <input
