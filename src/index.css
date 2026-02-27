@@ -80,6 +80,11 @@
     color: var(--widget-link-color, var(--widget-accent-color)) !important;
   }
 
+  .widget-design-scope a:not(.btn):not([class*="no-underline"]):not([class*="px-"]) {
+    text-decoration: underline;
+    font-family: inherit;
+  }
+
   .widget-design-scope.wds-btn-bg .btn {
     background-color: var(--widget-btn-bg) !important;
     color: var(--widget-btn-text, inherit) !important;
@@ -250,20 +255,26 @@
 
   .widget-design-scope [data-widget-media-frame][data-widget-overlay="on"] {
     position: relative;
+    overflow: hidden;
   }
 
   .widget-design-scope
     [data-widget-media-frame][data-widget-overlay="on"]::after {
     content: "";
     position: absolute;
-    width: var(--widget-media-overlay-size, 84px);
-    height: var(--widget-media-overlay-size, 84px);
+    width: var(--widget-media-overlay-size, 500px);
+    height: var(--widget-media-overlay-size, 500px);
     background-image: var(--widget-media-overlay-image);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    z-index: 5;
+    z-index: var(--widget-media-overlay-z-val, 100);
     pointer-events: none;
+    filter: opacity(var(--widget-media-overlay-opacity, 1))
+      brightness(var(--widget-media-overlay-brightness, 1))
+      contrast(var(--widget-media-overlay-contrast, 1))
+      saturate(var(--widget-media-overlay-saturate, 1))
+      blur(var(--widget-media-overlay-blur, 0px));
   }
 
   .widget-design-scope
@@ -299,19 +310,25 @@
 
   .widget-design-scope[data-widget-overlay="on"] {
     position: relative;
+    overflow: hidden;
   }
 
   .widget-design-scope[data-widget-overlay="on"]::after {
     content: "";
     position: absolute;
-    width: var(--widget-media-overlay-size, 84px);
-    height: var(--widget-media-overlay-size, 84px);
+    width: var(--widget-media-overlay-size, 500px);
+    height: var(--widget-media-overlay-size, 500px);
     background-image: var(--widget-media-overlay-image);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    z-index: 5;
+    z-index: var(--widget-media-overlay-z-val, 100);
     pointer-events: none;
+    filter: opacity(var(--widget-media-overlay-opacity, 1))
+      brightness(var(--widget-media-overlay-brightness, 1))
+      contrast(var(--widget-media-overlay-contrast, 1))
+      saturate(var(--widget-media-overlay-saturate, 1))
+      blur(var(--widget-media-overlay-blur, 0px));
   }
 
   .widget-design-scope[data-widget-overlay-position="top-left"]::after {
@@ -338,6 +355,87 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  /* ─── Mode "media" propagé : overlay appliqué sur chaque [data-widget-media-frame]
+   * qui n'a pas son propre data-widget-overlay (les items avec overlay propre
+   * utilisent le sélecteur [data-widget-overlay="on"] existant).
+   * Déclenché quand le scope a data-widget-overlay-mode="media".
+   * ─────────────────────────────────────────────────────────────────────── */
+  .widget-design-scope[data-widget-overlay-mode="media"]
+    [data-widget-media-frame]:not([data-widget-overlay]) {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .widget-design-scope[data-widget-overlay-mode="media"]
+    [data-widget-media-frame]:not([data-widget-overlay])::after {
+    content: "";
+    position: absolute;
+    width: var(--widget-media-overlay-size, 500px);
+    height: var(--widget-media-overlay-size, 500px);
+    background-image: var(--widget-media-overlay-image);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    right: 12px;
+    bottom: 12px;
+    z-index: var(--widget-media-overlay-z-val, 100);
+    pointer-events: none;
+    filter: opacity(var(--widget-media-overlay-opacity, 1))
+      brightness(var(--widget-media-overlay-brightness, 1))
+      contrast(var(--widget-media-overlay-contrast, 1))
+      saturate(var(--widget-media-overlay-saturate, 1))
+      blur(var(--widget-media-overlay-blur, 0px));
+  }
+
+  .widget-design-scope[data-widget-overlay-mode="media"][data-widget-overlay-position="top-left"]
+    [data-widget-media-frame]:not([data-widget-overlay])::after {
+    top: 12px;
+    left: 12px;
+    right: unset;
+    bottom: unset;
+  }
+
+  .widget-design-scope[data-widget-overlay-mode="media"][data-widget-overlay-position="top-right"]
+    [data-widget-media-frame]:not([data-widget-overlay])::after {
+    top: 12px;
+    right: 12px;
+    left: unset;
+    bottom: unset;
+  }
+
+  .widget-design-scope[data-widget-overlay-mode="media"][data-widget-overlay-position="bottom-left"]
+    [data-widget-media-frame]:not([data-widget-overlay])::after {
+    bottom: 12px;
+    left: 12px;
+    right: unset;
+    top: unset;
+  }
+
+  .widget-design-scope[data-widget-overlay-mode="media"][data-widget-overlay-position="center"]
+    [data-widget-media-frame]:not([data-widget-overlay])::after {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    right: unset;
+    bottom: unset;
+  }
+
+  .widget-design-scope[data-widget-overlay-z="behind-bg"] {
+    --widget-media-overlay-z-val: -1;
+  }
+
+  .widget-design-scope[data-widget-overlay-z="above-bg"] {
+    --widget-media-overlay-z-val: 2;
+  }
+
+  .widget-design-scope[data-widget-overlay-z="above-content"] {
+    --widget-media-overlay-z-val: 11;
+  }
+
+  .widget-design-scope[data-widget-overlay-z="above-all"] {
+    --widget-media-overlay-z-val: 100;
   }
 
   .widget-design-scope[data-widget-type*="header"] > header {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Check } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface PricingWidgetProps {
   section: PageBuilderSection;
@@ -52,7 +52,11 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
             key={index}
             className={`relative bg-base-100 rounded-2xl shadow-xl p-8 transition-transform hover:scale-105 ${plan.popular ? 'ring-2 ring-offset-2 border-primary ring-primary' : 'border border-base-content/10'
               }`}
-            style={plan.popular && accentColor ? { borderColor: accentColor, ringColor: accentColor } : undefined}
+            style={
+              plan.popular && accentColor
+                ? { borderColor: accentColor, boxShadow: `0 0 0 2px ${accentColor}` }
+                : undefined
+            }
           >
             {plan.popular && (
               <div

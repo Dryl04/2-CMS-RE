@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, Search, Monitor, Grid, MousePointer, Layout, Mail, MessageSquare, DollarSign, TrendingUp, Users, HelpCircle, Award, Video, Image, Clock, ListOrdered, Columns, AlignCenter, Minus, Layers, LayoutGrid, Phone, Zap, Shield, Heart, MessageCircle, Box, Umbrella, CreditCard, Paintbrush, Plug, Calendar, Share2, Sparkles, CheckSquare, Type, Quote, PlayCircle, Workflow, Facebook, Twitter, Youtube, Lock, Code } from 'lucide-react';
-import { widgetLibrary } from '../../lib/widgetLibrary';
-import { PageBuilderSection, WidgetDefinition } from '../../lib/pageBuilderTypes';
+import { widgetLibrary } from '@/lib/widgetLibrary';
+import { PageBuilderSection, WidgetDefinition } from '@/lib/pageBuilderTypes';
 
 
 interface WidgetLibraryProps {

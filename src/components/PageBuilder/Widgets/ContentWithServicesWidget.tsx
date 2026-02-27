@@ -1,13 +1,13 @@
 import { Umbrella, Layers, PaintBucket, Clock, AlarmClock, ImageIcon } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
-import { renderIcon, ICON_MAP } from '../../../lib/iconLibrary';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface ContentWithServicesWidgetProps {
   section: PageBuilderSection;
 }
 
-const iconMap: { [key: string]: any } = {
+const _iconMap: { [key: string]: any } = {
   umbrella: Umbrella,
   layers: Layers,
   paintbucket: PaintBucket,

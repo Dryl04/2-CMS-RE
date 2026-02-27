@@ -1,4 +1,4 @@
-import { PageBuilderSection } from '../../lib/pageBuilderTypes';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 
 interface HeroAdvancedEditorProps {
   section: PageBuilderSection;
@@ -22,9 +22,9 @@ export function HeroAdvancedEditor({ section, updateDesign }: HeroAdvancedEditor
   const sepia = section.design?.effects?.sepia || 0;
   const hueRotate = section.design?.effects?.hueRotate || 0;
 
-  const parallaxEnabled = section.design?.effects?.parallax || false;
   const animationEnabled = section.design?.effects?.animation || false;
   const animationType = section.design?.effects?.animationType || 'fade-in';
+  const animationDuration = section.design?.effects?.animationDuration ?? 800;
 
   const contentPosition = section.design?.layout?.contentPosition || 'left';
   const contentAlignment = section.design?.layout?.contentAlignment || 'start';
@@ -241,16 +241,6 @@ export function HeroAdvancedEditor({ section, updateDesign }: HeroAdvancedEditor
           <label className="flex items-center">
             <input
               type="checkbox"
-              checked={parallaxEnabled}
-              onChange={(e) => updateDesign('effects', 'parallax', e.target.checked)}
-              className="mr-2 w-4 h-4 text-green-600 rounded focus:ring-2 focus:ring-green-500"
-            />
-            <span className="text-sm text-gray-700">Effet parallaxe</span>
-          </label>
-
-          <label className="flex items-center">
-            <input
-              type="checkbox"
               checked={animationEnabled}
               onChange={(e) => updateDesign('effects', 'animation', e.target.checked)}
               className="mr-2 w-4 h-4 text-green-600 rounded focus:ring-2 focus:ring-green-500"
@@ -259,20 +249,37 @@ export function HeroAdvancedEditor({ section, updateDesign }: HeroAdvancedEditor
           </label>
 
           {animationEnabled && (
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Type d'animation</label>
-              <select
-                value={animationType}
-                onChange={(e) => updateDesign('effects', 'animationType', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
-              >
-                <option value="fade-in">Apparition progressive</option>
-                <option value="slide-up">Glissement vers le haut</option>
-                <option value="slide-down">Glissement vers le bas</option>
-                <option value="slide-left">Glissement vers la gauche</option>
-                <option value="slide-right">Glissement vers la droite</option>
-                <option value="zoom-in">Zoom avant</option>
-              </select>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Type d'animation</label>
+                <select
+                  value={animationType}
+                  onChange={(e) => updateDesign('effects', 'animationType', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
+                >
+                  <option value="fade-in">Apparition progressive</option>
+                  <option value="slide-up">Glissement vers le haut</option>
+                  <option value="slide-down">Glissement vers le bas</option>
+                  <option value="slide-left">Glissement vers la gauche</option>
+                  <option value="slide-right">Glissement vers la droite</option>
+                  <option value="zoom-in">Zoom avant</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">
+                  Durée d'animation (ms)
+                </label>
+                <input
+                  type="number"
+                  min={100}
+                  max={5000}
+                  step={50}
+                  value={animationDuration}
+                  onChange={(e) => updateDesign('effects', 'animationDuration', Number(e.target.value))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-400 mt-1">Valeur par défaut : 800 ms</p>
+              </div>
             </div>
           )}
         </div>
@@ -311,14 +318,25 @@ export function HeroAdvancedEditor({ section, updateDesign }: HeroAdvancedEditor
           </div>
 
           <div>
-            <label className="block text-xs text-gray-600 mb-1">Hauteur minimale</label>
-            <input
-              type="text"
-              value={minHeight}
-              onChange={(e) => updateDesign('layout', 'minHeight', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              placeholder="ex: 500px, 80vh"
-            />
+            <label className="block text-xs text-gray-600 mb-1">Hauteur minimale ({minHeight || '500px'})</label>
+            <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+              <input
+                type="range"
+                min="200"
+                max="1200"
+                step="20"
+                value={parseInt((minHeight || '500').replace(/[^0-9]/g, ''), 10) || 500}
+                onChange={(e) => updateDesign('layout', 'minHeight', `${e.target.value}px`)}
+                className="w-full"
+              />
+              <input
+                type="text"
+                value={minHeight}
+                onChange={(e) => updateDesign('layout', 'minHeight', e.target.value)}
+                className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                placeholder="500px"
+              />
+            </div>
           </div>
 
           <div>

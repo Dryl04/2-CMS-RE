@@ -1,5 +1,5 @@
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface NewsletterSignupWidgetProps {
   section: PageBuilderSection;
@@ -21,7 +21,7 @@ export default function NewsletterSignupWidget({ section }: NewsletterSignupWidg
   const subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
-  const linkStyle: React.CSSProperties = {
+  const _linkStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 

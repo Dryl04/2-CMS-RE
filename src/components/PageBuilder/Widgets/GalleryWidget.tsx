@@ -1,6 +1,6 @@
 import React from 'react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface GalleryWidgetProps {
   section: PageBuilderSection;
@@ -17,7 +17,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
     ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
   };
-  const textStyle: React.CSSProperties = {
+  const _textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
@@ -25,6 +25,24 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
   const accentColor = design.colors?.accent;
+
+  /** Retourne les props data-attributes + style CSS vars pour l'overlay par item */
+  const getItemOverlayProps = (item: any) => {
+    if (!item.overlayImage) return {};
+    return {
+      'data-widget-overlay': 'on' as const,
+      'data-widget-overlay-position': (item.overlayPosition || 'bottom-right') as string,
+      style: {
+        '--widget-media-overlay-image': `url(${item.overlayImage})`,
+        ...(item.overlaySize ? { '--widget-media-overlay-size': item.overlaySize } : {}),
+        ...(item.overlayOpacity !== undefined ? { '--widget-media-overlay-opacity': String(item.overlayOpacity) } : {}),
+        ...(item.overlayBrightness !== undefined ? { '--widget-media-overlay-brightness': String(item.overlayBrightness) } : {}),
+        ...(item.overlayContrast !== undefined ? { '--widget-media-overlay-contrast': String(item.overlayContrast) } : {}),
+        ...(item.overlaySaturate !== undefined ? { '--widget-media-overlay-saturate': String(item.overlaySaturate) } : {}),
+        ...(item.overlayBlur ? { '--widget-media-overlay-blur': item.overlayBlur } : {}),
+      } as React.CSSProperties,
+    };
+  };
 
   const defaultItems = [
     {
@@ -85,11 +103,14 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
       <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
         {(items || defaultItems).map((item: any, index: number) => {
           const heights = ['h-64', 'h-80', 'h-96', 'h-72'];
+          const overlayProps = getItemOverlayProps(item);
           return (
             <a
               key={index}
               href={item.link}
               className="group relative block break-inside-avoid overflow-hidden rounded-2xl"
+              data-widget-media-frame
+              {...overlayProps}
             >
               <img
                 src={item.image}
@@ -130,11 +151,15 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {(items || defaultItems).map((item: any, index: number) => (
+        {(items || defaultItems).map((item: any, index: number) => {
+          const overlayProps = getItemOverlayProps(item);
+          return (
           <a
             key={index}
             href={item.link}
             className="group relative overflow-hidden rounded-2xl aspect-square"
+            data-widget-media-frame
+            {...overlayProps}
           >
             <img
               src={item.image}
@@ -151,7 +176,8 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               <h3 className="text-xl font-bold text-neutral-content">{renderRichText(item.title)}</h3>
             </div>
           </a>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -174,11 +200,15 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
       </div>
 
       <div className="space-y-6">
-        {(items || defaultItems).slice(0, 1).map((item: any, index: number) => (
+        {(items || defaultItems).slice(0, 1).map((item: any, index: number) => {
+          const overlayProps = getItemOverlayProps(item);
+          return (
           <a
             key={index}
             href={item.link}
             className="group relative block overflow-hidden rounded-3xl"
+            data-widget-media-frame
+            {...overlayProps}
           >
             <img
               src={item.image}
@@ -201,14 +231,19 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               </button>
             </div>
           </a>
-        ))}
+          );
+        })}
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(items || defaultItems).slice(1).map((item: any, index: number) => (
+          {(items || defaultItems).slice(1).map((item: any, index: number) => {
+            const overlayProps = getItemOverlayProps(item);
+            return (
             <a
               key={index}
               href={item.link}
               className="group relative overflow-hidden rounded-2xl aspect-square"
+              data-widget-media-frame
+              {...overlayProps}
             >
               <img
                 src={item.image}
@@ -225,7 +260,8 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
                 <h3 className="text-lg font-bold text-neutral-content">{renderRichText(item.title)}</h3>
               </div>
             </a>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

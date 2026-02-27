@@ -46,6 +46,19 @@ export interface SEOMetadata {
   updated_at: string;
 }
 
+export interface SEORedirect {
+  id: string;
+  source_path: string;
+  target_path: string;
+  source_page_id?: string | null;
+  target_page_id?: string | null;
+  reason?: string | null;
+  is_active: boolean;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SectionType {
   id: string;
   name: string;

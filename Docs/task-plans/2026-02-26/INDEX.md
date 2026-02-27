@@ -1,0 +1,12 @@
+# Index — Plans de tâches (2026-02-26)
+
+- [01-correction-doublons-parametres-boutons.md](./01-correction-doublons-parametres-boutons.md)
+- [02-meilleure-nomination-parametres-widgets.md](./02-meilleure-nomination-parametres-widgets.md)
+- [03-griser-parametres-non-concernes.md](./03-griser-parametres-non-concernes.md)
+- [04-correction-background-image-opacite-overlay.md](./04-correction-background-image-opacite-overlay.md)
+- [05-gestion-centralisee-liens-redirections.md](./05-gestion-centralisee-liens-redirections.md)
+- [06-correction-doublons-parametres-textes.md](./06-correction-doublons-parametres-textes.md)
+- [07-correction-superposition-image-section-image.md](./07-correction-superposition-image-section-image.md)
+- [08-gestion-affichage-video-par-defaut.md](./08-gestion-affichage-video-par-defaut.md)
+- [09-modale-reutilisable-attribution-liens-texte.md](./09-modale-reutilisable-attribution-liens-texte.md)
+- [questions-cruciales-par-tache.md](./questions-cruciales-par-tache.md)

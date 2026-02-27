@@ -176,6 +176,24 @@ export function normalizeSectionForTheme(
       section.design?.background?.value ??
       defaultDesign?.background?.value ??
       "",
+    ...(section.design?.background?.opacity !== undefined
+      ? { opacity: section.design.background.opacity }
+      : {}),
+    ...(section.design?.background?.overlayColor !== undefined
+      ? { overlayColor: section.design.background.overlayColor }
+      : {}),
+    ...(section.design?.background?.overlayOpacity !== undefined
+      ? { overlayOpacity: section.design.background.overlayOpacity }
+      : {}),
+    ...(section.design?.background?.videoAutoplay !== undefined
+      ? { videoAutoplay: section.design.background.videoAutoplay }
+      : {}),
+    ...(section.design?.background?.videoNoBranding !== undefined
+      ? { videoNoBranding: section.design.background.videoNoBranding }
+      : {}),
+    ...(section.design?.background?.videoFullWidth !== undefined
+      ? { videoFullWidth: section.design.background.videoFullWidth }
+      : {}),
     ...(section.design?.background?.backdropBlur !== undefined
       ? { backdropBlur: section.design.background.backdropBlur }
       : {}),
@@ -530,6 +548,46 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
       ? {
           "--widget-media-overlay-size":
             normalizedSection.design.media.overlaySize,
+        }
+      : {}),
+    ...(normalizedSection.design?.media?.overlayZIndex
+      ? {
+          "--widget-media-overlay-z":
+            normalizedSection.design.media.overlayZIndex,
+        }
+      : {}),
+    ...(normalizedSection.design?.media?.overlayOpacity !== undefined
+      ? {
+          "--widget-media-overlay-opacity": String(
+            normalizedSection.design.media.overlayOpacity
+          ),
+        }
+      : {}),
+    ...(normalizedSection.design?.media?.overlayBrightness !== undefined
+      ? {
+          "--widget-media-overlay-brightness": String(
+            normalizedSection.design.media.overlayBrightness
+          ),
+        }
+      : {}),
+    ...(normalizedSection.design?.media?.overlayContrast !== undefined
+      ? {
+          "--widget-media-overlay-contrast": String(
+            normalizedSection.design.media.overlayContrast
+          ),
+        }
+      : {}),
+    ...(normalizedSection.design?.media?.overlaySaturate !== undefined
+      ? {
+          "--widget-media-overlay-saturate": String(
+            normalizedSection.design.media.overlaySaturate
+          ),
+        }
+      : {}),
+    ...(normalizedSection.design?.media?.overlayBlur
+      ? {
+          "--widget-media-overlay-blur":
+            normalizedSection.design.media.overlayBlur,
         }
       : {}),
     "--widget-btn-radius": buttonRadius,

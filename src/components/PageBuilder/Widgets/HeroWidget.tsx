@@ -1,6 +1,6 @@
 import React from 'react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface HeroWidgetProps {
   section: PageBuilderSection;
@@ -18,13 +18,13 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
     ...(typo.h1FontSize || typo.headingFontSize ? { fontSize: typo.h1FontSize || typo.headingFontSize } : {}),
     ...(typo.h1Color || typo.headingColor ? { color: typo.h1Color || typo.headingColor } : {}),
   };
-  const h2Style: React.CSSProperties = {
+  const _h2Style: React.CSSProperties = {
     ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
     ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
     ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
   };
-  const textStyle: React.CSSProperties = {
+  const _textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
@@ -53,9 +53,9 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
   const sepia = design.effects?.sepia || 0;
   const hueRotate = design.effects?.hueRotate || 0;
 
-  const parallaxEnabled = design.effects?.parallax || false;
   const animationEnabled = design.effects?.animation || false;
   const animationType = design.effects?.animationType || 'fade-in';
+  const animationDuration = design.effects?.animationDuration ?? 800;
 
   const contentPosition = design.layout?.contentPosition || 'left';
   const contentAlignment = design.layout?.contentAlignment || 'start';
@@ -108,6 +108,9 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
     return animations[animationType] || '';
   };
 
+  const getAnimationStyle = (): React.CSSProperties =>
+    animationEnabled ? { animationDuration: `${animationDuration}ms` } : {};
+
   const getContentAlignmentClass = () => {
     const alignmentMap: { [key: string]: string } = {
       'start': 'items-start',
@@ -154,21 +157,24 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
   };
 
   const renderDefault = () => (
-    <div className={`${getMaxWidthClass()} mx-auto px-4 sm:px-6 lg:px-8 ${getAnimationClass()}`}>
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-        <div>
+    <div
+      className={`${getMaxWidthClass()} mx-auto px-4 sm:px-6 lg:px-8 ${getAnimationClass()}`}
+      style={{ ...getAnimationStyle(), minHeight }}
+    >
+      <div className={`grid lg:grid-cols-2 gap-8 lg:gap-12 ${getContentAlignmentClass()}`}>
+        <div className={`${contentPosition === 'right' ? 'lg:order-2' : ''} ${getContentTextClass()}`}>
           <h1
             className="text-base-content text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 lg:mb-6 leading-tight"
             style={h1Style}
           >
             {renderRichText(headline, 'Your Amazing Headline')}
           </h1>
-          <div
+          <h2
             className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal"
             style={subtitleStyle}
           >
             {renderRichText(subheadline, 'A compelling subheadline that explains your value proposition')}
-          </div>
+          </h2>
           <a
             href={ctaLink || '#'}
             className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -176,7 +182,12 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
             {ctaText || 'Get Started'}
           </a>
         </div>
-        <div className="relative">
+        <div
+          className={`relative ${contentPosition === 'right' ? 'lg:order-1' : ''}`}
+          data-widget-media-frame
+          data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
+          data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+        >
           <img
             src={image || 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
             alt="Hero"
@@ -195,19 +206,23 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
   );
 
   const renderCentered = () => (
-    <div className={`max-w-4xl mx-auto px-4 sm:px-6 text-center ${getAnimationClass()}`}>
+    <div
+      className={`max-w-4xl mx-auto px-4 sm:px-6 flex flex-col ${getContentAlignmentClass()} ${getAnimationClass()}`}
+      style={{ ...getAnimationStyle(), minHeight }}
+    >
+    <div className={getContentTextClass()}>
       <h1
         className="text-base-content text-3xl sm:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6 leading-tight"
         style={h1Style}
       >
         {renderRichText(headline, 'Your Amazing Headline')}
       </h1>
-      <div
+      <h2
         className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal"
         style={subtitleStyle}
       >
         {renderRichText(subheadline, 'A compelling subheadline that explains your value proposition')}
-      </div>
+      </h2>
       <a
         href={ctaLink || '#'}
         className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -215,12 +230,14 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
         {ctaText || 'Get Started'}
       </a>
     </div>
+    </div>
   );
 
   const renderSplit = () => (
     <div className="grid lg:grid-cols-2 h-full">
       <div
         className={`bg-base-200 text-base-content flex ${getContentAlignmentClass()} ${contentPosition === 'right' ? 'lg:order-2' : ''} justify-center p-8 sm:p-12 ${getAnimationClass()} ${getContentTextClass()}`}
+        style={getAnimationStyle()}
       >
         <div className="max-w-xl">
           <h1
@@ -229,9 +246,9 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           >
             {renderRichText(headline, 'Your Amazing Headline')}
           </h1>
-          <div className="text-base-content/70 text-lg sm:text-xl mb-8 font-normal" style={subtitleStyle}>
+          <h2 className="text-base-content/70 text-lg sm:text-xl mb-8 font-normal" style={subtitleStyle}>
             {renderRichText(subheadline, 'A compelling subheadline that explains your value proposition')}
-          </div>
+          </h2>
           <a
             href={ctaLink || '#'}
             className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
@@ -240,12 +257,16 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           </a>
         </div>
       </div>
-      <div className="relative h-64 lg:h-full min-h-[300px] lg:min-h-[500px] overflow-hidden">
+      <div
+        className="relative h-64 lg:h-full min-h-[300px] lg:min-h-[500px] overflow-hidden"
+        data-widget-media-frame
+        data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
+        data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+      >
         <div
-          className={`w-full h-full bg-cover bg-center ${parallaxEnabled ? 'transform-gpu' : ''}`}
+          className="absolute inset-0 w-full h-full bg-cover bg-center"
           style={{
             backgroundImage: `url(${image || 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'})`,
-            backgroundAttachment: parallaxEnabled ? 'fixed' : 'scroll',
             filter: getImageFilter(),
           }}
         />
@@ -260,19 +281,22 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
   );
 
   const renderMinimal = () => (
-    <div className={`max-w-3xl mx-auto px-4 ${getAnimationClass()}`}>
+    <div
+      className={`max-w-3xl mx-auto px-4 flex flex-col ${getContentAlignmentClass()} ${getContentTextClass()} ${getAnimationClass()}`}
+      style={{ ...getAnimationStyle(), minHeight }}
+    >
       <h1
         className="text-base-content text-3xl sm:text-4xl font-bold mb-4"
         style={h1Style}
       >
         {renderRichText(headline, 'Your Amazing Headline')}
       </h1>
-      <div
+      <h2
         className="text-base-content/70 text-base sm:text-lg mb-6 font-normal"
         style={subtitleStyle}
       >
         {renderRichText(subheadline, 'A compelling subheadline that explains your value proposition')}
-      </div>
+      </h2>
       <a
         href={ctaLink || '#'}
         className="text-base-content font-semibold hover:underline transition-all"
@@ -284,12 +308,17 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
   );
 
   const renderFullBackground = () => (
-    <div className="relative w-full h-full overflow-hidden" style={{ minHeight }}>
+    <div
+      className="relative w-full h-full overflow-hidden"
+      style={{ minHeight }}
+      data-widget-media-frame
+      data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
+      data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+    >
       <div
-        className={`absolute inset-0 bg-cover bg-center ${parallaxEnabled ? 'transform-gpu' : ''}`}
+        className="absolute inset-0 w-full h-full bg-cover bg-center"
         style={{
           backgroundImage: `url(${image || 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'})`,
-          backgroundAttachment: parallaxEnabled ? 'fixed' : 'scroll',
           filter: getImageFilter(),
         }}
       />
@@ -300,7 +329,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
         />
       )}
       <div className={`relative z-10 flex ${getContentAlignmentClass()} ${getContentPositionClass()} h-full`}>
-        <div className={`w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-20 ${getAnimationClass()}`}>
+        <div className={`w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-20 ${getAnimationClass()}`} style={getAnimationStyle()}>
           <div
             className={`max-w-2xl ${contentPosition === 'center'
               ? 'mx-auto text-center'
@@ -315,12 +344,12 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
             >
               {renderRichText(headline, 'Your Amazing Headline')}
             </h1>
-            <div
+            <h2
               className="text-base-content/70 text-base sm:text-lg lg:text-xl mb-6 lg:mb-8 font-normal drop-shadow-md"
               style={subtitleStyle}
             >
               {renderRichText(subheadline, 'A compelling subheadline that explains your value proposition')}
-            </div>
+            </h2>
             <a
               href={ctaLink || '#'}
               className="btn btn-primary inline-block px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105"

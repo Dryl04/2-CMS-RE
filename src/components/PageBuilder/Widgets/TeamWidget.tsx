@@ -1,7 +1,7 @@
 import React from 'react';
 import { Linkedin, Twitter, Mail } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface TeamWidgetProps {
   section: PageBuilderSection;
@@ -28,6 +28,24 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
 
   const accentColor = design.colors?.accent;
   const accentStyle: React.CSSProperties = accentColor ? { color: accentColor } : {};
+
+  /** Retourne les props data-attributes + style CSS vars pour l'overlay par membre */
+  const getMemberOverlayProps = (member: any) => {
+    if (!member.overlayImage) return {};
+    return {
+      'data-widget-overlay': 'on' as const,
+      'data-widget-overlay-position': (member.overlayPosition || 'bottom-right') as string,
+      style: {
+        '--widget-media-overlay-image': `url(${member.overlayImage})`,
+        ...(member.overlaySize ? { '--widget-media-overlay-size': member.overlaySize } : {}),
+        ...(member.overlayOpacity !== undefined ? { '--widget-media-overlay-opacity': String(member.overlayOpacity) } : {}),
+        ...(member.overlayBrightness !== undefined ? { '--widget-media-overlay-brightness': String(member.overlayBrightness) } : {}),
+        ...(member.overlayContrast !== undefined ? { '--widget-media-overlay-contrast': String(member.overlayContrast) } : {}),
+        ...(member.overlaySaturate !== undefined ? { '--widget-media-overlay-saturate': String(member.overlaySaturate) } : {}),
+        ...(member.overlayBlur ? { '--widget-media-overlay-blur': member.overlayBlur } : {}),
+      } as React.CSSProperties,
+    };
+  };
 
   const defaultMembers = [
     {
@@ -78,9 +96,15 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {(members || defaultMembers).map((member: any, index: number) => (
+        {(members || defaultMembers).map((member: any, index: number) => {
+          const overlayProps = getMemberOverlayProps(member);
+          return (
           <div key={index} className="group text-center">
-            <div className="relative mb-4 overflow-hidden rounded-2xl">
+            <div
+              className="relative mb-4 overflow-hidden rounded-2xl"
+              data-widget-media-frame
+              {...overlayProps}
+            >
               <img
                 src={member.avatar}
                 alt={member.name}
@@ -143,7 +167,8 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
               {renderRichText(member.bio)}
             </p>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -166,9 +191,15 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
       </div>
 
       <div className="bg-base-100 rounded-3xl shadow-2xl p-8 sm:p-12">
-        {(members || defaultMembers).slice(0, 1).map((member: any, index: number) => (
+        {(members || defaultMembers).slice(0, 1).map((member: any, index: number) => {
+          const overlayProps = getMemberOverlayProps(member);
+          return (
           <div key={index} className="grid md:grid-cols-5 gap-8 items-center">
-            <div className="md:col-span-2">
+            <div
+              className="md:col-span-2"
+              data-widget-media-frame
+              {...overlayProps}
+            >
               <img
                 src={member.avatar}
                 alt={member.name}
@@ -222,7 +253,8 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -247,11 +279,14 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {(members || defaultMembers).map((member: any, index: number) => {
           const isLarge = index === 0 || index === 3;
+          const overlayProps = getMemberOverlayProps(member);
           return (
             <div
               key={index}
               className={`group relative overflow-hidden rounded-2xl ${isLarge ? 'col-span-2 row-span-2' : 'col-span-1'
                 }`}
+              data-widget-media-frame
+              {...overlayProps}
             >
               <img
                 src={member.avatar}
@@ -288,13 +323,21 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
       </div>
 
       <div className="space-y-8">
-        {(members || defaultMembers).map((member: any, index: number) => (
+        {(members || defaultMembers).map((member: any, index: number) => {
+          const overlayProps = getMemberOverlayProps(member);
+          return (
           <div key={index} className="flex items-center space-x-6 border-b border-base-content/10 pb-8">
+            <div
+              className="relative flex-shrink-0"
+              data-widget-media-frame
+              {...overlayProps}
+            >
             <img
               src={member.avatar}
               alt={member.name}
-              className="w-24 h-24 rounded-full object-cover flex-shrink-0"
+              className="w-24 h-24 rounded-full object-cover"
             />
+            </div>
             <div className="flex-1">
               <h3
                 className="text-2xl font-bold mb-1 text-base-content"
@@ -334,7 +377,8 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
               )}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

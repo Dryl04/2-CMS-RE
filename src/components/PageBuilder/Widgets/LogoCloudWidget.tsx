@@ -1,6 +1,6 @@
 import React from 'react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface LogoCloudWidgetProps {
   section: PageBuilderSection;
@@ -11,13 +11,14 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
   const { title, subtitle, logos } = section.content;
 
   const design = section.design || {};
+  const centerLastRow = design.centerLastRow !== false;
   const typo = design.typography || {};
   const headingStyle: React.CSSProperties = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
     ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
   };
-  const textStyle: React.CSSProperties = {
+  const _textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
@@ -60,20 +61,38 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 lg:gap-8 place-items-center">
-        {(logos || defaultLogos).map((logo: any, index: number) => (
-          <div
-            key={index}
-            className="flex items-center justify-center w-full grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
-          >
-            <img
-              src={logo.url}
-              alt={logo.name}
-              className="max-h-12 w-auto object-contain"
-            />
-          </div>
-        ))}
-      </div>
+      {centerLastRow ? (
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6 lg:gap-8">
+          {(logos || defaultLogos).map((logo: any, index: number) => (
+            <div
+              key={index}
+              className="flex items-center justify-center grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
+              style={{ width: '140px' }}
+            >
+              <img
+                src={logo.url}
+                alt={logo.name}
+                className="max-h-12 w-auto object-contain"
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 lg:gap-8 place-items-center">
+          {(logos || defaultLogos).map((logo: any, index: number) => (
+            <div
+              key={index}
+              className="flex items-center justify-center w-full grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
+            >
+              <img
+                src={logo.url}
+                alt={logo.name}
+                className="max-h-12 w-auto object-contain"
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 

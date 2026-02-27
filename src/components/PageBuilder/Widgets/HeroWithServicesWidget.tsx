@@ -1,6 +1,6 @@
 import { Umbrella, Layers, PaintBucket, Clock } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface HeroWithServicesWidgetProps {
   section: PageBuilderSection;
@@ -38,10 +38,10 @@ export default function HeroWithServicesWidget({ section }: HeroWithServicesWidg
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
-  const subtitleStyle = {
+  const _subtitleStyle = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
-  const linkStyle = {
+  const _linkStyle = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Check, ImageIcon } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface SplitContentWithChecklistProps {
   section: PageBuilderSection;

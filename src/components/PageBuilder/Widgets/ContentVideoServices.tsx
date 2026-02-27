@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { Play, Pause, Umbrella, Layers, PaintBucket } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
+import {
+  buildEmbedUrl,
+  getVideoIframeProps,
+  getIframeFrameStyle,
+} from '@/lib/videoConfig';
 
 interface ContentVideoServicesProps {
   section: PageBuilderSection;
@@ -33,22 +38,12 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
   const subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
-  const linkStyle: React.CSSProperties = {
+  const _linkStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 
-  const getEmbedUrl = (url?: string) => {
-    if (!url) return '';
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
-      return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-    }
-    if (url.includes('vimeo.com')) {
-      const videoId = url.split('/').pop();
-      return `https://player.vimeo.com/video/${videoId}?autoplay=1`;
-    }
-    return url;
-  };
+  const getEmbedUrl = (url?: string) =>
+    buildEmbedUrl(url || '', { controls: true });
 
   const videoPoster =
     content.thumbnail ||
@@ -88,16 +83,16 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
             <div
               className="relative group min-h-[260px] sm:min-h-[360px] lg:min-h-[450px] bg-neutral shadow-xl"
               data-widget-media-frame
-              data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+              data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
               data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
             >
               {content.videoUrl && isPlaying ? (
                 <iframe
                   src={getEmbedUrl(content.videoUrl)}
                   className="absolute inset-0 w-full h-full bg-neutral"
+                  style={getIframeFrameStyle()}
                   frameBorder="0"
-                  allow="autoplay; fullscreen"
-                  allowFullScreen
+                  {...getVideoIframeProps()}
                 />
               ) : (
                 <div className="absolute inset-0">

@@ -17,6 +17,7 @@ export interface PageBuilderSection {
       backdropBlur?: string;
       backdropColor?: string;
       backdropOpacity?: number;
+      [key: string]: any;
     };
     spacing: {
       paddingTop: string;
@@ -46,6 +47,7 @@ export interface PageBuilderSection {
       textColor?: string;
       textFontSize?: string;
       linkColor?: string;
+      [key: string]: any;
     };
     colors?: {
       primary?: string;
@@ -65,10 +67,24 @@ export interface PageBuilderSection {
       iconBorderColor?: string;
       iconBorderWidth?: string;
       iconRadius?: string;
+      iconSize?: string;
+      sectionRadius?: string;
+      buttonBg?: string;
+      topBarBg?: string;
+      cardBackground?: string;
+      badgeBg?: string;
+      badgeText?: string;
+      inputBg?: string;
+      inputText?: string;
+      inputPlaceholder?: string;
+      decorLeftColor?: string;
+      decorRightColor?: string;
+      [key: string]: any;
     };
     media?: {
       imageRadius?: string;
       overlayImage?: string;
+      overlayTarget?: "section" | "media";
       overlayPosition?:
         | "top-left"
         | "top-right"
@@ -76,8 +92,44 @@ export interface PageBuilderSection {
         | "bottom-right"
         | "center";
       overlaySize?: string;
+      overlayZIndex?: 'behind-bg' | 'above-bg' | 'above-content' | 'above-all';
+      overlayOpacity?: number;
+      overlayBrightness?: number;
+      overlayContrast?: number;
+      overlaySaturate?: number;
+      overlayBlur?: string;
       hideDecorationsOnVideoPlay?: boolean;
+      [key: string]: any;
     };
+    overlay?: {
+      enabled?: boolean;
+      color?: string;
+      opacity?: number;
+      gradient?: string;
+      gradientDirection?: string;
+      [key: string]: any;
+    };
+    effects?: {
+      blur?: number;
+      brightness?: number;
+      contrast?: number;
+      saturate?: number;
+      grayscale?: number;
+      sepia?: number;
+      hueRotate?: number;
+      animation?: boolean;
+      animationType?: string;
+      animationDuration?: number;
+      [key: string]: any;
+    };
+    layout?: {
+      contentPosition?: string;
+      contentAlignment?: string;
+      minHeight?: string;
+      maxWidth?: string;
+      [key: string]: any;
+    };
+    [key: string]: any;
   };
   themeConfig?: {
     themeMode: "inherit" | "named" | "custom";
@@ -101,26 +153,64 @@ export interface PageBuilderSection {
 
 export type WidgetType =
   | "header"
+  | "header-top-info"
+  | "header-with-icons"
+  | "header-account-bar"
+  | "header-full-contact"
+  | "header-clickfunnel"
   | "hero"
+  | "clickfunnels-hero"
+  | "clickfunnel-center-card"
   | "features"
+  | "services-grid"
   | "cta"
-  | "content"
+  | "image-text-split"
+  | "content-showcase"
+  | "centered-content"
+  | "text-columns"
+  | "content-with-services"
+  | "split-content-checklist"
+  | "dropcap-services"
+  | "content-video-services"
   | "testimonials"
+  | "click-funnel-testimonials"
+  | "centered-testimonial"
   | "contact"
+  | "contact-split"
+  | "feedback-contact"
   | "footer"
+  | "clickfunnel-footer"
+  | "simple-header-divider"
   | "pricing"
+  | "membership-pricing"
   | "stats"
+  | "image-stats-faq"
   | "team"
   | "faq"
+  | "faq-two-columns"
   | "logocloud"
   | "videohero"
   | "gallery"
   | "timeline"
+  | "timeline-grid"
   | "newsletter"
+  | "newsletter-signup"
   | "process"
+  | "process-alternating"
   | "creative-network-hero"
+  | "brand-identity-hero"
+  | "simple-centered-hero"
+  | "hero-with-services"
+  | "hero-with-testimonials"
   | "immersive-split-showcase"
   | "provider-masonry"
+  | "integrations-grid"
+  | "services-cards"
+  | "services-carousel"
+  | "social-follow"
+  | "bento-features"
+  | "features-carousel"
+  | "clickfunnel-features"
   | "process-steps-cards"
   | "editorial-cards-row"
   | "minimal-final-cta"

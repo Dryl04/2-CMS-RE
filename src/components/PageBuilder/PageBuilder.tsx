@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, Edit3, FolderOpen, FolderPlus, Download, FileJson, FileSpreadsheet, X, Palette, Settings, Copy, Link2, Image } from 'lucide-react';
-import { PageBuilderSection, DeviceType } from '../../lib/pageBuilderTypes';
-import { supabase, PageTemplate, SEOMetadata } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
-import { useDaisyTheme } from '../../contexts/DaisyThemeContext';
-import { exportTemplateAsJSON, exportTemplateAsCSV, downloadFile } from '../../lib/templateExport';
-import { generateCustomThemeCSS, getThemeInlineVars, type DaisyThemeTokens } from '../../lib/daisyThemes';
+import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, Edit3, FolderOpen, FolderPlus, Download, FileJson, FileSpreadsheet, X, Palette, Settings, Copy, Link2 } from 'lucide-react';
+import { PageBuilderSection, DeviceType } from '@/lib/pageBuilderTypes';
+import { supabase, PageTemplate, SEOMetadata } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { useDaisyTheme } from '@/contexts/DaisyThemeContext';
+import { exportTemplateAsJSON, exportTemplateAsCSV, downloadFile } from '@/lib/templateExport';
+import { generateCustomThemeCSS, getThemeInlineVars, type DaisyThemeTokens } from '@/lib/daisyThemes';
 import { savePreviewData } from './BuilderPreviewPage';
 import WidgetLibrary from './WidgetLibrary';
 import Canvas from './Canvas';
 import PropertiesPanel from './PropertiesPanel';
-import SEOPageViewer from '../SEOPageViewer';
-import DaisyThemeManager from '../DaisyThemeManager';
+import SEOPageViewer from '@/components/seo/SEOPageViewer';
+import DaisyThemeManager from '@/components/theme/DaisyThemeManager';
 import PageAssetManager from './PageAssetManager';
-import { normalizeSectionForTheme } from '../../lib/widgetThemeHelper';
+import { normalizeSectionForTheme } from '@/lib/widgetThemeHelper';
 
 interface PageBuilderProps {
   onNavigate?: (view: string) => void;

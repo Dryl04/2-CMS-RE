@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { Upload, Search, Trash2, Check, Image as ImageIcon, X as XIcon, ArrowLeft } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import imageCompression from 'browser-image-compression';
-import { supabase, MediaFile } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
+import { supabase, MediaFile } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface MediaLibraryProps {
   onNavigate?: (view: string) => void;

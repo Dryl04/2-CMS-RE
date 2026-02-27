@@ -1,8 +1,17 @@
 import React from 'react';
 import { useState } from 'react';
 import { Play, Pause, X } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
+import {
+  buildEmbedUrl,
+  isDirectVideoUrl,
+  getVideoElementProps,
+  getIframeCoverStyle,
+  getVideoIframeProps,
+  getIframeCoverContainerStyle,
+  getIframeFrameStyle,
+} from '@/lib/videoConfig';
 
 interface VideoHeroWidgetProps {
   section: PageBuilderSection;
@@ -11,9 +20,11 @@ interface VideoHeroWidgetProps {
 
 export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
   const { title, subtitle, videoUrl, thumbnail, ctaText, ctaLink } = section.content;
-  const [isPlaying, setIsPlaying] = useState(false);
-  const textPosition = section.content?.textPosition || 'center';
   const autoplay = section.content?.autoplay !== false;
+  // Démarrer en lecture si autoplay est activé (true par défaut)
+  const [isPlaying, setIsPlaying] = useState(autoplay);
+  const textPosition = section.content?.textPosition || 'center';
+  const videoOverlayEnabled = section.content?.videoOverlayEnabled !== false;
   const videoOverlayColor = section.content?.videoOverlayColor || '';
   const videoOverlayOpacity = section.content?.videoOverlayOpacity ?? 0.5;
 
@@ -33,16 +44,16 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
     ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
     ...(typo.h2Color || typo.subtitleColor || typo.headingColor ? { color: typo.h2Color || typo.subtitleColor || typo.headingColor } : {}),
   };
-  const headingStyle: React.CSSProperties = {
+  const _headingStyle: React.CSSProperties = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
     ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
   };
-  const textStyle: React.CSSProperties = {
+  const _textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
-  const subtitleStyle: React.CSSProperties = {
+  const _subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 
@@ -52,57 +63,35 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
     ? { backgroundColor: accentColor }
     : {};
 
-  const getEmbedUrl = (url: string) => {
-    if (!url) return '';
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
-      return `https://www.youtube.com/embed/${videoId}?autoplay=${autoplay ? 1 : 0}`;
-    }
-    if (url.includes('vimeo.com')) {
-      const videoId = url.split('/').pop();
-      return `https://player.vimeo.com/video/${videoId}?autoplay=${autoplay ? 1 : 0}`;
-    }
-    return url;
-  };
+  const getEmbedUrlForWidget = (url: string, opts?: { controls?: boolean }) =>
+    buildEmbedUrl(url, { autoplay, controls: opts?.controls ?? false });
 
   const renderBackground = () => (
     <div
       className="relative group w-full min-h-[360px] sm:min-h-[500px] lg:min-h-[640px] overflow-hidden bg-neutral"
-      data-widget-media-frame
-      data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+            data-widget-media-frame
+      data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
       data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
     >
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden" style={getIframeCoverContainerStyle()}>
         {isPlaying ? (
           (() => {
             const url = videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-            const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
-            const isDirectVideo = url.match(/\.(mp4|webm|ogg)(\?|$)/i);
-            if (isDirectVideo) {
+            if (isDirectVideoUrl(url)) {
               return (
                 <video
                   src={url}
-                  autoPlay={autoplay}
-                  muted
-                  loop
-                  playsInline
+                  {...getVideoElementProps({ autoplay })}
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full object-cover"
                 />
               );
             }
             return (
               <iframe
-                src={getEmbedUrl(url)}
+                src={getEmbedUrlForWidget(url)}
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                style={{
-                  width: '177.78vh',
-                  height: '100vh',
-                  minWidth: '100%',
-                  minHeight: '100%',
-                  border: 'none',
-                }}
-                allow="autoplay; fullscreen"
-                allowFullScreen
+                style={getIframeCoverStyle()}
+                {...getVideoIframeProps()}
               />
             );
           })()
@@ -116,7 +105,9 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         )}
       </div>
 
-      <div className="absolute inset-0 bg-neutral/50" style={videoOverlayColor ? { backgroundColor: videoOverlayColor, opacity: videoOverlayOpacity } : undefined} />
+      {videoOverlayEnabled && (
+        <div className="absolute inset-0 bg-neutral/50" style={videoOverlayColor ? { backgroundColor: videoOverlayColor, opacity: videoOverlayOpacity } : undefined} />
+      )}
 
       <div className={`absolute inset-0 flex ${textPosition === 'top' ? 'items-start' : textPosition === 'bottom' ? 'items-end' : 'items-center'} justify-center py-10 sm:py-16 transition-opacity ${shouldHideDecorations ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <div className="w-full max-w-4xl mx-auto px-4 text-center">
@@ -182,17 +173,17 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
       <div
         className="relative group overflow-hidden shadow-2xl bg-neutral"
         data-widget-media-frame
-        data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+        data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
         data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
       >
-        <div className="aspect-video">
+        <div className="relative aspect-video overflow-hidden">
           {isPlaying ? (
             <iframe
-              src={getEmbedUrl(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
-              className="w-full h-full bg-neutral"
+              src={getEmbedUrlForWidget(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', { controls: true })}
+              className="absolute inset-0 w-full h-full bg-neutral"
+              style={getIframeFrameStyle()}
               frameBorder="0"
-              allow="autoplay; fullscreen"
-              allowFullScreen
+              {...getVideoIframeProps()}
             />
           ) : (
             <div className="relative w-full h-full group cursor-pointer" onClick={() => setIsPlaying(true)}>
@@ -265,17 +256,17 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
         <div
           className="relative group overflow-hidden shadow-2xl bg-neutral"
           data-widget-media-frame
-          data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+          data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
           data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
         >
-          <div className="aspect-video">
+          <div className="relative aspect-video overflow-hidden">
             {isPlaying ? (
               <iframe
-                src={getEmbedUrl(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
-                className="w-full h-full bg-neutral"
+                src={getEmbedUrlForWidget(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', { controls: true })}
+                className="absolute inset-0 w-full h-full bg-neutral"
+                style={getIframeFrameStyle()}
                 frameBorder="0"
-                allow="autoplay; fullscreen"
-                allowFullScreen
+                {...getVideoIframeProps()}
               />
             ) : (
               <div className="relative w-full h-full group cursor-pointer" onClick={() => setIsPlaying(true)}>
@@ -328,7 +319,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
             className="relative inline-block overflow-hidden shadow-2xl cursor-pointer group"
             onClick={() => setIsPlaying(true)}
             data-widget-media-frame
-            data-widget-overlay={design.media?.overlayImage ? 'on' : undefined}
+            data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
             data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
           >
             <img
@@ -356,13 +347,13 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
           >
             <X className="w-6 h-6 text-neutral-content" />
           </button>
-          <div className="w-full max-w-6xl aspect-video">
+          <div className="relative w-full max-w-6xl aspect-video overflow-hidden">
             <iframe
-              src={getEmbedUrl(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
-              className="w-full h-full rounded-xl"
+              src={getEmbedUrlForWidget(videoUrl || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', { controls: true })}
+              className="absolute inset-0 w-full h-full rounded-xl"
+              style={getIframeFrameStyle()}
               frameBorder="0"
-              allow="autoplay; fullscreen"
-              allowFullScreen
+              {...getVideoIframeProps()}
             />
           </div>
         </div>

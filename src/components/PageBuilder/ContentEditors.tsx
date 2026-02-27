@@ -1,11 +1,25 @@
 import React from 'react';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
-import { PageBuilderSection } from '../../lib/pageBuilderTypes';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { getWidgetFieldLabel } from '@/lib/widgetFieldLabels';
 import ImageUploadField from './ImageUploadField';
 import IconPicker from './IconPicker';
+import { LinkInputField } from '@/components/common/LinkInputField';
+import { RichTextArea } from '@/components/common/RichTextArea';
 
 const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent';
 const labelClass = 'block text-sm font-medium text-gray-700 mb-2';
+const LABELS = {
+  headline: getWidgetFieldLabel('headline') || 'Titre principal',
+  subheadline: getWidgetFieldLabel('subheadline') || 'Sous-titre',
+  title: getWidgetFieldLabel('title') || 'Titre principal',
+  ctaText: getWidgetFieldLabel('ctaText') || 'Texte bouton principal',
+  ctaLink: getWidgetFieldLabel('ctaLink') || 'Lien bouton principal',
+  primaryCta: getWidgetFieldLabel('primaryCta') || 'Texte bouton principal',
+  primaryLink: getWidgetFieldLabel('primaryLink') || 'Lien bouton principal',
+  secondaryCta: getWidgetFieldLabel('secondaryCta') || 'Texte bouton secondaire',
+  secondaryLink: getWidgetFieldLabel('secondaryLink') || 'Lien bouton secondaire',
+};
 
 interface ContentEditorProps {
   section: PageBuilderSection;
@@ -44,26 +58,21 @@ const SOCIAL_PLATFORMS = [
 export function HeroContentEditor({ section, updateContent }: ContentEditorProps) {
   return (
     <div className="space-y-4">
+      <RichTextArea
+        label="Titre principal H1"
+        value={section.content.headline || ''}
+        onChange={(val) => updateContent('headline', val)}
+        rows={1}
+        singleLine
+      />
+      <RichTextArea
+        label="Sous-titre H2"
+        value={section.content.subheadline || ''}
+        onChange={(val) => updateContent('subheadline', val)}
+        rows={3}
+      />
       <div>
-        <label className={labelClass}>Titre principal (H1)</label>
-        <input
-          type="text"
-          value={section.content.headline || ''}
-          onChange={(e) => updateContent('headline', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
-        <textarea
-          value={section.content.subheadline || ''}
-          onChange={(e) => updateContent('subheadline', e.target.value)}
-          rows={3}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Texte du bouton</label>
+        <label className={labelClass}>{LABELS.ctaText}</label>
         <input
           type="text"
           value={section.content.ctaText || ''}
@@ -71,15 +80,11 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
           className={inputClass}
         />
       </div>
-      <div>
-        <label className={labelClass}>Lien du bouton</label>
-        <input
-          type="text"
-          value={section.content.ctaLink || ''}
-          onChange={(e) => updateContent('ctaLink', e.target.value)}
-          className={inputClass}
-        />
-      </div>
+      <LinkInputField
+        label={LABELS.ctaLink}
+        value={section.content.ctaLink || ''}
+        onChange={(val) => updateContent('ctaLink', val)}
+      />
       <ImageUploadField
         label="Image"
         value={section.content.image || ''}
@@ -93,24 +98,19 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
 export function CTAContentEditor({ section, updateContent }: ContentEditorProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Titre</label>
-        <input
-          type="text"
-          value={section.content.headline || ''}
-          onChange={(e) => updateContent('headline', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Description (H2)</label>
-        <textarea
-          value={section.content.description || ''}
-          onChange={(e) => updateContent('description', e.target.value)}
-          rows={3}
-          className={inputClass}
-        />
-      </div>
+      <RichTextArea
+        label="Titre H2"
+        value={section.content.headline || ''}
+        onChange={(val) => updateContent('headline', val)}
+        rows={1}
+        singleLine
+      />
+      <RichTextArea
+        label="Description"
+        value={section.content.description || ''}
+        onChange={(val) => updateContent('description', val)}
+        rows={3}
+      />
       <div>
         <label className={labelClass}>Bouton principal</label>
         <input
@@ -118,14 +118,11 @@ export function CTAContentEditor({ section, updateContent }: ContentEditorProps)
           value={section.content.primaryCta || ''}
           onChange={(e) => updateContent('primaryCta', e.target.value)}
           className={`${inputClass} mb-2`}
-          placeholder="Texte"
+          placeholder={LABELS.primaryCta}
         />
-        <input
-          type="text"
+        <LinkInputField
           value={section.content.primaryLink || ''}
-          onChange={(e) => updateContent('primaryLink', e.target.value)}
-          className={inputClass}
-          placeholder="Lien"
+          onChange={(val) => updateContent('primaryLink', val)}
         />
       </div>
       <div>
@@ -135,14 +132,11 @@ export function CTAContentEditor({ section, updateContent }: ContentEditorProps)
           value={section.content.secondaryCta || ''}
           onChange={(e) => updateContent('secondaryCta', e.target.value)}
           className={`${inputClass} mb-2`}
-          placeholder="Texte"
+          placeholder={LABELS.secondaryCta}
         />
-        <input
-          type="text"
+        <LinkInputField
           value={section.content.secondaryLink || ''}
-          onChange={(e) => updateContent('secondaryLink', e.target.value)}
-          className={inputClass}
-          placeholder="Lien"
+          onChange={(val) => updateContent('secondaryLink', val)}
         />
       </div>
       <ImageUploadField
@@ -182,7 +176,7 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
         placeholder="URL du logo"
       />
       <div>
-        <label className={labelClass}>Texte du logo</label>
+        <label className={labelClass}>Nom de marque</label>
         <input
           type="text"
           value={section.content.logoText || ''}
@@ -239,14 +233,11 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
           value={section.content.ctaText || ''}
           onChange={(e) => updateContent('ctaText', e.target.value)}
           className={`${inputClass} mb-2`}
-          placeholder="Texte du bouton"
+          placeholder={LABELS.ctaText}
         />
-        <input
-          type="text"
+        <LinkInputField
           value={section.content.ctaLink || ''}
-          onChange={(e) => updateContent('ctaLink', e.target.value)}
-          className={inputClass}
-          placeholder="Lien du bouton"
+          onChange={(val) => updateContent('ctaLink', val)}
         />
       </div>
 
@@ -257,14 +248,11 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
           value={section.content.secondaryCtaText || ''}
           onChange={(e) => updateContent('secondaryCtaText', e.target.value)}
           className={`${inputClass} mb-2`}
-          placeholder="Texte bouton secondaire"
+          placeholder={LABELS.secondaryCta}
         />
-        <input
-          type="text"
+        <LinkInputField
           value={section.content.secondaryCtaLink || ''}
-          onChange={(e) => updateContent('secondaryCtaLink', e.target.value)}
-          className={inputClass}
-          placeholder="Lien bouton secondaire"
+          onChange={(val) => updateContent('secondaryCtaLink', val)}
         />
       </div>
 
@@ -277,12 +265,9 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
           className={`${inputClass} mb-2`}
           placeholder="Texte compte (ex: Log in)"
         />
-        <input
-          type="text"
+        <LinkInputField
           value={section.content.accountLink || ''}
-          onChange={(e) => updateContent('accountLink', e.target.value)}
-          className={inputClass}
-          placeholder="Lien compte"
+          onChange={(val) => updateContent('accountLink', val)}
         />
       </div>
 
@@ -336,24 +321,20 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
 export function ContactContentEditor({ section, updateContent }: ContentEditorProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Titre</label>
-        <input
-          type="text"
-          value={section.content.title || ''}
-          onChange={(e) => updateContent('title', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
+      <RichTextArea
+        label="Titre H2"
+        value={section.content.title || ''}
+        onChange={(val) => updateContent('title', val)}
+        rows={1}
+        singleLine
+      />
+      <RichTextArea
+        label="Sous-titre"
+        value={section.content.subtitle || ''}
+        onChange={(val) => updateContent('subtitle', val)}
+        rows={1}
+        singleLine
+      />
       <div>
         <label className={labelClass}>Email</label>
         <input
@@ -419,24 +400,20 @@ export function FeaturesContentEditor({ section, updateContent }: ContentEditorP
 
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Titre</label>
-        <input
-          type="text"
-          value={section.content.title || ''}
-          onChange={(e) => updateContent('title', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
+      <RichTextArea
+        label="Titre H2"
+        value={section.content.title || ''}
+        onChange={(val) => updateContent('title', val)}
+        rows={1}
+        singleLine
+      />
+      <RichTextArea
+        label="Sous-titre"
+        value={section.content.subtitle || ''}
+        onChange={(val) => updateContent('subtitle', val)}
+        rows={1}
+        singleLine
+      />
 
       <div>
         <label className={labelClass}>Fonctionnalites</label>
@@ -513,24 +490,20 @@ export function TestimonialsContentEditor({ section, updateContent }: ContentEdi
 
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Titre</label>
-        <input
-          type="text"
-          value={section.content.title || ''}
-          onChange={(e) => updateContent('title', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Sous-titre (H2)</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
+      <RichTextArea
+        label="Titre H2"
+        value={section.content.title || ''}
+        onChange={(val) => updateContent('title', val)}
+        rows={1}
+        singleLine
+      />
+      <RichTextArea
+        label="Sous-titre"
+        value={section.content.subtitle || ''}
+        onChange={(val) => updateContent('subtitle', val)}
+        rows={1}
+        singleLine
+      />
 
       <div>
         <label className={labelClass}>Temoignages</label>
@@ -671,7 +644,7 @@ export function FooterContentEditor({ section, updateContent }: ContentEditorPro
         placeholder="URL du logo"
       />
       <div>
-        <label className={labelClass}>Texte du logo</label>
+        <label className={labelClass}>Nom de marque</label>
         <input
           type="text"
           value={section.content.logoText || ''}
@@ -680,15 +653,12 @@ export function FooterContentEditor({ section, updateContent }: ContentEditorPro
           placeholder="Nom de la marque"
         />
       </div>
-      <div>
-        <label className={labelClass}>Description</label>
-        <textarea
-          value={section.content.description || ''}
-          onChange={(e) => updateContent('description', e.target.value)}
-          rows={2}
-          className={inputClass}
-        />
-      </div>
+      <RichTextArea
+        label="Description"
+        value={section.content.description || ''}
+        onChange={(val) => updateContent('description', val)}
+        rows={2}
+      />
 
       <div>
         <label className={labelClass}>Colonnes de liens</label>
@@ -814,51 +784,38 @@ export function FooterContentEditor({ section, updateContent }: ContentEditorPro
 export function ImageTextSplitContentEditor({ section, updateContent }: ContentEditorProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Sous-titre (optionnel)</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Titre principal</label>
-        <textarea
-          value={section.content.headline || ''}
-          onChange={(e) => updateContent('headline', e.target.value)}
-          rows={3}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Paragraphe 1</label>
-        <textarea
-          value={section.content.paragraph1 || ''}
-          onChange={(e) => updateContent('paragraph1', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Paragraphe 2</label>
-        <textarea
-          value={section.content.paragraph2 || ''}
-          onChange={(e) => updateContent('paragraph2', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Paragraphe 3 (optionnel)</label>
-        <textarea
-          value={section.content.paragraph3 || ''}
-          onChange={(e) => updateContent('paragraph3', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
+      <RichTextArea
+        label="Sous-titre (optionnel)"
+        value={section.content.subtitle || ''}
+        onChange={(val) => updateContent('subtitle', val)}
+        rows={1}
+        singleLine
+      />
+      <RichTextArea
+        label="Titre H2"
+        value={section.content.headline || ''}
+        onChange={(val) => updateContent('headline', val)}
+        rows={1}
+        singleLine
+      />
+      <RichTextArea
+        label="Paragraphe 1"
+        value={section.content.paragraph1 || ''}
+        onChange={(val) => updateContent('paragraph1', val)}
+        rows={4}
+      />
+      <RichTextArea
+        label="Paragraphe 2"
+        value={section.content.paragraph2 || ''}
+        onChange={(val) => updateContent('paragraph2', val)}
+        rows={4}
+      />
+      <RichTextArea
+        label="Paragraphe 3 (optionnel)"
+        value={section.content.paragraph3 || ''}
+        onChange={(val) => updateContent('paragraph3', val)}
+        rows={4}
+      />
       <div>
         <label className={labelClass}>Texte du lien</label>
         <input
@@ -868,15 +825,11 @@ export function ImageTextSplitContentEditor({ section, updateContent }: ContentE
           className={inputClass}
         />
       </div>
-      <div>
-        <label className={labelClass}>Lien</label>
-        <input
-          type="text"
-          value={section.content.ctaLink || ''}
-          onChange={(e) => updateContent('ctaLink', e.target.value)}
-          className={inputClass}
-        />
-      </div>
+      <LinkInputField
+        label="Lien"
+        value={section.content.ctaLink || ''}
+        onChange={(val) => updateContent('ctaLink', val)}
+      />
       <ImageUploadField
         label="Image"
         value={section.content.image || ''}
@@ -889,51 +842,38 @@ export function ImageTextSplitContentEditor({ section, updateContent }: ContentE
 export function ContentShowcaseContentEditor({ section, updateContent }: ContentEditorProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Sous-titre</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Titre principal</label>
-        <textarea
-          value={section.content.headline || ''}
-          onChange={(e) => updateContent('headline', e.target.value)}
-          rows={2}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Colonne 1</label>
-        <textarea
-          value={section.content.column1 || ''}
-          onChange={(e) => updateContent('column1', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Colonne 2</label>
-        <textarea
-          value={section.content.column2 || ''}
-          onChange={(e) => updateContent('column2', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Colonne 3 (optionnel)</label>
-        <textarea
-          value={section.content.column3 || ''}
-          onChange={(e) => updateContent('column3', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
+      <RichTextArea
+        label="Sous-titre"
+        value={section.content.subtitle || ''}
+        onChange={(val) => updateContent('subtitle', val)}
+        rows={1}
+        singleLine
+      />
+      <RichTextArea
+        label="Titre H2"
+        value={section.content.headline || ''}
+        onChange={(val) => updateContent('headline', val)}
+        rows={1}
+        singleLine
+      />
+      <RichTextArea
+        label="Colonne 1"
+        value={section.content.column1 || ''}
+        onChange={(val) => updateContent('column1', val)}
+        rows={4}
+      />
+      <RichTextArea
+        label="Colonne 2"
+        value={section.content.column2 || ''}
+        onChange={(val) => updateContent('column2', val)}
+        rows={4}
+      />
+      <RichTextArea
+        label="Colonne 3 (optionnel)"
+        value={section.content.column3 || ''}
+        onChange={(val) => updateContent('column3', val)}
+        rows={4}
+      />
       <ImageUploadField
         label="Image"
         value={section.content.image || ''}
@@ -946,38 +886,31 @@ export function ContentShowcaseContentEditor({ section, updateContent }: Content
 export function CenteredContentContentEditor({ section, updateContent }: ContentEditorProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Sous-titre</label>
-        <input
-          type="text"
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Titre principal</label>
-        <textarea
-          value={section.content.headline || ''}
-          onChange={(e) => updateContent('headline', e.target.value)}
-          rows={2}
-          className={inputClass}
-        />
-      </div>
+      <RichTextArea
+        label="Sous-titre"
+        value={section.content.subtitle || ''}
+        onChange={(val) => updateContent('subtitle', val)}
+        rows={1}
+        singleLine
+      />
+      <RichTextArea
+        label="Titre H2"
+        value={section.content.headline || ''}
+        onChange={(val) => updateContent('headline', val)}
+        rows={1}
+        singleLine
+      />
       <ImageUploadField
         label="Image"
         value={section.content.image || ''}
         onChange={(value) => updateContent('image', value)}
       />
-      <div>
-        <label className={labelClass}>Description</label>
-        <textarea
-          value={section.content.description || ''}
-          onChange={(e) => updateContent('description', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
+      <RichTextArea
+        label="Description"
+        value={section.content.description || ''}
+        onChange={(val) => updateContent('description', val)}
+        rows={4}
+      />
       <div>
         <label className={labelClass}>Texte du bouton</label>
         <input
@@ -987,15 +920,11 @@ export function CenteredContentContentEditor({ section, updateContent }: Content
           className={inputClass}
         />
       </div>
-      <div>
-        <label className={labelClass}>Lien du bouton</label>
-        <input
-          type="text"
-          value={section.content.ctaLink || ''}
-          onChange={(e) => updateContent('ctaLink', e.target.value)}
-          className={inputClass}
-        />
-      </div>
+      <LinkInputField
+        label="Lien du bouton"
+        value={section.content.ctaLink || ''}
+        onChange={(val) => updateContent('ctaLink', val)}
+      />
     </div>
   );
 }
@@ -1003,15 +932,12 @@ export function CenteredContentContentEditor({ section, updateContent }: Content
 export function TextColumnsContentEditor({ section, updateContent }: ContentEditorProps) {
   return (
     <div className="space-y-4">
-      <div>
-        <label className={labelClass}>Introduction</label>
-        <textarea
-          value={section.content.introduction || ''}
-          onChange={(e) => updateContent('introduction', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
+      <RichTextArea
+        label="Introduction"
+        value={section.content.introduction || ''}
+        onChange={(val) => updateContent('introduction', val)}
+        rows={4}
+      />
       <div>
         <label className={labelClass}>Texte du bouton</label>
         <input
@@ -1021,42 +947,29 @@ export function TextColumnsContentEditor({ section, updateContent }: ContentEdit
           className={inputClass}
         />
       </div>
-      <div>
-        <label className={labelClass}>Lien du bouton</label>
-        <input
-          type="text"
-          value={section.content.ctaLink || ''}
-          onChange={(e) => updateContent('ctaLink', e.target.value)}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Colonne 1</label>
-        <textarea
-          value={section.content.column1 || ''}
-          onChange={(e) => updateContent('column1', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Colonne 2</label>
-        <textarea
-          value={section.content.column2 || ''}
-          onChange={(e) => updateContent('column2', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label className={labelClass}>Colonne 3 (optionnel)</label>
-        <textarea
-          value={section.content.column3 || ''}
-          onChange={(e) => updateContent('column3', e.target.value)}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
+      <LinkInputField
+        label="Lien du bouton"
+        value={section.content.ctaLink || ''}
+        onChange={(val) => updateContent('ctaLink', val)}
+      />
+      <RichTextArea
+        label="Colonne 1"
+        value={section.content.column1 || ''}
+        onChange={(val) => updateContent('column1', val)}
+        rows={4}
+      />
+      <RichTextArea
+        label="Colonne 2"
+        value={section.content.column2 || ''}
+        onChange={(val) => updateContent('column2', val)}
+        rows={4}
+      />
+      <RichTextArea
+        label="Colonne 3 (optionnel)"
+        value={section.content.column3 || ''}
+        onChange={(val) => updateContent('column3', val)}
+        rows={4}
+      />
     </div>
   );
 }
@@ -1149,25 +1062,21 @@ export function ClickFunnelCenterCardContentEditor({ section, updateContent }: C
               />
             </div>
 
-            <div>
-              <label className={labelClass}>Titre principal</label>
-              <input
-                type="text"
-                value={selectedTab.title || ''}
-                onChange={(e) => updateNavItem(selectedTabIndex, 'title', e.target.value)}
-                className={inputClass}
-              />
-            </div>
+            <RichTextArea
+              label="Titre H2"
+              value={selectedTab.title || ''}
+              onChange={(val) => updateNavItem(selectedTabIndex, 'title', val)}
+              rows={1}
+              singleLine
+            />
 
-            <div>
-              <label className={labelClass}>Sous-titre</label>
-              <input
-                type="text"
-                value={selectedTab.subtitle || ''}
-                onChange={(e) => updateNavItem(selectedTabIndex, 'subtitle', e.target.value)}
-                className={inputClass}
-              />
-            </div>
+            <RichTextArea
+              label="Sous-titre"
+              value={selectedTab.subtitle || ''}
+              onChange={(val) => updateNavItem(selectedTabIndex, 'subtitle', val)}
+              rows={1}
+              singleLine
+            />
 
             <div>
               <label className={labelClass}>Texte en surbrillance</label>
@@ -1179,15 +1088,12 @@ export function ClickFunnelCenterCardContentEditor({ section, updateContent }: C
               />
             </div>
 
-            <div>
-              <label className={labelClass}>Description</label>
-              <textarea
-                value={selectedTab.description || ''}
-                onChange={(e) => updateNavItem(selectedTabIndex, 'description', e.target.value)}
-                rows={3}
-                className={inputClass}
-              />
-            </div>
+            <RichTextArea
+              label="Description"
+              value={selectedTab.description || ''}
+              onChange={(val) => updateNavItem(selectedTabIndex, 'description', val)}
+              rows={3}
+            />
 
             <div>
               <label className={labelClass}>Texte du bouton</label>
@@ -1494,27 +1400,20 @@ export function ClickFunnelFeaturesContentEditor({ section, updateContent }: Con
 
   return (
     <div className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Titre</label>
-        <input
-          type="text"
-          value={section.content.title || ''}
-          onChange={(e) => updateContent('title', e.target.value)}
-          placeholder="Build a funnel-based business"
-          className={inputClass}
-        />
-      </div>
+      <RichTextArea
+        label="Titre H2"
+        value={section.content.title || ''}
+        onChange={(val) => updateContent('title', val)}
+        rows={1}
+        singleLine
+      />
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Sous-titre</label>
-        <textarea
-          value={section.content.subtitle || ''}
-          onChange={(e) => updateContent('subtitle', e.target.value)}
-          placeholder="Description complète"
-          className={inputClass}
-          rows={3}
-        />
-      </div>
+      <RichTextArea
+        label="Sous-titre"
+        value={section.content.subtitle || ''}
+        onChange={(val) => updateContent('subtitle', val)}
+        rows={3}
+      />
 
       <div>
         <div className="flex items-center justify-between mb-3">

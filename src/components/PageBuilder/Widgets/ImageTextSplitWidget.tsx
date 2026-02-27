@@ -1,6 +1,6 @@
 import React from 'react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface ImageTextSplitWidgetProps {
   section: PageBuilderSection;
@@ -9,7 +9,7 @@ interface ImageTextSplitWidgetProps {
 
 export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetProps) {
   const {
-    subtitle,
+    _subtitle,
     headline,
     paragraph1,
     paragraph2,
@@ -30,7 +30,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
-  const subtitleStyle: React.CSSProperties = {
+  const _subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
   const linkStyle: React.CSSProperties = {
@@ -40,7 +40,12 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
   const renderDefault = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center">
-        <div className="relative">
+        <div
+          className="relative"
+          data-widget-media-frame
+          data-widget-overlay={(section.design?.media?.overlayImage && section.design?.media?.overlayTarget === 'media') ? 'on' : undefined}
+          data-widget-overlay-position={section.design?.media?.overlayPosition || 'bottom-right'}
+        >
           <img
             src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
             alt="Content"
@@ -136,7 +141,12 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
             {ctaText || 'LEARN MORE'}
           </a>
         </div>
-        <div className="relative order-1 md:order-2">
+        <div
+          className="relative order-1 md:order-2"
+          data-widget-media-frame
+          data-widget-overlay={(section.design?.media?.overlayImage && section.design?.media?.overlayTarget === 'media') ? 'on' : undefined}
+          data-widget-overlay-position={section.design?.media?.overlayPosition || 'bottom-right'}
+        >
           <img
             src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
             alt="Content"
@@ -150,7 +160,12 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
   const renderStacked = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-6 md:space-y-8">
-        <div className="relative w-full">
+        <div
+          className="relative w-full"
+          data-widget-media-frame
+          data-widget-overlay={(section.design?.media?.overlayImage && section.design?.media?.overlayTarget === 'media') ? 'on' : undefined}
+          data-widget-overlay-position={section.design?.media?.overlayPosition || 'bottom-right'}
+        >
           <img
             src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
             alt="Content"

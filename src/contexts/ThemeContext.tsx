@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Theme } from '../lib/themeTypes';
-import { supabase } from '../lib/supabase';
-import { defaultThemes } from '../lib/defaultThemes';
+import { Theme } from '@/lib/themeTypes';
+import { supabase } from '@/lib/supabase';
+import { defaultThemes } from '@/lib/defaultThemes';
 
 interface ThemeContextType {
   currentTheme: Theme | null;
@@ -92,7 +92,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         is_default: theme.is_default,
       }));
 
-      const { data, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('themes')
         .insert(themesToInsert)
         .select();
@@ -103,7 +103,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         throw insertError;
       }
 
-      console.log('Default themes initialized successfully');
       await fetchThemes();
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';

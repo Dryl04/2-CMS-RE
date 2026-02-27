@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight, CheckCircle } from 'lucide-react';
-import { PageBuilderSection } from '../../../lib/pageBuilderTypes';
-import { renderRichText } from '../../../lib/htmlSanitizer';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import { renderRichText } from '@/lib/htmlSanitizer';
 
 interface ProcessWidgetProps {
   section: PageBuilderSection;
