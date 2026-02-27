@@ -80,7 +80,7 @@
     color: var(--widget-link-color, var(--widget-accent-color)) !important;
   }
 
-  .widget-design-scope a:not(.btn):not([class*="no-underline"]):not([class*="px-"]) {
+  .widget-design-scope a.rich-text-link {
     text-decoration: underline;
     font-family: inherit;
   }

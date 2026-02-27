@@ -53,7 +53,6 @@ function sanitizeAttributes(el: Element, tag: string): string {
     }
   }
 
-  // Force links to open in new tab and have noopener
   if (tag === "a") {
     if (!el.hasAttribute("target")) {
       attrs.push(' target="_blank"');
@@ -61,6 +60,7 @@ function sanitizeAttributes(el: Element, tag: string): string {
     if (!el.hasAttribute("rel")) {
       attrs.push(' rel="noopener noreferrer"');
     }
+    attrs.push(' class="rich-text-link"');
   }
 
   return attrs.join("");
