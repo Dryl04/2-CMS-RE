@@ -44,7 +44,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
           className="relative"
           data-widget-media-frame
           data-widget-overlay={(section.design?.media?.overlayImage && section.design?.media?.overlayTarget === 'media') ? 'on' : undefined}
-          data-widget-overlay-position={section.design?.media?.overlayPosition || 'bottom-right'}
+          data-widget-overlay-position={section.design?.media?.overlayPosition || 'center'}
         >
           <img
             src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
@@ -145,7 +145,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
           className="relative order-1 md:order-2"
           data-widget-media-frame
           data-widget-overlay={(section.design?.media?.overlayImage && section.design?.media?.overlayTarget === 'media') ? 'on' : undefined}
-          data-widget-overlay-position={section.design?.media?.overlayPosition || 'bottom-right'}
+          data-widget-overlay-position={section.design?.media?.overlayPosition || 'center'}
         >
           <img
             src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
@@ -164,7 +164,7 @@ export default function ImageTextSplitWidget({ section }: ImageTextSplitWidgetPr
           className="relative w-full"
           data-widget-media-frame
           data-widget-overlay={(section.design?.media?.overlayImage && section.design?.media?.overlayTarget === 'media') ? 'on' : undefined}
-          data-widget-overlay-position={section.design?.media?.overlayPosition || 'bottom-right'}
+          data-widget-overlay-position={section.design?.media?.overlayPosition || 'center'}
         >
           <img
             src={image || 'https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}

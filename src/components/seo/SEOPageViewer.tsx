@@ -354,7 +354,7 @@ function RenderSections({ sections }: { sections: PageBuilderSection[] }) {
             data-theme={dataTheme}
             data-widget-type={normalizedSection.type}
             data-widget-overlay={normalizedSection.design?.media?.overlayImage ? 'on' : undefined}
-            data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'bottom-right'}
+            data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'center'}
             data-widget-overlay-z={normalizedSection.design?.media?.overlayZIndex || 'above-all'}
             style={style as React.CSSProperties}
           >

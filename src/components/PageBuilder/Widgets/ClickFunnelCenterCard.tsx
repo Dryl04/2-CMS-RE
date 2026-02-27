@@ -208,7 +208,7 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
               style={{ backgroundColor: mediaBg }}
               data-widget-media-frame
               data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
-              data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+              data-widget-overlay-position={design.media?.overlayPosition || 'center'}
             >
               {activeTab.mediaType === 'video' && activeTab.mediaUrl ? (
                 <video

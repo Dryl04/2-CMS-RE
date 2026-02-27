@@ -1271,7 +1271,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             <div>
               <label className="block text-xs text-gray-600 mb-1">Position overlay</label>
               <select
-                value={section.design.media?.overlayPosition || 'bottom-right'}
+                value={section.design.media?.overlayPosition || 'center'}
                 onChange={(e) => updateDesign('media', 'overlayPosition', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
               >
@@ -1283,13 +1283,13 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-600 mb-1">Taille overlay ({section.design.media?.overlaySize || '500px'})</label>
+              <label className="block text-xs text-gray-600 mb-1">Taille overlay ({section.design.media?.overlaySize || 'auto'})</label>
               <input
                 type="range"
                 min="32"
                 max="1500"
                 step="10"
-                value={parseInt((section.design.media?.overlaySize || '500').replace('px', ''), 10) || 500}
+                value={parseInt((section.design.media?.overlaySize || '').replace('px', ''), 10) || 1500}
                 onChange={(e) => updateDesign('media', 'overlaySize', `${e.target.value}px`)}
                 className="w-full"
               />
@@ -1297,23 +1297,22 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
             <div>
               <label className="block text-xs text-gray-600 mb-1">Couche overlay</label>
               <select
-                value={section.design.media?.overlayZIndex ?? 'above-all'}
+                value={section.design.media?.overlayZIndex ?? 'above-bg'}
                 onChange={(e) => updateDesign('media', 'overlayZIndex', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
               >
                 <option value="behind-bg">Derrière l'arrière-plan</option>
                 <option value="above-bg">Au-dessus de l'arrière-plan</option>
                 <option value="above-content">Au-dessus du contenu</option>
-                <option value="above-all">Au-dessus de tout</option>
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-600 mb-1">Opacité overlay ({Math.round((section.design.media?.overlayOpacity ?? 1) * 100)}%)</label>
+              <label className="block text-xs text-gray-600 mb-1">Opacité overlay ({Math.round((section.design.media?.overlayOpacity ?? 0.5) * 100)}%)</label>
               <input
                 type="range"
                 min={0}
                 max={100}
-                value={Math.round((section.design.media?.overlayOpacity ?? 1) * 100)}
+                value={Math.round((section.design.media?.overlayOpacity ?? 0.5) * 100)}
                 onChange={(e) => updateDesign('media', 'overlayOpacity', parseInt(e.target.value) / 100)}
                 className="w-full"
               />
@@ -2233,7 +2232,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           <div>
             <label className="block text-xs text-gray-600 mb-1">Position overlay</label>
             <select
-              value={section.design.media?.overlayPosition || 'bottom-right'}
+              value={section.design.media?.overlayPosition || 'center'}
               onChange={(e) => updateDesign('media', 'overlayPosition', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
             >
@@ -2246,13 +2245,13 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           </div>
 
           <div>
-            <label className="block text-xs text-gray-600 mb-1">Taille overlay ({section.design.media?.overlaySize || '500px'})</label>
+            <label className="block text-xs text-gray-600 mb-1">Taille overlay ({section.design.media?.overlaySize || 'auto'})</label>
             <input
               type="range"
               min="32"
               max="1500"
               step="10"
-              value={parseInt((section.design.media?.overlaySize || '500').replace('px', ''), 10) || 500}
+              value={parseInt((section.design.media?.overlaySize || '').replace('px', ''), 10) || 1500}
               onChange={(e) => updateDesign('media', 'overlaySize', `${e.target.value}px`)}
               className="w-full"
             />
@@ -2261,24 +2260,23 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
           <div>
             <label className="block text-xs text-gray-600 mb-1">Couche overlay</label>
             <select
-              value={section.design.media?.overlayZIndex ?? 'above-all'}
+              value={section.design.media?.overlayZIndex ?? 'above-bg'}
               onChange={(e) => updateDesign('media', 'overlayZIndex', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
             >
               <option value="behind-bg">Derrière l'arrière-plan</option>
               <option value="above-bg">Au-dessus de l'arrière-plan</option>
               <option value="above-content">Au-dessus du contenu</option>
-              <option value="above-all">Au-dessus de tout</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs text-gray-600 mb-1">Opacité overlay ({Math.round((section.design.media?.overlayOpacity ?? 1) * 100)}%)</label>
+            <label className="block text-xs text-gray-600 mb-1">Opacité overlay ({Math.round((section.design.media?.overlayOpacity ?? 0.5) * 100)}%)</label>
             <input
               type="range"
               min={0}
               max={100}
-              value={Math.round((section.design.media?.overlayOpacity ?? 1) * 100)}
+              value={Math.round((section.design.media?.overlayOpacity ?? 0.5) * 100)}
               onChange={(e) => updateDesign('media', 'overlayOpacity', parseInt(e.target.value) / 100)}
               className="w-full"
             />

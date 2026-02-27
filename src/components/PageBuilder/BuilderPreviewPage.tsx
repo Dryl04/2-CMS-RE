@@ -238,7 +238,7 @@ export default function BuilderPreviewPage() {
             data-theme={dataTheme || data.daisyThemeSlug || 'light'}
             data-widget-type={normalizedSection.type}
             data-widget-overlay={normalizedSection.design?.media?.overlayImage ? 'on' : undefined}
-            data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'bottom-right'}
+            data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'center'}
             data-widget-overlay-z={normalizedSection.design?.media?.overlayZIndex || 'above-all'}
             style={style as React.CSSProperties}
           >

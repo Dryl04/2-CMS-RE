@@ -31,7 +31,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
     if (!item.overlayImage) return {};
     return {
       'data-widget-overlay': 'on' as const,
-      'data-widget-overlay-position': (item.overlayPosition || 'bottom-right') as string,
+      'data-widget-overlay-position': (item.overlayPosition || 'center') as string,
       style: {
         '--widget-media-overlay-image': `url(${item.overlayImage})`,
         ...(item.overlaySize ? { '--widget-media-overlay-size': item.overlaySize } : {}),

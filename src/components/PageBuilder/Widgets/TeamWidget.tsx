@@ -34,7 +34,7 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
     if (!member.overlayImage) return {};
     return {
       'data-widget-overlay': 'on' as const,
-      'data-widget-overlay-position': (member.overlayPosition || 'bottom-right') as string,
+      'data-widget-overlay-position': (member.overlayPosition || 'center') as string,
       style: {
         '--widget-media-overlay-image': `url(${member.overlayImage})`,
         ...(member.overlaySize ? { '--widget-media-overlay-size': member.overlaySize } : {}),

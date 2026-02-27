@@ -335,8 +335,8 @@ export default function SectionRenderer({
               ? (normalizedSection.design?.media?.overlayTarget === 'media' ? 'media' : 'section')
               : undefined
           }
-          data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'bottom-right'}
-          data-widget-overlay-z={normalizedSection.design?.media?.overlayZIndex || 'above-all'}
+          data-widget-overlay-position={normalizedSection.design?.media?.overlayPosition || 'center'}
+          data-widget-overlay-z={normalizedSection.design?.media?.overlayZIndex || 'above-bg'}
           style={wrapperStyle as React.CSSProperties}
         >
           {renderBackgroundLayers(normalizedSection.design?.background)}

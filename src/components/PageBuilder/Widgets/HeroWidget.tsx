@@ -186,7 +186,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           className={`relative ${contentPosition === 'right' ? 'lg:order-1' : ''}`}
           data-widget-media-frame
           data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
-          data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+          data-widget-overlay-position={design.media?.overlayPosition || 'center'}
         >
           <img
             src={image || 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
@@ -261,7 +261,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
         className="relative h-64 lg:h-full min-h-[300px] lg:min-h-[500px] overflow-hidden"
         data-widget-media-frame
         data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
-        data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+        data-widget-overlay-position={design.media?.overlayPosition || 'center'}
       >
         <div
           className="absolute inset-0 w-full h-full bg-cover bg-center"
@@ -313,7 +313,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
       style={{ minHeight }}
       data-widget-media-frame
       data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
-      data-widget-overlay-position={design.media?.overlayPosition || 'bottom-right'}
+      data-widget-overlay-position={design.media?.overlayPosition || 'center'}
     >
       <div
         className="absolute inset-0 w-full h-full bg-cover bg-center"

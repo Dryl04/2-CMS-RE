@@ -254,7 +254,7 @@ export function TeamContentEditor({ section, updateContent }: ContentEditorProps
                       <div>
                         <label className={labelClass}>Position</label>
                         <select
-                          value={member.overlayPosition || 'bottom-right'}
+                          value={member.overlayPosition || 'center'}
                           onChange={(e) => updateMember(index, 'overlayPosition', e.target.value)}
                           className={inputClass}
                         >
@@ -609,7 +609,7 @@ export function GalleryContentEditor({ section, updateContent }: ContentEditorPr
                       <div>
                         <label className={labelClass}>Position</label>
                         <select
-                          value={item.overlayPosition || 'bottom-right'}
+                          value={item.overlayPosition || 'center'}
                           onChange={(e) => updateItem(index, 'overlayPosition', e.target.value)}
                           className={inputClass}
                         >
