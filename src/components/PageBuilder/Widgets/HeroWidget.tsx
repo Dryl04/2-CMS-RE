@@ -183,7 +183,7 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           </a>
         </div>
         <div
-          className={`relative ${contentPosition === 'right' ? 'lg:order-1' : ''}`}
+          className={`relative overflow-hidden rounded-2xl ${contentPosition === 'right' ? 'lg:order-1' : ''}`}
           data-widget-media-frame
           data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
           data-widget-overlay-position={design.media?.overlayPosition || 'center'}
@@ -191,12 +191,12 @@ export default function HeroWidget({ section }: HeroWidgetProps) {
           <img
             src={image || 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750'}
             alt="Hero"
-            className="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-2xl shadow-xl"
+            className="w-full h-64 sm:h-80 lg:h-96 object-cover shadow-xl"
             style={{ filter: getImageFilter() }}
           />
           {overlayEnabled && (
             <div
-              className="absolute inset-0 rounded-2xl"
+              className="absolute inset-0"
               style={getOverlayStyle()}
             />
           )}

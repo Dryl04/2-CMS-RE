@@ -32,12 +32,13 @@ export function renderBackgroundLayers(background?: BackgroundConfig) {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             opacity: background.opacity ?? 1,
+            borderRadius: 'inherit',
           }}
         />
       )}
 
       {background.type === 'video' && hasBackgroundValue && (
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" style={getIframeCoverContainerStyle()}>
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" style={{ ...getIframeCoverContainerStyle(), borderRadius: 'inherit' }}>
           {isYouTubeUrl(background.value) ? (
             <iframe
               src={buildEmbedUrl(background.value, {
@@ -67,6 +68,7 @@ export function renderBackgroundLayers(background?: BackgroundConfig) {
           style={{
             backgroundColor: background.overlayColor,
             opacity: background.overlayOpacity ?? 0.5,
+            borderRadius: 'inherit',
           }}
         />
       )}
