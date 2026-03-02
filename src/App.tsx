@@ -16,10 +16,13 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import VisualPageBuilder from '@/components/VisualPageBuilder';
 import BuilderPreviewPage from '@/components/PageBuilder/BuilderPreviewPage';
+import GlobalHFManager from '@/components/GlobalHFManager';
+import HFBuilderModal from '@/components/HFBuilderModal';
 import { supabase, SEOMetadata } from '@/lib/supabase';
 import { normalizeInternalPath } from '@/lib/linkRegistry';
+import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 
-type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'links' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder' | 'page-builder';
+type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'links' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder' | 'page-builder' | 'global-hf';
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -29,6 +32,11 @@ function AppContent() {
   const [builderInitialSections, setBuilderInitialSections] = useState<any[] | undefined>(undefined);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
   const [showDaisyThemeManager, setShowDaisyThemeManager] = useState(false);
+  const [hfBuilderModal, setHfBuilderModal] = useState<{
+    type: 'header' | 'footer';
+    initialSection: PageBuilderSection | null;
+    onDone: (section: PageBuilderSection | null) => void;
+  } | null>(null);
 
   useEffect(() => {
     const handlePathChange = () => {
@@ -273,9 +281,29 @@ function AppContent() {
             </div>
           </div>
         )}
+
+        {currentView === 'global-hf' && (
+          <div className="max-w-7xl mx-auto px-6 py-8 w-full">
+            <GlobalHFManager
+              onNavigate={handleNavigate}
+              onOpenHFBuilder={(type, initialSection, onDone) => {
+                setHfBuilderModal({ type, initialSection, onDone });
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {showFooter && <Footer />}
+
+      {hfBuilderModal && (
+        <HFBuilderModal
+          type={hfBuilderModal.type}
+          initialSection={hfBuilderModal.initialSection}
+          onDone={hfBuilderModal.onDone}
+          onClose={() => setHfBuilderModal(null)}
+        />
+      )}
     </div>
   );
 }

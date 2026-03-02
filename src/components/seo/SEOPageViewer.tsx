@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ArrowLeft, Edit, Settings, X, ChevronUp } from 'lucide-react';
 import {
   getBackgroundContentClassName,
@@ -74,6 +74,7 @@ import EmbedWidget from '@/components/PageBuilder/Widgets/EmbedWidget';
 import CodeInsertWidget from '@/components/PageBuilder/Widgets/CodeInsertWidget';
 import { getWidgetWrapperProps, normalizeSectionForTheme } from '@/lib/widgetThemeHelper';
 import { sanitizeSectionUrls } from '@/lib/contentSanitizer';
+import { loadActiveGlobalHFSetting, applySectionsWithGlobalHF, type GlobalHFSetting } from '@/lib/globalHFSettings';
 
 interface SEOPageViewerProps {
   page: SEOMetadata;
@@ -459,12 +460,22 @@ function FallbackPage({ page }: { page: SEOMetadata }) {
 }
 
 export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThemeId }: SEOPageViewerProps) {
-  const sections = normalizeSectionsData(page.sections_data);
-  const hasSections = sections.length > 0;
-  const hasRenderableSections = sections.some((section) => canRenderSectionType(section?.type));
+  const rawSections = normalizeSectionsData(page.sections_data);
+  const [globalHFSetting, setGlobalHFSetting] = useState<GlobalHFSetting | null>(null);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
 
-  // Get the DaisyUI theme to apply to this page
+  useEffect(() => {
+    loadActiveGlobalHFSetting().then(setGlobalHFSetting);
+  }, []);
+
+  const sections = useMemo(() => {
+    if (!globalHFSetting) return rawSections;
+    return applySectionsWithGlobalHF(rawSections, globalHFSetting, page.id);
+  }, [rawSections, globalHFSetting, page.id]);
+
+  const hasSections = sections.length > 0;
+  const hasRenderableSections = sections.some((section) => canRenderSectionType(section?.type));
+
   const daisyThemeSlug = page.daisy_theme_slug || undefined;
 
   return (

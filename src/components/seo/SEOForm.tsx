@@ -3,6 +3,7 @@ import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, Layout, ChevronRig
 import { supabase, PageTemplate } from '@/lib/supabase';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { normalizeInternalPath, replaceInternalLinksInSections } from '@/lib/linkRegistry';
+import { loadActiveGlobalHFSetting, shouldApplyOnCreate, injectGlobalHFIntoNewSections } from '@/lib/globalHFSettings';
 
 interface SEOFormProps {
   onSaveComplete: () => void;
@@ -216,6 +217,13 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
         const templateSections = (selectedTemplate?.sections_data || []) as PageBuilderSection[];
         if (templateSections.length > 0) {
           sectionsToSave = templateSections;
+        }
+      }
+
+      if (!editingPage?.id) {
+        const globalHF = await loadActiveGlobalHFSetting();
+        if (shouldApplyOnCreate(globalHF)) {
+          sectionsToSave = injectGlobalHFIntoNewSections(sectionsToSave, globalHF!);
         }
       }
 
