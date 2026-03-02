@@ -99,6 +99,12 @@ export function PricingContentEditor({ section, updateContent }: ContentEditorPr
                 <input type="text" value={plan.price || ''} onChange={(e) => updatePlan(planIndex, 'price', e.target.value)} className={inputClass} placeholder="Prix (ex: $29)" />
                 <input type="text" value={plan.period || ''} onChange={(e) => updatePlan(planIndex, 'period', e.target.value)} className={inputClass} placeholder="/month" />
               </div>
+              <input type="text" value={plan.buttonText || ''} onChange={(e) => updatePlan(planIndex, 'buttonText', e.target.value)} className={inputClass} placeholder="Texte du bouton (ex: Get Started)" />
+              <LinkInputField
+                label="Lien du bouton"
+                value={plan.buttonLink || ''}
+                onChange={(val) => updatePlan(planIndex, 'buttonLink', val)}
+              />
               <label className="flex items-center space-x-2 text-sm text-gray-700 cursor-pointer">
                 <input type="checkbox" checked={plan.popular === true} onChange={(e) => updatePlan(planIndex, 'popular', e.target.checked)} className="w-4 h-4 rounded border-gray-300" />
                 <span>Plan populaire</span>
@@ -1703,6 +1709,11 @@ export function MembershipPricingContentEditor({ section, updateContent }: Conte
               </div>
               <textarea value={plan.description || ''} onChange={(e) => updatePlan(planIndex, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description du plan" />
               <input type="text" value={plan.ctaText || ''} onChange={(e) => updatePlan(planIndex, 'ctaText', e.target.value)} className={inputClass} placeholder="Texte du bouton" />
+              <LinkInputField
+                label="Lien du bouton"
+                value={plan.ctaLink || ''}
+                onChange={(val) => updatePlan(planIndex, 'ctaLink', val)}
+              />
               <label className="flex items-center space-x-2 text-sm text-gray-700 cursor-pointer">
                 <input type="checkbox" checked={plan.highlighted === true} onChange={(e) => updatePlan(planIndex, 'highlighted', e.target.checked)} className="w-4 h-4 rounded border-gray-300" />
                 <span>Plan mis en avant</span>

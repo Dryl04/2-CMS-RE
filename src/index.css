@@ -249,7 +249,7 @@
   }
 
   .widget-design-scope [data-widget-media-frame] {
-    border-radius: var(--widget-media-radius, 12px);
+    border-radius: var(--widget-media-radius, 0px);
     overflow: hidden;
   }
 

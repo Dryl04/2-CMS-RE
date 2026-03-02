@@ -85,8 +85,11 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
                 </li>
               ))}
             </ul>
-            <button
-              className={`w-full py-3 px-6 rounded-xl font-semibold transition-all hover:shadow-lg ${plan.popular ? 'bg-primary text-primary-content' : 'bg-transparent text-primary border-2 border-primary'
+            <a
+              href={plan.buttonLink || undefined}
+              target={plan.buttonLink ? '_blank' : undefined}
+              rel={plan.buttonLink ? 'noopener noreferrer' : undefined}
+              className={`block w-full py-3 px-6 rounded-xl font-semibold text-center transition-all hover:shadow-lg ${plan.popular ? 'bg-primary text-primary-content' : 'bg-transparent text-primary border-2 border-primary'
                 }`}
               style={accentColor ? {
                 backgroundColor: plan.popular ? accentColor : undefined,
@@ -94,8 +97,8 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
                 borderColor: accentColor,
               } : undefined}
             >
-              Get Started
-            </button>
+              {plan.buttonText || 'Get Started'}
+            </a>
           </div>
         ))}
       </div>
@@ -200,12 +203,15 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
                 </li>
               ))}
             </ul>
-            <button
-              className="btn btn-primary w-full h-auto py-3 px-6"
+            <a
+              href={plan.buttonLink || undefined}
+              target={plan.buttonLink ? '_blank' : undefined}
+              rel={plan.buttonLink ? 'noopener noreferrer' : undefined}
+              className="btn btn-primary w-full h-auto py-3 px-6 text-center"
               style={accentColor ? { backgroundColor: accentColor } : undefined}
             >
-              Start Free Trial
-            </button>
+              {plan.buttonText || 'Start Free Trial'}
+            </a>
           </div>
         ))}
       </div>
@@ -253,12 +259,15 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           ))}
         </div>
 
-        <button
-          className="px-12 py-4 rounded-xl font-semibold text-lg transition-all hover:shadow-xl bg-primary text-primary-content"
+        <a
+          href={(plans?.[0]?.buttonLink) || undefined}
+          target={(plans?.[0]?.buttonLink) ? '_blank' : undefined}
+          rel={(plans?.[0]?.buttonLink) ? 'noopener noreferrer' : undefined}
+          className="inline-block px-12 py-4 rounded-xl font-semibold text-lg transition-all hover:shadow-xl bg-primary text-primary-content"
           style={accentColor ? { backgroundColor: accentColor } : undefined}
         >
-          Get Started Now
-        </button>
+          {plans?.[0]?.buttonText || 'Get Started Now'}
+        </a>
       </div>
     </div>
   );

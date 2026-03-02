@@ -134,14 +134,17 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                   </div>
                 </div>
 
-                <button
-                  className={`w-full py-3 rounded-lg font-semibold transition hover:opacity-90 ${isFeatured
+                <a
+                  href={plan.ctaLink || undefined}
+                  target={plan.ctaLink ? '_blank' : undefined}
+                  rel={plan.ctaLink ? 'noopener noreferrer' : undefined}
+                  className={`block w-full py-3 rounded-lg font-semibold text-center transition hover:opacity-90 ${isFeatured
                       ? 'bg-neutral-content text-neutral'
                       : 'bg-base-100 text-base-content border border-base-content/10'
                     }`}
                 >
                   {plan.ctaText || 'Get Started'}
-                </button>
+                </a>
 
                 {plan.guarantee && (
                   <p className={`text-xs text-center mt-4 ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`}

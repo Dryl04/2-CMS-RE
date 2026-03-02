@@ -366,7 +366,7 @@ export function getWidgetWrapperProps(section: PageBuilderSection) {
       : colors.buttonBorderColor || "currentColor";
   const buttonShadow = colors.buttonShadow || "none";
   const mediaRadius =
-    normalizeRadius(normalizedSection.design?.media?.imageRadius) || "12px";
+    normalizeRadius(normalizedSection.design?.media?.imageRadius) || "0px";
 
   const usesInternalVerticalSpacing =
     INTERNAL_VERTICAL_SPACING_WIDGET_TYPES.has(normalizedSection.type);
