@@ -5,6 +5,7 @@ import {
   ChevronDown,
   ChevronRight,
   ExternalLink,
+  FileText,
   Globe,
   Link2,
   RefreshCw,
@@ -29,7 +30,7 @@ interface LinkManagerProps {
 }
 
 type LinkHealth = 'ok' | 'redirected' | 'broken';
-type ActiveTab = 'internal' | 'external';
+type ActiveTab = 'internal' | 'external' | 'by-page';
 
 interface PageLinkEntry {
   pageId: string;
@@ -38,30 +39,81 @@ interface PageLinkEntry {
   count: number;
 }
 
+interface SectionLinkEntry {
+  sectionId: string;
+  sectionType: string;
+  sectionIndex: number;
+  value: string;
+  type: 'internal' | 'external';
+  key: string;
+  elementLabel?: string;
+  normalizedPath?: string;
+  health?: LinkHealth;
+  redirectTarget?: string;
+}
+
+interface PageDetailEntry {
+  pageId: string;
+  pageKey: string;
+  pageTitle: string;
+  links: SectionLinkEntry[];
+}
+
 interface DetectedLinkEntry {
   value: string;
   type: 'internal' | 'external';
   totalCount: number;
   pages: PageLinkEntry[];
-  // internal only
   normalizedPath?: string;
   health?: LinkHealth;
   redirectTarget?: string;
 }
 
 interface ReplaceDialog {
-  entry: DetectedLinkEntry;
+  entry: DetectedLinkEntry | null;
+  sectionLink: SectionLinkEntry | null;
+  pageEntry: PageLinkEntry | null;
   newValue: string;
-  /** 'all' = toutes les pages ; pageId = page spécifique */
   scope: 'all' | string;
   saving: boolean;
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+const WIDGET_LABELS: Record<string, string> = {
+  hero: 'Hero',
+  features: 'Fonctionnalités',
+  pricing: 'Tarifs',
+  testimonials: 'Témoignages',
+  contact: 'Contact',
+  faq: 'FAQ',
+  cta: 'Appel à l\'action',
+  footer: 'Pied de page',
+  header: 'En-tête',
+  gallery: 'Galerie',
+  team: 'Équipe',
+  stats: 'Statistiques',
+  newsletter: 'Newsletter',
+  timeline: 'Chronologie',
+  process: 'Processus',
+  services: 'Services',
+  blog: 'Blog',
+  embed: 'Intégration',
+  video: 'Vidéo',
+  text: 'Texte',
+  image: 'Image',
+  logo: 'Logo',
+  social: 'Réseaux sociaux',
+  code: 'Code',
+  map: 'Carte',
+  form: 'Formulaire',
+};
 
-const SITE_HOST = typeof window !== 'undefined' ? window.location.host : '';
+function getWidgetLabel(type: string): string {
+  const lower = type.toLowerCase();
+  for (const [key, label] of Object.entries(WIDGET_LABELS)) {
+    if (lower.includes(key)) return label;
+  }
+  return type;
+}
 
 function getSiteHost() {
   return typeof window !== 'undefined' ? window.location.host : '';
@@ -90,16 +142,13 @@ function healthBadge(health: LinkHealth) {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export default function LinkManager({ onNavigate }: LinkManagerProps) {
   const [pages, setPages] = useState<SEOMetadata[]>([]);
   const [redirects, setRedirects] = useState<SEORedirect[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<ActiveTab>('internal');
   const [expandedLinks, setExpandedLinks] = useState<Set<string>>(new Set());
+  const [expandedPages, setExpandedPages] = useState<Set<string>>(new Set());
   const [replaceDialog, setReplaceDialog] = useState<ReplaceDialog | null>(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; variant: 'ok' | 'err' } | null>(null);
@@ -134,15 +183,11 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
 
   useEffect(() => { loadData(); }, []);
 
-  // Focus input when dialog opens
   useEffect(() => {
     if (replaceDialog) setTimeout(() => newValueRef.current?.focus(), 50);
-  }, [replaceDialog?.entry.value]);
+  }, [replaceDialog?.entry?.value, replaceDialog?.sectionLink?.value]);
 
-  // ---------------------------------------------------------------------------
-  // Computed link index
-  // ---------------------------------------------------------------------------
-  const { internalLinks, externalLinks } = useMemo(() => {
+  const { internalLinks, externalLinks, pageDetails } = useMemo(() => {
     const host = getSiteHost();
     const publishedSet = new Set(
       pages.filter((p) => p.status === 'published').map((p) => normalizeInternalPath(p.page_key)).filter(Boolean),
@@ -155,6 +200,7 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
 
     const internalMap = new Map<string, { pages: Map<string, PageLinkEntry> }>();
     const externalMap = new Map<string, { pages: Map<string, PageLinkEntry> }>();
+    const pageDetailsMap = new Map<string, PageDetailEntry>();
 
     for (const page of pages) {
       const sections = Array.isArray(page.sections_data) ? (page.sections_data as PageBuilderSection[]) : [];
@@ -179,6 +225,37 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
           });
         }
         entry.pages.get(page.id)!.count += 1;
+
+        // Build per-page detail
+        if (!pageDetailsMap.has(page.id)) {
+          pageDetailsMap.set(page.id, {
+            pageId: page.id,
+            pageKey: page.page_key,
+            pageTitle: (page as SEOMetadata & { title?: string }).title || page.page_key,
+            links: [],
+          });
+        }
+        const normalizedPath = kind === 'internal' ? normalizeInternalPath(raw) : undefined;
+        const redirectTarget = normalizedPath ? activeRedirects.get(normalizedPath) : undefined;
+        let health: LinkHealth | undefined;
+        if (kind === 'internal') {
+          if (publishedSet.has(normalizedPath!)) health = 'ok';
+          else if (redirectTarget) health = 'redirected';
+          else health = 'broken';
+        }
+
+        pageDetailsMap.get(page.id)!.links.push({
+          sectionId: item.sectionId || '',
+          sectionType: item.sectionType || '',
+          sectionIndex: item.sectionIndex ?? -1,
+          value: raw,
+          type: kind,
+          key: item.key,
+          elementLabel: item.elementLabel,
+          normalizedPath,
+          health,
+          redirectTarget,
+        });
       }
     }
 
@@ -189,12 +266,12 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
       if (publishedSet.has(normalizedPath)) health = 'ok';
       else if (redirectTarget) health = 'redirected';
 
-      const pages = Array.from(meta.pages.values());
+      const pagesArr = Array.from(meta.pages.values());
       return {
         value,
         type: 'internal',
-        totalCount: pages.reduce((s, p) => s + p.count, 0),
-        pages,
+        totalCount: pagesArr.reduce((s, p) => s + p.count, 0),
+        pages: pagesArr,
         normalizedPath,
         health,
         redirectTarget,
@@ -202,24 +279,26 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
     };
 
     const toExternalEntry = ([value, meta]: [string, { pages: Map<string, PageLinkEntry> }]): DetectedLinkEntry => {
-      const pages = Array.from(meta.pages.values());
+      const pagesArr = Array.from(meta.pages.values());
       return {
         value,
         type: 'external',
-        totalCount: pages.reduce((s, p) => s + p.count, 0),
-        pages,
+        totalCount: pagesArr.reduce((s, p) => s + p.count, 0),
+        pages: pagesArr,
       };
     };
 
     return {
       internalLinks: Array.from(internalMap.entries()).map(toInternalEntry).sort((a, b) => b.totalCount - a.totalCount),
       externalLinks: Array.from(externalMap.entries()).map(toExternalEntry).sort((a, b) => b.totalCount - a.totalCount),
+      pageDetails: Array.from(pageDetailsMap.values()).sort((a, b) => a.pageTitle.localeCompare(b.pageTitle)),
     };
   }, [pages, redirects]);
 
   const activeLinks = activeTab === 'internal' ? internalLinks : externalLinks;
 
   const filteredLinks = useMemo(() => {
+    if (activeTab === 'by-page') return [];
     const q = searchQuery.toLowerCase().trim();
     if (!q) return activeLinks;
     return activeLinks.filter(
@@ -229,11 +308,30 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
         item.pages.some((p) => p.pageKey.toLowerCase().includes(q) || p.pageTitle.toLowerCase().includes(q)) ||
         (item.redirectTarget || '').toLowerCase().includes(q),
     );
-  }, [activeLinks, searchQuery]);
+  }, [activeLinks, searchQuery, activeTab]);
 
-  // ---------------------------------------------------------------------------
-  // Expand / collapse
-  // ---------------------------------------------------------------------------
+  const filteredPageDetails = useMemo(() => {
+    if (activeTab !== 'by-page') return [];
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return pageDetails;
+    return pageDetails
+      .map((pd) => ({
+        ...pd,
+        links: pd.links.filter(
+          (l) =>
+            l.value.toLowerCase().includes(q) ||
+            l.normalizedPath?.toLowerCase().includes(q) ||
+            l.sectionType.toLowerCase().includes(q) ||
+            getWidgetLabel(l.sectionType).toLowerCase().includes(q),
+        ),
+      }))
+      .filter((pd) =>
+        pd.pageTitle.toLowerCase().includes(q) ||
+        pd.pageKey.toLowerCase().includes(q) ||
+        pd.links.length > 0,
+      );
+  }, [pageDetails, searchQuery, activeTab]);
+
   const toggleExpand = (value: string) => {
     setExpandedLinks((prev) => {
       const next = new Set(prev);
@@ -243,19 +341,45 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
     });
   };
 
-  // ---------------------------------------------------------------------------
-  // Replace actions
-  // ---------------------------------------------------------------------------
+  const toggleExpandPage = (pageId: string) => {
+    setExpandedPages((prev) => {
+      const next = new Set(prev);
+      if (next.has(pageId)) next.delete(pageId);
+      else next.add(pageId);
+      return next;
+    });
+  };
+
   const openReplaceAll = (entry: DetectedLinkEntry) => {
-    setReplaceDialog({ entry, newValue: entry.value, scope: 'all', saving: false });
+    setReplaceDialog({ entry, sectionLink: null, pageEntry: null, newValue: entry.value, scope: 'all', saving: false });
   };
 
   const openReplaceOnPage = (entry: DetectedLinkEntry, pageEntry: PageLinkEntry) => {
-    setReplaceDialog({ entry, newValue: entry.value, scope: pageEntry.pageId, saving: false });
+    setReplaceDialog({ entry, sectionLink: null, pageEntry, newValue: entry.value, scope: pageEntry.pageId, saving: false });
+  };
+
+  const openReplaceFromPageView = (sectionLink: SectionLinkEntry, pageEntry: PageDetailEntry) => {
+    const fakeEntry: DetectedLinkEntry = {
+      value: sectionLink.value,
+      type: sectionLink.type,
+      totalCount: 1,
+      pages: [{ pageId: pageEntry.pageId, pageKey: pageEntry.pageKey, pageTitle: pageEntry.pageTitle, count: 1 }],
+      normalizedPath: sectionLink.normalizedPath,
+      health: sectionLink.health,
+      redirectTarget: sectionLink.redirectTarget,
+    };
+    setReplaceDialog({
+      entry: fakeEntry,
+      sectionLink,
+      pageEntry: { pageId: pageEntry.pageId, pageKey: pageEntry.pageKey, pageTitle: pageEntry.pageTitle, count: 1 },
+      newValue: sectionLink.value,
+      scope: pageEntry.pageId,
+      saving: false,
+    });
   };
 
   const confirmReplace = async () => {
-    if (!replaceDialog) return;
+    if (!replaceDialog?.entry) return;
     const { entry, newValue, scope } = replaceDialog;
     const trimmedNew = newValue.trim();
     if (!trimmedNew || trimmedNew === entry.value) {
@@ -310,9 +434,6 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
     loadData();
   };
 
-  // ---------------------------------------------------------------------------
-  // Redirections — delete
-  // ---------------------------------------------------------------------------
   const handleDeleteRedirect = async (id: string) => {
     if (!confirm('Supprimer cette redirection ?')) return;
     const { error } = await supabase.from('seo_redirects').delete().eq('id', id);
@@ -324,16 +445,14 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
     }
   };
 
-  // ---------------------------------------------------------------------------
-  // Stats
-  // ---------------------------------------------------------------------------
   const internalOk = internalLinks.filter((i) => i.health === 'ok').length;
-  const internalRedirected = internalLinks.filter((i) => i.health === 'redirected').length;
   const internalBroken = internalLinks.filter((i) => i.health === 'broken').length;
 
-  // ---------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------
+  const currentDialogValue = replaceDialog?.entry?.value ?? '';
+  const currentDialogScopeLabel = replaceDialog?.scope === 'all'
+    ? `toutes les pages (${replaceDialog.entry?.pages.length})`
+    : replaceDialog?.pageEntry?.pageTitle || replaceDialog?.scope || '';
+
   return (
     <div className="relative">
       {/* Toast */}
@@ -367,36 +486,36 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
             </div>
 
             <div className="px-6 py-5 space-y-4">
-              {/* Scope info */}
               <div className="text-xs text-gray-500 bg-gray-50 rounded-xl px-4 py-3">
                 {replaceDialog.scope === 'all' ? (
                   <span>
                     Portée :{' '}
-                    <strong className="text-gray-800">
-                      toutes les pages ({replaceDialog.entry.pages.length})
-                    </strong>
+                    <strong className="text-gray-800">{currentDialogScopeLabel}</strong>
                   </span>
                 ) : (
                   <span>
                     Portée :{' '}
-                    <strong className="text-gray-800">
-                      {replaceDialog.entry.pages.find((p) => p.pageId === replaceDialog.scope)?.pageTitle ||
-                        replaceDialog.scope}
-                    </strong>{' '}
+                    <strong className="text-gray-800">{currentDialogScopeLabel}</strong>{' '}
                     uniquement
+                    {replaceDialog.sectionLink && (
+                      <span className="ml-1 text-gray-400">
+                        · <strong className="text-gray-600">{getWidgetLabel(replaceDialog.sectionLink.sectionType)}</strong>
+                        {replaceDialog.sectionLink.elementLabel && (
+                          <span> · <strong className="text-gray-600">{replaceDialog.sectionLink.elementLabel}</strong></span>
+                        )}
+                      </span>
+                    )}
                   </span>
                 )}
               </div>
 
-              {/* Old value */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Valeur actuelle</label>
                 <div className="font-mono text-sm bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-gray-700 break-all">
-                  {replaceDialog.entry.value}
+                  {currentDialogValue}
                 </div>
               </div>
 
-              {/* New value */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Nouvelle valeur</label>
                 <input
@@ -404,10 +523,10 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
                   value={replaceDialog.newValue}
                   onChange={(e) => setReplaceDialog((d) => d && { ...d, newValue: e.target.value })}
                   className="w-full font-mono text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                  placeholder={replaceDialog.entry.type === 'internal' ? 'nouveau-slug' : 'https://'}
+                  placeholder={replaceDialog.entry?.type === 'internal' ? 'nouveau-slug' : 'https://'}
                   onKeyDown={(e) => { if (e.key === 'Enter') confirmReplace(); if (e.key === 'Escape') setReplaceDialog(null); }}
                 />
-                {replaceDialog.entry.type === 'internal' && (
+                {replaceDialog.entry?.type === 'internal' && (
                   <p className="text-xs text-gray-400 mt-1">Les formats /slug, slug et https://site/slug sont tous acceptés.</p>
                 )}
               </div>
@@ -422,7 +541,7 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
               </button>
               <button
                 onClick={confirmReplace}
-                disabled={replaceDialog.saving || !replaceDialog.newValue.trim() || replaceDialog.newValue.trim() === replaceDialog.entry.value}
+                disabled={replaceDialog.saving || !replaceDialog.newValue.trim() || replaceDialog.newValue.trim() === currentDialogValue}
                 className="px-4 py-2 text-sm font-medium bg-gray-900 text-white rounded-xl hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {replaceDialog.saving && (
@@ -473,8 +592,8 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
           <p className="text-xl font-bold text-emerald-700">{internalOk}</p>
         </div>
         <div className="bg-white rounded-2xl border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 mb-1">Redirigés</p>
-          <p className="text-xl font-bold text-blue-700">{internalRedirected}</p>
+          <p className="text-xs text-gray-500 mb-1">Liens externes</p>
+          <p className="text-xl font-bold text-blue-700">{externalLinks.length}</p>
         </div>
         <div className="bg-white rounded-2xl border border-gray-200 p-4">
           <p className="text-xs text-gray-500 mb-1">Cassés</p>
@@ -503,6 +622,15 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
             <Globe className="w-3.5 h-3.5" />
             Externes ({externalLinks.length})
           </button>
+          <button
+            onClick={() => setActiveTab('by-page')}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors ${
+              activeTab === 'by-page' ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <FileText className="w-3.5 h-3.5" />
+            Par page ({pageDetails.length})
+          </button>
         </div>
 
         <div className="relative flex-1 min-w-48">
@@ -510,7 +638,11 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Filtrer par URL, page source..."
+            placeholder={
+              activeTab === 'by-page'
+                ? 'Filtrer par page, URL, widget...'
+                : 'Filtrer par URL, page source...'
+            }
             className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-white"
           />
           {searchQuery && (
@@ -528,163 +660,312 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Links list */}
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between gap-2">
-              <span className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                {activeTab === 'internal' ? (
-                  <><Link2 className="w-4 h-4" />Liens internes détectés</>
-                ) : (
-                  <><Globe className="w-4 h-4" />Liens externes détectés</>
-                )}
-                <span className="text-xs font-normal text-gray-400">({filteredLinks.length})</span>
-              </span>
-              {filteredLinks.length > 0 && (
-                <span className="text-xs text-gray-400">
-                  Cliquer sur une ligne pour voir les pages sources
+          {/* ---------------------------------------------------------------- */}
+          {/* Internal / External tab                                          */}
+          {/* ---------------------------------------------------------------- */}
+          {activeTab !== 'by-page' && (
+            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between gap-2">
+                <span className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                  {activeTab === 'internal' ? (
+                    <><Link2 className="w-4 h-4" />Liens internes détectés</>
+                  ) : (
+                    <><Globe className="w-4 h-4" />Liens externes détectés</>
+                  )}
+                  <span className="text-xs font-normal text-gray-400">({filteredLinks.length})</span>
                 </span>
-              )}
-            </div>
+                {filteredLinks.length > 0 && (
+                  <span className="text-xs text-gray-400">
+                    Cliquer sur une ligne pour voir les pages sources
+                  </span>
+                )}
+              </div>
 
-            <div className="divide-y divide-gray-100">
-              {filteredLinks.length === 0 ? (
-                <div className="px-4 py-10 text-sm text-gray-500 text-center">
-                  Aucun lien {activeTab === 'internal' ? 'interne' : 'externe'} trouvé.
-                </div>
-              ) : (
-                filteredLinks.map((item) => {
-                  const isExpanded = expandedLinks.has(item.value);
-                  return (
-                    <div key={item.value}>
-                      {/* Link row */}
-                      <div
-                        className="px-4 py-3 flex items-center justify-between gap-3 hover:bg-gray-50 cursor-pointer"
-                        onClick={() => toggleExpand(item.value)}
-                      >
-                        <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <span className="shrink-0 text-gray-400">
-                            {isExpanded ? (
-                              <ChevronDown className="w-4 h-4" />
-                            ) : (
-                              <ChevronRight className="w-4 h-4" />
+              <div className="divide-y divide-gray-100">
+                {filteredLinks.length === 0 ? (
+                  <div className="px-4 py-10 text-sm text-gray-500 text-center">
+                    Aucun lien {activeTab === 'internal' ? 'interne' : 'externe'} trouvé.
+                  </div>
+                ) : (
+                  filteredLinks.map((item) => {
+                    const isExpanded = expandedLinks.has(item.value);
+                    return (
+                      <div key={item.value}>
+                        <div
+                          className="px-4 py-3 flex items-center justify-between gap-3 hover:bg-gray-50 cursor-pointer"
+                          onClick={() => toggleExpand(item.value)}
+                        >
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <span className="shrink-0 text-gray-400">
+                              {isExpanded ? (
+                                <ChevronDown className="w-4 h-4" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4" />
+                              )}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="font-mono text-sm text-gray-900 break-all">
+                                {item.type === 'internal' ? `/${item.normalizedPath}` : item.value}
+                              </p>
+                              <p className="text-xs text-gray-400 mt-0.5">
+                                {item.totalCount} occurrence(s) · {item.pages.length} page(s) source(s)
+                              </p>
+                              {item.redirectTarget && (
+                                <p className="text-xs text-blue-600 font-mono mt-0.5">→ /{item.redirectTarget}</p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+                            {item.health && healthBadge(item.health)}
+                            {item.type === 'external' && (
+                              <a
+                                href={item.value}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                                title="Ouvrir dans un onglet"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5 text-gray-500" />
+                              </a>
                             )}
-                          </span>
-                          <div className="min-w-0">
-                            <p className="font-mono text-sm text-gray-900 break-all">
-                              {item.type === 'internal' ? `/${item.normalizedPath}` : item.value}
-                            </p>
-                            <p className="text-xs text-gray-400 mt-0.5">
-                              {item.totalCount} occurrence(s) · {item.pages.length} page(s) source(s)
-                            </p>
-                            {item.redirectTarget && (
-                              <p className="text-xs text-blue-600 font-mono mt-0.5">→ /{item.redirectTarget}</p>
+                            <button
+                              onClick={() => openReplaceAll(item)}
+                              className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                              title="Remplacer sur toutes les pages"
+                            >
+                              <Replace className="w-3.5 h-3.5" />
+                              Remplacer partout
+                            </button>
+                          </div>
+                        </div>
+
+                        {isExpanded && (
+                          <div className="bg-gray-50 border-t border-gray-100">
+                            {item.pages.map((pageEntry) => (
+                              <div
+                                key={pageEntry.pageId}
+                                className="flex items-center justify-between gap-3 px-8 py-2.5 border-b border-gray-100 last:border-b-0"
+                              >
+                                <div className="min-w-0">
+                                  <p className="text-sm text-gray-800 font-medium truncate">{pageEntry.pageTitle}</p>
+                                  <p className="text-xs font-mono text-gray-400">/{pageEntry.pageKey}</p>
+                                </div>
+                                <div className="flex items-center gap-2 shrink-0">
+                                  <span className="text-xs text-gray-400">{pageEntry.count} occ.</span>
+                                  <button
+                                    onClick={() => openReplaceOnPage(item, pageEntry)}
+                                    className="flex items-center gap-1 text-xs px-2.5 py-1.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-white transition-colors"
+                                    title="Remplacer sur cette page uniquement"
+                                  >
+                                    <Replace className="w-3 h-3" />
+                                    Cette page
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ---------------------------------------------------------------- */}
+          {/* By-page tab                                                      */}
+          {/* ---------------------------------------------------------------- */}
+          {activeTab === 'by-page' && (
+            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between gap-2">
+                <span className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                  <FileText className="w-4 h-4" />
+                  Liens par page
+                  <span className="text-xs font-normal text-gray-400">({filteredPageDetails.length} page(s))</span>
+                </span>
+                <span className="text-xs text-gray-400">
+                  Cliquer sur une page pour voir ses liens
+                </span>
+              </div>
+
+              <div className="divide-y divide-gray-100">
+                {filteredPageDetails.length === 0 ? (
+                  <div className="px-4 py-10 text-sm text-gray-500 text-center">
+                    Aucune page avec des liens trouvée.
+                  </div>
+                ) : (
+                  filteredPageDetails.map((pd) => {
+                    const isExpanded = expandedPages.has(pd.pageId);
+                    const internalCount = pd.links.filter((l) => l.type === 'internal').length;
+                    const externalCount = pd.links.filter((l) => l.type === 'external').length;
+                    const brokenCount = pd.links.filter((l) => l.health === 'broken').length;
+
+                    return (
+                      <div key={pd.pageId}>
+                        {/* Page row */}
+                        <div
+                          className="px-4 py-3 flex items-center justify-between gap-3 hover:bg-gray-50 cursor-pointer"
+                          onClick={() => toggleExpandPage(pd.pageId)}
+                        >
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <span className="shrink-0 text-gray-400">
+                              {isExpanded ? (
+                                <ChevronDown className="w-4 h-4" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4" />
+                              )}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold text-gray-900 truncate">{pd.pageTitle}</p>
+                              <p className="text-xs font-mono text-gray-400 mt-0.5">/{pd.pageKey}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0 text-xs text-gray-500">
+                            {internalCount > 0 && (
+                              <span className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full">
+                                <Link2 className="w-3 h-3" />
+                                {internalCount}
+                              </span>
+                            )}
+                            {externalCount > 0 && (
+                              <span className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full">
+                                <Globe className="w-3 h-3" />
+                                {externalCount}
+                              </span>
+                            )}
+                            {brokenCount > 0 && (
+                              <span className="flex items-center gap-1 px-2 py-1 bg-red-50 text-red-600 rounded-full">
+                                <AlertTriangle className="w-3 h-3" />
+                                {brokenCount}
+                              </span>
                             )}
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
-                          {item.health && healthBadge(item.health)}
-                          {item.type === 'external' && (
-                            <a
-                              href={item.value}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-                              title="Ouvrir dans un onglet"
-                            >
-                              <ExternalLink className="w-3.5 h-3.5 text-gray-500" />
-                            </a>
-                          )}
-                          <button
-                            onClick={() => openReplaceAll(item)}
-                            className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-                            title="Remplacer sur toutes les pages"
-                          >
-                            <Replace className="w-3.5 h-3.5" />
-                            Remplacer partout
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Expanded: per-page list */}
-                      {isExpanded && (
-                        <div className="bg-gray-50 border-t border-gray-100">
-                          {item.pages.map((pageEntry) => (
-                            <div
-                              key={pageEntry.pageId}
-                              className="flex items-center justify-between gap-3 px-8 py-2.5 border-b border-gray-100 last:border-b-0"
-                            >
-                              <div className="min-w-0">
-                                <p className="text-sm text-gray-800 font-medium truncate">{pageEntry.pageTitle}</p>
-                                <p className="text-xs font-mono text-gray-400">/{pageEntry.pageKey}</p>
-                              </div>
-                              <div className="flex items-center gap-2 shrink-0">
-                                <span className="text-xs text-gray-400">{pageEntry.count} occ.</span>
-                                <button
-                                  onClick={() => openReplaceOnPage(item, pageEntry)}
-                                  className="flex items-center gap-1 text-xs px-2.5 py-1.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-white transition-colors"
-                                  title="Remplacer sur cette page uniquement"
+                        {/* Expanded: per-link list */}
+                        {isExpanded && (
+                          <div className="bg-gray-50 border-t border-gray-100 divide-y divide-gray-100">
+                            {pd.links.length === 0 ? (
+                              <div className="px-8 py-4 text-xs text-gray-400">Aucun lien sur cette page.</div>
+                            ) : (
+                              pd.links.map((link, idx) => (
+                                <div
+                                  key={`${link.sectionId}-${link.key}-${idx}`}
+                                  className="flex items-center justify-between gap-3 px-8 py-2.5"
                                 >
-                                  <Replace className="w-3 h-3" />
-                                  Cette page
-                                </button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })
-              )}
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                                      <span className="text-xs font-medium text-gray-600 bg-white border border-gray-200 px-2 py-0.5 rounded-md shrink-0">
+                                        {getWidgetLabel(link.sectionType) || `Widget ${link.sectionIndex + 1}`}
+                                      </span>
+                                      {link.elementLabel && (
+                                        <>
+                                          <span className="text-gray-300 text-xs shrink-0">·</span>
+                                          <span className="text-xs text-gray-700 font-medium shrink-0 max-w-[160px] truncate" title={link.elementLabel}>
+                                            {link.elementLabel}
+                                          </span>
+                                        </>
+                                      )}
+                                      <span className="ml-auto shrink-0">
+                                        {link.type === 'external' ? (
+                                          <Globe className="w-3 h-3 text-gray-400" />
+                                        ) : (
+                                          <Link2 className="w-3 h-3 text-gray-400" />
+                                        )}
+                                      </span>
+                                    </div>
+                                    <p className="font-mono text-sm text-gray-900 break-all">
+                                      {link.type === 'internal' && link.normalizedPath
+                                        ? `/${link.normalizedPath}`
+                                        : link.value}
+                                    </p>
+                                    {link.redirectTarget && (
+                                      <p className="text-xs text-blue-600 font-mono mt-0.5">→ /{link.redirectTarget}</p>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    {link.health && healthBadge(link.health)}
+                                    {link.type === 'external' && (
+                                      <a
+                                        href={link.value}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-1.5 hover:bg-white rounded-lg transition-colors"
+                                        title="Ouvrir dans un onglet"
+                                      >
+                                        <ExternalLink className="w-3.5 h-3.5 text-gray-500" />
+                                      </a>
+                                    )}
+                                    <button
+                                      onClick={() => openReplaceFromPageView(link, pd)}
+                                      className="flex items-center gap-1 text-xs px-2.5 py-1.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-white transition-colors"
+                                      title="Modifier ce lien"
+                                    >
+                                      <Replace className="w-3 h-3" />
+                                      Modifier
+                                    </button>
+                                  </div>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Redirections panel */}
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2 text-sm font-semibold text-gray-800">
-              <Route className="w-4 h-4" />
-              Changements automatiques enregistrés
-              <span className="text-xs font-normal text-gray-400">({redirects.length})</span>
-            </div>
-            <div className="divide-y divide-gray-100">
-              {redirects.length === 0 ? (
-                <div className="px-4 py-8 text-sm text-gray-500 text-center">Aucune redirection.</div>
-              ) : (
-                redirects.map((redirect) => (
-                  <div key={redirect.id} className="px-4 py-3 flex items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <span
-                        className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium mb-1 ${
-                          redirect.is_active
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'bg-gray-100 text-gray-500'
-                        }`}
+          {activeTab !== 'by-page' && (
+            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2 text-sm font-semibold text-gray-800">
+                <Route className="w-4 h-4" />
+                Changements automatiques enregistrés
+                <span className="text-xs font-normal text-gray-400">({redirects.length})</span>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {redirects.length === 0 ? (
+                  <div className="px-4 py-8 text-sm text-gray-500 text-center">Aucune redirection.</div>
+                ) : (
+                  redirects.map((redirect) => (
+                    <div key={redirect.id} className="px-4 py-3 flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <span
+                          className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium mb-1 ${
+                            redirect.is_active
+                              ? 'bg-emerald-50 text-emerald-700'
+                              : 'bg-gray-100 text-gray-500'
+                          }`}
+                        >
+                          {redirect.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                        <p className="font-mono text-sm text-gray-900 break-all">
+                          /{normalizeInternalPath(redirect.source_path)}
+                        </p>
+                        <p className="font-mono text-xs text-blue-700 break-all mt-0.5">
+                          → /{normalizeInternalPath(redirect.target_path)}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteRedirect(redirect.id)}
+                        className="p-2 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                        title="Supprimer"
                       >
-                        {redirect.is_active ? 'Active' : 'Inactive'}
-                      </span>
-                      <p className="font-mono text-sm text-gray-900 break-all">
-                        /{normalizeInternalPath(redirect.source_path)}
-                      </p>
-                      <p className="font-mono text-xs text-blue-700 break-all mt-0.5">
-                        → /{normalizeInternalPath(redirect.target_path)}
-                      </p>
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => handleDeleteRedirect(redirect.id)}
-                      className="p-2 hover:bg-red-50 rounded-lg transition-colors shrink-0"
-                      title="Supprimer"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-500" />
-                    </button>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>
   );
 }
-

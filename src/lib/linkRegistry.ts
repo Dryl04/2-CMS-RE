@@ -4,6 +4,10 @@ export interface FoundSectionLink {
   path: string;
   key: string;
   value: string;
+  sectionIndex?: number;
+  sectionType?: string;
+  sectionId?: string;
+  elementLabel?: string;
 }
 
 export interface InternalLinkReplacementResult {
@@ -163,10 +167,30 @@ function deepMapLinks(value: unknown, oldPath: string, newPath: string, currentK
   return { value, updatedCount: 0 };
 }
 
-function deepCollectLinks(value: unknown, path: string, bucket: FoundSectionLink[], currentKey?: string): void {
+const LABEL_CANDIDATE_KEYS = [
+  'label', 'text', 'title', 'name', 'ctaText', 'buttonText', 'primaryCta', 'secondaryCta',
+  'primaryText', 'secondaryText', 'linkText', 'platform', 'accountText', 'searchText', 'cartText',
+];
+
+function pickLabelFromParent(parent: Record<string, unknown>): string | undefined {
+  for (const key of LABEL_CANDIDATE_KEYS) {
+    const val = parent[key];
+    if (typeof val === 'string' && val.trim()) return val.trim();
+  }
+  return undefined;
+}
+
+function deepCollectLinks(
+  value: unknown,
+  path: string,
+  bucket: FoundSectionLink[],
+  currentKey?: string,
+  parentObject?: Record<string, unknown>,
+): void {
   if (typeof value === 'string') {
     if (currentKey && shouldInspectKey(currentKey) && value.trim()) {
-      bucket.push({ path, key: currentKey, value });
+      const elementLabel = parentObject ? pickLabelFromParent(parentObject) : undefined;
+      bucket.push({ path, key: currentKey, value, elementLabel });
     }
 
     if (value.includes('<a ') && value.includes('href="')) {
@@ -182,26 +206,34 @@ function deepCollectLinks(value: unknown, path: string, bucket: FoundSectionLink
 
   if (Array.isArray(value)) {
     value.forEach((item, index) => {
-      deepCollectLinks(item, `${path}[${index}]`, bucket, currentKey);
+      deepCollectLinks(item, `${path}[${index}]`, bucket, currentKey, typeof item === 'object' && item !== null ? (item as Record<string, unknown>) : parentObject);
     });
     return;
   }
 
   if (value && typeof value === 'object') {
-    for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+    const obj = value as Record<string, unknown>;
+    for (const [key, item] of Object.entries(obj)) {
       const nextPath = path ? `${path}.${key}` : key;
-      deepCollectLinks(item, nextPath, bucket, key);
+      deepCollectLinks(item, nextPath, bucket, key, obj);
     }
   }
 }
 
 export function extractLinksFromSections(sections: PageBuilderSection[]): FoundSectionLink[] {
-  const bucket: FoundSectionLink[] = [];
+  const rawBucket: FoundSectionLink[] = [];
   sections.forEach((section, index) => {
-    deepCollectLinks(section.content, `sections[${index}].content`, bucket);
-    deepCollectLinks(section.design, `sections[${index}].design`, bucket);
+    deepCollectLinks(section.content, `sections[${index}].content`, rawBucket);
+    deepCollectLinks(section.design, `sections[${index}].design`, rawBucket);
   });
-  return bucket;
+  return rawBucket.map((link) => {
+    const match = link.path.match(/^sections\[(\d+)\]/);
+    if (!match) return link;
+    const idx = parseInt(match[1], 10);
+    const section = sections[idx];
+    if (!section) return link;
+    return { ...link, sectionIndex: idx, sectionType: section.type, sectionId: section.id };
+  });
 }
 
 export function replaceInternalLinksInSections(

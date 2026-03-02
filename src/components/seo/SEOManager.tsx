@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import SEOImporter from './SEOImporter';
 import SEOForm from './SEOForm';
 import SEOPageViewer from './SEOPageViewer';
+import { computePageWordCount, formatWordCount } from '@/lib/wordCount';
 
 type ViewMode = 'list' | 'form' | 'import' | 'view';
 
@@ -571,6 +572,8 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
                         {item.status !== 'published' && (
                           <span className="font-mono">/{item.page_key}</span>
                         )}
+                        <span className="text-gray-300">·</span>
+                        <span>{formatWordCount(computePageWordCount(item))}</span>
                       </div>
                       <div>
                         Modifie le {new Date(item.updated_at).toLocaleDateString('fr-FR')}
