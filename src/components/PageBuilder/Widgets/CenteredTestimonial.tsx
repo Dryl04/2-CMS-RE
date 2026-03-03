@@ -18,7 +18,7 @@ export default function CenteredTestimonial({ section }: CenteredTestimonialProp
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
-  const _subtitleStyle: React.CSSProperties = {
+  const subtitleStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
   const _linkStyle: React.CSSProperties = {
@@ -58,3 +58,4 @@ export default function CenteredTestimonial({ section }: CenteredTestimonialProp
     </div>
   );
 }
+
