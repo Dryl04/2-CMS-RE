@@ -363,6 +363,31 @@ export function extractTemplateVariables(
         break;
 
       case "pricing":
+        variables.push(
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.plans",
+            fieldLabel: "Plans tarifaires",
+            fieldType: "array",
+            currentValue: section.content.plans,
+          },
+        );
+        break;
+
       case "membership-pricing":
         variables.push(
           {
@@ -378,6 +403,13 @@ export function extractTemplateVariables(
             fieldLabel: "Sous-titre",
             fieldType: "text",
             currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.description",
+            fieldLabel: "Description",
+            fieldType: "text",
+            currentValue: section.content.description,
           },
           {
             ...baseInfo,
@@ -595,7 +627,6 @@ export function extractTemplateVariables(
         break;
 
       case "newsletter":
-      case "newsletter-signup":
         variables.push(
           {
             ...baseInfo,
@@ -631,6 +662,53 @@ export function extractTemplateVariables(
             fieldLabel: "Note confidentialite",
             fieldType: "text",
             currentValue: section.content.privacyNote,
+          },
+        );
+        break;
+
+      case "newsletter-signup":
+        variables.push(
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.description",
+            fieldLabel: "Description",
+            fieldType: "text",
+            currentValue: section.content.description,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.placeholder",
+            fieldLabel: "Placeholder email",
+            fieldType: "text",
+            currentValue: section.content.placeholder,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.buttonText",
+            fieldLabel: "Texte du bouton",
+            fieldType: "text",
+            currentValue: section.content.buttonText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.note",
+            fieldLabel: "Note confidentialite",
+            fieldType: "text",
+            currentValue: section.content.note,
           },
         );
         break;
@@ -750,6 +828,13 @@ export function extractTemplateVariables(
           },
           {
             ...baseInfo,
+            fieldPath: "content.formDescription",
+            fieldLabel: "Description du formulaire",
+            fieldType: "text",
+            currentValue: section.content.formDescription,
+          },
+          {
+            ...baseInfo,
             fieldPath: "content.buttonText",
             fieldLabel: "Texte du bouton",
             fieldType: "text",
@@ -783,10 +868,24 @@ export function extractTemplateVariables(
           },
           {
             ...baseInfo,
+            fieldPath: "content.ctaText",
+            fieldLabel: "Texte CTA",
+            fieldType: "text",
+            currentValue: section.content.ctaText,
+          },
+          {
+            ...baseInfo,
             fieldPath: "content.formTitle",
             fieldLabel: "Titre du formulaire",
             fieldType: "text",
             currentValue: section.content.formTitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.formDescription",
+            fieldLabel: "Description du formulaire",
+            fieldType: "text",
+            currentValue: section.content.formDescription,
           },
           {
             ...baseInfo,
@@ -912,10 +1011,86 @@ export function extractTemplateVariables(
         break;
 
       case "simple-centered-hero":
+        variables.push(
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre principal",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+        );
+        break;
+
       case "brand-identity-hero":
+        variables.push(
+          {
+            ...baseInfo,
+            fieldPath: "content.badge1",
+            fieldLabel: "Badge 1",
+            fieldType: "text",
+            currentValue: section.content.badge1,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.badge2",
+            fieldLabel: "Badge 2",
+            fieldType: "text",
+            currentValue: section.content.badge2,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.circleText",
+            fieldLabel: "Texte du cercle",
+            fieldType: "text",
+            currentValue: section.content.circleText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.title1",
+            fieldLabel: "Titre ligne 1",
+            fieldType: "text",
+            currentValue: section.content.title1,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.title2",
+            fieldLabel: "Titre ligne 2",
+            fieldType: "text",
+            currentValue: section.content.title2,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.accent",
+            fieldLabel: "Accent decoratif",
+            fieldType: "text",
+            currentValue: section.content.accent,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.ctaLinks",
+            fieldLabel: "Liens CTA",
+            fieldType: "array",
+            currentValue: section.content.ctaLinks,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.socialLinks",
+            fieldLabel: "Liens sociaux",
+            fieldType: "array",
+            currentValue: section.content.socialLinks,
+          },
+        );
+        break;
+
       case "hero-with-services":
-      case "hero-with-testimonials":
-      case "creative-network-hero":
         variables.push(
           {
             ...baseInfo,
@@ -947,10 +1122,160 @@ export function extractTemplateVariables(
           },
           {
             ...baseInfo,
-            fieldPath: "content.ctaLink",
-            fieldLabel: "Lien bouton",
+            fieldPath: "content.phone",
+            fieldLabel: "Telephone",
             fieldType: "text",
-            currentValue: section.content.ctaLink,
+            currentValue: section.content.phone,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.services",
+            fieldLabel: "Services",
+            fieldType: "array",
+            currentValue: section.content.services,
+          },
+        );
+        break;
+
+      case "hero-with-testimonials":
+        variables.push(
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre principal",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.description",
+            fieldLabel: "Description",
+            fieldType: "text",
+            currentValue: section.content.description,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.ctaText",
+            fieldLabel: "Texte bouton",
+            fieldType: "text",
+            currentValue: section.content.ctaText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.testimonials",
+            fieldLabel: "Temoignages",
+            fieldType: "array",
+            currentValue: section.content.testimonials,
+          },
+        );
+        break;
+
+      case "creative-network-hero":
+        variables.push(
+          {
+            ...baseInfo,
+            fieldPath: "content.brand",
+            fieldLabel: "Nom de marque",
+            fieldType: "text",
+            currentValue: section.content.brand,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.navItems",
+            fieldLabel: "Elements de navigation",
+            fieldType: "array",
+            currentValue: section.content.navItems,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.topCtaText",
+            fieldLabel: "Texte CTA haut",
+            fieldType: "text",
+            currentValue: section.content.topCtaText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.topCtaLink",
+            fieldLabel: "Lien CTA haut",
+            fieldType: "text",
+            currentValue: section.content.topCtaLink,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.eyebrow",
+            fieldLabel: "Surtitre",
+            fieldType: "text",
+            currentValue: section.content.eyebrow,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.title",
+            fieldLabel: "Titre principal",
+            fieldType: "text",
+            currentValue: section.content.title,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.subtitle",
+            fieldLabel: "Sous-titre",
+            fieldType: "text",
+            currentValue: section.content.subtitle,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.primaryText",
+            fieldLabel: "Texte bouton principal",
+            fieldType: "text",
+            currentValue: section.content.primaryText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.primaryLink",
+            fieldLabel: "Lien bouton principal",
+            fieldType: "text",
+            currentValue: section.content.primaryLink,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.secondaryText",
+            fieldLabel: "Texte bouton secondaire",
+            fieldType: "text",
+            currentValue: section.content.secondaryText,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.secondaryLink",
+            fieldLabel: "Lien bouton secondaire",
+            fieldType: "text",
+            currentValue: section.content.secondaryLink,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.leftCardLabel",
+            fieldLabel: "Label carte gauche",
+            fieldType: "text",
+            currentValue: section.content.leftCardLabel,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.rightCardLabel",
+            fieldLabel: "Label carte droite",
+            fieldType: "text",
+            currentValue: section.content.rightCardLabel,
+          },
+          {
+            ...baseInfo,
+            fieldPath: "content.logos",
+            fieldLabel: "Logos partenaires",
+            fieldType: "array",
+            currentValue: section.content.logos,
           },
         );
         break;

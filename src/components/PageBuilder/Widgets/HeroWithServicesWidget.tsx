@@ -1,17 +1,10 @@
-import { Umbrella, Layers, PaintBucket, Clock } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface HeroWithServicesWidgetProps {
   section: PageBuilderSection;
 }
-
-const iconMap: { [key: string]: any } = {
-  umbrella: Umbrella,
-  layers: Layers,
-  paintbucket: PaintBucket,
-  clock: Clock,
-};
 
 export default function HeroWithServicesWidget({ section }: HeroWithServicesWidgetProps) {
   const { content, design } = section;
@@ -93,13 +86,11 @@ export default function HeroWithServicesWidget({ section }: HeroWithServicesWidg
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mt-12 sm:mt-16 pt-12 sm:pt-16 border-t border-base-content/10">
           {content.services?.map((service: any, index: number) => {
-            const IconComponent = iconMap[service.icon] || Layers;
             return (
               <div key={index} className="space-y-3 sm:space-y-4">
-                <IconComponent
-                  className="w-10 h-10 sm:w-12 sm:h-12 text-base-content"
-                  style={headingStyle}
-                />
+                <div data-widget-icon-frame>
+                  {renderIcon(service.icon, 'text-base-content', service.iconSize || 48)}
+                </div>
                 <h3
                   className="text-lg sm:text-xl font-bold text-base-content"
                   style={headingStyle}

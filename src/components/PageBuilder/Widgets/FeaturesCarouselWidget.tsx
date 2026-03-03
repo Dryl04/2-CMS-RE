@@ -1,18 +1,10 @@
-import { Umbrella, Layers, PaintBucket, Clock, MessageCircle } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface FeaturesCarouselWidgetProps {
   section: PageBuilderSection;
 }
-
-const iconMap: { [key: string]: any } = {
-  umbrella: Umbrella,
-  layers: Layers,
-  paintbucket: PaintBucket,
-  clock: Clock,
-  messagecircle: MessageCircle,
-};
 
 export default function FeaturesCarouselWidget({ section }: FeaturesCarouselWidgetProps) {
   const { content, design } = section;
@@ -35,7 +27,6 @@ export default function FeaturesCarouselWidget({ section }: FeaturesCarouselWidg
       }}>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-5xl mx-auto">
           {content.features?.map((feature: any, index: number) => {
-            const IconComponent = iconMap[feature.icon] || Layers;
             const isFeatured = feature.featured || false;
             const borderClass = isFeatured ? 'border-2 border-base-content' : 'border border-base-content/10';
 
@@ -44,8 +35,8 @@ export default function FeaturesCarouselWidget({ section }: FeaturesCarouselWidg
                 key={index}
                 className={`bg-base-100 rounded-2xl p-6 sm:p-8 text-center space-y-4 sm:space-y-6 transition-all hover:shadow-lg ${borderClass}`}
               >
-                <div className="flex justify-center">
-                  <IconComponent className="w-16 h-16 text-base-content" style={headingStyle} />
+                <div className="flex justify-center" data-widget-icon-frame>
+                  {renderIcon(feature.icon, 'text-base-content', feature.iconSize || 64)}
                 </div>
 
                 <h3 className="text-2xl font-bold text-base-content" style={headingStyle}>

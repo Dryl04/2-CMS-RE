@@ -1,16 +1,11 @@
-import { Check, Minus, Umbrella, Layers, PaintBucket } from 'lucide-react';
+import { Check, Minus } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface MembershipPricingWidgetProps {
   section: PageBuilderSection;
 }
-
-const iconMap: { [key: string]: any } = {
-  umbrella: Umbrella,
-  layers: Layers,
-  paintbucket: PaintBucket,
-};
 
 export default function MembershipPricingWidget({ section }: MembershipPricingWidgetProps) {
   const { content, design } = section;
@@ -61,7 +56,6 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
 
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
           {content.plans?.map((plan: any, index: number) => {
-            const IconComponent = iconMap[plan.icon] || Layers;
             const isFeatured = plan.featured || false;
 
             return (
@@ -72,8 +66,8 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
               >
                 <div className="mb-8">
                   <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto ${isFeatured ? 'bg-neutral-content/20' : 'bg-primary'
-                    }`}>
-                    <IconComponent className={`w-8 h-8 ${isFeatured ? 'text-neutral-content' : 'text-primary-content'}`} />
+                    }`} data-widget-icon-frame>
+                    {renderIcon(plan.icon, isFeatured ? 'text-neutral-content' : 'text-primary-content', plan.iconSize || 32)}
                   </div>
                   <h3
                     className={`text-2xl font-bold mb-2 text-center ${isFeatured ? '' : 'text-base-content'}`}

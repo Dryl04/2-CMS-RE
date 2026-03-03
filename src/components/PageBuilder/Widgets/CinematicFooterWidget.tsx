@@ -1,7 +1,6 @@
-import { Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
-import { ComponentType } from 'react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface CinematicFooterWidgetProps {
   section: PageBuilderSection;
@@ -21,14 +20,6 @@ interface FooterColumn {
   title?: string;
   links?: FooterLink[];
 }
-
-const socialIconMap: Record<string, ComponentType<{ className?: string }>> = {
-  facebook: Facebook,
-  twitter: Twitter,
-  instagram: Instagram,
-  linkedin: Linkedin,
-  youtube: Youtube,
-};
 
 export default function CinematicFooterWidget({ section }: CinematicFooterWidgetProps) {
   const { content, design } = section;
@@ -67,11 +58,9 @@ export default function CinematicFooterWidget({ section }: CinematicFooterWidget
           </div>
           <div className="flex items-center gap-3">
             {socials.map((social: SocialItem, index: number) => {
-              const platformKey = social.platform || 'facebook';
-              const Icon = socialIconMap[platformKey] || Facebook;
               return (
                 <a key={index} href={social.url || '#'} className="text-neutral-content/80 hover:text-neutral-content transition-colors" style={linkStyle}>
-                  <Icon className="w-4 h-4" />
+                  {renderIcon(social.platform || 'facebook', 'text-neutral-content/80', 16)}
                 </a>
               );
             })}

@@ -657,6 +657,7 @@ export default function PropertiesPanel({ section, onUpdateSection }: Properties
         return <HeroWithTestimonialsContentEditor {...editorProps} />;
       case 'hero-with-services':
       case 'content-with-services':
+      case 'content-video-services':
         return <HeroWithServicesContentEditor {...editorProps} />;
       case 'clickfunnels-hero':
         return <div className="space-y-5">{quickEdit}<ClickFunnelsHeroContentEditor {...editorProps} /></div>;

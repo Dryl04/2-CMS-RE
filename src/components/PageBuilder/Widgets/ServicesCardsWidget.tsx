@@ -1,16 +1,10 @@
-import { Umbrella, Layers, CreditCard } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface ServicesCardsWidgetProps {
   section: PageBuilderSection;
 }
-
-const iconMap: { [key: string]: any } = {
-  umbrella: Umbrella,
-  layers: Layers,
-  creditcard: CreditCard,
-};
 
 export default function ServicesCardsWidget({ section }: ServicesCardsWidgetProps) {
   const { content, design } = section;
@@ -69,7 +63,6 @@ export default function ServicesCardsWidget({ section }: ServicesCardsWidgetProp
 
         <div className="grid md:grid-cols-3 gap-8 mt-16">
           {content.services?.map((service: any, index: number) => {
-            const IconComponent = iconMap[service.icon] || Layers;
             return (
               <div
                 key={index}
@@ -85,7 +78,7 @@ export default function ServicesCardsWidget({ section }: ServicesCardsWidgetProp
                   )}
                   <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
                     <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg bg-primary" data-widget-icon-frame>
-                      <IconComponent className="w-8 h-8 text-primary-content" />
+                      {renderIcon(service.icon, 'text-primary-content', service.iconSize || 32)}
                     </div>
                   </div>
                 </div>

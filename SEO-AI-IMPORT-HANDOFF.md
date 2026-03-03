@@ -266,7 +266,7 @@ This section defines **exactly** which fields the SEO agent **MUST modify** to a
 2. **CONDITIONALLY EDITABLE fields** (marked 🔄): The agent SHOULD adapt these if the current template content is not relevant to the target project. For example, FAQ questions/answers about a completely different industry should be rewritten for the target project.
 3. **FROZEN fields** (marked 🔒): Never modify these unless the user explicitly requests it. These include: buttons, CTA text, links, navigation, images, icons, contact info, form labels, config values. This applies to ALL occurrences — both top-level fields AND fields inside array items (e.g., `testimonials[].avatar`, `features[].icon`).
 4. **DESIGN BLOCK IS ALWAYS FROZEN**: The entire `design` block of every section must be copied verbatim from the template. Do not change any `design.*` field under any circumstances, even if you believe it would improve the visual result.
-5. **Array cardinality**: Keep the same number of items in arrays by default. Exception: in `FAQ_EXTENDED` mode (only when explicitly requested), `content.faqs` may exceed template capacity.
+5. **Array cardinality**: Keep the same number of items in arrays by default. **Exception: FAQ arrays (`content.faqs`) are extended by default** — the agent may add new Q&A entries beyond the template capacity. If the user explicitly requests `FAQ_RESTRICTED` mode, then FAQ cardinality must be respected strictly.
 
 ### Field Classification Reference
 
@@ -304,25 +304,37 @@ This section defines **exactly** which fields the SEO agent **MUST modify** to a
 
 #### `clickfunnels-hero`
 
-| Field                      | Status | Notes             |
-| -------------------------- | ------ | ----------------- |
-| `headline`                 | ✏️     | Main H1           |
-| `subheadline`              | ✏️     | Supporting copy   |
-| `description`              | ✏️     | Longer text block |
-| `ctaText`, `secondaryCta`  | 🔒     |                   |
-| `ctaLink`, `secondaryLink` | 🔒     |                   |
-| `image`                    | 🔒     |                   |
+| Field                 | Status | Notes                            |
+| --------------------- | ------ | -------------------------------- |
+| `title`               | ✏️     | Main H1 — primary SEO target     |
+| `subtitle`            | ✏️     | Supporting headline              |
+| `tagline`             | ✏️     | Short tagline below subtitle     |
+| `trustBadges[].text`  | 🔄     | Adapt if not relevant to project |
+| `buttonText`          | 🔒     |                                  |
+| `inputPlaceholder`    | 🔒     |                                  |
+| `secondaryLinkText`   | 🔒     |                                  |
+| `secondaryLinkPrefix` | 🔒     |                                  |
+| `secondaryLink`       | 🔒     |                                  |
+| `showButtonArrow`     | 🔒     | Config                           |
+| `showSecondaryLink`   | 🔒     | Config                           |
+| `showLeftDecor`       | 🔒     | Config                           |
+| `showRightDecor`      | 🔒     | Config                           |
+| `showTrustBadges`     | 🔒     | Config                           |
 
 #### `clickfunnel-center-card`
 
-| Field                                | Status | Notes                                |
-| ------------------------------------ | ------ | ------------------------------------ |
-| `title`                              | ✏️     |                                      |
-| `subtitle`                           | ✏️     |                                      |
-| `description`                        | ✏️     |                                      |
-| `cards[].title`                      | 🔄     | Adapt if not relevant to the project |
-| `cards[].description`                | 🔄     |                                      |
-| `cards[].image`, `cards[].mediaType` | 🔒     |                                      |
+| Field                    | Status | Notes                          |
+| ------------------------ | ------ | ------------------------------ |
+| `navItems[].title`       | 🔄     | Tab heading — adapt to project |
+| `navItems[].subtitle`    | 🔄     | Tab subtitle text              |
+| `navItems[].highlight`   | 🔄     | Highlighted phrase             |
+| `navItems[].description` | 🔄     | Tab description text           |
+| `navItems[].label`       | 🔒     | Tab navigation label           |
+| `navItems[].buttonText`  | 🔒     |                                |
+| `navItems[].mediaUrl`    | 🔒     |                                |
+| `navItems[].mediaType`   | 🔒     |                                |
+| `showLeftDecor`          | 🔒     | Config                         |
+| `showRightDecor`         | 🔒     | Config                         |
 
 #### `clickfunnel-features`
 
@@ -336,13 +348,18 @@ This section defines **exactly** which fields the SEO agent **MUST modify** to a
 
 #### `click-funnel-testimonials`
 
-| Field                   | Status | Notes                                |
-| ----------------------- | ------ | ------------------------------------ |
-| `title`                 | ✏️     |                                      |
-| `testimonials[].quote`  | 🔄     | Adapt testimonial quotes to project  |
-| `testimonials[].name`   | 🔄     | Adapt if placeholder                 |
-| `testimonials[].title`  | 🔄     | Role/position — adapt if placeholder |
-| `testimonials[].avatar` | 🔒     |                                      |
+| Field                   | Status | Notes                               |
+| ----------------------- | ------ | ----------------------------------- |
+| `statNumber`            | 🔄     | Adapt stat number to project        |
+| `statLabel`             | 🔄     | Adapt stat label to project         |
+| `testimonials[].quote`  | 🔄     | Adapt testimonial quotes to project |
+| `testimonials[].name`   | 🔄     | Adapt if placeholder                |
+| `testimonials[].badge`  | 🔄     | Badge text — adapt if placeholder   |
+| `testimonials[].avatar` | 🔒     |                                     |
+| `showLogos`             | 🔒     | Config                              |
+| `showStat`              | 🔒     | Config                              |
+| `logos[].name`          | 🔒     |                                     |
+| `logos[].imageUrl`      | 🔒     |                                     |
 
 #### `features`
 
@@ -387,7 +404,7 @@ This section defines **exactly** which fields the SEO agent **MUST modify** to a
 | `faqs[].question` | ✏️     | **MUST** be rewritten for the target project/keyword. Write relevant, SEO-optimized questions. |
 | `faqs[].answer`   | ✏️     | **MUST** be rewritten with accurate, helpful answers for the target project.                   |
 
-> **FAQ Special Rule:** FAQ content is always fully editable because it directly targets search intent. The agent should write questions that real users would ask about the service/product + location. Answers should be detailed, informative, and naturally include relevant keywords.
+> **FAQ Default Rule:** FAQ content is always fully editable and the agent **may add new Q&A entries** beyond the template's initial array count. The agent should write questions that real users would ask about the service/product + location. Answers should be detailed, informative, and naturally include relevant keywords. Only in `FAQ_RESTRICTED` mode (explicitly requested) must FAQ cardinality match the template.
 
 #### `image-stats-faq`
 
@@ -623,18 +640,18 @@ This section defines **exactly** which fields the SEO agent **MUST modify** to a
 
 #### `content-with-services`
 
-| Field                    | Status | Notes |
-| ------------------------ | ------ | ----- |
-| `title`                  | ✏️     |       |
-| `subtitle`               | ✏️     |       |
-| `description`            | ✏️     |       |
-| `additionalText`         | ✏️     |       |
-| `imageLabel`             | 🔄     |       |
-| `services[].title`       | 🔄     |       |
-| `services[].description` | 🔄     |       |
-| `services[].icon`        | 🔒     |       |
-| `ctaText`                | 🔒     |       |
-| `image`                  | 🔒     |       |
+| Field              | Status | Notes                                          |
+| ------------------ | ------ | ---------------------------------------------- |
+| `title`            | ✏️     |                                                |
+| `subtitle`         | ✏️     |                                                |
+| `description`      | ✏️     |                                                |
+| `additionalText`   | ✏️     |                                                |
+| `imageLabel`       | 🔄     |                                                |
+| `services[].title` | 🔄     | Adapt service names to match project offerings |
+| `services[].icon`  | 🔒     |                                                |
+| `ctaText`          | 🔒     |                                                |
+| `image`            | 🔒     |                                                |
+| `showDots`         | 🔒     | Config                                         |
 
 #### `split-content-checklist`
 
@@ -671,31 +688,29 @@ This section defines **exactly** which fields the SEO agent **MUST modify** to a
 
 #### `content-video-services`
 
-| Field                    | Status | Notes |
-| ------------------------ | ------ | ----- |
-| `title`                  | ✏️     |       |
-| `subtitle`               | ✏️     |       |
-| `description`            | ✏️     |       |
-| `additionalText`         | ✏️     |       |
-| `services[].title`       | 🔄     |       |
-| `services[].description` | 🔄     |       |
-| `services[].icon`        | 🔒     |       |
-| `ctaText`                | 🔒     |       |
-| `videoUrl`               | 🔒     |       |
-| `thumbnail`              | 🔒     |       |
+| Field              | Status | Notes |
+| ------------------ | ------ | ----- |
+| `title`            | ✏️     |       |
+| `subtitle`         | ✏️     |       |
+| `description`      | ✏️     |       |
+| `additionalText`   | ✏️     |       |
+| `services[].title` | 🔄     |       |
+| `services[].icon`  | 🔒     |       |
+| `ctaText`          | 🔒     |       |
+| `videoUrl`         | 🔒     |       |
+| `thumbnail`        | 🔒     |       |
 
 #### `hero-with-services`
 
-| Field                    | Status | Notes |
-| ------------------------ | ------ | ----- |
-| `title`                  | ✏️     |       |
-| `subtitle`               | ✏️     |       |
-| `description`            | ✏️     |       |
-| `services[].title`       | 🔄     |       |
-| `services[].description` | 🔄     |       |
-| `services[].icon`        | 🔒     |       |
-| `ctaText`                | 🔒     |       |
-| `phone`                  | 🔒     |       |
+| Field              | Status | Notes                                          |
+| ------------------ | ------ | ---------------------------------------------- |
+| `title`            | ✏️     |                                                |
+| `subtitle`         | ✏️     |                                                |
+| `description`      | ✏️     |                                                |
+| `services[].title` | 🔄     | Adapt service names to match project offerings |
+| `services[].icon`  | 🔒     |                                                |
+| `ctaText`          | 🔒     |                                                |
+| `phone`            | 🔒     |                                                |
 
 #### `hero-with-testimonials`
 
@@ -824,6 +839,10 @@ All footer fields are **🔒 FROZEN**. Do not modify any footer content — it c
 
 All header fields are **🔒 FROZEN**. Do not modify any header content — it contains branding, navigation, and UI elements.
 
+#### Embed / Code widgets (`embed`, `code-insert`)
+
+All fields are **🔒 FROZEN**. These widgets contain external embed code or source code blocks that must not be modified by the SEO agent.
+
 ---
 
 ### Understanding ✏️ vs 🔄
@@ -935,7 +954,7 @@ Before returning JSON, ensure:
 - Media URLs are unchanged unless explicitly requested.
 - Contact/operational fields (`email`, `phone`, `address`, `openHours*`, `logoText`) are unchanged.
 - FAQ questions and answers are fully rewritten for the target project.
-- Array cardinality is preserved (same number of items); exception: `FAQ_EXTENDED` mode when explicitly requested.
+- Array cardinality is preserved (same number of items); **exception: FAQ arrays (`content.faqs`) may be extended by default** — restrict only in explicit `FAQ_RESTRICTED` mode.
 - No markdown emphasis markers appear inside JSON string values.
 - No new sections or fields have been created.
 

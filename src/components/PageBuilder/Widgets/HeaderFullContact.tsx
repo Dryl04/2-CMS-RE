@@ -1,16 +1,11 @@
-import { Clock, Mail, MapPin, Facebook, Twitter, Youtube, Phone } from 'lucide-react';
+import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface HeaderFullContactProps {
   section: PageBuilderSection;
 }
-
-const socialIconMap: { [key: string]: any } = {
-  facebook: Facebook,
-  twitter: Twitter,
-  youtube: Youtube,
-};
 
 export default function HeaderFullContact({ section }: HeaderFullContactProps) {
   const { content, design } = section;
@@ -61,14 +56,11 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
 
             {content.socialLinks && content.socialLinks.length > 0 && (
               <div className="flex items-center space-x-4">
-                {content.socialLinks.map((social: any, index: number) => {
-                  const IconComponent = socialIconMap[social.icon] || Facebook;
-                  return (
+                {content.socialLinks.map((social: any, index: number) => (
                     <a key={index} href={social.url || '#'} className="hover:opacity-70 transition" style={linkStyle}>
-                      <IconComponent className="w-4 h-4 text-base-content" style={headingStyle} />
+                      {renderIcon(social.icon, 'text-base-content', social.iconSize || 16)}
                     </a>
-                  );
-                })}
+                  ))}
               </div>
             )}
           </div>

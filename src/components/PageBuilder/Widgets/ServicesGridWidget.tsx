@@ -1,17 +1,12 @@
 import React from 'react';
-import { Monitor, Shield, Lock, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface ServicesGridWidgetProps {
   section: PageBuilderSection;
 }
-
-const iconMap: { [key: string]: any } = {
-  monitor: Monitor,
-  shield: Shield,
-  lock: Lock,
-};
 
 export default function ServicesGridWidget({ section }: ServicesGridWidgetProps) {
   const { content, design } = section;
@@ -63,9 +58,13 @@ export default function ServicesGridWidget({ section }: ServicesGridWidgetProps)
 
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mt-6 md:mt-8 lg:mt-12">
           {content.services?.map((service: any, index: number) => {
-            const _IconComponent = iconMap[service.icon] || Monitor;
             return (
               <div key={index} className="space-y-3 md:space-y-4">
+                {service.icon && (
+                  <div className="mb-1" data-widget-icon-frame>
+                    {renderIcon(service.icon, 'text-base-content', service.iconSize || 28)}
+                  </div>
+                )}
                 <h3
                   className="text-xl sm:text-2xl font-bold text-base-content"
                   style={headingStyle}

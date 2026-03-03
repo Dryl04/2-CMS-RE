@@ -91,6 +91,13 @@ import {
   Wifi,
   Wind,
   X,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube,
+  Github,
+  PaintBucket,
   type LucideIcon,
 } from "lucide-react";
 
@@ -181,6 +188,16 @@ export const ICON_MAP: Record<string, LucideIcon> = {
   wifi: Wifi,
   wind: Wind,
   x: X,
+  facebook: Facebook,
+  twitter: Twitter,
+  instagram: Instagram,
+  linkedin: Linkedin,
+  youtube: Youtube,
+  github: Github,
+  paintbucket: PaintBucket,
+  creditcard: CreditCard,
+  messagecircle: MessageCircle,
+  alarmclock: Clock,
 };
 
 /** Flat list for pickers: { id, label } */
@@ -193,13 +210,9 @@ export const ICON_LIST: { id: string; label: string }[] = Object.keys(ICON_MAP)
 
 const EMOJI_REGEX = /^[\p{Emoji_Presentation}\p{Extended_Pictographic}]/u;
 const URL_REGEX = /^https?:\/\//i;
+const SVG_REGEX = /^<svg[\s>]/i;
+const DATA_URI_REGEX = /^data:/i;
 
-/**
- * Render an icon from a key, URL, or emoji string.
- * @param icon - Lucide key, image URL, or emoji
- * @param className - CSS class for the icon element
- * @param size - Size in px (default 24)
- */
 export function renderIcon(
   icon: string | undefined,
   className?: string,
@@ -207,8 +220,15 @@ export function renderIcon(
 ): React.ReactNode {
   if (!icon) return null;
 
-  // Image URL → <img>
-  if (URL_REGEX.test(icon)) {
+  if (SVG_REGEX.test(icon)) {
+    return React.createElement("span", {
+      className,
+      style: { width: size, height: size, display: "inline-flex", alignItems: "center", justifyContent: "center" },
+      dangerouslySetInnerHTML: { __html: icon.replace(/<svg/, `<svg width="${size}" height="${size}"`) },
+    });
+  }
+
+  if (URL_REGEX.test(icon) || DATA_URI_REGEX.test(icon)) {
     return React.createElement("img", {
       src: icon,
       alt: "icon",
@@ -217,7 +237,6 @@ export function renderIcon(
     });
   }
 
-  // Emoji → <span>
   if (EMOJI_REGEX.test(icon)) {
     return React.createElement(
       "span",
@@ -229,7 +248,6 @@ export function renderIcon(
     );
   }
 
-  // Lucide icon
   const IconComponent = ICON_MAP[icon];
   if (IconComponent) {
     return React.createElement(IconComponent, {
@@ -238,6 +256,5 @@ export function renderIcon(
     });
   }
 
-  // Unknown key → render as text fallback
   return React.createElement("span", { className }, icon);
 }

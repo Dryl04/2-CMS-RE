@@ -381,7 +381,7 @@ export function ContactContentEditor({ section, updateContent }: ContentEditorPr
 export function FeaturesContentEditor({ section, updateContent }: ContentEditorProps) {
   const features = section.content.features || [];
 
-  const updateFeature = (index: number, field: string, value: string) => {
+  const updateFeature = (index: number, field: string, value: any) => {
     const updated = [...features];
     updated[index] = { ...updated[index], [field]: value };
     updateContent('features', updated);
@@ -433,6 +433,10 @@ export function FeaturesContentEditor({ section, updateContent }: ContentEditorP
                 value={feature.icon || 'zap'}
                 onChange={(val) => updateFeature(index, 'icon', val)}
               />
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Taille icone ({feature.iconSize || 28}px)</label>
+                <input type="range" min="16" max="80" step="4" value={feature.iconSize || 28} onChange={(e) => updateFeature(index, 'iconSize', parseInt(e.target.value))} className="w-full" />
+              </div>
               <input
                 type="text"
                 value={feature.title || ''}

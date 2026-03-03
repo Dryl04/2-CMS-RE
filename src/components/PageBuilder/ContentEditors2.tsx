@@ -884,6 +884,10 @@ export function ServicesGridContentEditor({ section, updateContent }: ContentEdi
                 </button>
               </div>
               <IconPicker value={service.icon || 'zap'} onChange={(val) => updateService(index, 'icon', val)} />
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Taille icone ({service.iconSize || 28}px)</label>
+                <input type="range" min="16" max="80" step="4" value={service.iconSize || 28} onChange={(e) => updateService(index, 'iconSize', parseInt(e.target.value))} className="w-full" />
+              </div>
               <input type="text" value={service.title || ''} onChange={(e) => updateService(index, 'title', e.target.value)} className={inputClass} placeholder="Titre du service" />
               <textarea value={service.description || ''} onChange={(e) => updateService(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
               <div className="flex gap-2">
@@ -1050,6 +1054,10 @@ export function ServicesCardsContentEditor({ section, updateContent }: ContentEd
                 </button>
               </div>
               <IconPicker value={service.icon || 'zap'} onChange={(val) => updateService(index, 'icon', val)} />
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Taille icone ({service.iconSize || 32}px)</label>
+                <input type="range" min="16" max="80" step="4" value={service.iconSize || 32} onChange={(e) => updateService(index, 'iconSize', parseInt(e.target.value))} className="w-full" />
+              </div>
               <input type="text" value={service.title || ''} onChange={(e) => updateService(index, 'title', e.target.value)} className={inputClass} placeholder="Titre" />
               <textarea value={service.description || ''} onChange={(e) => updateService(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
               <ImageUploadField label="Image" value={service.image || ''} onChange={(url) => updateService(index, 'image', url)} placeholder="URL de l'image" />
@@ -1559,6 +1567,10 @@ export function HeroWithServicesContentEditor({ section, updateContent }: Conten
                 </button>
               </div>
               <IconPicker value={service.icon || 'zap'} onChange={(val) => updateService(index, 'icon', val)} />
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Taille icone ({service.iconSize || 48}px)</label>
+                <input type="range" min="16" max="80" step="4" value={service.iconSize || 48} onChange={(e) => updateService(index, 'iconSize', parseInt(e.target.value))} className="w-full" />
+              </div>
               <input type="text" value={service.title || ''} onChange={(e) => updateService(index, 'title', e.target.value)} className={inputClass} placeholder="Titre" />
               <textarea value={service.description || ''} onChange={(e) => updateService(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
             </div>
@@ -1703,6 +1715,11 @@ export function MembershipPricingContentEditor({ section, updateContent }: Conte
                 </button>
               </div>
               <input type="text" value={plan.name || ''} onChange={(e) => updatePlan(planIndex, 'name', e.target.value)} className={inputClass} placeholder="Nom du plan" />
+              <IconPicker value={plan.icon || 'layers'} onChange={(val) => updatePlan(planIndex, 'icon', val)} />
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Taille icone ({plan.iconSize || 32}px)</label>
+                <input type="range" min="16" max="80" step="4" value={plan.iconSize || 32} onChange={(e) => updatePlan(planIndex, 'iconSize', parseInt(e.target.value))} className="w-full" />
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 <input type="text" value={plan.price || ''} onChange={(e) => updatePlan(planIndex, 'price', e.target.value)} className={inputClass} placeholder="Prix" />
                 <input type="text" value={plan.period || ''} onChange={(e) => updatePlan(planIndex, 'period', e.target.value)} className={inputClass} placeholder="/mois" />
@@ -1840,13 +1857,11 @@ export function FeaturesCarouselContentEditor({ section, updateContent }: Conten
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <select value={feature.icon || 'layers'} onChange={(e) => updateFeature(index, 'icon', e.target.value)} className={inputClass}>
-                <option value="umbrella">Parapluie</option>
-                <option value="layers">Calques</option>
-                <option value="paintbucket">Peinture</option>
-                <option value="clock">Horloge</option>
-                <option value="messagecircle">Message</option>
-              </select>
+              <IconPicker value={feature.icon || 'layers'} onChange={(val) => updateFeature(index, 'icon', val)} />
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Taille icone ({feature.iconSize || 64}px)</label>
+                <input type="range" min="16" max="128" step="4" value={feature.iconSize || 64} onChange={(e) => updateFeature(index, 'iconSize', parseInt(e.target.value))} className="w-full" />
+              </div>
               <input type="text" value={feature.title || ''} onChange={(e) => updateFeature(index, 'title', e.target.value)} className={inputClass} placeholder="Titre" />
               <textarea value={feature.description || ''} onChange={(e) => updateFeature(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
               <input type="text" value={feature.ctaText || ''} onChange={(e) => updateFeature(index, 'ctaText', e.target.value)} className={inputClass} placeholder="Texte du bouton (optionnel)" />

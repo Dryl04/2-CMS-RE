@@ -1,19 +1,11 @@
 import React from 'react';
-import { Facebook, Twitter, Youtube, Instagram, Linkedin } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface SocialFollowWidgetProps {
   section: PageBuilderSection;
 }
-
-const socialIconMap: { [key: string]: any } = {
-  facebook: Facebook,
-  twitter: Twitter,
-  youtube: Youtube,
-  instagram: Instagram,
-  linkedin: Linkedin,
-};
 
 export default function SocialFollowWidget({ section }: SocialFollowWidgetProps) {
   const { content, design } = section;
@@ -42,9 +34,7 @@ export default function SocialFollowWidget({ section }: SocialFollowWidgetProps)
           </h2>
 
           <div className="flex items-center flex-wrap justify-center gap-3 sm:gap-4 sm:space-x-0">
-            {content.socials?.map((social: any, index: number) => {
-              const IconComponent = socialIconMap[social.platform] || Facebook;
-              return (
+            {content.socials?.map((social: any, index: number) => (
                 <a
                   key={index}
                   href={social.url || '#'}
@@ -54,10 +44,9 @@ export default function SocialFollowWidget({ section }: SocialFollowWidgetProps)
                   aria-label={social.platform}
                   style={linkStyle}
                 >
-                  <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 text-base-content" />
+                  {renderIcon(social.platform, 'text-base-content', social.iconSize || 20)}
                 </a>
-              );
-            })}
+              ))}
 
             {content.ctaText && (
               <button

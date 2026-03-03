@@ -1,20 +1,12 @@
 import React from 'react';
-import { Facebook, Twitter, Instagram, Linkedin, Youtube } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface FooterWidgetProps {
   section: PageBuilderSection;
   onUpdate: (updates: Partial<PageBuilderSection>) => void;
 }
-
-const socialIconMap: Record<string, any> = {
-  facebook: Facebook,
-  twitter: Twitter,
-  instagram: Instagram,
-  linkedin: Linkedin,
-  youtube: Youtube,
-};
 
 export default function FooterWidget({ section }: FooterWidgetProps) {
   const { logo, logoText, description, columns, socialLinks, copyright } = section.content;
@@ -56,9 +48,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
             )}
             {socialLinks && socialLinks.length > 0 && (
               <div className="flex items-center space-x-3">
-                {socialLinks.map((social: any, index: number) => {
-                  const Icon = socialIconMap[social.platform] || Facebook;
-                  return (
+                {socialLinks.map((social: any, index: number) => (
                     <a
                       key={index}
                       href={social.url || '#'}
@@ -66,10 +56,9 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                      {renderIcon(social.platform, '', social.iconSize || 20)}
                     </a>
-                  );
-                })}
+                  ))}
               </div>
             )}
           </div>
@@ -135,9 +124,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
 
           {socialLinks && socialLinks.length > 0 && (
             <div className="flex items-center space-x-3">
-              {socialLinks.map((social: any, index: number) => {
-                const Icon = socialIconMap[social.platform] || Facebook;
-                return (
+              {socialLinks.map((social: any, index: number) => (
                   <a
                     key={index}
                     href={social.url || '#'}
@@ -145,10 +132,9 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <Icon className="w-5 h-5" />
+                    {renderIcon(social.platform, '', social.iconSize || 20)}
                   </a>
-                );
-              })}
+                ))}
             </div>
           )}
         </div>
@@ -181,9 +167,7 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
 
           {socialLinks && socialLinks.length > 0 && (
             <div className="flex items-center justify-center space-x-3 mb-8">
-              {socialLinks.map((social: any, index: number) => {
-                const Icon = socialIconMap[social.platform] || Facebook;
-                return (
+              {socialLinks.map((social: any, index: number) => (
                   <a
                     key={index}
                     href={social.url || '#'}
@@ -191,10 +175,9 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-base-content/70" />
+                    {renderIcon(social.platform, 'text-base-content/70', social.iconSize || 20)}
                   </a>
-                );
-              })}
+                ))}
             </div>
           )}
         </div>

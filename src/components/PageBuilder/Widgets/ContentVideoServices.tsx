@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Play, Pause, Umbrella, Layers, PaintBucket } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 import {
   buildEmbedUrl,
   getVideoIframeProps,
@@ -11,12 +12,6 @@ import {
 interface ContentVideoServicesProps {
   section: PageBuilderSection;
 }
-
-const iconMap: { [key: string]: any } = {
-  umbrella: Umbrella,
-  layers: Layers,
-  paintbucket: PaintBucket,
-};
 
 export default function ContentVideoServices({ section }: ContentVideoServicesProps) {
   const { content, design } = section;
@@ -132,12 +127,11 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
 
           <div className={`lg:col-span-3 grid sm:grid-cols-3 lg:grid-cols-1 gap-6 sm:gap-4 lg:gap-8 transition-all ${shouldHideDecorations ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             {content.services?.map((service: any, index: number) => {
-              const IconComponent = iconMap[service.icon] || Umbrella;
               return (
                 <div key={index} className="text-center space-y-2 sm:space-y-3">
                   <div className="flex justify-center">
                     <span data-widget-icon-frame className="inline-flex items-center justify-center p-2">
-                      <IconComponent className="w-10 h-10 sm:w-12 sm:h-12 text-base-content" style={headingStyle} />
+                      {renderIcon(service.icon, 'text-base-content', service.iconSize || 48)}
                     </span>
                   </div>
                   <h3 className="text-base sm:text-lg font-bold leading-tight text-base-content" style={headingStyle}>

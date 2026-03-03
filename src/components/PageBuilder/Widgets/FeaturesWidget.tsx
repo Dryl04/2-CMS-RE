@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageIcon } from 'lucide-react';
+import { Image as ImageIcon } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
 import { renderIcon } from '@/lib/iconLibrary';
@@ -58,7 +58,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
                 className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-primary"
                 data-widget-icon-frame
               >
-                {renderIcon(feature.icon, 'w-7 h-7 sm:w-8 sm:h-8 text-primary-content', 28)}
+                {renderIcon(feature.icon, 'text-primary-content', feature.iconSize || 28)}
               </div>
               <h3
                 className="text-lg sm:text-xl font-bold mb-2 text-base-content"
@@ -111,7 +111,7 @@ export default function FeaturesWidget({ section }: FeaturesWidgetProps) {
                   className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mb-6 bg-primary"
                   data-widget-icon-frame
                 >
-                  {renderIcon(feature.icon, 'w-7 h-7 sm:w-8 sm:h-8 text-primary-content', 28)}
+                  {renderIcon(feature.icon, 'text-primary-content', feature.iconSize || 28)}
                 </div>
                 <h3
                   className="text-xl sm:text-2xl font-bold mb-4 text-base-content"

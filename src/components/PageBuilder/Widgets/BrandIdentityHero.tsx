@@ -1,16 +1,10 @@
-import { Facebook, Twitter, Youtube } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface BrandIdentityHeroProps {
   section: PageBuilderSection;
 }
-
-const socialIconMap: { [key: string]: any } = {
-  facebook: Facebook,
-  twitter: Twitter,
-  youtube: Youtube,
-};
 
 export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
   const { content, design } = section;
@@ -105,14 +99,11 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
 
           {content.socialLinks && content.socialLinks.length > 0 && (
             <div className="flex items-center gap-4 sm:gap-6">
-              {content.socialLinks.map((social: any, index: number) => {
-                const IconComponent = socialIconMap[social.icon] || Facebook;
-                return (
+              {content.socialLinks.map((social: any, index: number) => (
                   <a key={index} href={social.url || '#'} className="hover:opacity-70 transition" style={linkStyle}>
-                    <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-base-content" style={headingStyle} />
+                    {renderIcon(social.icon, 'text-base-content', social.iconSize || 24)}
                   </a>
-                );
-              })}
+                ))}
             </div>
           )}
         </div>

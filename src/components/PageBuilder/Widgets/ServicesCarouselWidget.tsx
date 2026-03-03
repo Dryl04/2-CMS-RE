@@ -1,17 +1,11 @@
-import { Umbrella, Layers, PaintBucket, Clock, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface ServicesCarouselWidgetProps {
   section: PageBuilderSection;
 }
-
-const iconMap: { [key: string]: any } = {
-  umbrella: Umbrella,
-  layers: Layers,
-  paintbucket: PaintBucket,
-  clock: Clock,
-};
 
 export default function ServicesCarouselWidget({ section }: ServicesCarouselWidgetProps) {
   const { content, design } = section;
@@ -40,14 +34,13 @@ export default function ServicesCarouselWidget({ section }: ServicesCarouselWidg
       }}>
         <div className="grid md:grid-cols-4 gap-6">
           {content.services?.map((service: any, index: number) => {
-            const IconComponent = iconMap[service.icon] || Layers;
             return (
               <div
                 key={index}
                 className="bg-base-100 rounded-2xl p-8 shadow-md hover:shadow-xl transition-all border border-base-content/10"
               >
-                <div className="mb-6">
-                  <IconComponent className="w-12 h-12 text-base-content" style={headingStyle} />
+                <div className="mb-6" data-widget-icon-frame>
+                  {renderIcon(service.icon, 'text-base-content', service.iconSize || 48)}
                 </div>
 
                 <h3 className="text-xl font-bold mb-4 text-base-content" style={headingStyle}>

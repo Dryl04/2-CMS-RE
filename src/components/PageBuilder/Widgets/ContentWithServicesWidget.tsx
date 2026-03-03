@@ -1,4 +1,4 @@
-import { Umbrella, Layers, PaintBucket, Clock, AlarmClock, Image as ImageIcon } from 'lucide-react';
+import { Image as ImageIcon } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
 import { renderIcon } from '@/lib/iconLibrary';
@@ -6,14 +6,6 @@ import { renderIcon } from '@/lib/iconLibrary';
 interface ContentWithServicesWidgetProps {
   section: PageBuilderSection;
 }
-
-const _iconMap: { [key: string]: any } = {
-  umbrella: Umbrella,
-  layers: Layers,
-  paintbucket: PaintBucket,
-  clock: Clock,
-  alarmclock: AlarmClock,
-};
 
 export default function ContentWithServicesWidget({ section }: ContentWithServicesWidgetProps) {
   const { content, design } = section;
@@ -100,7 +92,7 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
                 return (
                   <div key={index} className="p-6 rounded-lg bg-base-200" style={servicesBg ? { backgroundColor: servicesBg } : undefined}>
                     <div className="w-12 h-12 mb-4 flex items-center justify-center rounded-xl" data-widget-icon-frame>
-                      {renderIcon(service.icon, 'w-6 h-6 text-base-content', 24) || <Umbrella className="w-6 h-6 text-base-content" />}
+                      {renderIcon(service.icon, 'text-base-content', service.iconSize || 24)}
                     </div>
                     <h3 className="text-lg font-bold leading-tight text-base-content" style={headingStyle}>
                       {renderRichText(service.title)}

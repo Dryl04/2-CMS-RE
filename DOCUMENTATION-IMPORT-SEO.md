@@ -36,7 +36,7 @@ L'export est maintenant en **mode maximum-compact** (JSON minifie + champs edita
 
 `array_cardinality` donne la cardinalite exacte des champs de type tableau (ex: `content.features`, `content.testimonials`).
 
-Pour les FAQ (`content.faqs`), cette cardinalite est une limite stricte de slots disponibles dans le template.
+Pour les FAQ (`content.faqs`), cette cardinalite indique le nombre initial de slots dans le template, mais l'agent peut ajouter des Q/R supplementaires par defaut (mode etendu).
 
 Pour minimiser le JSON de retour, utilisez `content_overrides` (recommande) plutot que recopier tout `sections_data`.
 
@@ -398,13 +398,13 @@ Le Gems agit uniquement sur la **redaction SEO**.
 - Balises autorisees dans ce cadre: `<strong>`, `<em>`, `<u>`
 - Ne pas imbriquer ces balises, ne pas ajouter d'autres balises HTML
 
-### Regle FAQ (mode standard + exception controlee)
+### Regle FAQ (mode etendu par defaut)
 
-- Mode standard: pour chaque section contenant `content.faqs`, respecter la cardinalite du template (`array_cardinality` ou `editable_sections.content_shape.__count`).
-- Exception autorisee uniquement sur demande explicite: mode `FAQ_ETENDUE`.
-- En mode `FAQ_ETENDUE`, vous pouvez ajouter des Q/R dans `content.faqs` au-dela de la cardinalite initiale du template, sans modifier `id/type/variant/design/advanced/themeConfig`.
-- Cette exception ne s'applique qu'aux FAQ. Tous les autres tableaux (`features`, `services`, `steps`, `navItems`, `columns`, etc.) restent verrouilles en cardinalite.
+- Par defaut, pour chaque section contenant `content.faqs`, l'agent peut **modifier les questions/reponses existantes** ET **ajouter de nouvelles Q/R** au-dela de la cardinalite initiale du template (`array_cardinality`).
+- L'agent ne doit pas modifier `id/type/variant/design/advanced/themeConfig` de la section FAQ.
+- Cette regle d'extension de cardinalite ne s'applique qu'aux FAQ (`content.faqs`). Tous les autres tableaux (`features`, `services`, `steps`, `navItems`, `columns`, etc.) restent verrouilles en cardinalite.
 - Interdiction de creer de nouveaux champs ou de nouvelles sections pour contourner cette regle.
+- Si une consigne explicite demande le mode `FAQ_RESTREINTE`, alors la cardinalite du template doit etre respectee strictement.
 
 ---
 
@@ -465,7 +465,7 @@ Avant de soumettre votre JSON, verifiez :
 - [ ] Les URLs de medias (images/avatars/logos/thumbnails) sont restees identiques au modele sauf demande explicite
 - [ ] Les champs non SEO de coordination (`email`, `phone`, `address`, `openHours*`) sont restes identiques au modele
 - [ ] Le nombre d'elements dans les tableaux (features, testimonials, navItems, columns, services, steps) est identique au modele
-- [ ] FAQ: par defaut, cardinalite identique au modele; si mode `FAQ_ETENDUE` explicitement demande, `content.faqs` peut etre etendu sans autre changement structurel
+- [ ] FAQ: par defaut, l'agent peut modifier et ajouter des Q/R dans `content.faqs` (mode etendu); si mode `FAQ_RESTREINTE` explicitement demande, cardinalite identique au modele
 - [ ] Les URLs d'images sont des URLs Pexels valides (format brut `https://...`, pas de markdown)
 - [ ] Les URLs d'images dans les sous-objets (testimonials, features, items) sont aussi en format brut
 - [ ] Le `status` est bien `"published"` pour une publication automatique
