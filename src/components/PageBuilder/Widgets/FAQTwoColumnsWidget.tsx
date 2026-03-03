@@ -7,7 +7,6 @@ interface FAQTwoColumnsWidgetProps {
 
 export default function FAQTwoColumnsWidget({ section }: FAQTwoColumnsWidgetProps) {
   const { content, design } = section;
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
   const typo = design.typography || {};
   const headingStyle: React.CSSProperties = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
@@ -27,7 +26,7 @@ export default function FAQTwoColumnsWidget({ section }: FAQTwoColumnsWidgetProp
   const rightColumn = faqs.filter((_: any, index: number) => index % 2 === 1);
 
   return (
-    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
+    <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,

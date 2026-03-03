@@ -7,7 +7,6 @@ interface NewsletterSignupWidgetProps {
 
 export default function NewsletterSignupWidget({ section }: NewsletterSignupWidgetProps) {
   const { content, design } = section;
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
   const typo = design.typography || {};
   const headingStyle: React.CSSProperties = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
@@ -26,7 +25,7 @@ export default function NewsletterSignupWidget({ section }: NewsletterSignupWidg
   };
 
   return (
-    <div className="bg-neutral" style={bg ? { backgroundColor: bg } : undefined}>
+    <div>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,

@@ -22,8 +22,6 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
-
   const intro = content.introduction || content.title || 'Maximize your website\'s impact with premium content sections.';
   const ctaText = content.ctaText || 'Learn More';
   const ctaLink = content.ctaLink || '#';
@@ -134,7 +132,7 @@ export default function TextColumnsWidget({ section }: TextColumnsWidgetProps) {
   );
 
   return (
-    <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
+    <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,

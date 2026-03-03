@@ -7,7 +7,6 @@ interface SimpleCenteredHeroProps {
 
 export default function SimpleCenteredHero({ section }: SimpleCenteredHeroProps) {
   const { content, design } = section;
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
   const typo = design.typography || {};
   const h1Style = {
     ...(typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
@@ -40,7 +39,7 @@ export default function SimpleCenteredHero({ section }: SimpleCenteredHeroProps)
   const badgeText = design.colors?.badgeText;
 
   return (
-    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
+    <div>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,

@@ -50,7 +50,7 @@ export default function CinematicFooterWidget({ section }: CinematicFooterWidget
   };
 
   return (
-    <footer className="relative bg-base-300 text-base-content overflow-hidden">
+    <footer className="relative text-base-content overflow-hidden">
       {content.backgroundImage && (
         <img src={content.backgroundImage} alt="footer-bg" className="absolute inset-0 w-full h-full object-cover" />
       )}

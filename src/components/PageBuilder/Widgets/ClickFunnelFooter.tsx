@@ -70,10 +70,6 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
     privacyChoicesText = 'Your Privacy Choices'
   } = content;
 
-  const bgColor = section.design?.background?.type === 'color' && section.design?.background?.value
-    ? section.design.background.value
-    : undefined;
-
   const typo = section.design?.typography || {};
   const fontFamily = typo.fontFamily || undefined;
   const headingFontFamily = typo.headingFontFamily || fontFamily || undefined;
@@ -104,7 +100,7 @@ export default function ClickFunnelFooter({ section }: ClickFunnelFooterProps) {
   };
 
   return (
-    <footer className="py-16 px-4 bg-base-100 text-base-content" style={bgColor ? { backgroundColor: bgColor } : undefined}>
+    <footer className="py-16 px-4 text-base-content">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-center mb-12">
           {logo ? (

@@ -8,7 +8,6 @@ interface HeroWithTestimonialsProps {
 
 export default function HeroWithTestimonials({ section }: HeroWithTestimonialsProps) {
   const { content, design } = section;
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
   const typo = design.typography || {};
   const h1Style = {
     ...(typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h1FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
@@ -40,7 +39,7 @@ export default function HeroWithTestimonials({ section }: HeroWithTestimonialsPr
   const cardBg = design.colors?.cardBackground;
 
   return (
-    <div className="bg-neutral relative" style={bg ? { backgroundColor: bg } : undefined}>
+    <div className="relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: content.testimonials?.length ? '180px' : design.spacing.paddingBottom,

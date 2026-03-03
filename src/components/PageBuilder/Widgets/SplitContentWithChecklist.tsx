@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, ImageIcon } from 'lucide-react';
+import { Check, Image as ImageIcon } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
 
@@ -20,10 +20,8 @@ export default function SplitContentWithChecklist({ section }: SplitContentWithC
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
   };
 
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
-
   return (
-    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
+    <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,

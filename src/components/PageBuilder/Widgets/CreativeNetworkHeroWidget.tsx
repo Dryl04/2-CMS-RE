@@ -40,7 +40,7 @@ export default function CreativeNetworkHeroWidget({ section }: CreativeNetworkHe
   const logos = content.logos || ['HF', 'runway', 'dentsu', 'wayfair', 'xfinity'];
 
   return (
-    <section className="bg-base-100 text-base-content">
+    <section className="text-base-content">
       <div
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded-3xl border border-base-content/10 overflow-hidden"
         style={{

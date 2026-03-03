@@ -25,8 +25,6 @@ export default function ContentShowcaseWidget({ section }: ContentShowcaseWidget
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
-
   const subtitle = content.subtitle || '';
   const headline = content.headline || content.title || 'Quis autem veleum iure repreh enderit.';
   const column1 = content.column1 || content.description || '';
@@ -97,7 +95,7 @@ export default function ContentShowcaseWidget({ section }: ContentShowcaseWidget
   );
 
   return (
-    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
+    <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,

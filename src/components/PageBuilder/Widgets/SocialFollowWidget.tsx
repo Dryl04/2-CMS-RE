@@ -27,12 +27,11 @@ export default function SocialFollowWidget({ section }: SocialFollowWidgetProps)
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
   };
 
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
   const buttonBg = design.colors?.buttonBackground;
   const buttonText = design.colors?.buttonText;
 
   return (
-    <div className="bg-neutral" style={bg ? { backgroundColor: bg } : undefined}>
+    <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,

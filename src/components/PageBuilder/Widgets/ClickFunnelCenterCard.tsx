@@ -16,8 +16,6 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
   const fontFamily = typo.fontFamily || undefined;
   const headingFontFamily = typo.headingFontFamily || fontFamily || undefined;
 
-  const bgColor = design?.background?.type === 'color' ? design.background.value : undefined;
-
   const headingStyle: React.CSSProperties = {
     ...(headingFontFamily ? { fontFamily: headingFontFamily } : {}),
     ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
@@ -101,8 +99,7 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
 
   return (
     <div
-      className="relative flex flex-col overflow-hidden py-8 sm:py-12 bg-base-100 text-base-content"
-      style={bgColor ? { backgroundColor: bgColor } : undefined}
+      className="relative flex flex-col overflow-hidden py-8 sm:py-12 text-base-content"
     >
       {content.showLeftDecor !== false && (
         <>

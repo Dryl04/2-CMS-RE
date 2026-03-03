@@ -23,7 +23,6 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
   const [isPlaying, setIsPlaying] = useState(false);
   const hideDecorationsOnVideoPlay = design.media?.hideDecorationsOnVideoPlay === true;
   const shouldHideDecorations = hideDecorationsOnVideoPlay && isPlaying;
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
   const typo = design.typography || {};
   const accentColor = design.colors?.accent || design.colors?.buttonBackground;
   const headingStyle: React.CSSProperties = {
@@ -50,7 +49,7 @@ export default function ContentVideoServices({ section }: ContentVideoServicesPr
     'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1920';
 
   return (
-    <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
+    <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 items-center">
           <div className={`lg:col-span-3 bg-base-100 rounded-2xl p-6 sm:p-8 shadow-lg transition-all ${shouldHideDecorations ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>

@@ -1,4 +1,4 @@
-import { Umbrella, Layers, PaintBucket, Clock, AlarmClock, ImageIcon } from 'lucide-react';
+import { Umbrella, Layers, PaintBucket, Clock, AlarmClock, Image as ImageIcon } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
 import { renderIcon } from '@/lib/iconLibrary';
@@ -17,7 +17,6 @@ const _iconMap: { [key: string]: any } = {
 
 export default function ContentWithServicesWidget({ section }: ContentWithServicesWidgetProps) {
   const { content, design } = section;
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
   const servicesBg = design.colors?.servicesBackground;
 
   const typo = design.typography || {};
@@ -37,7 +36,7 @@ export default function ContentWithServicesWidget({ section }: ContentWithServic
   const gridCols = content.services?.length === 2 ? 'grid-cols-2' : content.services?.length >= 3 ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-1';
 
   return (
-    <div className="bg-base-200" style={bg ? { backgroundColor: bg } : undefined}>
+    <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,

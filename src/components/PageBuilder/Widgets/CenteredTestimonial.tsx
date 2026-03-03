@@ -7,7 +7,6 @@ interface CenteredTestimonialProps {
 
 export default function CenteredTestimonial({ section }: CenteredTestimonialProps) {
   const { content, design } = section;
-  const bg = design.background.type === 'color' ? design.background.value : undefined;
   const typo = design.typography || {};
   const headingStyle: React.CSSProperties = {
     ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
@@ -26,7 +25,7 @@ export default function CenteredTestimonial({ section }: CenteredTestimonialProp
   };
 
   return (
-    <div className="bg-base-100" style={bg ? { backgroundColor: bg } : undefined}>
+    <div>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{
         paddingTop: design.spacing.paddingTop,
         paddingBottom: design.spacing.paddingBottom,
@@ -58,4 +57,3 @@ export default function CenteredTestimonial({ section }: CenteredTestimonialProp
     </div>
   );
 }
-

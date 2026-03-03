@@ -109,7 +109,7 @@ export default function ClickFunnelTestimonials({ section }: ClickFunnelTestimon
   const statCardPosition = Math.floor(testimonials.length / 2);
 
   return (
-    <div className="relative w-full py-16 overflow-hidden bg-base-100 text-base-content" style={bgColor ? { backgroundColor: bgColor } : undefined}>
+    <div className="relative w-full py-16 overflow-hidden text-base-content">
       <div className="container mx-auto px-4">
         {showLogos && logos.length > 0 && (
           <div className="flex flex-wrap items-center justify-center gap-12 mb-16">

@@ -68,7 +68,7 @@ export default function VideoHeroWidget({ section }: VideoHeroWidgetProps) {
 
   const renderBackground = () => (
     <div
-      className="relative group w-full min-h-[360px] sm:min-h-[500px] lg:min-h-[640px] overflow-hidden bg-neutral"
+      className="relative group w-full min-h-[360px] sm:min-h-[500px] lg:min-h-[640px] overflow-hidden"
             data-widget-media-frame
       data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
       data-widget-overlay-position={design.media?.overlayPosition || 'center'}

@@ -13,7 +13,6 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
 
   const typo = design?.typography || {};
 
-  const bgColor = design?.background?.type === 'color' ? design.background.value : undefined;
   const _fontFamily = typo.headingFontFamily || typo.fontFamily || undefined;
 
   const h1Style: React.CSSProperties = {
@@ -45,8 +44,7 @@ export default function ClickFunnelsHero({ section }: ClickFunnelsHeroProps) {
 
   return (
     <div
-      className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-base-100 text-base-content"
-      style={bgColor ? { backgroundColor: bgColor } : undefined}
+      className="relative min-h-[600px] flex items-center justify-center overflow-hidden text-base-content"
     >
       {content.showLeftDecor !== false && (
         <>
