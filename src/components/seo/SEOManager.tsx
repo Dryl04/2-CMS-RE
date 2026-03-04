@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useModal } from '@/contexts/ModalContext';
-import { Search, CreditCard as Edit, Trash2, Eye, FileUp, FormInput, ExternalLink, ArrowLeft, Copy, LayoutGrid as Layout, FolderOpen, FolderPlus, X } from 'lucide-react';
+import { Search, Pencil as Edit, Trash2, Eye, FileUp, FormInput, ExternalLink, ArrowLeft, Copy, LayoutGrid as Layout, FolderOpen, FolderPlus, X } from 'lucide-react';
 import { supabase, SEOMetadata } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import SEOImporter from './SEOImporter';

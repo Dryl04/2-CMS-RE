@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useModal } from '@/contexts/ModalContext';
-import { Plus, Trash2, CreditCard as Edit3, Copy, X, Type } from 'lucide-react';
+import { Plus, Trash2, Pencil as Edit3, Copy, X, Type } from 'lucide-react';
 import { useDaisyTheme } from '@/contexts/DaisyThemeContext';
 import { DaisyTheme, TOKEN_GROUPS, TOKEN_LABELS, getThemeUsage } from '@/lib/daisyThemes';
 import DaisyThemeEditorModal from './DaisyThemeEditorModal';

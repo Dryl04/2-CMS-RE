@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useModal } from '@/contexts/ModalContext';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Trash2, Copy, CreditCard as Edit3 } from 'lucide-react';
+import { GripVertical, Trash2, Copy, Pencil as Edit3 } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import {
   getBackgroundContentClassName,

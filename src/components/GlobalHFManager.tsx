@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useModal } from '@/contexts/ModalContext';
-import { ArrowLeft, Save, Plus, Trash2, CreditCard as Edit3, Check, ChevronDown, ChevronUp, ToggleLeft, ToggleRight, LayoutGrid as Layout, FileText, X, Layers } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, Pencil as Edit3, Check, ChevronDown, ChevronUp, ToggleLeft, ToggleRight, LayoutGrid as Layout, FileText, X, Layers } from 'lucide-react';
 import { supabase, SEOMetadata } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import {
