@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useModal } from '@/contexts/ModalContext';
 import { X, Search, Download, Check } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -72,6 +73,7 @@ const WEB_SAFE_FONT_FAMILY: Record<string, string> = {
 };
 
 export default function FontImporter({ onClose, onFontImported }: FontImporterProps) {
+  const modal = useModal();
   const [activeTab, setActiveTab] = useState<FontTab>('available');
   const [searchTerm, setSearchTerm] = useState('');
   const [customFontName, setCustomFontName] = useState('');
@@ -179,7 +181,7 @@ export default function FontImporter({ onClose, onFontImported }: FontImporterPr
   };
 
   const handleDeleteFont = async (fontId: string, fontName: string) => {
-    if (!confirm(`Supprimer la police ${fontName} ?`)) return;
+    if (!await modal.confirm(`Supprimer la police ${fontName} ?`, 'Supprimer la police')) return;
 
     try {
       const { error } = await supabase

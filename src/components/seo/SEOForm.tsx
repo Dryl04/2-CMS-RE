@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, Layout, ChevronRight, FolderPlus, X } from 'lucide-react';
+import { useModal } from '@/contexts/ModalContext';
+import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, LayoutGrid as Layout, ChevronRight, FolderPlus, X } from 'lucide-react';
 import { supabase, PageTemplate } from '@/lib/supabase';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { normalizeInternalPath, replaceInternalLinksInSections } from '@/lib/linkRegistry';
@@ -13,6 +14,7 @@ interface SEOFormProps {
 }
 
 export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBuilder }: SEOFormProps) {
+  const modal = useModal();
   const normalizeSlug = (value: string) =>
     value
       .toLowerCase()
@@ -159,7 +161,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
     // Case-insensitive duplicate check
     const alreadyExists = existingPageFolders.some(f => f.toLowerCase() === trimmed.toLowerCase());
     if (alreadyExists) {
-      alert(`Un dossier portant le nom "${trimmed}" existe deja (la casse est ignoree).`);
+      modal.alert(`Un dossier portant le nom "${trimmed}" existe deja (la casse est ignoree).`, 'Dossier existant');
       return;
     }
     setExistingPageFolders(prev => [...prev, trimmed].sort());
@@ -200,7 +202,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
 
   const handleSave = async () => {
     if (!slug || !title) {
-      alert('Le slug et le titre sont obligatoires');
+      modal.alert('Le slug et le titre sont obligatoires', 'Champs obligatoires');
       return;
     }
 
@@ -340,7 +342,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
     } catch (error: any) {
       console.error('Save error:', error);
       const errorMessage = error?.message || error?.toString() || 'Erreur inconnue';
-      alert(`Erreur lors de la sauvegarde : ${errorMessage}`);
+      modal.alert(`Erreur lors de la sauvegarde : ${errorMessage}`, 'Erreur');
     } finally {
       setIsSaving(false);
     }

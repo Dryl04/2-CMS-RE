@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { useModal } from '@/contexts/ModalContext';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Trash2, Copy, Edit3 } from 'lucide-react';
+import { GripVertical, Trash2, Copy, CreditCard as Edit3 } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import {
   getBackgroundContentClassName,
@@ -95,6 +96,7 @@ export default function SectionRenderer({
   previewMode = false,
   canvasThemeSlug,
 }: SectionRendererProps) {
+  const modal = useModal();
   const [isHovered, setIsHovered] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: section.id,
@@ -301,9 +303,9 @@ export default function SectionRenderer({
               <Edit3 className="w-4 h-4 text-gray-600" />
             </button>
             <button
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation();
-                if (confirm('Supprimer cette section ?')) {
+                if (await modal.confirm('Supprimer cette section ?', 'Supprimer la section')) {
                   onDelete();
                 }
               }}

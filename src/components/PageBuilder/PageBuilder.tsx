@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, Edit3, FolderOpen, FolderPlus, Download, FileJson, FileSpreadsheet, X, Palette, Settings, Copy, Link2 } from 'lucide-react';
+import { useModal } from '@/contexts/ModalContext';
+import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, CreditCard as Edit3, FolderOpen, FolderPlus, Download, FileJson, FileSpreadsheet, X, Palette, Settings, Copy, Link2 } from 'lucide-react';
 import { PageBuilderSection, DeviceType } from '@/lib/pageBuilderTypes';
 import { supabase, PageTemplate, SEOMetadata } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
@@ -71,6 +72,7 @@ export default function PageBuilder({
   mode = 'template',
   onSavePageSections,
 }: PageBuilderProps) {
+  const modal = useModal();
   const { profile } = useAuth();
   const { themes: daisyThemes } = useDaisyTheme();
   const [builderView, setBuilderView] = useState<BuilderView>(editingPageId ? 'editor' : 'list');
@@ -304,7 +306,7 @@ export default function PageBuilder({
   };
 
   const deleteTemplate = async (id: string) => {
-    if (!confirm('Supprimer ce modele ?')) return;
+    if (!await modal.confirm('Supprimer ce modele ?', 'Supprimer le modèle')) return;
     try {
       const { error } = await supabase
         .from('page_templates')

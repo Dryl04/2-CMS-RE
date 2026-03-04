@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Search, Edit, Trash2, Eye, FileUp, FormInput, ExternalLink, ArrowLeft, Copy, Layout, FolderOpen, FolderPlus, X } from 'lucide-react';
+import { useModal } from '@/contexts/ModalContext';
+import { Search, CreditCard as Edit, Trash2, Eye, FileUp, FormInput, ExternalLink, ArrowLeft, Copy, LayoutGrid as Layout, FolderOpen, FolderPlus, X } from 'lucide-react';
 import { supabase, SEOMetadata } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import SEOImporter from './SEOImporter';
@@ -15,6 +16,7 @@ interface SEOManagerProps {
 }
 
 export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManagerProps) {
+  const modal = useModal();
   const { profile } = useAuth();
   const [metadata, setMetadata] = useState<SEOMetadata[]>([]);
   const [filteredMetadata, setFilteredMetadata] = useState<SEOMetadata[]>([]);
@@ -136,7 +138,7 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Supprimer cette page ? Cette action est irreversible.')) return;
+    if (!await modal.confirm('Supprimer cette page ? Cette action est irreversible.', 'Supprimer la page')) return;
 
     try {
       const { error } = await supabase

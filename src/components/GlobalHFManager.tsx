@@ -1,9 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
-  ArrowLeft, Save, Plus, Trash2, Edit3, Check,
-  ChevronDown, ChevronUp, ToggleLeft, ToggleRight,
-  Layout, FileText, X, Layers
-} from 'lucide-react';
+import { useModal } from '@/contexts/ModalContext';
+import { ArrowLeft, Save, Plus, Trash2, CreditCard as Edit3, Check, ChevronDown, ChevronUp, ToggleLeft, ToggleRight, LayoutGrid as Layout, FileText, X, Layers } from 'lucide-react';
 import { supabase, SEOMetadata } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -24,6 +21,7 @@ interface GlobalHFManagerProps {
 }
 
 export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalHFManagerProps) {
+  const modal = useModal();
   const { profile } = useAuth();
   const [settings, setSettings] = useState<GlobalHFSetting[]>([]);
   const [loading, setLoading] = useState(true);
@@ -162,7 +160,7 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Supprimer cette configuration ?')) return;
+    if (!await modal.confirm('Supprimer cette configuration ?', 'Supprimer la configuration')) return;
     try {
       const { error } = await supabase
         .from('global_hf_settings')

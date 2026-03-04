@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useModal } from '@/contexts/ModalContext';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -143,6 +144,7 @@ function healthBadge(health: LinkHealth) {
 }
 
 export default function LinkManager({ onNavigate }: LinkManagerProps) {
+  const modal = useModal();
   const [pages, setPages] = useState<SEOMetadata[]>([]);
   const [redirects, setRedirects] = useState<SEORedirect[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -435,7 +437,7 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
   };
 
   const handleDeleteRedirect = async (id: string) => {
-    if (!confirm('Supprimer cette redirection ?')) return;
+    if (!await modal.confirm('Supprimer cette redirection ?', 'Supprimer la redirection')) return;
     const { error } = await supabase.from('seo_redirects').delete().eq('id', id);
     if (error) {
       showToast('Suppression impossible', 'err');

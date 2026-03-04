@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useModal } from '@/contexts/ModalContext';
 import { Save, X, Trash2, Plus, Copy, Palette, Type, Ruler, Weight, Upload, Download } from 'lucide-react';
 import { PageTheme } from '@/lib/pageThemes';
 import { createEmptyTheme, isCustomTheme } from '@/lib/pageThemesStorage';
@@ -47,6 +48,7 @@ interface FontLibraryItem {
 }
 
 export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEditorProps) {
+  const modal = useModal();
   const { pageThemes, loading, saveTheme, deleteTheme: deleteThemeContext, migrateLegacyThemes } = usePageTheme();
   const [editingTheme, setEditingTheme] = useState<PageTheme | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -174,7 +176,7 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
   };
 
   const handleDeleteTheme = async (themeId: string) => {
-    if (!confirm('Supprimer ce thème ?')) return;
+    if (!await modal.confirm('Supprimer ce thème ?', 'Supprimer le thème')) return;
 
     try {
       await deleteThemeContext(themeId);

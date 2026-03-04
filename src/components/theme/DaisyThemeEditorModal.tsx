@@ -17,6 +17,7 @@ interface Props {
   theme: DaisyTheme | null;
   onClose: () => void;
   onSaved: () => void;
+  sourceThemeId?: string;
 }
 
 interface FontLibraryItem {
@@ -40,7 +41,7 @@ const extractPrimaryFontName = (fontStack?: string) => {
   return fontStack.split(',')[0]?.trim().replace(/['"]/g, '') || '';
 };
 
-export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props) {
+export default function DaisyThemeEditorModal({ theme, onClose, onSaved, sourceThemeId }: Props) {
   const { createTheme, updateTheme, themes } = useDaisyTheme();
   const isNew = !theme?.id;
   const isOfficial = theme?.source === 'daisyui';
@@ -133,7 +134,7 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved }: Props
         : null;
 
       if (isNew || isOfficial) {
-        await createTheme(name.trim(), slug.trim(), tokens, finalFontConfig);
+        await createTheme(name.trim(), slug.trim(), tokens, finalFontConfig, sourceThemeId);
       } else {
         await updateTheme(theme!.id, { name: name.trim(), slug: slug.trim(), tokens, font_config: finalFontConfig });
       }

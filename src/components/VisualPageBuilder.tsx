@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useModal } from '@/contexts/ModalContext';
 import { Plus, Eye, Save, ArrowLeft, Sparkles, X, Check } from 'lucide-react';
 import { widgetLibrary } from '@/lib/widgetLibrary';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
@@ -10,6 +11,7 @@ interface VisualPageBuilderProps {
 }
 
 export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
+  const modal = useModal();
   const [selectedSections, setSelectedSections] = useState<PageBuilderSection[]>([]);
   const [pageName, setPageName] = useState('');
   const [pageSlug, setPageSlug] = useState('');
@@ -38,7 +40,7 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
     ? allWidgetVariants
     : allWidgetVariants.filter(wv => wv.widget.category === selectedCategory || !wv.widget.category);
 
-  const addSection = (widget: typeof widgetLibrary[0], variantId: string) => {
+  const addSection = async (widget: typeof widgetLibrary[0], variantId: string) => {
     const newSection: PageBuilderSection = {
       id: `section-${Date.now()}-${Math.random()}`,
       type: widget.type,
@@ -70,7 +72,7 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
     };
 
     if (widget.unique && selectedSections.some(s => s.type === widget.type)) {
-      alert('Ce widget ne peut être ajouté qu\'une seule fois');
+      await modal.alert('Ce widget ne peut être ajouté qu\'une seule fois', 'Widget unique');
       return;
     }
 
@@ -88,7 +90,7 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
 
   const savePage = async () => {
     if (!pageName.trim()) {
-      alert('Veuillez remplir le nom de la page');
+      await modal.alert('Veuillez remplir le nom de la page', 'Champ obligatoire');
       return;
     }
 
@@ -97,7 +99,7 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
-        alert('Vous devez être connecté');
+        await modal.alert('Vous devez être connecté', 'Non connecté');
         return;
       }
 
@@ -132,11 +134,11 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
 
       if (sectionsError) throw sectionsError;
 
-      alert('Page créée avec succès!');
+      await modal.alert('Page créée avec succès!', 'Succès');
       if (onClose) onClose();
     } catch (error: any) {
       console.error('Error saving page:', error);
-      alert('Erreur lors de la sauvegarde: ' + error.message);
+      await modal.alert('Erreur lors de la sauvegarde: ' + error.message, 'Erreur');
     } finally {
       setSaving(false);
     }

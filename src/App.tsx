@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { DaisyThemeProvider } from '@/contexts/DaisyThemeContext';
 import { PageThemeProvider } from '@/contexts/PageThemeContext';
+import { ModalProvider } from '@/contexts/ModalContext';
 import Auth from '@/components/Auth';
 import Dashboard from '@/components/Dashboard';
 import SEOManager from '@/components/seo/SEOManager';
@@ -313,7 +314,9 @@ function App() {
     <AuthProvider>
       <PageThemeProvider>
         <DaisyThemeProvider>
-          <AppContent />
+          <ModalProvider>
+            <AppContent />
+          </ModalProvider>
         </DaisyThemeProvider>
       </PageThemeProvider>
     </AuthProvider>

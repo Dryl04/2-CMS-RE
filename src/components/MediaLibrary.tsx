@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useModal } from '@/contexts/ModalContext';
 import { Upload, Search, Trash2, Check, Image as ImageIcon, X as XIcon, ArrowLeft } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import imageCompression from 'browser-image-compression';
@@ -11,6 +12,7 @@ interface MediaLibraryProps {
 }
 
 export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibraryProps) {
+  const modal = useModal();
   const { profile } = useAuth();
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -147,7 +149,7 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
   });
 
   const deleteFile = async (file: MediaFile) => {
-    if (!confirm(`Supprimer ${file.original_filename} ?`)) return;
+    if (!await modal.confirm(`Supprimer ${file.original_filename} ?`, 'Supprimer le fichier')) return;
 
     try {
       if (!file.uploaded_by || !file.filename) {
@@ -192,7 +194,7 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
 
   const deleteSelected = async () => {
     if (selectedFiles.size === 0) return;
-    if (!confirm(`Supprimer ${selectedFiles.size} fichier(s) ?`)) return;
+    if (!await modal.confirm(`Supprimer ${selectedFiles.size} fichier(s) ?`, 'Supprimer la sélection')) return;
 
     setDeleting(true);
     let deletedCount = 0;

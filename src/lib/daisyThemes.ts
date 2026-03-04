@@ -491,7 +491,8 @@ export async function createCustomThemeWithValidation(
   tokens: DaisyThemeTokens,
   userId: string,
   existingThemes: DaisyTheme[],
-  fontConfig?: DaisyFontConfig | null
+  fontConfig?: DaisyFontConfig | null,
+  excludeIdFromTokensCheck?: string
 ): Promise<DaisyTheme> {
   // Check for duplicate slug
   const duplicateSlug = existingThemes.find(t => t.slug === slug);
@@ -499,8 +500,10 @@ export async function createCustomThemeWithValidation(
     throw new ThemeError('Un thème avec ce slug existe déjà', 'DUPLICATE', 409);
   }
 
-  // Check for identical tokens
-  const identicalTokens = existingThemes.find(t => !tokensAreDifferent(t.tokens, tokens));
+  // Check for identical tokens (excluding the source theme when duplicating)
+  const identicalTokens = existingThemes.find(
+    t => (!excludeIdFromTokensCheck || t.id !== excludeIdFromTokensCheck) && !tokensAreDifferent(t.tokens, tokens)
+  );
   if (identicalTokens) {
     throw new ThemeError(
       `Un thème avec des tokens identiques existe déjà: "${identicalTokens.name}"`,

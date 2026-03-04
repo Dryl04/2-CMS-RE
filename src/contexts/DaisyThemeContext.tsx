@@ -20,7 +20,7 @@ interface DaisyThemeContextType {
   loading: boolean;
   error: string | null;
   setActiveTheme: (themeId: string) => Promise<void>;
-  createTheme: (name: string, slug: string, tokens: DaisyThemeTokens, fontConfig?: DaisyFontConfig | null) => Promise<DaisyTheme>;
+  createTheme: (name: string, slug: string, tokens: DaisyThemeTokens, fontConfig?: DaisyFontConfig | null, sourceThemeId?: string) => Promise<DaisyTheme>;
   updateTheme: (id: string, updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens; font_config?: DaisyFontConfig | null }) => Promise<void>;
   removeTheme: (id: string, force?: boolean) => Promise<{ success: boolean; usage?: ThemeUsage }>;
   refreshThemes: () => Promise<void>;
@@ -113,12 +113,12 @@ export function DaisyThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const createTheme = async (name: string, slug: string, tokens: DaisyThemeTokens, fontConfig?: DaisyFontConfig | null): Promise<DaisyTheme> => {
+  const createTheme = async (name: string, slug: string, tokens: DaisyThemeTokens, fontConfig?: DaisyFontConfig | null, sourceThemeId?: string): Promise<DaisyTheme> => {
     try {
       setError(null);
       if (!profile) throw new Error('Not authenticated');
 
-      const newTheme = await createCustomThemeWithValidation(name, slug, tokens, profile.id, themes, fontConfig);
+      const newTheme = await createCustomThemeWithValidation(name, slug, tokens, profile.id, themes, fontConfig, sourceThemeId);
       await refreshThemes();
       return newTheme;
     } catch (err) {

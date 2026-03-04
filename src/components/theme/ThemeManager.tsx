@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useModal } from '@/contexts/ModalContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Theme, ThemeColors } from '@/lib/themeTypes';
 import { Palette, Trash2, Copy, Check, Eye, AlertCircle, Download, ExternalLink, ClipboardCopy, Code } from 'lucide-react';
@@ -6,6 +7,7 @@ import { getSQLScript } from '@/lib/setupThemes';
 import { ThemeCSSEditor } from './ThemeCSSEditor';
 
 export const ThemeManager: React.FC = () => {
+  const modal = useModal();
   const { themes, currentTheme, setCurrentTheme, createTheme, deleteTheme, loading, error, initializeDefaultThemes } = useTheme();
   const [initializing, setInitializing] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -45,7 +47,7 @@ export const ThemeManager: React.FC = () => {
   };
 
   const handleDeleteTheme = async (themeId: string) => {
-    if (window.confirm('Are you sure you want to delete this theme?')) {
+    if (await modal.confirm('Are you sure you want to delete this theme?', 'Delete theme')) {
       await deleteTheme(themeId);
     }
   };
@@ -65,7 +67,7 @@ export const ThemeManager: React.FC = () => {
     const sql = getSQLScript();
     try {
       await navigator.clipboard.writeText(sql);
-      alert('✅ SQL script copied to clipboard!\n\nNow:\n1. Open Supabase Dashboard\n2. Go to SQL Editor\n3. Paste and execute');
+      modal.alert('SQL script copied to clipboard!\n\nNow:\n1. Open Supabase Dashboard\n2. Go to SQL Editor\n3. Paste and execute', 'Copied');
     } catch (err) {
       console.error('Failed to copy:', err);
       const textarea = document.createElement('textarea');
@@ -74,7 +76,7 @@ export const ThemeManager: React.FC = () => {
       textarea.select();
       document.execCommand('copy');
       document.body.removeChild(textarea);
-      alert('✅ SQL script copied to clipboard!');
+      modal.alert('SQL script copied to clipboard!', 'Copied');
     }
   };
 

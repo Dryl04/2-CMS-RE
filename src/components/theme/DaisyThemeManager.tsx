@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Plus, Trash2, Edit3, Copy, X, Type } from 'lucide-react';
+import { useModal } from '@/contexts/ModalContext';
+import { Plus, Trash2, CreditCard as Edit3, Copy, X, Type } from 'lucide-react';
 import { useDaisyTheme } from '@/contexts/DaisyThemeContext';
-import { DaisyTheme, TOKEN_GROUPS, TOKEN_LABELS } from '@/lib/daisyThemes';
+import { DaisyTheme, TOKEN_GROUPS, TOKEN_LABELS, getThemeUsage } from '@/lib/daisyThemes';
 import DaisyThemeEditorModal from './DaisyThemeEditorModal';
 
 interface DaisyThemeManagerProps {
@@ -9,10 +10,12 @@ interface DaisyThemeManagerProps {
 }
 
 export default function DaisyThemeManager({ onClose }: DaisyThemeManagerProps) {
+  const modal = useModal();
   const { themes, loading, removeTheme } = useDaisyTheme();
   const [editingTheme, setEditingTheme] = useState<DaisyTheme | null>(null);
   const [selectedThemeId, setSelectedThemeId] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [duplicateSourceId, setDuplicateSourceId] = useState<string | undefined>(undefined);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'daisyui' | 'custom'>('all');
 
@@ -28,28 +31,24 @@ export default function DaisyThemeManager({ onClose }: DaisyThemeManagerProps) {
     }
 
     try {
-      // First check if theme is in use
-      const result = await removeTheme(theme.id, false);
+      const usage = await getThemeUsage(theme.slug);
 
-      if (!result.success && result.usage) {
-        // Theme is in use, show detailed warning
-        const usageMsg = `Ce thème est utilisé dans ${result.usage.totalUsages} élément(s):\n` +
-          `- ${result.usage.pageThemes} thème(s) de page\n` +
-          `- ${result.usage.pageTemplates} modèle(s) de page\n\n` +
+      let confirmed: boolean;
+      if (usage.totalUsages > 0) {
+        const usageMsg = `Ce thème est utilisé dans ${usage.totalUsages} élément(s):\n` +
+          `- ${usage.pageThemes} thème(s) de page\n` +
+          `- ${usage.pageTemplates} modèle(s) de page\n\n` +
           `Voulez-vous vraiment le supprimer ? Les éléments utilisant ce thème seront migrés vers le thème par défaut.`;
-
-        if (!confirm(usageMsg)) return;
-
-        // Force delete with migration
-        const forceResult = await removeTheme(theme.id, true);
-        if (forceResult.success) {
-          showToast('Thème supprimé et éléments migrés');
-        }
+        confirmed = await modal.confirm(usageMsg, 'Supprimer le thème');
       } else {
-        // Theme not in use, simple deletion
-        if (!confirm(`Supprimer le thème "${theme.name}" ?`)) return;
-        await removeTheme(theme.id, false);
-        showToast('Thème supprimé');
+        confirmed = await modal.confirm(`Supprimer le thème "${theme.name}" ?`, 'Supprimer le thème');
+      }
+
+      if (!confirmed) return;
+
+      const result = await removeTheme(theme.id, usage.totalUsages > 0);
+      if (result.success) {
+        showToast(usage.totalUsages > 0 ? 'Thème supprimé et éléments migrés' : 'Thème supprimé');
       }
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'Erreur lors de la suppression');
@@ -57,6 +56,7 @@ export default function DaisyThemeManager({ onClose }: DaisyThemeManagerProps) {
   };
 
   const handleDuplicate = (theme: DaisyTheme) => {
+    setDuplicateSourceId(theme.id);
     setEditingTheme({
       ...theme,
       id: '',
@@ -312,8 +312,9 @@ export default function DaisyThemeManager({ onClose }: DaisyThemeManagerProps) {
       {showCreateModal && (
         <DaisyThemeEditorModal
           theme={editingTheme}
-          onClose={() => { setShowCreateModal(false); setEditingTheme(null); }}
-          onSaved={() => { setShowCreateModal(false); setEditingTheme(null); showToast('Thème enregistré'); }}
+          sourceThemeId={duplicateSourceId}
+          onClose={() => { setShowCreateModal(false); setEditingTheme(null); setDuplicateSourceId(undefined); }}
+          onSaved={() => { setShowCreateModal(false); setEditingTheme(null); setDuplicateSourceId(undefined); showToast('Thème enregistré'); }}
         />
       )}
     </div>
