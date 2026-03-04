@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, X, Search, ShoppingBag, User } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
 import { useState } from 'react';
@@ -19,12 +19,6 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
     ctaLink,
     secondaryCtaText,
     secondaryCtaLink,
-    accountText,
-    accountLink,
-    showSearch,
-    showCart,
-    searchLink,
-    cartLink,
   } = section.content;
 
   const design = section.design || {};
@@ -339,23 +333,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-2 min-w-[250px] justify-end">
-            {accountText && (
-              <a href={accountLink || '#'} className="btn btn-ghost btn-sm text-neutral-content">
-                <User className="w-4 h-4" />
-                <span>{accountText}</span>
-              </a>
-            )}
-            {showSearch && (
-              <a href={searchLink || '#'} className="btn btn-ghost btn-sm btn-square" aria-label="Rechercher" data-widget-icon-frame>
-                <Search className="w-4 h-4" />
-              </a>
-            )}
-            {showCart && (
-              <a href={cartLink || '#'} className="btn btn-ghost btn-sm btn-square" aria-label="Panier" data-widget-icon-frame>
-                <ShoppingBag className="w-4 h-4" />
-              </a>
-            )}
+          <div className="hidden md:flex items-center gap-2 min-w-[120px] justify-end">
             {secondaryCtaText && (
               <a href={secondaryCtaLink || '#'} className="btn btn-outline btn-sm">
                 {secondaryCtaText}

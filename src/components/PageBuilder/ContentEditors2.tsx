@@ -2,6 +2,7 @@ import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { getWidgetFieldLabel } from '@/lib/widgetFieldLabels';
+import { isFieldVisibleForVariant } from '@/lib/variantFieldVisibility';
 import ImageUploadField from './ImageUploadField';
 import { LinkInputField } from '@/components/common/LinkInputField';
 import { RichTextArea } from '@/components/common/RichTextArea';
@@ -32,6 +33,7 @@ interface ContentEditorProps {
 
 export function PricingContentEditor({ section, updateContent }: ContentEditorProps) {
   const plans = section.content.plans || [];
+  const v = (field: string) => isFieldVisibleForVariant('pricing', field, section.variant);
 
   const updatePlan = (index: number, field: string, value: any) => {
     const updated = [...plans];
@@ -99,30 +101,38 @@ export function PricingContentEditor({ section, updateContent }: ContentEditorPr
                 <input type="text" value={plan.price || ''} onChange={(e) => updatePlan(planIndex, 'price', e.target.value)} className={inputClass} placeholder="Prix (ex: $29)" />
                 <input type="text" value={plan.period || ''} onChange={(e) => updatePlan(planIndex, 'period', e.target.value)} className={inputClass} placeholder="/month" />
               </div>
-              <input type="text" value={plan.buttonText || ''} onChange={(e) => updatePlan(planIndex, 'buttonText', e.target.value)} className={inputClass} placeholder="Texte du bouton (ex: Get Started)" />
-              <LinkInputField
-                label="Lien du bouton"
-                value={plan.buttonLink || ''}
-                onChange={(val) => updatePlan(planIndex, 'buttonLink', val)}
-              />
-              <label className="flex items-center space-x-2 text-sm text-gray-700 cursor-pointer">
-                <input type="checkbox" checked={plan.popular === true} onChange={(e) => updatePlan(planIndex, 'popular', e.target.checked)} className="w-4 h-4 rounded border-gray-300" />
-                <span>Plan populaire</span>
-              </label>
-              <div className="pl-3 border-l-2 border-gray-200 space-y-1.5">
-                <span className="text-xs font-medium text-gray-500">Fonctionnalites</span>
-                {(plan.features || []).map((feat: string, fIndex: number) => (
-                  <div key={fIndex} className="flex items-center gap-1">
-                    <input type="text" value={feat} onChange={(e) => updatePlanFeatures(planIndex, fIndex, e.target.value)} className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="Fonctionnalite" />
-                    <button onClick={() => removePlanFeature(planIndex, fIndex)} className="p-1 hover:bg-red-50 text-red-400 hover:text-red-600 rounded flex-shrink-0">
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-                <button onClick={() => addPlanFeature(planIndex)} className="flex items-center space-x-1 text-xs text-gray-500 hover:text-gray-700">
-                  <Plus className="w-3 h-3" /><span>Ajouter</span>
-                </button>
-              </div>
+              {v('plans.buttonText') && (
+                <input type="text" value={plan.buttonText || ''} onChange={(e) => updatePlan(planIndex, 'buttonText', e.target.value)} className={inputClass} placeholder="Texte du bouton (ex: Get Started)" />
+              )}
+              {v('plans.buttonLink') && (
+                <LinkInputField
+                  label="Lien du bouton"
+                  value={plan.buttonLink || ''}
+                  onChange={(val) => updatePlan(planIndex, 'buttonLink', val)}
+                />
+              )}
+              {v('plans.popular') && (
+                <label className="flex items-center space-x-2 text-sm text-gray-700 cursor-pointer">
+                  <input type="checkbox" checked={plan.popular === true} onChange={(e) => updatePlan(planIndex, 'popular', e.target.checked)} className="w-4 h-4 rounded border-gray-300" />
+                  <span>Plan populaire</span>
+                </label>
+              )}
+              {v('plans.features') && (
+                <div className="pl-3 border-l-2 border-gray-200 space-y-1.5">
+                  <span className="text-xs font-medium text-gray-500">Fonctionnalites</span>
+                  {(plan.features || []).map((feat: string, fIndex: number) => (
+                    <div key={fIndex} className="flex items-center gap-1">
+                      <input type="text" value={feat} onChange={(e) => updatePlanFeatures(planIndex, fIndex, e.target.value)} className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="Fonctionnalite" />
+                      <button onClick={() => removePlanFeature(planIndex, fIndex)} className="p-1 hover:bg-red-50 text-red-400 hover:text-red-600 rounded flex-shrink-0">
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                  <button onClick={() => addPlanFeature(planIndex)} className="flex items-center space-x-1 text-xs text-gray-500 hover:text-gray-700">
+                    <Plus className="w-3 h-3" /><span>Ajouter</span>
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -443,6 +453,8 @@ export function LogoCloudContentEditor({ section, updateContent }: ContentEditor
 }
 
 export function VideoHeroContentEditor({ section, updateContent }: ContentEditorProps) {
+  const v = (field: string) => isFieldVisibleForVariant('videohero', field, section.variant);
+
   return (
     <div className="space-y-4">
       <RichTextArea
@@ -458,18 +470,20 @@ export function VideoHeroContentEditor({ section, updateContent }: ContentEditor
         onChange={(val) => updateContent('subtitle', val)}
         rows={2}
       />
-      <div>
-        <label className={labelClass}>Position du texte</label>
-        <select
-          value={section.content.textPosition || 'center'}
-          onChange={(e) => updateContent('textPosition', e.target.value)}
-          className={inputClass}
-        >
-          <option value="top">Haut</option>
-          <option value="center">Centré</option>
-          <option value="bottom">Bas</option>
-        </select>
-      </div>
+      {v('textPosition') && (
+        <div>
+          <label className={labelClass}>Position du texte</label>
+          <select
+            value={section.content.textPosition || 'center'}
+            onChange={(e) => updateContent('textPosition', e.target.value)}
+            className={inputClass}
+          >
+            <option value="top">Haut</option>
+            <option value="center">Centré</option>
+            <option value="bottom">Bas</option>
+          </select>
+        </div>
+      )}
       <ImageUploadField
         label="URL de la video"
         value={section.content.videoUrl || ''}
@@ -538,15 +552,19 @@ export function VideoHeroContentEditor({ section, updateContent }: ContentEditor
           </div>
         </>
       )}
-      <div>
-        <label className={labelClass}>{LABELS.ctaText}</label>
-        <input type="text" value={section.content.ctaText || ''} onChange={(e) => updateContent('ctaText', e.target.value)} className={inputClass} />
-      </div>
-      <LinkInputField
-        label={LABELS.ctaLink}
-        value={section.content.ctaLink || ''}
-        onChange={(val) => updateContent('ctaLink', val)}
-      />
+      {v('ctaText') && (
+        <div>
+          <label className={labelClass}>{LABELS.ctaText}</label>
+          <input type="text" value={section.content.ctaText || ''} onChange={(e) => updateContent('ctaText', e.target.value)} className={inputClass} />
+        </div>
+      )}
+      {v('ctaLink') && (
+        <LinkInputField
+          label={LABELS.ctaLink}
+          value={section.content.ctaLink || ''}
+          onChange={(val) => updateContent('ctaLink', val)}
+        />
+      )}
     </div>
   );
 }
@@ -679,6 +697,7 @@ export function GalleryContentEditor({ section, updateContent }: ContentEditorPr
 
 export function TimelineContentEditor({ section, updateContent }: ContentEditorProps) {
   const events = section.content.events || [];
+  const v = (field: string) => isFieldVisibleForVariant('timeline', field, section.variant);
 
   const updateEvent = (index: number, field: string, value: string) => {
     const updated = [...events];
@@ -724,7 +743,9 @@ export function TimelineContentEditor({ section, updateContent }: ContentEditorP
               <input type="text" value={event.date || ''} onChange={(e) => updateEvent(index, 'date', e.target.value)} className={inputClass} placeholder="Date (ex: 2024)" />
               <input type="text" value={event.title || ''} onChange={(e) => updateEvent(index, 'title', e.target.value)} className={inputClass} placeholder="Titre" />
               <textarea value={event.description || ''} onChange={(e) => updateEvent(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
-              <ImageUploadField label="Image (optionnel)" value={event.image || ''} onChange={(url) => updateEvent(index, 'image', url)} placeholder="URL de l'image" />
+              {v('events.image') && (
+                <ImageUploadField label="Image (optionnel)" value={event.image || ''} onChange={(url) => updateEvent(index, 'image', url)} placeholder="URL de l'image" />
+              )}
             </div>
           ))}
         </div>
@@ -737,6 +758,8 @@ export function TimelineContentEditor({ section, updateContent }: ContentEditorP
 }
 
 export function NewsletterContentEditor({ section, updateContent }: ContentEditorProps) {
+  const v = (field: string) => isFieldVisibleForVariant('newsletter', field, section.variant);
+
   return (
     <div className="space-y-4">
       <RichTextArea
@@ -760,11 +783,15 @@ export function NewsletterContentEditor({ section, updateContent }: ContentEdito
         <label className={labelClass}>Texte du bouton</label>
         <input type="text" value={section.content.buttonText || ''} onChange={(e) => updateContent('buttonText', e.target.value)} className={inputClass} />
       </div>
-      <div>
-        <label className={labelClass}>Note confidentialite</label>
-        <input type="text" value={section.content.privacyNote || ''} onChange={(e) => updateContent('privacyNote', e.target.value)} className={inputClass} placeholder="Nous respectons votre vie privee." />
-      </div>
-      <ImageUploadField label="Image (optionnel)" value={section.content.image || ''} onChange={(url) => updateContent('image', url)} placeholder="URL de l'image" />
+      {v('privacyNote') && (
+        <div>
+          <label className={labelClass}>Note confidentialite</label>
+          <input type="text" value={section.content.privacyNote || ''} onChange={(e) => updateContent('privacyNote', e.target.value)} className={inputClass} placeholder="Nous respectons votre vie privee." />
+        </div>
+      )}
+      {v('image') && (
+        <ImageUploadField label="Image (optionnel)" value={section.content.image || ''} onChange={(url) => updateContent('image', url)} placeholder="URL de l'image" />
+      )}
     </div>
   );
 }

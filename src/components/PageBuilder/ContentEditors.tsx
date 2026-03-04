@@ -2,6 +2,7 @@ import React from 'react';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { getWidgetFieldLabel } from '@/lib/widgetFieldLabels';
+import { isFieldVisibleForVariant } from '@/lib/variantFieldVisibility';
 import ImageUploadField from './ImageUploadField';
 import IconPicker from './IconPicker';
 import { LinkInputField } from '@/components/common/LinkInputField';
@@ -56,6 +57,8 @@ const SOCIAL_PLATFORMS = [
 ];
 
 export function HeroContentEditor({ section, updateContent }: ContentEditorProps) {
+  const v = (field: string) => isFieldVisibleForVariant('hero', field, section.variant);
+
   return (
     <div className="space-y-4">
       <RichTextArea
@@ -85,17 +88,21 @@ export function HeroContentEditor({ section, updateContent }: ContentEditorProps
         value={section.content.ctaLink || ''}
         onChange={(val) => updateContent('ctaLink', val)}
       />
-      <ImageUploadField
-        label="Image"
-        value={section.content.image || ''}
-        onChange={(url) => updateContent('image', url)}
-        placeholder="URL de l'image"
-      />
+      {v('image') && (
+        <ImageUploadField
+          label="Image"
+          value={section.content.image || ''}
+          onChange={(url) => updateContent('image', url)}
+          placeholder="URL de l'image"
+        />
+      )}
     </div>
   );
 }
 
 export function CTAContentEditor({ section, updateContent }: ContentEditorProps) {
+  const v = (field: string) => isFieldVisibleForVariant('cta', field, section.variant);
+
   return (
     <div className="space-y-4">
       <RichTextArea
@@ -139,19 +146,22 @@ export function CTAContentEditor({ section, updateContent }: ContentEditorProps)
           onChange={(val) => updateContent('secondaryLink', val)}
         />
       </div>
-      <ImageUploadField
-        label="Image (variante split)"
-        value={section.content.image || ''}
-        onChange={(url) => updateContent('image', url)}
-        placeholder="URL de l'image"
-        mediaType="image"
-      />
+      {v('image') && (
+        <ImageUploadField
+          label="Image (variante split)"
+          value={section.content.image || ''}
+          onChange={(url) => updateContent('image', url)}
+          placeholder="URL de l'image"
+          mediaType="image"
+        />
+      )}
     </div>
   );
 }
 
 export function HeaderContentEditor({ section, updateContent }: ContentEditorProps) {
   const navItems = section.content.navItems || [];
+  const v = (field: string) => isFieldVisibleForVariant('header', field, section.variant);
 
   const updateNavItem = (index: number, field: string, value: string) => {
     const updated = [...navItems];
@@ -241,84 +251,30 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
         />
       </div>
 
-      <div>
-        <label className={labelClass}>Bouton secondaire</label>
-        <input
-          type="text"
-          value={section.content.secondaryCtaText || ''}
-          onChange={(e) => updateContent('secondaryCtaText', e.target.value)}
-          className={`${inputClass} mb-2`}
-          placeholder={LABELS.secondaryCta}
-        />
-        <LinkInputField
-          value={section.content.secondaryCtaLink || ''}
-          onChange={(val) => updateContent('secondaryCtaLink', val)}
-        />
-      </div>
-
-      <div>
-        <label className={labelClass}>Lien compte</label>
-        <input
-          type="text"
-          value={section.content.accountText || ''}
-          onChange={(e) => updateContent('accountText', e.target.value)}
-          className={`${inputClass} mb-2`}
-          placeholder="Texte compte (ex: Log in)"
-        />
-        <LinkInputField
-          value={section.content.accountLink || ''}
-          onChange={(val) => updateContent('accountLink', val)}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <label className="flex items-center space-x-2 cursor-pointer text-sm font-medium text-gray-700">
-          <input
-            type="checkbox"
-            checked={section.content.showSearch !== false}
-            onChange={(e) => updateContent('showSearch', e.target.checked)}
-            className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black"
-          />
-          <span>Afficher recherche</span>
-        </label>
-        <label className="flex items-center space-x-2 cursor-pointer text-sm font-medium text-gray-700">
-          <input
-            type="checkbox"
-            checked={section.content.showCart === true}
-            onChange={(e) => updateContent('showCart', e.target.checked)}
-            className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black"
-          />
-          <span>Afficher panier</span>
-        </label>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {v('secondaryCtaText') && (
         <div>
-          <label className={labelClass}>Lien recherche</label>
+          <label className={labelClass}>Bouton secondaire</label>
           <input
             type="text"
-            value={section.content.searchLink || ''}
-            onChange={(e) => updateContent('searchLink', e.target.value)}
-            className={inputClass}
-            placeholder="Lien recherche"
+            value={section.content.secondaryCtaText || ''}
+            onChange={(e) => updateContent('secondaryCtaText', e.target.value)}
+            className={`${inputClass} mb-2`}
+            placeholder={LABELS.secondaryCta}
+          />
+          <LinkInputField
+            value={section.content.secondaryCtaLink || ''}
+            onChange={(val) => updateContent('secondaryCtaLink', val)}
           />
         </div>
-        <div>
-          <label className={labelClass}>Lien panier</label>
-          <input
-            type="text"
-            value={section.content.cartLink || ''}
-            onChange={(e) => updateContent('cartLink', e.target.value)}
-            className={inputClass}
-            placeholder="Lien panier"
-          />
-        </div>
-      </div>
+      )}
+
     </div>
   );
 }
 
 export function ContactContentEditor({ section, updateContent }: ContentEditorProps) {
+  const v = (field: string) => isFieldVisibleForVariant('contact', field, section.variant);
+
   return (
     <div className="space-y-4">
       <RichTextArea
@@ -328,13 +284,15 @@ export function ContactContentEditor({ section, updateContent }: ContentEditorPr
         rows={1}
         singleLine
       />
-      <RichTextArea
-        label="Sous-titre"
-        value={section.content.subtitle || ''}
-        onChange={(val) => updateContent('subtitle', val)}
-        rows={1}
-        singleLine
-      />
+      {v('subtitle') && (
+        <RichTextArea
+          label="Sous-titre"
+          value={section.content.subtitle || ''}
+          onChange={(val) => updateContent('subtitle', val)}
+          rows={1}
+          singleLine
+        />
+      )}
       <div>
         <label className={labelClass}>Email</label>
         <input
@@ -365,15 +323,17 @@ export function ContactContentEditor({ section, updateContent }: ContentEditorPr
           placeholder="123 Rue Example, 75001 Paris"
         />
       </div>
-      <label className="flex items-center space-x-3 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={section.content.showForm !== false}
-          onChange={(e) => updateContent('showForm', e.target.checked)}
-          className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black"
-        />
-        <span className="text-sm font-medium text-gray-700">Afficher le formulaire de contact</span>
-      </label>
+      {v('showForm') && (
+        <label className="flex items-center space-x-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={section.content.showForm !== false}
+            onChange={(e) => updateContent('showForm', e.target.checked)}
+            className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black"
+          />
+          <span className="text-sm font-medium text-gray-700">Afficher le formulaire de contact</span>
+        </label>
+      )}
     </div>
   );
 }
@@ -468,6 +428,7 @@ export function FeaturesContentEditor({ section, updateContent }: ContentEditorP
 
 export function TestimonialsContentEditor({ section, updateContent }: ContentEditorProps) {
   const testimonials = section.content.testimonials || [];
+  const v = (field: string) => isFieldVisibleForVariant('testimonials', field, section.variant);
 
   const updateTestimonial = (index: number, field: string, value: any) => {
     const updated = [...testimonials];
@@ -501,13 +462,15 @@ export function TestimonialsContentEditor({ section, updateContent }: ContentEdi
         rows={1}
         singleLine
       />
-      <RichTextArea
-        label="Sous-titre"
-        value={section.content.subtitle || ''}
-        onChange={(val) => updateContent('subtitle', val)}
-        rows={1}
-        singleLine
-      />
+      {v('subtitle') && (
+        <RichTextArea
+          label="Sous-titre"
+          value={section.content.subtitle || ''}
+          onChange={(val) => updateContent('subtitle', val)}
+          rows={1}
+          singleLine
+        />
+      )}
 
       <div>
         <label className={labelClass}>Temoignages</label>
@@ -544,29 +507,33 @@ export function TestimonialsContentEditor({ section, updateContent }: ContentEdi
                 className={inputClass}
                 placeholder="Titre / Poste"
               />
-              <ImageUploadField
-                label="Avatar"
-                value={t.avatar || ''}
-                onChange={(url) => updateTestimonial(index, 'avatar', url)}
-                placeholder="URL de l'avatar"
-              />
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Note</label>
-                <div className="flex items-center space-x-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      onClick={() => updateTestimonial(index, 'rating', star)}
-                      className={`w-7 h-7 rounded text-sm font-medium transition-colors ${star <= (t.rating || 0)
-                        ? 'bg-yellow-400 text-white'
-                        : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
-                        }`}
-                    >
-                      {star}
-                    </button>
-                  ))}
+              {v('testimonials.avatar') && (
+                <ImageUploadField
+                  label="Avatar"
+                  value={t.avatar || ''}
+                  onChange={(url) => updateTestimonial(index, 'avatar', url)}
+                  placeholder="URL de l'avatar"
+                />
+              )}
+              {v('testimonials.rating') && (
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Note</label>
+                  <div className="flex items-center space-x-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        onClick={() => updateTestimonial(index, 'rating', star)}
+                        className={`w-7 h-7 rounded text-sm font-medium transition-colors ${star <= (t.rating || 0)
+                          ? 'bg-yellow-400 text-white'
+                          : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
+                          }`}
+                      >
+                        {star}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
@@ -585,6 +552,7 @@ export function TestimonialsContentEditor({ section, updateContent }: ContentEdi
 export function FooterContentEditor({ section, updateContent }: ContentEditorProps) {
   const columns = section.content.columns || [];
   const socialLinks = section.content.socialLinks || [];
+  const v = (field: string) => isFieldVisibleForVariant('footer', field, section.variant);
 
   const updateColumn = (colIndex: number, field: string, value: any) => {
     const updated = [...columns];
@@ -657,12 +625,14 @@ export function FooterContentEditor({ section, updateContent }: ContentEditorPro
           placeholder="Nom de la marque"
         />
       </div>
-      <RichTextArea
-        label="Description"
-        value={section.content.description || ''}
-        onChange={(val) => updateContent('description', val)}
-        rows={2}
-      />
+      {v('description') && (
+        <RichTextArea
+          label="Description"
+          value={section.content.description || ''}
+          onChange={(val) => updateContent('description', val)}
+          rows={2}
+        />
+      )}
 
       <div>
         <label className={labelClass}>Colonnes de liens</label>

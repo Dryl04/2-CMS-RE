@@ -28,12 +28,6 @@ export const widgetLibrary: WidgetDefinition[] = [
       ctaLink: "#",
       secondaryCtaText: "Book a call",
       secondaryCtaLink: "#",
-      accountText: "Log in",
-      accountLink: "#",
-      showSearch: true,
-      showCart: false,
-      searchLink: "#",
-      cartLink: "#",
     },
     defaultDesign: {
       background: {
