@@ -61,9 +61,9 @@ export default function HeaderAccountBar({ section }: HeaderAccountBarProps) {
       <div className="border-b border-base-content/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex items-center justify-between">
-            <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content" style={headingStyle}>
+            <a href="#" className="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content" style={headingStyle}>
               {renderRichText(content.logo, 'KING')}
-            </div>
+            </a>
 
             <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
               {content.menuItems?.map((item: string, index: number) => (

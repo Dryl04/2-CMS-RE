@@ -46,7 +46,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
     <header className="border-b border-base-content/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
+          <a href="#" className="flex items-center">
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-8 w-auto" />
             ) : (
@@ -54,7 +54,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 {renderRichText(logoText, 'Brand')}
               </span>
             )}
-          </div>
+          </a>
 
           <nav className="hidden md:flex items-center space-x-8">
             {(navItems || []).map((item: any, index: number) => (
@@ -121,7 +121,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
     <header className="border-b border-base-content/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex flex-col items-center space-y-4">
-          <div className="flex items-center">
+          <a href="#" className="flex items-center">
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-10 w-auto" />
             ) : (
@@ -129,7 +129,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 {renderRichText(logoText, 'Brand')}
               </span>
             )}
-          </div>
+          </a>
 
           <nav className="hidden md:flex items-center space-x-8">
             {(navItems || []).map((item: any, index: number) => (
@@ -193,7 +193,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
     <header className="border-b border-base-content/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <div className="flex items-center">
+          <a href="#" className="flex items-center">
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-8 w-auto drop-shadow-md" />
             ) : (
@@ -204,7 +204,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 {renderRichText(logoText, 'Brand')}
               </span>
             )}
-          </div>
+          </a>
 
           <nav className="hidden md:flex items-center space-x-8">
             {(navItems || []).map((item: any, index: number) => (
@@ -270,7 +270,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
     <header>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 border-b border-base-content/5">
-          <div className="flex items-center">
+          <a href="#" className="flex items-center">
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-6 w-auto" />
             ) : (
@@ -278,7 +278,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 {renderRichText(logoText, 'Brand')}
               </span>
             )}
-          </div>
+          </a>
 
           <nav className="hidden md:flex items-center space-x-6">
             {(navItems || []).map((item: any, index: number) => (
@@ -310,7 +310,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
     <header className="border-b border-base-content/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center min-w-[120px]">
+          <a href="#" className="flex items-center min-w-[120px]">
             {logo ? (
               <img src={logo} alt={logoText || 'Logo'} className="h-7 w-auto" />
             ) : (
@@ -318,7 +318,7 @@ export default function HeaderWidget({ section }: HeaderWidgetProps) {
                 {renderRichText(logoText, 'FLORA')}
               </span>
             )}
-          </div>
+          </a>
 
           <nav className="hidden md:flex items-center space-x-6">
             {(navItems || []).map((item: any, index: number) => (

@@ -70,9 +70,9 @@ export default function HeaderFullContact({ section }: HeaderFullContactProps) {
       <div className="border-b border-base-content/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className="text-3xl md:text-4xl font-bold text-base-content" style={headingStyle}>
+            <a href="#" className="text-3xl md:text-4xl font-bold text-base-content" style={headingStyle}>
               {renderRichText(content.logo, 'KING')}
-            </div>
+            </a>
 
             <nav className="hidden lg:flex items-center space-x-8">
               {content.menuItems?.map((item: string, index: number) => (

@@ -78,9 +78,9 @@ export default function HeaderWithIcons({ section }: HeaderWithIconsProps) {
               </div>
             </div>
 
-            <div className="text-2xl md:text-3xl font-bold text-base-content" style={headingStyle}>
+            <a href="#" className="text-2xl md:text-3xl font-bold text-base-content" style={headingStyle}>
               {renderRichText(content.logo, 'KING')}
-            </div>
+            </a>
 
             {content.phone && (
               <div className="flex items-center space-x-3">

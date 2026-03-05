@@ -41,9 +41,9 @@ export default function HeaderTopInfo({ section }: HeaderTopInfoProps) {
               </div>
             </div>
 
-            <div className="text-2xl md:text-3xl font-bold text-base-content" style={headingStyle}>
+            <a href="#" className="text-2xl md:text-3xl font-bold text-base-content" style={headingStyle}>
               {renderRichText(content.logo, 'KING')}
-            </div>
+            </a>
 
             <div className="flex items-center space-x-4">
               {content.phone && (

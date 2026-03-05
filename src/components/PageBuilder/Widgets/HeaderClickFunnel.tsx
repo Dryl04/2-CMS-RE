@@ -39,7 +39,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
     <header className="text-base-content">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-2">
+          <a href="#" className="flex items-center space-x-2">
             {content.logo ? (
               <img src={content.logo} alt={content.logoText || 'Logo'} className="h-8 w-auto" />
             ) : (
@@ -63,7 +63,7 @@ export default function HeaderClickFunnel({ section }: HeaderClickFunnelProps) {
                 </span>
               </>
             )}
-          </div>
+          </a>
 
           <nav className="hidden md:flex items-center space-x-8">
             {(content.navItems || []).map((item: any, index: number) => (
