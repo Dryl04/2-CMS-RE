@@ -40,7 +40,9 @@ export default function ImmersiveSplitShowcaseWidget({ section }: ImmersiveSplit
         style={{ paddingTop: design.spacing.paddingTop, paddingBottom: design.spacing.paddingBottom }}
       >
         <div className="relative overflow-hidden rounded-3xl border border-base-content/10">
-          <img src={content.backgroundImage || ''} alt="background" className="absolute inset-0 w-full h-full object-cover" />
+          {content.backgroundImage && (
+            <img src={content.backgroundImage} alt="background" className="absolute inset-0 w-full h-full object-cover" />
+          )}
           <div className="absolute inset-0 bg-neutral/60" />
 
           <div className="relative z-10 grid lg:grid-cols-2 gap-8 p-6 sm:p-10 lg:p-14 min-h-[520px]">

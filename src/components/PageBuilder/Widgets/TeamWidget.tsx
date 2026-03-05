@@ -108,7 +108,7 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
               <img
                 src={member.avatar}
                 alt={member.name}
-                className="w-full h-80 object-cover transition-transform group-hover:scale-110"
+                className="w-full h-80 object-cover transition-transform group-hover:scale-110 bg-base-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-6">
                 <div className="flex space-x-3">
@@ -203,7 +203,7 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
               <img
                 src={member.avatar}
                 alt={member.name}
-                className="w-full h-96 object-cover rounded-2xl shadow-xl"
+                className="w-full h-96 object-cover rounded-2xl shadow-xl bg-base-300"
               />
             </div>
             <div className="md:col-span-3">
@@ -291,7 +291,7 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
               <img
                 src={member.avatar}
                 alt={member.name}
-                className={`w-full object-cover ${isLarge ? 'h-96' : 'h-48'
+                className={`w-full object-cover bg-base-300 ${isLarge ? 'h-96' : 'h-48'
                   } group-hover:scale-110 transition-transform`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/40 to-transparent flex flex-col justify-end p-6">
@@ -335,7 +335,7 @@ export default function TeamWidget({ section }: TeamWidgetProps) {
             <img
               src={member.avatar}
               alt={member.name}
-              className="w-24 h-24 rounded-full object-cover"
+              className="w-24 h-24 rounded-full object-cover bg-base-300"
             />
             </div>
             <div className="flex-1">

@@ -15,13 +15,16 @@ import SEOPageViewer from '@/components/seo/SEOPageViewer';
 import DaisyThemeManager from '@/components/theme/DaisyThemeManager';
 import PageAssetManager from './PageAssetManager';
 import { normalizeSectionForTheme } from '@/lib/widgetThemeHelper';
+import TemplatePropagationModal, { type PageInfo, type PropagationChoice } from './TemplatePropagationModal';
+import { applyTemplateDiffToPage } from '@/lib/templateDiff';
 
 interface PageBuilderProps {
   onNavigate?: (view: string) => void;
   editingPageId?: string;
   initialSections?: PageBuilderSection[];
+  initialDaisyThemeSlug?: string | null;
   mode?: 'template' | 'page';
-  onSavePageSections?: (sections: PageBuilderSection[]) => void;
+  onSavePageSections?: (sections: PageBuilderSection[], daisyThemeSlug: string | null) => void;
 }
 
 type BuilderView = 'list' | 'editor';
@@ -69,6 +72,7 @@ export default function PageBuilder({
   onNavigate,
   editingPageId,
   initialSections,
+  initialDaisyThemeSlug = null,
   mode = 'template',
   onSavePageSections,
 }: PageBuilderProps) {
@@ -90,7 +94,7 @@ export default function PageBuilder({
   const [filterFolder, setFilterFolder] = useState<string>('');
   const [showNewTemplateFolderInput, setShowNewTemplateFolderInput] = useState(false);
   const [newTemplateFolderName, setNewTemplateFolderName] = useState('');
-  const [daisyThemeSlug, setDaisyThemeSlug] = useState<string | null>(null);
+  const [daisyThemeSlug, setDaisyThemeSlug] = useState<string | null>(initialDaisyThemeSlug);
   const [showDaisyThemeManager, setShowDaisyThemeManager] = useState(false);
   const [showAssetManager, setShowAssetManager] = useState(false);
   const [history, setHistory] = useState<PageBuilderSection[][]>([initialSections || []]);
@@ -98,6 +102,19 @@ export default function PageBuilder({
   const [saving, setSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [propagationModal, setPropagationModal] = useState<{
+    open: boolean;
+    pages: PageInfo[];
+    normalizedSections: PageBuilderSection[];
+    daisyThemeSlugValue: string | null;
+    originalSections: PageBuilderSection[];
+    originalDaisyThemeSlug: string | null;
+  }>({ open: false, pages: [], normalizedSections: [], daisyThemeSlugValue: null, originalSections: [], originalDaisyThemeSlug: null });
+
+  const originalTemplateRef = useRef<{
+    sections: PageBuilderSection[];
+    daisyThemeSlug: string | null;
+  } | null>(null);
 
   const selectedSection = sections.find(s => s.id === selectedSectionId) || null;
 
@@ -252,6 +269,24 @@ export default function PageBuilder({
         }
 
         if (error) throw error;
+
+        const { data: linkedPages } = await supabase
+          .from('seo_metadata')
+          .select('id, title, page_key, status')
+          .eq('template_id', editingTemplateId);
+
+        if (linkedPages && linkedPages.length > 0) {
+          setSaving(false);
+          setPropagationModal({
+            open: true,
+            pages: linkedPages as PageInfo[],
+            normalizedSections,
+            daisyThemeSlugValue: daisyThemeSlug,
+            originalSections: originalTemplateRef.current?.sections ?? [],
+            originalDaisyThemeSlug: originalTemplateRef.current?.daisyThemeSlug ?? null,
+          });
+          return;
+        }
       } else {
         if (profile?.id) {
           templateData.created_by = profile.id;
@@ -284,9 +319,86 @@ export default function PageBuilder({
     }
   };
 
+  const handlePropagationConfirm = async (choice: PropagationChoice, selectedPageIds: string[]) => {
+    setPropagationModal((prev) => ({ ...prev, open: false }));
+
+    if (choice !== 'none' && selectedPageIds.length > 0) {
+      setSaving(true);
+      try {
+        const { data: pageRecords, error: fetchError } = await supabase
+          .from('seo_metadata')
+          .select('id, sections_data, daisy_theme_slug')
+          .in('id', selectedPageIds);
+
+        if (fetchError) throw fetchError;
+
+        const {
+          originalSections,
+          originalDaisyThemeSlug,
+          normalizedSections: newTemplateSections,
+          daisyThemeSlugValue: newDaisyThemeSlug,
+        } = propagationModal;
+
+        for (const pageRecord of (pageRecords ?? [])) {
+          const pageSections: PageBuilderSection[] = Array.isArray(pageRecord.sections_data)
+            ? pageRecord.sections_data
+            : [];
+
+          const diffResult = applyTemplateDiffToPage(
+            originalSections,
+            newTemplateSections,
+            pageSections,
+            originalDaisyThemeSlug,
+            newDaisyThemeSlug
+          );
+
+          const updatePayload: Record<string, any> = {
+            sections_data: diffResult.sectionsData,
+            updated_at: new Date().toISOString(),
+          };
+
+          if (diffResult.daisyThemeSlugChanged) {
+            updatePayload.daisy_theme_slug = diffResult.newDaisyThemeSlug;
+          }
+
+          const { error } = await supabase
+            .from('seo_metadata')
+            .update(updatePayload)
+            .eq('id', pageRecord.id);
+
+          if (error) throw error;
+        }
+
+        const count = selectedPageIds.length;
+        showToast(`Modele enregistre — ${count} page${count > 1 ? 's' : ''} mise${count > 1 ? 's' : ''} a jour`);
+      } catch (err) {
+        console.error('Error propagating template to pages:', err);
+        showToast('Modele enregistre, erreur lors de la propagation');
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      showToast('Modele enregistre');
+    }
+
+    await loadTemplates();
+    setBuilderView('list');
+    resetEditor();
+    setPropagationModal({ open: false, pages: [], normalizedSections: [], daisyThemeSlugValue: null, originalSections: [], originalDaisyThemeSlug: null });
+  };
+
+  const handlePropagationCancel = async () => {
+    setPropagationModal((prev) => ({ ...prev, open: false }));
+    showToast('Modele enregistre');
+    await loadTemplates();
+    setBuilderView('list');
+    resetEditor();
+    setPropagationModal({ open: false, pages: [], normalizedSections: [], daisyThemeSlugValue: null, originalSections: [], originalDaisyThemeSlug: null });
+  };
+
   const savePageSections = () => {
     if (onSavePageSections) {
-      onSavePageSections(sections.map((section) => normalizeSectionForTheme(section)));
+      onSavePageSections(sections.map((section) => normalizeSectionForTheme(section)), daisyThemeSlug);
     }
   };
 
@@ -295,8 +407,13 @@ export default function PageBuilder({
     setTemplateName(template.name);
     setTemplateDescription(template.description || '');
     setTemplateFolder(template.folder || '');
-    setDaisyThemeSlug(template.daisy_theme_slug || null);
+    const initialDaisy = template.daisy_theme_slug || null;
+    setDaisyThemeSlug(initialDaisy);
     const loadedSections = normalizeSectionsData(template.sections_data);
+    originalTemplateRef.current = {
+      sections: loadedSections,
+      daisyThemeSlug: initialDaisy,
+    };
     setSections(loadedSections);
     setHistory([loadedSections]);
     setHistoryIndex(0);
@@ -355,6 +472,7 @@ export default function PageBuilder({
     setHistoryIndex(0);
     setSelectedSectionId(null);
     setShowPreview(false);
+    originalTemplateRef.current = null;
   };
 
   const startNewTemplate = () => {
@@ -1087,6 +1205,14 @@ export default function PageBuilder({
           onClose={() => setShowAssetManager(false)}
         />
       )}
+
+      <TemplatePropagationModal
+        open={propagationModal.open}
+        templateName={templateName}
+        pages={propagationModal.pages}
+        onConfirm={handlePropagationConfirm}
+        onCancel={handlePropagationCancel}
+      />
     </div>
   );
 }

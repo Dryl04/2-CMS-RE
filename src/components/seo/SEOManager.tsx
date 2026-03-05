@@ -12,7 +12,7 @@ type ViewMode = 'list' | 'form' | 'import' | 'view';
 
 interface SEOManagerProps {
   onNavigate?: (view: string) => void;
-  onOpenPageBuilder?: (pageId: string, sections: any[]) => void;
+  onOpenPageBuilder?: (pageId: string, sections: any[], daisyThemeSlug?: string | null) => void;
 }
 
 export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManagerProps) {
@@ -442,7 +442,7 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
                         </button>
                         {onOpenPageBuilder && (
                           <button
-                            onClick={() => onOpenPageBuilder(item.id, (item as any).sections_data || [])}
+                            onClick={() => onOpenPageBuilder(item.id, (item as any).sections_data || [], (item as any).daisy_theme_slug ?? null)}
                             className="p-2 hover:bg-purple-50 rounded-lg transition-colors"
                             title="Editer visuellement"
                           >

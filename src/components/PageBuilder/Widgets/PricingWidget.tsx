@@ -13,17 +13,24 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
 
   const design = section.design || {};
   const typo = design.typography || {};
-  const headingStyle: React.CSSProperties = {
-    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
-    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
-    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  const h2Style: React.CSSProperties = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
+  };
+  const planNameStyle: React.CSSProperties = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
   };
   const textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+    ...(typo.textColor ? { color: typo.textColor } : {}),
   };
   const subtitleStyle: React.CSSProperties = {
-    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.subtitleColor || typo.h2Color || typo.headingColor ? { color: typo.subtitleColor || typo.h2Color || typo.headingColor } : {}),
   };
 
   const accentColor = design.colors?.accent;
@@ -33,7 +40,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingStyle}
+          style={h2Style}
         >
           {renderRichText(title, 'Simple, Transparent Pricing')}
         </h2>
@@ -67,7 +74,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
               </div>
             )}
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold mb-2 text-base-content" style={headingStyle}>
+              <h3 className="text-2xl font-bold mb-2 text-base-content" style={planNameStyle}>
                 {renderRichText(plan.name)}
               </h3>
               <div className="flex items-baseline justify-center">
@@ -110,7 +117,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingStyle}
+          style={h2Style}
         >
           {renderRichText(title, 'Compare Plans')}
         </h2>
@@ -138,7 +145,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           <tbody className="divide-y divide-base-content/10">
             {['Projects', 'Storage', 'Support', 'Analytics', 'Custom Domain'].map((feature, idx) => (
               <tr key={idx}>
-                <td className="px-6 py-4 font-medium text-base-content" style={headingStyle}>
+                <td className="px-6 py-4 font-medium text-base-content" style={textStyle}>
                   {feature}
                 </td>
                 <td className="px-6 py-4 text-center">
@@ -163,7 +170,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
       <div className="text-center mb-8">
         <h2
           className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-          style={headingStyle}
+          style={h2Style}
         >
           {renderRichText(title, 'Flexible Pricing')}
         </h2>
@@ -186,7 +193,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
           { name: 'Enterprise', price: '$199', features: ['Everything in Pro', '24/7 Support', 'Custom Solutions'] },
         ]).slice(0, 2).map((plan: any, index: number) => (
           <div key={index} className="bg-base-100 rounded-2xl shadow-xl p-8 border-2 border-base-content/5 hover:border-base-content/20 transition-all">
-            <h3 className="text-2xl font-bold mb-2 text-base-content" style={headingStyle}>
+            <h3 className="text-2xl font-bold mb-2 text-base-content" style={planNameStyle}>
               {renderRichText(plan.name)}
             </h3>
             <div className="flex items-baseline mb-6">
@@ -223,7 +230,7 @@ export default function PricingWidget({ section }: PricingWidgetProps) {
       <div className="text-center mb-12">
         <h2
           className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
-          style={headingStyle}
+          style={h2Style}
         >
           {renderRichText(title, 'One Simple Price')}
         </h2>

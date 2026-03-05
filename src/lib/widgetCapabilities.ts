@@ -404,10 +404,20 @@ const deriveWidgetCapabilities = (widgetType: string): WidgetCapabilities => {
   };
 };
 
+const WIDGET_CAPABILITY_OVERRIDES: Record<string, Partial<WidgetCapabilities>> = {
+  pricing: { supportsH1: false, supportsBodyTypography: true },
+  'membership-pricing': { supportsH1: false },
+  stats: { supportsH1: false, supportsBodyTypography: true },
+  testimonials: { supportsH1: false },
+  'dropcap-services': { supportsH1: false },
+};
+
 export const WIDGET_CAPABILITIES: Record<string, WidgetCapabilities> = Object.keys(
   PROFILE_BY_WIDGET_TYPE,
 ).reduce((acc, widgetType) => {
-  acc[widgetType] = deriveWidgetCapabilities(widgetType);
+  const derived = deriveWidgetCapabilities(widgetType);
+  const overrides = WIDGET_CAPABILITY_OVERRIDES[widgetType];
+  acc[widgetType] = overrides ? { ...derived, ...overrides } : derived;
   return acc;
 }, {} as Record<string, WidgetCapabilities>);
 

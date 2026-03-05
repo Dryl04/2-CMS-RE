@@ -46,7 +46,11 @@ export default function ProcessStepsCardsWidget({ section }: ProcessStepsCardsWi
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           {steps.map((step: ProcessStepItem, index: number) => (
             <article key={index} className="bg-base-200 rounded-2xl border border-base-content/10 overflow-hidden">
-              <img src={step.image || ''} alt={step.title || 'step'} className="w-full h-44 object-cover bg-base-300" />
+              {step.image ? (
+                <img src={step.image} alt={step.title || 'step'} className="w-full h-44 object-cover" />
+              ) : (
+                <div className="w-full h-44 bg-base-300" />
+              )}
               <div className="p-4">
                 <p className="text-sm font-semibold opacity-80" style={textStyle}>{step.number || `0${index + 1}`}</p>
                 <h3 className="text-xl font-bold mt-1" style={headingStyle}>{renderRichText(step.title, 'Step')}</h3>

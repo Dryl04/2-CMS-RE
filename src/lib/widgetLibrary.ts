@@ -901,21 +901,25 @@ export const widgetLibrary: WidgetDefinition[] = [
       steps: [
         {
           number: "01",
+          icon: "check-circle",
           title: "Sign Up",
           description: "Create your account in less than a minute",
         },
         {
           number: "02",
+          icon: "check-circle",
           title: "Set Up",
           description: "Configure your preferences and settings",
         },
         {
           number: "03",
+          icon: "check-circle",
           title: "Start Building",
           description: "Begin creating your first project",
         },
         {
           number: "04",
+          icon: "check-circle",
           title: "Launch",
           description: "Go live and share with the world",
         },

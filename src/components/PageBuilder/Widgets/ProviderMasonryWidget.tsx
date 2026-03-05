@@ -60,7 +60,9 @@ export default function ProviderMasonryWidget({ section }: ProviderMasonryWidget
               className={`rounded-2xl border border-base-content/10 overflow-hidden bg-base-200 ${item.tall ? 'md:row-span-2' : ''} ${item.wide ? 'md:col-span-2' : ''}`}
             >
               <div className="h-full relative">
-                <img src={item.image || ''} alt={item.name || 'provider'} className="absolute inset-0 w-full h-full object-cover" />
+                {item.image && (
+                  <img src={item.image} alt={item.name || 'provider'} className="absolute inset-0 w-full h-full object-cover" />
+                )}
                 <div className="absolute inset-0 bg-neutral/50" />
                 <div className="relative z-10 p-4 flex h-full flex-col justify-end">
                   <p className="text-xs uppercase tracking-wider text-neutral-content/80" style={subtitleStyle}>{renderRichText(item.tag, 'Provider')}</p>

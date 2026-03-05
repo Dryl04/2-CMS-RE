@@ -13,17 +13,25 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
 
   const design = section.design || {};
   const typo = design.typography || {};
-  const headingStyle: React.CSSProperties = {
-    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
-    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
-    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  const h2Style: React.CSSProperties = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
+  };
+  const statNumberStyle: React.CSSProperties = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
   };
   const textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+    ...(typo.textColor ? { color: typo.textColor } : {}),
   };
   const subtitleStyle: React.CSSProperties = {
-    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.subtitleColor || typo.h2Color || typo.headingColor ? { color: typo.subtitleColor || typo.h2Color || typo.headingColor } : {}),
   };
 
   const accentColor = design.colors?.accent;
@@ -43,7 +51,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
           {title && (
             <h2
               className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-              style={headingStyle}
+              style={h2Style}
             >
               {renderRichText(title)}
             </h2>
@@ -87,7 +95,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
           {title && (
             <h2
               className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-base-content"
-              style={headingStyle}
+              style={h2Style}
             >
               {renderRichText(title)}
             </h2>
@@ -139,7 +147,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
           {title && (
             <h2
               className="text-3xl sm:text-4xl font-bold mb-4 text-base-content"
-              style={headingStyle}
+              style={h2Style}
             >
               {renderRichText(title)}
             </h2>
@@ -164,7 +172,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
           >
             <div
               className="text-5xl sm:text-6xl font-bold mb-3 text-base-content"
-              style={headingStyle}
+              style={statNumberStyle}
             >
               {stat.number}
             </div>
@@ -187,7 +195,7 @@ export default function StatsWidget({ section }: StatsWidgetProps) {
           {title && (
             <h2
               className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-base-content"
-              style={headingStyle}
+              style={h2Style}
             >
               {renderRichText(title)}
             </h2>

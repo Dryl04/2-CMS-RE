@@ -10,17 +10,24 @@ interface MembershipPricingWidgetProps {
 export default function MembershipPricingWidget({ section }: MembershipPricingWidgetProps) {
   const { content, design } = section;
   const typo = design.typography || {};
-  const headingStyle: React.CSSProperties = {
-    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
-    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
-    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+  const h2Style: React.CSSProperties = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
+  };
+  const planNameStyle: React.CSSProperties = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
   };
   const textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+    ...(typo.textColor ? { color: typo.textColor } : {}),
   };
   const subtitleStyle: React.CSSProperties = {
-    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.subtitleColor || typo.h2Color || typo.headingColor ? { color: typo.subtitleColor || typo.h2Color || typo.headingColor } : {}),
   };
 
   return (
@@ -40,7 +47,7 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
           )}
           <h2
             className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-base-content"
-            style={headingStyle}
+            style={h2Style}
           >
             {renderRichText(content.title)}
           </h2>
@@ -71,7 +78,7 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                   </div>
                   <h3
                     className={`text-2xl font-bold mb-2 text-center ${isFeatured ? '' : 'text-base-content'}`}
-                    style={!isFeatured ? headingStyle : undefined}
+                    style={!isFeatured ? planNameStyle : undefined}
                   >
                     {renderRichText(plan.name)}
                   </h3>
@@ -90,13 +97,9 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                     return (
                       <div key={fIndex} className="flex items-center space-x-3">
                         {isIncluded ? (
-                          <Check className={`w-5 h-5 flex-shrink-0 ${isFeatured ? '' : 'text-base-content'}`}
-                            style={!isFeatured ? headingStyle : undefined}
-                          />
+                          <Check className={`w-5 h-5 flex-shrink-0 ${isFeatured ? '' : 'text-base-content'}`} />
                         ) : (
-                          <Minus className={`w-5 h-5 flex-shrink-0 ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`}
-                            style={!isFeatured ? textStyle : undefined}
-                          />
+                          <Minus className={`w-5 h-5 flex-shrink-0 ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`} />
                         )}
                         <span
                           className={`text-sm ${isFeatured ? 'opacity-70' : 'text-base-content/70'}`}
@@ -113,7 +116,7 @@ export default function MembershipPricingWidget({ section }: MembershipPricingWi
                   <div className="flex items-baseline justify-center">
                     <span
                       className={`text-5xl font-bold ${isFeatured ? '' : 'text-base-content'}`}
-                      style={!isFeatured ? headingStyle : undefined}
+                      style={!isFeatured ? planNameStyle : undefined}
                     >
                       {plan.price}
                     </span>

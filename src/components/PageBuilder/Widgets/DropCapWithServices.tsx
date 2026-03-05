@@ -1,3 +1,4 @@
+import React from 'react';
 import { Check } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
@@ -10,19 +11,27 @@ export default function DropCapWithServices({ section }: DropCapWithServicesProp
   const { content, design } = section;
   const typo = design.typography || {};
   const headingStyle: React.CSSProperties = {
-    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
-    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
-    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
+  };
+  const subHeadingStyle: React.CSSProperties = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
   };
   const textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+    ...(typo.textColor ? { color: typo.textColor } : {}),
   };
   const subtitleStyle: React.CSSProperties = {
-    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.subtitleColor || typo.h2Color || typo.headingColor ? { color: typo.subtitleColor || typo.h2Color || typo.headingColor } : {}),
   };
   const linkStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.linkColor ? { color: typo.linkColor } : {}),
   };
 
   return (
@@ -45,7 +54,7 @@ export default function DropCapWithServices({ section }: DropCapWithServicesProp
           <div className="lg:col-span-1 space-y-6">
             {content.dropCap && (
               <div className="flex items-start space-x-3 sm:space-x-4">
-                <span className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-none text-base-content flex-shrink-0" style={headingStyle}>
+                <span className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-none text-base-content flex-shrink-0" style={subHeadingStyle}>
                   {content.dropCap}
                 </span>
                 <p className="text-sm sm:text-base leading-relaxed pt-1 sm:pt-2 text-base-content/70" style={textStyle}>
@@ -70,13 +79,13 @@ export default function DropCapWithServices({ section }: DropCapWithServicesProp
           <div className="lg:col-span-2 grid sm:grid-cols-2 gap-6 sm:gap-8">
             {content.serviceColumns?.map((column: any, index: number) => (
               <div key={index} className="space-y-4 sm:space-y-6">
-                <h3 className="text-xl sm:text-2xl font-bold text-base-content" style={headingStyle}>
+                <h3 className="text-xl sm:text-2xl font-bold text-base-content" style={subHeadingStyle}>
                   {renderRichText(column.title)}
                 </h3>
                 <div className="space-y-2 sm:space-y-3">
                   {column.items?.map((item: string, itemIndex: number) => (
                     <div key={itemIndex} className="flex items-center space-x-3">
-                      <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-base-content/70" style={textStyle} />
+                      <Check className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-base-content/70" />
                       <span className="text-sm sm:text-base text-base-content/70" style={textStyle}>
                         {renderRichText(item)}
                       </span>
@@ -84,7 +93,7 @@ export default function DropCapWithServices({ section }: DropCapWithServicesProp
                   ))}
                 </div>
                 {column.ctaText && (
-                  <a href={column.ctaLink || '#'} className="inline-block text-sm sm:text-base font-semibold underline text-base-content" style={{ ...headingStyle, ...linkStyle }}>
+                  <a href={column.ctaLink || '#'} className="inline-block text-sm sm:text-base font-semibold underline text-base-content" style={linkStyle}>
                     {column.ctaText}
                   </a>
                 )}

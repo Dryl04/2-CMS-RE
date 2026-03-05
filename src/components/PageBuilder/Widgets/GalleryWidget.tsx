@@ -115,7 +115,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               <img
                 src={item.image}
                 alt={item.title}
-                className={`w-full ${heights[index % 4]} object-cover transition-transform group-hover:scale-110`}
+                className={`w-full ${heights[index % 4]} object-cover transition-transform group-hover:scale-110 bg-base-300`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
                 <p
@@ -164,7 +164,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
             <img
               src={item.image}
               alt={item.title}
-              className="w-full h-full object-cover transition-transform group-hover:scale-110"
+              className="w-full h-full object-cover transition-transform group-hover:scale-110 bg-base-300"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
               <p
@@ -213,7 +213,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
             <img
               src={item.image}
               alt={item.title}
-              className="w-full h-96 lg:h-[600px] object-cover transition-transform group-hover:scale-105"
+              className="w-full h-96 lg:h-[600px] object-cover transition-transform group-hover:scale-105 bg-base-300"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/30 to-transparent flex flex-col justify-end p-12">
               <p
@@ -248,7 +248,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform group-hover:scale-110 bg-base-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
                 <p
@@ -290,7 +290,7 @@ export default function GalleryWidget({ section }: GalleryWidgetProps) {
             <img
               src={item.image}
               alt={item.title}
-              className="w-full h-96 lg:h-[600px] object-cover"
+              className="w-full h-96 lg:h-[600px] object-cover bg-base-300"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-neutral/80 via-neutral/30 to-transparent flex flex-col justify-end p-12">
               <div

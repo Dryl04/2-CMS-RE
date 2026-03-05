@@ -18,6 +18,7 @@ export default function SplitContentWithChecklist({ section }: SplitContentWithC
   const textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+    ...(typo.textColor ? { color: typo.textColor } : {}),
   };
 
   return (

@@ -14,16 +14,23 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
   const design = section.design || {};
   const typo = design.typography || {};
   const headingStyle: React.CSSProperties = {
-    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
-    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
-    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2FontWeight || typo.headingFontWeight ? { fontWeight: typo.h2FontWeight || typo.headingFontWeight } : {}),
+    ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
+    ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
+  };
+  const nameStyle: React.CSSProperties = {
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.h2Color || typo.headingColor ? { color: typo.h2Color || typo.headingColor } : {}),
   };
   const textStyle: React.CSSProperties = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
+    ...(typo.textColor ? { color: typo.textColor } : {}),
   };
   const subtitleStyle: React.CSSProperties = {
-    ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
+    ...(typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.h2FontFamily || typo.headingFontFamily || typo.fontFamily } : {}),
+    ...(typo.subtitleColor || typo.h2Color || typo.headingColor ? { color: typo.subtitleColor || typo.h2Color || typo.headingColor } : {}),
   };
 
   const renderStars = (rating: number) => (
@@ -78,7 +85,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
               <div>
                 <div
                   className="font-semibold text-sm sm:text-base text-base-content"
-                  style={headingStyle}
+                  style={nameStyle}
                 >
                   {renderRichText(testimonial.name)}
                 </div>
@@ -128,7 +135,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
             )}
             <div
               className="font-semibold text-base sm:text-lg text-base-content"
-              style={headingStyle}
+              style={nameStyle}
             >
               {renderRichText(testimonial.name)}
             </div>
@@ -168,7 +175,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
           <div
             key={index}
             className="border-l-4 border-primary pl-4 sm:pl-6 py-2"
-            style={typo.headingColor ? { borderColor: typo.headingColor } : undefined}
+            style={typo.h2Color || typo.headingColor ? { borderColor: typo.h2Color || typo.headingColor } : undefined}
           >
             <p
               className="mb-3 italic text-sm sm:text-base text-base-content/70"
@@ -179,7 +186,7 @@ export default function TestimonialsWidget({ section }: TestimonialsWidgetProps)
             <div className="text-sm">
               <span
                 className="font-semibold text-base-content"
-                style={headingStyle}
+                style={nameStyle}
               >
                 {renderRichText(testimonial.name)}
               </span>

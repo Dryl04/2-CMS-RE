@@ -201,7 +201,7 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
             </div>
 
             <div
-              className="relative flex items-center justify-center p-6 sm:p-8 min-h-[240px] sm:min-h-[320px]"
+              className="relative overflow-hidden h-[240px] sm:h-[320px]"
               style={{ backgroundColor: mediaBg }}
               data-widget-media-frame
               data-widget-overlay={(design.media?.overlayImage && design.media?.overlayTarget === 'media') ? 'on' : undefined}
@@ -217,14 +217,14 @@ export default function ClickFunnelCenterCard({ section }: ClickFunnelCenterCard
                   playsInline
                   className="w-full h-full object-cover transition-all duration-300"
                 />
-              ) : (
+              ) : activeTab.mediaUrl ? (
                 <img
                   key={activeTab.mediaUrl}
                   src={activeTab.mediaUrl}
                   alt={activeTab.mediaAlt || activeTab.title || 'Preview'}
                   className="w-full h-full object-cover transition-all duration-300"
                 />
-              )}
+              ) : null}
             </div>
           </div>
         </div>

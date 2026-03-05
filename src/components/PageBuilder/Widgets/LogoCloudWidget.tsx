@@ -63,7 +63,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
 
       {centerLastRow ? (
         <div className="flex flex-wrap justify-center gap-4 md:gap-6 lg:gap-8">
-          {(logos || defaultLogos).map((logo: any, index: number) => (
+          {(logos || defaultLogos).map((logo: any, index: number) => logo.url && (
             <div
               key={index}
               className="flex items-center justify-center grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
@@ -79,7 +79,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 lg:gap-8 place-items-center">
-          {(logos || defaultLogos).map((logo: any, index: number) => (
+          {(logos || defaultLogos).map((logo: any, index: number) => logo.url && (
             <div
               key={index}
               className="flex items-center justify-center w-full grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
@@ -121,7 +121,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
 
       <div className="relative flex overflow-hidden">
         <div className="flex animate-marquee whitespace-nowrap">
-          {[...(logos || defaultLogos), ...(logos || defaultLogos)].map((logo: any, index: number) => (
+          {[...(logos || defaultLogos), ...(logos || defaultLogos)].map((logo: any, index: number) => logo.url && (
             <div
               key={index}
               className="flex items-center justify-center mx-6 sm:mx-8 md:mx-10 lg:mx-12 grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
@@ -178,7 +178,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
 
       <div className="space-y-6 md:space-y-8 lg:space-y-12">
         <div className="flex justify-center items-center">
-          {(logos || defaultLogos).slice(0, 1).map((logo: any, index: number) => (
+          {(logos || defaultLogos).slice(0, 1).map((logo: any, index: number) => logo.url && (
             <div
               key={index}
               className="bg-base-100 rounded-xl md:rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 border border-base-content/10"
@@ -193,7 +193,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
-          {(logos || defaultLogos).slice(1).map((logo: any, index: number) => (
+          {(logos || defaultLogos).slice(1).map((logo: any, index: number) => logo.url && (
             <div
               key={index}
               className="flex items-center justify-center bg-base-100 rounded-lg md:rounded-xl shadow-md p-4 sm:p-5 md:p-6 border border-base-content/10 grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
@@ -234,7 +234,7 @@ export default function LogoCloudWidget({ section }: LogoCloudWidgetProps) {
       )}
 
       <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 sm:gap-x-12 sm:gap-y-6 md:gap-x-16 md:gap-y-8">
-        {(logos || defaultLogos).map((logo: any, index: number) => (
+        {(logos || defaultLogos).map((logo: any, index: number) => logo.url && (
           <div
             key={index}
             className="grayscale hover:grayscale-0 transition-all opacity-50 hover:opacity-100"

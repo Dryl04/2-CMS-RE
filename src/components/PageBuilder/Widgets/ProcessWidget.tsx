@@ -1,7 +1,8 @@
 import React from 'react';
-import { ArrowRight, CheckCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { renderRichText } from '@/lib/htmlSanitizer';
+import { renderIcon } from '@/lib/iconLibrary';
 
 interface ProcessWidgetProps {
   section: PageBuilderSection;
@@ -29,31 +30,18 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
   const accentColor = design.colors?.accent;
 
   const defaultSteps = [
-    {
-      number: '01',
-      title: 'Sign Up',
-      description: 'Create your account in less than a minute',
-      icon: 'user-plus',
-    },
-    {
-      number: '02',
-      title: 'Set Up',
-      description: 'Configure your preferences and settings',
-      icon: 'settings',
-    },
-    {
-      number: '03',
-      title: 'Start Building',
-      description: 'Begin creating your first project',
-      icon: 'rocket',
-    },
-    {
-      number: '04',
-      title: 'Launch',
-      description: 'Go live and share with the world',
-      icon: 'check',
-    },
+    { number: '01', icon: 'check-circle', title: 'Sign Up', description: 'Create your account in less than a minute' },
+    { number: '02', icon: 'check-circle', title: 'Set Up', description: 'Configure your preferences and settings' },
+    { number: '03', icon: 'check-circle', title: 'Start Building', description: 'Begin creating your first project' },
+    { number: '04', icon: 'check-circle', title: 'Launch', description: 'Go live and share with the world' },
   ];
+
+  const renderStepIcon = (step: any, iconClassName: string, fallbackClassName: string, size = 28) => {
+    if (step.icon) {
+      return renderIcon(step.icon, iconClassName, size);
+    }
+    return <span className={fallbackClassName}>{step.number}</span>;
+  };
 
   const renderNumbered = () => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -83,10 +71,14 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
             <div key={index} className="text-center">
               <div
                 className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 mx-auto mb-4 md:mb-6 rounded-xl md:rounded-2xl flex items-center justify-center bg-primary"
-                style={accentColor ? { backgroundColor: accentColor } : undefined}
                 data-widget-icon-frame
               >
-                <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary-content">{step.number}</span>
+                {renderStepIcon(
+                  step,
+                  'text-primary-content',
+                  'text-2xl sm:text-3xl md:text-4xl font-bold text-primary-content',
+                  32,
+                )}
               </div>
               <h3
                 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 md:mb-3 text-base-content"
@@ -139,15 +131,14 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
             <div className="relative">
               <div
                 className="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 bg-primary/20"
-                style={accentColor ? { backgroundColor: `${accentColor}20` } : undefined}
                 data-widget-icon-frame
               >
-                <span
-                  className="text-2xl font-bold text-primary"
-                  style={accentColor ? { color: accentColor } : undefined}
-                >
-                  {step.number}
-                </span>
+                {renderStepIcon(
+                  step,
+                  'text-primary',
+                  'text-2xl font-bold text-primary',
+                  28,
+                )}
               </div>
               <h3
                 className="text-2xl font-bold mb-3 text-base-content"
@@ -202,10 +193,14 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
             <div key={index} className="relative pl-16 sm:pl-20">
               <div
                 className="absolute left-0 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-primary"
-                style={accentColor ? { backgroundColor: accentColor } : undefined}
                 data-widget-icon-frame
               >
-                <span className="text-lg sm:text-2xl font-bold text-primary-content">{step.number}</span>
+                {renderStepIcon(
+                  step,
+                  'text-primary-content',
+                  'text-lg sm:text-2xl font-bold text-primary-content',
+                  24,
+                )}
               </div>
               <div>
                 <h3
@@ -255,10 +250,14 @@ export default function ProcessWidget({ section }: ProcessWidgetProps) {
             <div className="flex items-start gap-6">
               <div
                 className="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center bg-primary"
-                style={accentColor ? { backgroundColor: accentColor } : undefined}
                 data-widget-icon-frame
               >
-                <CheckCircle className="w-7 h-7 text-primary-content" />
+                {renderStepIcon(
+                  step,
+                  'text-primary-content',
+                  'text-xl font-bold text-primary-content',
+                  28,
+                )}
               </div>
               <div className="flex-1">
                 <div

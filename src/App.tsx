@@ -31,6 +31,7 @@ function AppContent() {
   const [seoPage, setSeoPage] = useState<SEOMetadata | null>(null);
   const [builderPageId, setBuilderPageId] = useState<string | null>(null);
   const [builderInitialSections, setBuilderInitialSections] = useState<any[] | undefined>(undefined);
+  const [builderInitialDaisyTheme, setBuilderInitialDaisyTheme] = useState<string | null>(null);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
   const [showDaisyThemeManager, setShowDaisyThemeManager] = useState(false);
   const [hfBuilderModal, setHfBuilderModal] = useState<{
@@ -106,12 +107,14 @@ function AppContent() {
     setSeoPage(null);
     setBuilderPageId(null);
     setBuilderInitialSections(undefined);
+    setBuilderInitialDaisyTheme(null);
     window.history.pushState({}, '', '/');
   };
 
-  const handleOpenPageBuilder = (pageId: string, sections: any[]) => {
+  const handleOpenPageBuilder = (pageId: string, sections: any[], daisyThemeSlug?: string | null) => {
     setBuilderPageId(pageId);
     setBuilderInitialSections(sections);
+    setBuilderInitialDaisyTheme(daisyThemeSlug ?? null);
     setCurrentView('page-builder');
   };
 
@@ -156,7 +159,7 @@ function AppContent() {
             const pageId = seoPage.id;
             setSeoPage(null);
             window.history.pushState({}, '', '/');
-            handleOpenPageBuilder(pageId, sections as any[]);
+            handleOpenPageBuilder(pageId, sections as any[], seoPage.daisy_theme_slug ?? null);
           }
         }}
         onBack={() => {
@@ -196,12 +199,17 @@ function AppContent() {
             onNavigate={handleNavigate}
             editingPageId={builderPageId}
             initialSections={builderInitialSections as any}
+            initialDaisyThemeSlug={builderInitialDaisyTheme}
             mode="page"
-            onSavePageSections={async (sections) => {
+            onSavePageSections={async (sections, daisyThemeSlug) => {
               try {
                 const { error } = await supabase
                   .from('seo_metadata')
-                  .update({ sections_data: sections, updated_at: new Date().toISOString() })
+                  .update({
+                    sections_data: sections,
+                    daisy_theme_slug: daisyThemeSlug,
+                    updated_at: new Date().toISOString(),
+                  })
                   .eq('id', builderPageId);
                 if (error) throw error;
                 handleNavigate('pages');
