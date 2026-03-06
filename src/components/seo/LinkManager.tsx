@@ -9,6 +9,7 @@ import {
   FileText,
   Globe,
   Link2,
+  Link2Off,
   RefreshCw,
   Replace,
   Route,
@@ -23,6 +24,7 @@ import {
   normalizeInternalPath,
   replaceLiteralLinkInSections,
   replaceInternalLinksInSections,
+  replaceTargetedLinkInSections,
 } from '@/lib/linkRegistry';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 
@@ -45,8 +47,9 @@ interface SectionLinkEntry {
   sectionType: string;
   sectionIndex: number;
   value: string;
-  type: 'internal' | 'external';
+  type: 'internal' | 'external' | 'empty';
   key: string;
+  fieldPath?: string;
   elementLabel?: string;
   normalizedPath?: string;
   health?: LinkHealth;
@@ -62,7 +65,7 @@ interface PageDetailEntry {
 
 interface DetectedLinkEntry {
   value: string;
-  type: 'internal' | 'external';
+  type: 'internal' | 'external' | 'empty';
   totalCount: number;
   pages: PageLinkEntry[];
   normalizedPath?: string;
@@ -253,10 +256,44 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
           value: raw,
           type: kind,
           key: item.key,
+          fieldPath: item.path,
           elementLabel: item.elementLabel,
           normalizedPath,
           health,
           redirectTarget,
+        });
+      }
+    }
+
+    for (const page of pages) {
+      const sections = Array.isArray(page.sections_data) ? (page.sections_data as PageBuilderSection[]) : [];
+      if (!sections.length) continue;
+
+      const allFound = extractLinksFromSections(sections, { includeEmpty: true });
+      for (const item of allFound) {
+        const raw = item.value.trim();
+        const kind = classifyLink(raw || '', host);
+        const isEmptyOrPlaceholder = !raw || raw === '#' || kind === 'anchor';
+        if (!isEmptyOrPlaceholder) continue;
+
+        if (!pageDetailsMap.has(page.id)) {
+          pageDetailsMap.set(page.id, {
+            pageId: page.id,
+            pageKey: page.page_key,
+            pageTitle: (page as SEOMetadata & { title?: string }).title || page.page_key,
+            links: [],
+          });
+        }
+
+        pageDetailsMap.get(page.id)!.links.push({
+          sectionId: item.sectionId || '',
+          sectionType: item.sectionType || '',
+          sectionIndex: item.sectionIndex ?? -1,
+          value: raw || '',
+          type: 'empty',
+          key: item.key,
+          fieldPath: item.path,
+          elementLabel: item.elementLabel,
         });
       }
     }
@@ -382,7 +419,7 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
 
   const confirmReplace = async () => {
     if (!replaceDialog?.entry) return;
-    const { entry, newValue, scope } = replaceDialog;
+    const { entry, sectionLink, newValue, scope } = replaceDialog;
     const trimmedNew = newValue.trim();
     if (!trimmedNew || trimmedNew === entry.value) {
       showToast('La nouvelle valeur est identique à l\'ancienne', 'err');
@@ -398,12 +435,23 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
     let totalUpdated = 0;
     let errors = 0;
 
+    const isEmptyLink = entry.type === 'empty';
+
     for (const page of targetPages) {
       const sections = Array.isArray(page.sections_data) ? (page.sections_data as PageBuilderSection[]) : [];
       if (!sections.length) continue;
 
       let result;
-      if (entry.type === 'internal' && entry.normalizedPath) {
+      if (isEmptyLink && sectionLink) {
+        result = replaceTargetedLinkInSections(
+          sections,
+          sectionLink.sectionIndex,
+          sectionLink.key,
+          entry.value,
+          trimmedNew,
+          sectionLink.fieldPath,
+        );
+      } else if (entry.type === 'internal' && entry.normalizedPath) {
         const newNormalized = normalizeInternalPath(trimmedNew);
         result = replaceInternalLinksInSections(sections, entry.normalizedPath, newNormalized || trimmedNew);
       } else {
@@ -449,6 +497,7 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
 
   const internalOk = internalLinks.filter((i) => i.health === 'ok').length;
   const internalBroken = internalLinks.filter((i) => i.health === 'broken').length;
+  const emptyLinksTotal = pageDetails.reduce((sum, pd) => sum + pd.links.filter((l) => l.type === 'empty').length, 0);
 
   const currentDialogValue = replaceDialog?.entry?.value ?? '';
   const currentDialogScopeLabel = replaceDialog?.scope === 'all'
@@ -513,8 +562,8 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
 
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Valeur actuelle</label>
-                <div className="font-mono text-sm bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-gray-700 break-all">
-                  {currentDialogValue}
+                <div className={`font-mono text-sm bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 break-all ${currentDialogValue ? 'text-gray-700' : 'text-amber-600 italic'}`}>
+                  {currentDialogValue || '(vide)'}
                 </div>
               </div>
 
@@ -525,11 +574,14 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
                   value={replaceDialog.newValue}
                   onChange={(e) => setReplaceDialog((d) => d && { ...d, newValue: e.target.value })}
                   className="w-full font-mono text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                  placeholder={replaceDialog.entry?.type === 'internal' ? 'nouveau-slug' : 'https://'}
+                  placeholder={replaceDialog.entry?.type === 'empty' ? '/page-cible ou https://...' : replaceDialog.entry?.type === 'internal' ? 'nouveau-slug' : 'https://'}
                   onKeyDown={(e) => { if (e.key === 'Enter') confirmReplace(); if (e.key === 'Escape') setReplaceDialog(null); }}
                 />
                 {replaceDialog.entry?.type === 'internal' && (
                   <p className="text-xs text-gray-400 mt-1">Les formats /slug, slug et https://site/slug sont tous acceptés.</p>
+                )}
+                {replaceDialog.entry?.type === 'empty' && (
+                  <p className="text-xs text-gray-400 mt-1">Renseignez un lien interne (/slug) ou externe (https://...).</p>
                 )}
               </div>
             </div>
@@ -584,7 +636,7 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         <div className="bg-white rounded-2xl border border-gray-200 p-4">
           <p className="text-xs text-gray-500 mb-1">Liens internes</p>
           <p className="text-xl font-bold text-gray-900">{internalLinks.length}</p>
@@ -598,7 +650,11 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
           <p className="text-xl font-bold text-blue-700">{externalLinks.length}</p>
         </div>
         <div className="bg-white rounded-2xl border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 mb-1">Cassés</p>
+          <p className="text-xs text-gray-500 mb-1">Non definis</p>
+          <p className="text-xl font-bold text-amber-600">{emptyLinksTotal}</p>
+        </div>
+        <div className="bg-white rounded-2xl border border-gray-200 p-4">
+          <p className="text-xs text-gray-500 mb-1">Casses</p>
           <p className="text-xl font-bold text-red-700">{internalBroken}</p>
         </div>
       </div>
@@ -803,6 +859,7 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
                     const internalCount = pd.links.filter((l) => l.type === 'internal').length;
                     const externalCount = pd.links.filter((l) => l.type === 'external').length;
                     const brokenCount = pd.links.filter((l) => l.health === 'broken').length;
+                    const emptyCount = pd.links.filter((l) => l.type === 'empty').length;
 
                     return (
                       <div key={pd.pageId}>
@@ -835,6 +892,12 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
                               <span className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full">
                                 <Globe className="w-3 h-3" />
                                 {externalCount}
+                              </span>
+                            )}
+                            {emptyCount > 0 && (
+                              <span className="flex items-center gap-1 px-2 py-1 bg-amber-50 text-amber-600 rounded-full">
+                                <Link2Off className="w-3 h-3" />
+                                {emptyCount}
                               </span>
                             )}
                             {brokenCount > 0 && (
@@ -873,21 +936,35 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
                                       <span className="ml-auto shrink-0">
                                         {link.type === 'external' ? (
                                           <Globe className="w-3 h-3 text-gray-400" />
+                                        ) : link.type === 'empty' ? (
+                                          <Link2Off className="w-3 h-3 text-amber-400" />
                                         ) : (
                                           <Link2 className="w-3 h-3 text-gray-400" />
                                         )}
                                       </span>
                                     </div>
-                                    <p className="font-mono text-sm text-gray-900 break-all">
-                                      {link.type === 'internal' && link.normalizedPath
-                                        ? `/${link.normalizedPath}`
-                                        : link.value}
-                                    </p>
+                                    {link.type === 'empty' ? (
+                                      <p className="font-mono text-sm text-amber-600 italic break-all">
+                                        {link.value ? link.value : '(vide)'}
+                                      </p>
+                                    ) : (
+                                      <p className="font-mono text-sm text-gray-900 break-all">
+                                        {link.type === 'internal' && link.normalizedPath
+                                          ? `/${link.normalizedPath}`
+                                          : link.value}
+                                      </p>
+                                    )}
                                     {link.redirectTarget && (
                                       <p className="text-xs text-blue-600 font-mono mt-0.5">→ /{link.redirectTarget}</p>
                                     )}
                                   </div>
                                   <div className="flex items-center gap-2 shrink-0">
+                                    {link.type === 'empty' && (
+                                      <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-amber-50 text-amber-700 shrink-0">
+                                        <Link2Off className="w-3.5 h-3.5" />
+                                        Non defini
+                                      </span>
+                                    )}
                                     {link.health && healthBadge(link.health)}
                                     {link.type === 'external' && (
                                       <a

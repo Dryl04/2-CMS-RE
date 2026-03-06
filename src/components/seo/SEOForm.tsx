@@ -4,7 +4,6 @@ import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, LayoutGrid as Layo
 import { supabase, PageTemplate } from '@/lib/supabase';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { normalizeInternalPath, replaceInternalLinksInSections } from '@/lib/linkRegistry';
-import { loadActiveGlobalHFSetting, shouldApplyOnCreate, injectGlobalHFIntoNewSections } from '@/lib/globalHFSettings';
 
 interface SEOFormProps {
   onSaveComplete: () => void;
@@ -222,12 +221,6 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
         }
       }
 
-      if (!editingPage?.id) {
-        const globalHF = await loadActiveGlobalHFSetting();
-        if (shouldApplyOnCreate(globalHF)) {
-          sectionsToSave = injectGlobalHFIntoNewSections(sectionsToSave, globalHF!);
-        }
-      }
 
       const data: Record<string, any> = {
         page_key: pageKey,

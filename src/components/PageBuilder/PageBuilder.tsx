@@ -158,7 +158,7 @@ export default function PageBuilder({
   };
 
   const addSection = (section: PageBuilderSection) => {
-    const newSections = [...sections, section];
+    const newSections = [...sections, { ...section, order: sections.length }];
     setSections(newSections);
     setSelectedSectionId(section.id);
     addToHistory(newSections);
@@ -173,7 +173,7 @@ export default function PageBuilder({
   };
 
   const deleteSection = (id: string) => {
-    const newSections = sections.filter(s => s.id !== id);
+    const newSections = sections.filter(s => s.id !== id).map((s, i) => ({ ...s, order: i }));
     setSections(newSections);
     setSelectedSectionId(null);
     addToHistory(newSections);

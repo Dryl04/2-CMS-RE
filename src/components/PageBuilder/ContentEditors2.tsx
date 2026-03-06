@@ -323,8 +323,8 @@ export function TeamContentEditor({ section, updateContent }: ContentEditorProps
               </details>
               <div className="pl-3 border-l-2 border-gray-200 space-y-1.5">
                 <span className="text-xs font-medium text-gray-500">Reseaux sociaux</span>
-                <input type="text" value={member.social?.linkedin || ''} onChange={(e) => updateMemberSocial(index, 'linkedin', e.target.value)} className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="LinkedIn URL" />
-                <input type="text" value={member.social?.twitter || ''} onChange={(e) => updateMemberSocial(index, 'twitter', e.target.value)} className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="Twitter URL" />
+                <LinkInputField label="LinkedIn" value={member.social?.linkedin || ''} onChange={(val) => updateMemberSocial(index, 'linkedin', val)} />
+                <LinkInputField label="Twitter" value={member.social?.twitter || ''} onChange={(val) => updateMemberSocial(index, 'twitter', val)} />
                 <input type="email" value={member.social?.email || ''} onChange={(e) => updateMemberSocial(index, 'email', e.target.value)} className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="Email" />
               </div>
             </div>
@@ -616,7 +616,7 @@ export function GalleryContentEditor({ section, updateContent }: ContentEditorPr
               <ImageUploadField label="Image" value={item.image || ''} onChange={(url) => updateItem(index, 'image', url)} placeholder="URL de l'image" />
               <input type="text" value={item.title || ''} onChange={(e) => updateItem(index, 'title', e.target.value)} className={inputClass} placeholder="Titre du projet" />
               <input type="text" value={item.category || ''} onChange={(e) => updateItem(index, 'category', e.target.value)} className={inputClass} placeholder="Categorie" />
-              <input type="text" value={item.link || ''} onChange={(e) => updateItem(index, 'link', e.target.value)} className={inputClass} placeholder="Lien" />
+              <LinkInputField label="Lien" value={item.link || ''} onChange={(val) => updateItem(index, 'link', val)} />
               <details className="mt-1">
                 <summary className="text-xs font-medium text-gray-500 cursor-pointer hover:text-gray-800 select-none py-1 list-none flex items-center gap-1">
                   <span className="text-gray-400">▸</span> Overlay image décoratif
@@ -798,15 +798,19 @@ export function NewsletterContentEditor({ section, updateContent }: ContentEdito
 
 export function ProcessContentEditor({ section, updateContent }: ContentEditorProps) {
   const steps = section.content.steps || [];
+  const usesImages = section.type === 'process-steps-cards';
 
-  const updateStep = (index: number, field: string, value: string) => {
+  const updateStep = (index: number, field: string, value: any) => {
     const updated = [...steps];
     updated[index] = { ...updated[index], [field]: value };
     updateContent('steps', updated);
   };
 
   const addStep = () => {
-    updateContent('steps', [...steps, { number: String(steps.length + 1).padStart(2, '0'), icon: 'check', title: 'Nouvelle etape', description: 'Description de l etape' }]);
+    const newStep = usesImages
+      ? { number: String(steps.length + 1).padStart(2, '0'), title: 'Nouvelle etape', description: 'Description de l etape', image: '' }
+      : { number: String(steps.length + 1).padStart(2, '0'), icon: 'check', title: 'Nouvelle etape', description: 'Description de l etape' };
+    updateContent('steps', [...steps, newStep]);
   };
 
   const removeStep = (index: number) => {
@@ -843,10 +847,14 @@ export function ProcessContentEditor({ section, updateContent }: ContentEditorPr
               <input type="text" value={step.number || ''} onChange={(e) => updateStep(index, 'number', e.target.value)} className={inputClass} placeholder="Numero (ex: 01)" />
               <input type="text" value={step.title || ''} onChange={(e) => updateStep(index, 'title', e.target.value)} className={inputClass} placeholder="Titre de l'etape" />
               <textarea value={step.description || ''} onChange={(e) => updateStep(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
-              <div>
-                <label className={labelClass}>Icone</label>
-                <IconPicker value={step.icon || 'check'} onChange={(val) => updateStep(index, 'icon', val)} />
-              </div>
+              {usesImages ? (
+                <ImageUploadField label="Image" value={step.image || ''} onChange={(url) => updateStep(index, 'image', url)} placeholder="URL de l'image" />
+              ) : (
+                <div>
+                  <label className={labelClass}>Icone</label>
+                  <IconPicker value={step.icon || 'check'} onChange={(val) => updateStep(index, 'icon', val)} />
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -915,9 +923,9 @@ export function ServicesGridContentEditor({ section, updateContent }: ContentEdi
               </div>
               <input type="text" value={service.title || ''} onChange={(e) => updateService(index, 'title', e.target.value)} className={inputClass} placeholder="Titre du service" />
               <textarea value={service.description || ''} onChange={(e) => updateService(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
-              <div className="flex gap-2">
-                <input type="text" value={service.linkText || ''} onChange={(e) => updateService(index, 'linkText', e.target.value)} className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="Texte du lien" />
-                <input type="text" value={service.link || ''} onChange={(e) => updateService(index, 'link', e.target.value)} className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="URL" />
+              <div className="space-y-1.5">
+                <input type="text" value={service.linkText || ''} onChange={(e) => updateService(index, 'linkText', e.target.value)} className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="Texte du lien" />
+                <LinkInputField value={service.link || ''} onChange={(val) => updateService(index, 'link', val)} />
               </div>
             </div>
           ))}
@@ -1086,9 +1094,9 @@ export function ServicesCardsContentEditor({ section, updateContent }: ContentEd
               <input type="text" value={service.title || ''} onChange={(e) => updateService(index, 'title', e.target.value)} className={inputClass} placeholder="Titre" />
               <textarea value={service.description || ''} onChange={(e) => updateService(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
               <ImageUploadField label="Image" value={service.image || ''} onChange={(url) => updateService(index, 'image', url)} placeholder="URL de l'image" />
-              <div className="flex gap-2">
-                <input type="text" value={service.linkText || ''} onChange={(e) => updateService(index, 'linkText', e.target.value)} className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="Texte lien" />
-                <input type="text" value={service.link || ''} onChange={(e) => updateService(index, 'link', e.target.value)} className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="URL" />
+              <div className="space-y-1.5">
+                <input type="text" value={service.linkText || ''} onChange={(e) => updateService(index, 'linkText', e.target.value)} className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="Texte lien" />
+                <LinkInputField value={service.link || ''} onChange={(val) => updateService(index, 'link', val)} />
               </div>
             </div>
           ))}
@@ -1267,14 +1275,16 @@ export function CinematicFooterContentEditor({ section, updateContent }: Content
         <label className={labelClass}>Reseaux sociaux</label>
         <div className="space-y-2">
           {socials.map((social: any, index: number) => (
-            <div key={index} className="flex items-center gap-1.5">
-              <select value={social.platform || 'facebook'} onChange={(e) => updateSocial(index, 'platform', e.target.value)} className="px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent">
-                {SOCIAL_PLATFORMS.map((p) => (<option key={p.id} value={p.id}>{p.label}</option>))}
-              </select>
-              <input type="text" value={social.url || ''} onChange={(e) => updateSocial(index, 'url', e.target.value)} className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="URL" />
-              <button onClick={() => removeSocial(index)} className="p-1 hover:bg-red-50 text-red-400 hover:text-red-600 rounded flex-shrink-0">
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
+            <div key={index} className="bg-gray-50 p-2 rounded-lg space-y-1.5">
+              <div className="flex items-center gap-1.5">
+                <select value={social.platform || 'facebook'} onChange={(e) => updateSocial(index, 'platform', e.target.value)} className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent">
+                  {SOCIAL_PLATFORMS.map((p) => (<option key={p.id} value={p.id}>{p.label}</option>))}
+                </select>
+                <button onClick={() => removeSocial(index)} className="p-1 hover:bg-red-50 text-red-400 hover:text-red-600 rounded flex-shrink-0">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <LinkInputField value={social.url || ''} onChange={(val) => updateSocial(index, 'url', val)} />
             </div>
           ))}
         </div>
@@ -1297,12 +1307,12 @@ export function CinematicFooterContentEditor({ section, updateContent }: Content
               <input type="text" value={col.title || ''} onChange={(e) => updateColumn(colIndex, 'title', e.target.value)} className={inputClass} placeholder="Titre de la colonne" />
               <div className="pl-3 border-l-2 border-gray-200 space-y-1.5">
                 {(col.links || []).map((link: any, linkIndex: number) => (
-                  <div key={linkIndex} className="flex items-center gap-1">
-                    <div className="flex-1 flex gap-1">
-                      <input type="text" value={link.label || ''} onChange={(e) => updateColumnLink(colIndex, linkIndex, 'label', e.target.value)} className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="Label" />
-                      <input type="text" value={link.url || ''} onChange={(e) => updateColumnLink(colIndex, linkIndex, 'url', e.target.value)} className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="URL" />
+                  <div key={linkIndex} className="flex items-start gap-1">
+                    <div className="flex-1 space-y-1">
+                      <input type="text" value={link.label || ''} onChange={(e) => updateColumnLink(colIndex, linkIndex, 'label', e.target.value)} className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent" placeholder="Label" />
+                      <LinkInputField value={link.url || ''} onChange={(val) => updateColumnLink(colIndex, linkIndex, 'url', val)} />
                     </div>
-                    <button onClick={() => removeColumnLink(colIndex, linkIndex)} className="p-1 hover:bg-red-50 text-red-400 hover:text-red-600 rounded flex-shrink-0">
+                    <button onClick={() => removeColumnLink(colIndex, linkIndex)} className="p-1 hover:bg-red-50 text-red-400 hover:text-red-600 rounded flex-shrink-0 mt-1">
                       <Trash2 className="w-3 h-3" />
                     </button>
                   </div>
@@ -1371,7 +1381,7 @@ export function SocialFollowContentEditor({ section, updateContent }: ContentEdi
               </select>
               <input type="text" value={platform.handle || ''} onChange={(e) => updatePlatform(index, 'handle', e.target.value)} className={inputClass} placeholder="@votrecompte" />
               <input type="text" value={platform.followers || ''} onChange={(e) => updatePlatform(index, 'followers', e.target.value)} className={inputClass} placeholder="Nb abonnes (ex: 12.5K)" />
-              <input type="text" value={platform.url || ''} onChange={(e) => updatePlatform(index, 'url', e.target.value)} className={inputClass} placeholder="URL du profil" />
+              <LinkInputField label="URL du profil" value={platform.url || ''} onChange={(val) => updatePlatform(index, 'url', val)} />
             </div>
           ))}
         </div>
@@ -1657,7 +1667,7 @@ export function ClickFunnelsHeroContentEditor({ section, updateContent }: Conten
           </div>
           <div>
             <label className={labelClass}>URL lien secondaire</label>
-            <input type="text" value={section.content.secondaryLink || ''} onChange={(e) => updateContent('secondaryLink', e.target.value)} className={inputClass} placeholder="#" />
+            <LinkInputField value={section.content.secondaryLink || ''} onChange={(val) => updateContent('secondaryLink', val)} />
           </div>
         </>
       )}

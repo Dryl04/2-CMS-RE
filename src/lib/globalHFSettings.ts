@@ -109,37 +109,3 @@ function isSettingApplicableToPage(setting: GlobalHFSetting, pageId?: string): b
   return ids.includes(pageId);
 }
 
-export function shouldApplyOnCreate(setting: GlobalHFSetting | null): boolean {
-  return !!setting && setting.is_active && setting.apply_on_create;
-}
-
-export function shouldApplyOnImport(setting: GlobalHFSetting | null): boolean {
-  return !!setting && setting.is_active && setting.apply_on_import;
-}
-
-export function injectGlobalHFIntoNewSections(
-  sections: PageBuilderSection[],
-  setting: GlobalHFSetting
-): PageBuilderSection[] {
-  let result = [...sections];
-
-  if (setting.header_section) {
-    result = result.filter(s => !isHeaderType(s.type));
-    result.unshift({
-      ...setting.header_section,
-      id: `global-header-${Date.now()}`,
-      order: -1,
-    });
-  }
-
-  if (setting.footer_section) {
-    result = result.filter(s => !isFooterType(s.type));
-    result.push({
-      ...setting.footer_section,
-      id: `global-footer-${Date.now()}`,
-      order: result.length,
-    });
-  }
-
-  return result.map((s, i) => ({ ...s, order: i }));
-}

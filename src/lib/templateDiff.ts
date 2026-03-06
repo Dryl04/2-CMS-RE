@@ -171,7 +171,9 @@ export function applyTemplateDiffToPage(
   );
   mergedSections.push(...pageOnlySections);
 
-  mergedSections.sort((a, b) => a.order - b.order);
+  for (let i = 0; i < mergedSections.length; i++) {
+    mergedSections[i] = { ...mergedSections[i], order: i };
+  }
 
   const daisyThemeSlugChanged = !deepEqual(oldDaisyThemeSlug, newDaisyThemeSlug);
 

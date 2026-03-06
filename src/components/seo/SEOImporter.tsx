@@ -7,7 +7,6 @@ import {
 import { supabase } from '@/lib/supabase';
 import { normalizeSectionForTheme } from '@/lib/widgetThemeHelper';
 import { sanitizeSectionUrls, extractPlainUrl } from '@/lib/contentSanitizer';
-import { loadActiveGlobalHFSetting, shouldApplyOnImport, injectGlobalHFIntoNewSections } from '@/lib/globalHFSettings';
 
 interface ImportedPage {
   page_key: string;
@@ -347,13 +346,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
         throw new Error(`Impossible de reconstruire sections_data pour: ${details}. Verifiez template_id.`);
       }
 
-      const globalHF = await loadActiveGlobalHFSetting();
-      const applyHF = shouldApplyOnImport(globalHF);
-
       const dataToImport = resolvedPreviewData.map(page => {
-        if (applyHF && globalHF) {
-          page = { ...page, sections_data: injectGlobalHFIntoNewSections(page.sections_data || [], globalHF) };
-        }
         const row: Record<string, any> = {
           page_key: page.page_key,
           title: page.title,
