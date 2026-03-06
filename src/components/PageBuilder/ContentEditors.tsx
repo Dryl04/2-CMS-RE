@@ -210,12 +210,10 @@ export function HeaderContentEditor({ section, updateContent }: ContentEditorPro
                   className={inputClass}
                   placeholder="Label"
                 />
-                <input
-                  type="text"
+                <LinkInputField
+                  label="Lien"
                   value={item.link || ''}
-                  onChange={(e) => updateNavItem(index, 'link', e.target.value)}
-                  className={inputClass}
-                  placeholder="Lien (ex: /about)"
+                  onChange={(val) => updateNavItem(index, 'link', val)}
                 />
               </div>
               <button
@@ -657,26 +655,23 @@ export function FooterContentEditor({ section, updateContent }: ContentEditorPro
               />
               <div className="pl-3 border-l-2 border-gray-200 space-y-1.5">
                 {(col.links || []).map((link: any, linkIndex: number) => (
-                  <div key={linkIndex} className="flex items-center gap-1">
-                    <div className="flex-1 flex gap-1">
+                  <div key={linkIndex} className="flex items-start gap-1">
+                    <div className="flex-1 space-y-1">
                       <input
                         type="text"
                         value={link.label || ''}
                         onChange={(e) => updateColumnLink(colIndex, linkIndex, 'label', e.target.value)}
-                        className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent"
+                        className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent"
                         placeholder="Label"
                       />
-                      <input
-                        type="text"
+                      <LinkInputField
                         value={link.url || ''}
-                        onChange={(e) => updateColumnLink(colIndex, linkIndex, 'url', e.target.value)}
-                        className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent"
-                        placeholder="URL"
+                        onChange={(val) => updateColumnLink(colIndex, linkIndex, 'url', val)}
                       />
                     </div>
                     <button
                       onClick={() => removeColumnLink(colIndex, linkIndex)}
-                      className="p-1 hover:bg-red-50 text-red-400 hover:text-red-600 rounded flex-shrink-0"
+                      className="p-1 hover:bg-red-50 text-red-400 hover:text-red-600 rounded flex-shrink-0 mt-1"
                     >
                       <Trash2 className="w-3 h-3" />
                     </button>
@@ -706,29 +701,28 @@ export function FooterContentEditor({ section, updateContent }: ContentEditorPro
         <label className={labelClass}>Reseaux sociaux</label>
         <div className="space-y-2">
           {socialLinks.map((social: any, index: number) => (
-            <div key={index} className="flex items-center gap-1.5">
-              <select
-                value={social.platform || 'facebook'}
-                onChange={(e) => updateSocialLink(index, 'platform', e.target.value)}
-                className="px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent"
-              >
-                {SOCIAL_PLATFORMS.map((p) => (
-                  <option key={p.id} value={p.id}>{p.label}</option>
-                ))}
-              </select>
-              <input
-                type="text"
+            <div key={index} className="bg-gray-50 p-2 rounded-lg space-y-1.5">
+              <div className="flex items-center gap-1.5">
+                <select
+                  value={social.platform || 'facebook'}
+                  onChange={(e) => updateSocialLink(index, 'platform', e.target.value)}
+                  className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent"
+                >
+                  {SOCIAL_PLATFORMS.map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => removeSocialLink(index)}
+                  className="p-1 hover:bg-red-50 text-red-400 hover:text-red-600 rounded flex-shrink-0"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <LinkInputField
                 value={social.url || ''}
-                onChange={(e) => updateSocialLink(index, 'url', e.target.value)}
-                className="flex-1 px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-black focus:border-transparent"
-                placeholder="URL"
+                onChange={(val) => updateSocialLink(index, 'url', val)}
               />
-              <button
-                onClick={() => removeSocialLink(index)}
-                className="p-1 hover:bg-red-50 text-red-400 hover:text-red-600 rounded flex-shrink-0"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
             </div>
           ))}
         </div>
@@ -1468,12 +1462,9 @@ export function ClickFunnelFeaturesContentEditor({ section, updateContent }: Con
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Lien du bouton</label>
-        <input
-          type="text"
+        <LinkInputField
           value={section.content.buttonUrl || ''}
-          onChange={(e) => updateContent('buttonUrl', e.target.value)}
-          placeholder="#"
-          className={inputClass}
+          onChange={(val) => updateContent('buttonUrl', val)}
         />
       </div>
     </div>
@@ -1611,12 +1602,9 @@ export function ClickFunnelFooterContentEditor({ section, updateContent }: Conte
                         placeholder="Texte du lien"
                         className={inputClass}
                       />
-                      <input
-                        type="text"
+                      <LinkInputField
                         value={link.url || ''}
-                        onChange={(e) => updateLink(columnIndex, linkIndex, 'url', e.target.value)}
-                        placeholder="URL"
-                        className={inputClass}
+                        onChange={(val) => updateLink(columnIndex, linkIndex, 'url', val)}
                       />
                     </div>
                     <button
