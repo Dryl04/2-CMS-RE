@@ -5,6 +5,10 @@ import { supabase, PageTemplate } from '@/lib/supabase';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { normalizeInternalPath, replaceInternalLinksInSections } from '@/lib/linkRegistry';
 import { loadActiveGlobalHFSetting, shouldApplyOnCreate, injectGlobalHFIntoNewSections } from '@/lib/globalHFSettings';
+import { loadSiteSettings } from '@/lib/siteSettings';
+import { SiteSettings } from '@/lib/supabase';
+import { validatePageSEO } from '@/lib/seoRuntime';
+import TrackingIntegrationsPanel from '@/components/settings/TrackingIntegrationsPanel';
 
 interface SEOFormProps {
   onSaveComplete: () => void;
@@ -49,6 +53,20 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
   const [ogTitle, setOgTitle] = useState('');
   const [ogDescription, setOgDescription] = useState('');
   const [ogImage, setOgImage] = useState('');
+  const [metaRobots, setMetaRobots] = useState('');
+  const [ogType, setOgType] = useState('website');
+  const [twitterTitle, setTwitterTitle] = useState('');
+  const [twitterDescription, setTwitterDescription] = useState('');
+  const [twitterImage, setTwitterImage] = useState('');
+  const [socialImageAlt, setSocialImageAlt] = useState('');
+  const [schemaType, setSchemaType] = useState('WebPage');
+  const [schemaJsonLd, setSchemaJsonLd] = useState('');
+  const [noindex, setNoindex] = useState(false);
+  const [nofollow, setNofollow] = useState(false);
+  const [excludeFromSitemap, setExcludeFromSitemap] = useState(false);
+  const [primaryKeyword, setPrimaryKeyword] = useState('');
+  const [secondaryKeywords, setSecondaryKeywords] = useState('');
+  const [breadcrumbTitle, setBreadcrumbTitle] = useState('');
   const [status, setStatus] = useState<'draft' | 'published' | 'archived'>('draft');
   const [sectionsData, setSectionsData] = useState<PageBuilderSection[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
@@ -61,11 +79,18 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
   const [existingPageFolders, setExistingPageFolders] = useState<string[]>([]);
   const [showNewFolderInput, setShowNewFolderInput] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
 
   useEffect(() => {
     loadTemplates();
     loadAvailablePages();
     loadExistingPageFolders();
+    loadSiteSettings().then((settings) => {
+      setSiteSettings(settings);
+      if (settings.base_url) {
+        setDomain(settings.base_url.replace(/\/$/, ''));
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -95,6 +120,20 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
       setOgTitle(editingPage.og_title || '');
       setOgDescription(editingPage.og_description || '');
       setOgImage(editingPage.og_image || '');
+      setMetaRobots((editingPage as any).meta_robots || '');
+      setOgType((editingPage as any).og_type || 'website');
+      setTwitterTitle((editingPage as any).twitter_title || '');
+      setTwitterDescription((editingPage as any).twitter_description || '');
+      setTwitterImage((editingPage as any).twitter_image || '');
+      setSocialImageAlt((editingPage as any).social_image_alt || '');
+      setSchemaType((editingPage as any).schema_type || 'WebPage');
+      setSchemaJsonLd((editingPage as any).schema_jsonld || '');
+      setNoindex(Boolean((editingPage as any).noindex));
+      setNofollow(Boolean((editingPage as any).nofollow));
+      setExcludeFromSitemap(Boolean((editingPage as any).exclude_from_sitemap));
+      setPrimaryKeyword((editingPage as any).primary_keyword || '');
+      setSecondaryKeywords(Array.isArray((editingPage as any).secondary_keywords) ? (editingPage as any).secondary_keywords.join(', ') : ((editingPage as any).secondary_keywords || ''));
+      setBreadcrumbTitle((editingPage as any).breadcrumb_title || '');
       setStatus(editingPage.status || 'draft');
       setSectionsData(editingPage.sections_data || []);
       setSelectedTemplateId(editingPage.template_id || null);
@@ -241,6 +280,22 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
         og_title: ogTitle || null,
         og_description: ogDescription || null,
         og_image: ogImage || null,
+        meta_robots: metaRobots || null,
+        og_type: ogType || 'website',
+        twitter_title: twitterTitle || null,
+        twitter_description: twitterDescription || null,
+        twitter_image: twitterImage || null,
+        social_image_alt: socialImageAlt || null,
+        schema_type: schemaType || null,
+        schema_jsonld: schemaJsonLd || null,
+        noindex,
+        nofollow,
+        exclude_from_sitemap: excludeFromSitemap,
+        primary_keyword: primaryKeyword || null,
+        secondary_keywords: secondaryKeywords.split(',').map(k => k.trim()).filter(Boolean),
+        breadcrumb_title: breadcrumbTitle || null,
+        published_at: status === 'published' ? (editingPage as any)?.published_at || new Date().toISOString() : null,
+        last_reviewed_at: new Date().toISOString(),
         canonical_url: getFullUrl(),
         language: 'fr',
         status,
@@ -349,6 +404,16 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
   };
 
   const sectionCount = sectionsData.length;
+  const validationIssues = validatePageSEO({
+    page_key: getPageKey(),
+    title,
+    description,
+    og_image: ogImage,
+    canonical_url: getFullUrl(),
+    schema_jsonld: schemaJsonLd,
+    status,
+    noindex,
+  }, siteSettings);
 
   return (
     <div className="bg-white rounded-3xl border border-gray-200 p-8">
@@ -747,8 +812,203 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
               />
               <div className="text-xs text-gray-600 mt-1">Recommande : 1200x630 pixels</div>
             </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Type Open Graph
+              </label>
+              <select
+                value={ogType}
+                onChange={(e) => setOgType(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900"
+              >
+                <option value="website">website</option>
+                <option value="article">article</option>
+                <option value="product">product</option>
+              </select>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Titre Twitter
+                </label>
+                <input
+                  type="text"
+                  value={twitterTitle}
+                  onChange={(e) => setTwitterTitle(e.target.value)}
+                  placeholder="Titre dedie au partage X"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Image Twitter
+                </label>
+                <input
+                  type="text"
+                  value={twitterImage}
+                  onChange={(e) => setTwitterImage(e.target.value)}
+                  placeholder="https://example.com/twitter-card.jpg"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Description Twitter
+              </label>
+              <textarea
+                value={twitterDescription}
+                onChange={(e) => setTwitterDescription(e.target.value)}
+                placeholder="Description dediee au partage X"
+                rows={2}
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Texte alternatif de l'image sociale
+              </label>
+              <input
+                type="text"
+                value={socialImageAlt}
+                onChange={(e) => setSocialImageAlt(e.target.value)}
+                placeholder="Description courte de l'image de partage"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900"
+              />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Robots specifiques
+                </label>
+                <input
+                  type="text"
+                  value={metaRobots}
+                  onChange={(e) => setMetaRobots(e.target.value)}
+                  placeholder="index,follow,max-image-preview:large"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Type de schema
+                </label>
+                <select
+                  value={schemaType}
+                  onChange={(e) => setSchemaType(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900"
+                >
+                  <option value="WebPage">WebPage</option>
+                  <option value="Article">Article</option>
+                  <option value="Service">Service</option>
+                  <option value="Product">Product</option>
+                  <option value="FAQPage">FAQPage</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Mot-cle principal
+                </label>
+                <input
+                  type="text"
+                  value={primaryKeyword}
+                  onChange={(e) => setPrimaryKeyword(e.target.value)}
+                  placeholder="mot-cle principal"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Mots-cles secondaires
+                </label>
+                <input
+                  type="text"
+                  value={secondaryKeywords}
+                  onChange={(e) => setSecondaryKeywords(e.target.value)}
+                  placeholder="mot-cle 2, mot-cle 3"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Libelle breadcrumb
+              </label>
+              <input
+                type="text"
+                value={breadcrumbTitle}
+                onChange={(e) => setBreadcrumbTitle(e.target.value)}
+                placeholder="Titre court pour le fil d'ariane"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900"
+              />
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              <label className="flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" checked={noindex} onChange={(e) => setNoindex(e.target.checked)} />
+                Noindex
+              </label>
+              <label className="flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" checked={nofollow} onChange={(e) => setNofollow(e.target.checked)} />
+                Nofollow
+              </label>
+              <label className="flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" checked={excludeFromSitemap} onChange={(e) => setExcludeFromSitemap(e.target.checked)} />
+                Exclure du sitemap
+              </label>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                JSON-LD personnalise
+              </label>
+              <textarea
+                value={schemaJsonLd}
+                onChange={(e) => setSchemaJsonLd(e.target.value)}
+                placeholder='{"@context":"https://schema.org","@type":"WebPage"}'
+                rows={6}
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900 font-mono text-sm"
+              />
+            </div>
           </div>
         </details>
+
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <h4 className="font-bold text-gray-900 mb-4">Controle SEO</h4>
+          <div className="space-y-2">
+            {validationIssues.length === 0 ? (
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+                Aucun point bloquant detecte sur les controles SEO de base.
+              </div>
+            ) : (
+              validationIssues.map((issue, index) => (
+                <div
+                  key={`${issue.message}-${index}`}
+                  className={`rounded-xl px-4 py-3 text-sm border ${issue.level === 'error'
+                    ? 'bg-red-50 border-red-200 text-red-800'
+                    : issue.level === 'warning'
+                      ? 'bg-amber-50 border-amber-200 text-amber-800'
+                      : 'bg-blue-50 border-blue-200 text-blue-800'
+                    }`}
+                >
+                  {issue.message}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
 
         <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 border-2 border-amber-200">
           <div className="flex items-center space-x-2 mb-4">
@@ -859,6 +1119,14 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
           )}
           <p className="text-xs text-gray-500 mt-2">Organisez vos pages dans des dossiers</p>
         </div>
+
+        <TrackingIntegrationsPanel
+          scope="page"
+          pageId={editingPage?.id}
+          userId={userId}
+          title="Tracking specifique a la page"
+          description="Ajoutez ici des scripts de suivi propres a cette page ou desactivez l'heritage d'un provider global."
+        />
 
         <button
           onClick={handleSave}

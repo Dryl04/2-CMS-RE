@@ -72,9 +72,14 @@ import MinimalFinalCTAWidget from '@/components/PageBuilder/Widgets/MinimalFinal
 import CinematicFooterWidget from '@/components/PageBuilder/Widgets/CinematicFooterWidget';
 import EmbedWidget from '@/components/PageBuilder/Widgets/EmbedWidget';
 import CodeInsertWidget from '@/components/PageBuilder/Widgets/CodeInsertWidget';
+import SEOHeadManager from '@/components/public/SEOHeadManager';
+import PageTrackingRuntime from '@/components/public/PageTrackingRuntime';
+import CookieConsentBanner from '@/components/public/CookieConsentBanner';
 import { getWidgetWrapperProps, normalizeSectionForTheme } from '@/lib/widgetThemeHelper';
 import { sanitizeSectionUrls } from '@/lib/contentSanitizer';
 import { loadActiveGlobalHFSetting, applySectionsWithGlobalHF, type GlobalHFSetting } from '@/lib/globalHFSettings';
+import { loadSiteSettings } from '@/lib/siteSettings';
+import { SiteSettings } from '@/lib/supabase';
 
 interface SEOPageViewerProps {
   page: SEOMetadata;
@@ -462,10 +467,12 @@ function FallbackPage({ page }: { page: SEOMetadata }) {
 export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThemeId }: SEOPageViewerProps) {
   const rawSections = normalizeSectionsData(page.sections_data);
   const [globalHFSetting, setGlobalHFSetting] = useState<GlobalHFSetting | null>(null);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
 
   useEffect(() => {
     loadActiveGlobalHFSetting().then(setGlobalHFSetting);
+    loadSiteSettings().then(setSiteSettings);
   }, []);
 
   const sections = useMemo(() => {
@@ -483,6 +490,8 @@ export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThem
       className="min-h-screen bg-base-100 text-base-content page-themed"
       data-theme={daisyThemeSlug || 'light'}
     >
+      <SEOHeadManager page={page} siteSettings={siteSettings} />
+      {isPublic && <PageTrackingRuntime pageId={page.id} />}
       <PageThemeInjector themeId={pageThemeId} />
       <ScrollToTopButton />
       {/* Bouton flottant admin - uniquement visible quand l'utilisateur est connecté */}
@@ -552,6 +561,7 @@ export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThem
           <FallbackPage page={page} />
         )}
       </div>
+      {isPublic && <CookieConsentBanner settings={siteSettings} />}
     </div>
   );
 }

@@ -19,6 +19,7 @@ import VisualPageBuilder from '@/components/VisualPageBuilder';
 import BuilderPreviewPage from '@/components/PageBuilder/BuilderPreviewPage';
 import GlobalHFManager from '@/components/GlobalHFManager';
 import HFBuilderModal from '@/components/HFBuilderModal';
+import SiteSettingsManager from '@/components/settings/SiteSettingsManager';
 import { supabase, SEOMetadata } from '@/lib/supabase';
 import { normalizeInternalPath } from '@/lib/linkRegistry';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
@@ -273,21 +274,7 @@ function AppContent() {
 
         {currentView === 'settings' && (
           <div className="max-w-7xl mx-auto px-6 py-8 w-full">
-            <button
-              onClick={() => handleNavigate('dashboard')}
-              className="flex items-center space-x-2 text-base-content/60 hover:text-base-content mb-6 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm font-medium">Retour au tableau de bord</span>
-            </button>
-            <div className="bg-base-100 rounded-2xl border border-base-300 p-12 text-center">
-              <h2 className="text-3xl font-serif font-bold text-base-content mb-4">
-                Parametres
-              </h2>
-              <p className="text-base-content/60 text-lg mb-8">
-                Cette fonctionnalite sera disponible prochainement
-              </p>
-            </div>
+            <SiteSettingsManager onNavigate={handleNavigate} userId={user?.id} />
           </div>
         )}
 

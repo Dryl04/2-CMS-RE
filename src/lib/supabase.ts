@@ -32,6 +32,22 @@ export interface SEOMetadata {
   og_image?: string;
   canonical_url?: string;
   language?: string;
+  meta_robots?: string;
+  og_type?: string;
+  twitter_title?: string;
+  twitter_description?: string;
+  twitter_image?: string;
+  social_image_alt?: string;
+  schema_type?: string;
+  schema_jsonld?: string;
+  noindex?: boolean;
+  nofollow?: boolean;
+  exclude_from_sitemap?: boolean;
+  primary_keyword?: string;
+  secondary_keywords?: string[];
+  breadcrumb_title?: string;
+  published_at?: string;
+  last_reviewed_at?: string;
   status: "draft" | "published" | "archived";
   content?: string;
   sections_data?: any[];
@@ -54,6 +70,59 @@ export interface SEORedirect {
   target_page_id?: string | null;
   reason?: string | null;
   is_active: boolean;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type TrackingScope = 'site' | 'page';
+export type TrackingPlacement = 'head' | 'body_start' | 'body_end';
+export type TrackingMode = 'preset' | 'custom';
+export type TrackingLoadStrategy = 'immediate' | 'after_consent' | 'lazy' | 'route_change';
+export type ConsentCategory = 'necessary' | 'analytics' | 'ads' | 'social';
+
+export interface SiteSettings {
+  id: string;
+  site_name: string;
+  base_url: string;
+  default_locale: string;
+  default_title_suffix?: string | null;
+  default_meta_description?: string | null;
+  default_og_image?: string | null;
+  default_twitter_card: string;
+  default_meta_robots: string;
+  favicon_url?: string | null;
+  apple_touch_icon_url?: string | null;
+  site_webmanifest_url?: string | null;
+  organization_name?: string | null;
+  organization_logo_url?: string | null;
+  organization_same_as?: string[] | null;
+  google_site_verification?: string | null;
+  bing_site_verification?: string | null;
+  default_schema_type?: string | null;
+  robots_txt_overrides?: string | null;
+  enable_cookie_banner: boolean;
+  cookie_banner_message?: string | null;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TrackingIntegration {
+  id: string;
+  scope: TrackingScope;
+  page_id?: string | null;
+  provider: string;
+  label: string;
+  placement: TrackingPlacement;
+  mode: TrackingMode;
+  config_json?: Record<string, any> | null;
+  custom_code?: string | null;
+  requires_consent: boolean;
+  consent_category: ConsentCategory;
+  is_active: boolean;
+  load_strategy: TrackingLoadStrategy;
+  disable_inherited: boolean;
   created_by?: string | null;
   created_at: string;
   updated_at: string;
