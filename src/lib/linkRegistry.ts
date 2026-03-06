@@ -186,9 +186,10 @@ function deepCollectLinks(
   bucket: FoundSectionLink[],
   currentKey?: string,
   parentObject?: Record<string, unknown>,
+  includeEmpty?: boolean,
 ): void {
   if (typeof value === 'string') {
-    if (currentKey && shouldInspectKey(currentKey) && value.trim()) {
+    if (currentKey && shouldInspectKey(currentKey) && (value.trim() || includeEmpty)) {
       const elementLabel = parentObject ? pickLabelFromParent(parentObject) : undefined;
       bucket.push({ path, key: currentKey, value, elementLabel });
     }
@@ -206,7 +207,7 @@ function deepCollectLinks(
 
   if (Array.isArray(value)) {
     value.forEach((item, index) => {
-      deepCollectLinks(item, `${path}[${index}]`, bucket, currentKey, typeof item === 'object' && item !== null ? (item as Record<string, unknown>) : parentObject);
+      deepCollectLinks(item, `${path}[${index}]`, bucket, currentKey, typeof item === 'object' && item !== null ? (item as Record<string, unknown>) : parentObject, includeEmpty);
     });
     return;
   }
@@ -215,16 +216,17 @@ function deepCollectLinks(
     const obj = value as Record<string, unknown>;
     for (const [key, item] of Object.entries(obj)) {
       const nextPath = path ? `${path}.${key}` : key;
-      deepCollectLinks(item, nextPath, bucket, key, obj);
+      deepCollectLinks(item, nextPath, bucket, key, obj, includeEmpty);
     }
   }
 }
 
-export function extractLinksFromSections(sections: PageBuilderSection[]): FoundSectionLink[] {
+export function extractLinksFromSections(sections: PageBuilderSection[], options?: { includeEmpty?: boolean }): FoundSectionLink[] {
   const rawBucket: FoundSectionLink[] = [];
+  const includeEmpty = options?.includeEmpty;
   sections.forEach((section, index) => {
-    deepCollectLinks(section.content, `sections[${index}].content`, rawBucket);
-    deepCollectLinks(section.design, `sections[${index}].design`, rawBucket);
+    deepCollectLinks(section.content, `sections[${index}].content`, rawBucket, undefined, undefined, includeEmpty);
+    deepCollectLinks(section.design, `sections[${index}].design`, rawBucket, undefined, undefined, includeEmpty);
   });
   return rawBucket.map((link) => {
     const match = link.path.match(/^sections\[(\d+)\]/);
@@ -315,4 +317,117 @@ export function replaceLiteralLinkInSections(
     sections: mapped.value as PageBuilderSection[],
     updatedCount: mapped.updatedCount,
   };
+}
+
+function setNestedValue(obj: Record<string, unknown>, keys: string[], value: string): boolean {
+  let current: unknown = obj;
+  for (let i = 0; i < keys.length - 1; i++) {
+    const k = keys[i];
+    const arrayMatch = k.match(/^(.+)\[(\d+)\]$/);
+    if (arrayMatch) {
+      const arr = (current as Record<string, unknown>)[arrayMatch[1]];
+      if (!Array.isArray(arr)) return false;
+      current = arr[parseInt(arrayMatch[2], 10)];
+    } else {
+      if (!current || typeof current !== 'object') return false;
+      current = (current as Record<string, unknown>)[k];
+    }
+    if (current === undefined || current === null) return false;
+  }
+
+  const lastKey = keys[keys.length - 1];
+  const arrayMatch = lastKey.match(/^(.+)\[(\d+)\]$/);
+  if (arrayMatch) {
+    const arr = (current as Record<string, unknown>)[arrayMatch[1]];
+    if (!Array.isArray(arr)) return false;
+    arr[parseInt(arrayMatch[2], 10)] = value;
+    return true;
+  }
+
+  if (!current || typeof current !== 'object') return false;
+  (current as Record<string, unknown>)[lastKey] = value;
+  return true;
+}
+
+export function replaceTargetedLinkInSections(
+  sections: PageBuilderSection[],
+  sectionIndex: number,
+  fieldKey: string,
+  oldValue: string,
+  newValue: string,
+  fieldPath?: string,
+): InternalLinkReplacementResult {
+  const cloned = JSON.parse(JSON.stringify(sections)) as PageBuilderSection[];
+  const section = cloned[sectionIndex];
+  if (!section) return { sections: cloned, updatedCount: 0 };
+
+  if (fieldPath) {
+    const pathAfterContent = fieldPath.replace(/^sections\[\d+\]\./, '');
+    const keys = pathAfterContent.split('.').flatMap((k) => {
+      const m = k.match(/^(.+?)(\[\d+\])+$/);
+      if (!m) return [k];
+      const parts: string[] = [];
+      const idxMatches = k.match(/\[\d+\]/g);
+      if (idxMatches) {
+        const base = k.slice(0, k.indexOf('['));
+        parts.push(`${base}${idxMatches[0]}`);
+        for (let i = 1; i < idxMatches.length; i++) {
+          parts.push(idxMatches[i].replace(/[\[\]]/g, ''));
+        }
+      }
+      return parts.length ? parts : [k];
+    });
+
+    if (setNestedValue(section as unknown as Record<string, unknown>, keys, newValue)) {
+      return { sections: cloned, updatedCount: 1 };
+    }
+  }
+
+  const deepReplace = (obj: unknown, key?: string): { value: unknown; count: number } => {
+    if (typeof obj === 'string') {
+      if (key === fieldKey && obj === oldValue) {
+        return { value: newValue, count: 1 };
+      }
+      return { value: obj, count: 0 };
+    }
+    if (Array.isArray(obj)) {
+      let count = 0;
+      const arr = obj.map((item) => {
+        if (count > 0) return item;
+        const r = deepReplace(item, key);
+        count += r.count;
+        return r.value;
+      });
+      return { value: arr, count };
+    }
+    if (obj && typeof obj === 'object') {
+      let count = 0;
+      const rec: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+        if (count > 0) {
+          rec[k] = v;
+          continue;
+        }
+        const r = deepReplace(v, k);
+        count += r.count;
+        rec[k] = r.value;
+      }
+      return { value: rec, count };
+    }
+    return { value: obj, count: 0 };
+  };
+
+  const contentResult = deepReplace(section.content);
+  if (contentResult.count > 0) {
+    section.content = contentResult.value as Record<string, unknown>;
+    return { sections: cloned, updatedCount: contentResult.count };
+  }
+
+  const designResult = deepReplace(section.design);
+  if (designResult.count > 0) {
+    section.design = designResult.value as Record<string, unknown>;
+    return { sections: cloned, updatedCount: designResult.count };
+  }
+
+  return { sections: cloned, updatedCount: 0 };
 }
