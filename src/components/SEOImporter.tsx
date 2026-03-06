@@ -7,6 +7,7 @@ import {
 import { supabase } from '../lib/supabase';
 import { normalizeSectionForTheme } from '../lib/widgetThemeHelper';
 import { sanitizeSectionUrls, extractPlainUrl } from '../lib/contentSanitizer';
+import { loadActiveGlobalHFSetting, applySectionsWithGlobalHF } from '../lib/globalHFSettings';
 
 interface ImportedPage {
   page_key: string;
@@ -377,6 +378,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
   const handleImport = async () => {
     setIsImporting(true);
     try {
+      const activeGlobalHFSetting = await loadActiveGlobalHFSetting();
       const templateIds = Array.from(
         new Set(previewData.map((page) => page.template_id).filter(Boolean) as string[]),
       );
@@ -438,6 +440,10 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
       }
 
       const dataToImport = resolvedPreviewData.map(page => {
+        const sectionsWithGlobalHF = activeGlobalHFSetting
+          ? applySectionsWithGlobalHF(page.sections_data || [], activeGlobalHFSetting, { context: 'import' })
+          : (page.sections_data || []);
+
         const row: Record<string, any> = {
           page_key: page.page_key,
           title: page.title,
@@ -454,7 +460,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
           seo_h2: page.seo_h2 || null,
           template_id: page.template_id || null,
           daisy_theme_slug: page.daisy_theme_slug ?? null,
-          sections_data: page.sections_data || [],
+          sections_data: sectionsWithGlobalHF,
           imported_at: new Date().toISOString(),
         };
         if (userId) {

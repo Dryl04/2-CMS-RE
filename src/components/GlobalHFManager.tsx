@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   GlobalHFSetting,
   loadAllGlobalHFSettings,
+  activateGlobalHFSetting,
   isHeaderType,
   isFooterType,
 } from '@/lib/globalHFSettings';
@@ -128,10 +129,15 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
       } else {
         payload.created_by = profile?.id || null;
         payload.is_active = true;
-        const { error } = await supabase
+        const { data: insertedSetting, error } = await supabase
           .from('global_hf_settings')
-          .insert(payload);
+          .insert(payload)
+          .select('id')
+          .single();
         if (error) throw error;
+        if (insertedSetting?.id) {
+          await activateGlobalHFSetting(insertedSetting.id);
+        }
         showToast('Configuration creee');
       }
 
@@ -147,15 +153,21 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
 
   const toggleActive = async (setting: GlobalHFSetting) => {
     try {
-      const { error } = await supabase
-        .from('global_hf_settings')
-        .update({ is_active: !setting.is_active, updated_at: new Date().toISOString() })
-        .eq('id', setting.id);
-      if (error) throw error;
+      if (setting.is_active) {
+        const { error } = await supabase
+          .from('global_hf_settings')
+          .update({ is_active: false, updated_at: new Date().toISOString() })
+          .eq('id', setting.id);
+        if (error) throw error;
+      } else {
+        await activateGlobalHFSetting(setting.id);
+      }
+
       showToast(setting.is_active ? 'Configuration desactivee' : 'Configuration activee');
       await loadData();
     } catch (error) {
       console.error('[GlobalHFManager] Error toggling:', error);
+      showToast('Erreur lors du changement d\'etat');
     }
   };
 
@@ -336,41 +348,41 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
         <div className="border-t border-gray-200 pt-6">
           <h4 className="text-sm font-semibold text-gray-800 mb-4">Options d'application</h4>
           <div className="space-y-3">
-            <label className="flex items-center space-x-3 cursor-pointer group">
-              <button
-                type="button"
-                onClick={() => setEditingApplyOnCreate(!editingApplyOnCreate)}
-                className="flex-shrink-0"
-              >
+            <button
+              type="button"
+              onClick={() => setEditingApplyOnCreate((prev) => !prev)}
+              className="w-full flex items-center space-x-3 text-left group"
+            >
+              <span className="flex-shrink-0">
                 {editingApplyOnCreate ? (
                   <ToggleRight className="w-8 h-5 text-blue-600" />
                 ) : (
                   <ToggleLeft className="w-8 h-5 text-gray-400 group-hover:text-gray-500" />
                 )}
-              </button>
+              </span>
               <div>
                 <span className="text-sm font-medium text-gray-900">Appliquer aux nouvelles pages creees</span>
                 <p className="text-xs text-gray-500">Le header/footer sera automatiquement insere lors de la creation manuelle</p>
               </div>
-            </label>
+            </button>
 
-            <label className="flex items-center space-x-3 cursor-pointer group">
-              <button
-                type="button"
-                onClick={() => setEditingApplyOnImport(!editingApplyOnImport)}
-                className="flex-shrink-0"
-              >
+            <button
+              type="button"
+              onClick={() => setEditingApplyOnImport((prev) => !prev)}
+              className="w-full flex items-center space-x-3 text-left group"
+            >
+              <span className="flex-shrink-0">
                 {editingApplyOnImport ? (
                   <ToggleRight className="w-8 h-5 text-blue-600" />
                 ) : (
                   <ToggleLeft className="w-8 h-5 text-gray-400 group-hover:text-gray-500" />
                 )}
-              </button>
+              </span>
               <div>
                 <span className="text-sm font-medium text-gray-900">Appliquer aux pages importees</span>
                 <p className="text-xs text-gray-500">Le header/footer sera automatiquement insere lors de l'importation</p>
               </div>
-            </label>
+            </button>
           </div>
         </div>
 

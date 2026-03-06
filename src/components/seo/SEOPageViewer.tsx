@@ -470,7 +470,7 @@ export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThem
 
   const sections = useMemo(() => {
     if (!globalHFSetting) return rawSections;
-    return applySectionsWithGlobalHF(rawSections, globalHFSetting, page.id);
+    return applySectionsWithGlobalHF(rawSections, globalHFSetting, { pageId: page.id, context: 'existing' });
   }, [rawSections, globalHFSetting, page.id]);
 
   const hasSections = sections.length > 0;

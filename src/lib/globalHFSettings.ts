@@ -15,6 +15,13 @@ export interface GlobalHFSetting {
   updated_at: string;
 }
 
+export type GlobalHFApplicationContext = 'existing' | 'import' | 'create';
+
+interface ApplySectionsWithGlobalHFOptions {
+  pageId?: string;
+  context?: GlobalHFApplicationContext;
+}
+
 const HEADER_TYPES = new Set([
   'header', 'header-top-info', 'header-with-icons',
   'header-account-bar', 'header-full-contact', 'header-clickfunnel',
@@ -61,12 +68,68 @@ export async function loadAllGlobalHFSettings(): Promise<GlobalHFSetting[]> {
   return (data || []) as GlobalHFSetting[];
 }
 
+export async function activateGlobalHFSetting(settingId: string): Promise<void> {
+  const timestamp = new Date().toISOString();
+
+  const { error: deactivateError } = await supabase
+    .from('global_hf_settings')
+    .update({ is_active: false, updated_at: timestamp })
+    .neq('id', settingId)
+    .eq('is_active', true);
+
+  if (deactivateError) {
+    throw deactivateError;
+  }
+
+  const { error: activateError } = await supabase
+    .from('global_hf_settings')
+    .update({ is_active: true, updated_at: timestamp })
+    .eq('id', settingId);
+
+  if (activateError) {
+    throw activateError;
+  }
+}
+
+export function shouldApplyGlobalHFSetting(
+  setting: GlobalHFSetting,
+  context: GlobalHFApplicationContext = 'existing',
+  pageId?: string,
+): boolean {
+  if (!setting.is_active) return false;
+
+  if (context === 'import') {
+    return setting.apply_on_import;
+  }
+
+  if (context === 'create') {
+    return setting.apply_on_create;
+  }
+
+  if (!pageId) return false;
+
+  const ids = setting.target_page_ids;
+  if (!ids || ids.length === 0) return false;
+
+  return ids.includes(pageId);
+}
+
 export function applySectionsWithGlobalHF(
   sections: PageBuilderSection[],
   setting: GlobalHFSetting,
-  pageId?: string
+  options?: string | ApplySectionsWithGlobalHFOptions,
 ): PageBuilderSection[] {
-  const shouldApply = isSettingApplicableToPage(setting, pageId);
+  const resolvedOptions: ApplySectionsWithGlobalHFOptions =
+    typeof options === 'string'
+      ? { pageId: options, context: 'existing' }
+      : (options || {});
+
+  const shouldApply = shouldApplyGlobalHFSetting(
+    setting,
+    resolvedOptions.context || 'existing',
+    resolvedOptions.pageId,
+  );
+
   if (!shouldApply) return sections;
 
   const hasGlobalHeader = !!setting.header_section;
@@ -97,15 +160,5 @@ export function applySectionsWithGlobalHF(
   }
 
   return result.map((s, i) => ({ ...s, order: i }));
-}
-
-function isSettingApplicableToPage(setting: GlobalHFSetting, pageId?: string): boolean {
-  if (!setting.is_active) return false;
-  if (!pageId) return false;
-
-  const ids = setting.target_page_ids;
-  if (!ids || ids.length === 0) return false;
-
-  return ids.includes(pageId);
 }
 
