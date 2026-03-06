@@ -798,15 +798,19 @@ export function NewsletterContentEditor({ section, updateContent }: ContentEdito
 
 export function ProcessContentEditor({ section, updateContent }: ContentEditorProps) {
   const steps = section.content.steps || [];
+  const usesImages = section.type === 'process-steps-cards';
 
-  const updateStep = (index: number, field: string, value: string) => {
+  const updateStep = (index: number, field: string, value: any) => {
     const updated = [...steps];
     updated[index] = { ...updated[index], [field]: value };
     updateContent('steps', updated);
   };
 
   const addStep = () => {
-    updateContent('steps', [...steps, { number: String(steps.length + 1).padStart(2, '0'), icon: 'check', title: 'Nouvelle etape', description: 'Description de l etape' }]);
+    const newStep = usesImages
+      ? { number: String(steps.length + 1).padStart(2, '0'), title: 'Nouvelle etape', description: 'Description de l etape', image: '' }
+      : { number: String(steps.length + 1).padStart(2, '0'), icon: 'check', title: 'Nouvelle etape', description: 'Description de l etape' };
+    updateContent('steps', [...steps, newStep]);
   };
 
   const removeStep = (index: number) => {
@@ -843,10 +847,14 @@ export function ProcessContentEditor({ section, updateContent }: ContentEditorPr
               <input type="text" value={step.number || ''} onChange={(e) => updateStep(index, 'number', e.target.value)} className={inputClass} placeholder="Numero (ex: 01)" />
               <input type="text" value={step.title || ''} onChange={(e) => updateStep(index, 'title', e.target.value)} className={inputClass} placeholder="Titre de l'etape" />
               <textarea value={step.description || ''} onChange={(e) => updateStep(index, 'description', e.target.value)} rows={2} className={inputClass} placeholder="Description" />
-              <div>
-                <label className={labelClass}>Icone</label>
-                <IconPicker value={step.icon || 'check'} onChange={(val) => updateStep(index, 'icon', val)} />
-              </div>
+              {usesImages ? (
+                <ImageUploadField label="Image" value={step.image || ''} onChange={(url) => updateStep(index, 'image', url)} placeholder="URL de l'image" />
+              ) : (
+                <div>
+                  <label className={labelClass}>Icone</label>
+                  <IconPicker value={step.icon || 'check'} onChange={(val) => updateStep(index, 'icon', val)} />
+                </div>
+              )}
             </div>
           ))}
         </div>
