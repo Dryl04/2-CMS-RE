@@ -11,6 +11,7 @@ import {
   isFooterType,
 } from '@/lib/globalHFSettings';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import GlobalHFPreview from '@/components/GlobalHFPreview';
 
 interface GlobalHFManagerProps {
   onNavigate: (view: string) => void;
@@ -487,7 +488,10 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
         key={setting.id}
         className={`bg-white rounded-2xl border transition-all ${setting.is_active ? 'border-blue-200 shadow-sm' : 'border-gray-200 opacity-75'}`}
       >
-        <div className="p-5">
+        <div
+          className="p-5 cursor-pointer"
+          onClick={() => setExpandedId(isExpanded ? null : setting.id)}
+        >
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2 mb-1">
@@ -536,7 +540,10 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
 
             <div className="flex items-center space-x-1 ml-4 flex-shrink-0">
               <button
-                onClick={() => toggleActive(setting)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  toggleActive(setting);
+                }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 title={setting.is_active ? 'Desactiver' : 'Activer'}
               >
@@ -547,21 +554,30 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
                 )}
               </button>
               <button
-                onClick={() => startEdit(setting)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  startEdit(setting);
+                }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Modifier"
               >
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
               <button
-                onClick={() => handleDelete(setting.id)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleDelete(setting.id);
+                }}
                 className="p-2 hover:bg-red-50 rounded-lg transition-colors"
                 title="Supprimer"
               >
                 <Trash2 className="w-4 h-4 text-red-400" />
               </button>
               <button
-                onClick={() => setExpandedId(isExpanded ? null : setting.id)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setExpandedId(isExpanded ? null : setting.id);
+                }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
@@ -573,6 +589,29 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
         {isExpanded && (
           <div className="px-5 pb-5 pt-0 border-t border-gray-100 mt-0">
             <div className="pt-4 space-y-3">
+              <div>
+                <h4 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Parametres actifs</h4>
+                <div className="flex flex-wrap gap-2">
+                  <span className={`text-[10px] font-medium px-2 py-1 rounded ${setting.is_active ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
+                    {setting.is_active ? 'Configuration active' : 'Configuration inactive'}
+                  </span>
+                  <span className={`text-[10px] font-medium px-2 py-1 rounded ${setting.apply_on_import ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                    Importation {setting.apply_on_import ? 'active' : 'inactive'}
+                  </span>
+                  <span className={`text-[10px] font-medium px-2 py-1 rounded ${setting.apply_on_create ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                    Creation {setting.apply_on_create ? 'active' : 'inactive'}
+                  </span>
+                  <span className={`text-[10px] font-medium px-2 py-1 rounded ${pageCount > 0 ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
+                    Pages ciblees {pageCount > 0 ? `(${pageCount})` : 'aucune'}
+                  </span>
+                </div>
+              </div>
+
+              <GlobalHFPreview
+                headerSection={setting.header_section}
+                footerSection={setting.footer_section}
+              />
+
               {pageCount > 0 && (
                 <div>
                   <h4 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Pages ciblees</h4>
