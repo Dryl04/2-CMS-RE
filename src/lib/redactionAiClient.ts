@@ -232,5 +232,4 @@ export async function callAIProvider(params: AIChatParams): Promise<string> {
 
   const data = await response.json();
   return data.content ?? data.message ?? '';
-  }
 }

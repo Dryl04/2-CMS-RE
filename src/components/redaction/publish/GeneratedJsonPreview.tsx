@@ -49,7 +49,7 @@ export default function GeneratedJsonPreview({ jsonText, onCopy }: GeneratedJson
           </span>
         </div>
         <div className="flex items-center gap-2">
-          {result.json && (
+          {result.json != null ? (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -60,7 +60,7 @@ export default function GeneratedJsonPreview({ jsonText, onCopy }: GeneratedJson
             >
               <Copy className="w-3.5 h-3.5 text-gray-500" />
             </button>
-          )}
+          ) : null}
           {expanded ? (
             <ChevronUp className="w-4 h-4 text-gray-400" />
           ) : (

@@ -1,5 +1,5 @@
 -- Auto-generated migration bundle
--- Generated at: 2026-02-17T08:36:24Z
+-- Generated at: 2026-03-08T17:53:09Z
 -- Source directory: supabase/migrations
 
 BEGIN;
@@ -1896,6 +1896,1088 @@ ADD COLUMN IF NOT EXISTS daisy_theme_slug text;
 
 CREATE INDEX IF NOT EXISTS idx_page_templates_daisy_theme_slug
   ON page_templates(daisy_theme_slug);
+
+
+-- ===================================================================
+-- MIGRATION: 20260217124500_fix_signup_role_default_and_trigger.sql
+-- ===================================================================
+/*
+  # Fix signup failure from user_profiles role mismatch
+
+  1. Problem
+    - user_profiles.role default was originally 'contributor'
+    - later constraint only allows ('admin', 'seo_manager', 'content_creator')
+    - signup trigger inserts into user_profiles without explicit role
+    - result: INSERT violates check constraint and Auth signup returns 500
+
+  2. Fix
+    - normalize old rows from contributor -> content_creator
+    - enforce role constraint with valid values
+    - set default role to content_creator
+    - update handle_new_user trigger function to insert explicit valid role
+*/
+
+-- Normalize historical rows before constraint enforcement
+UPDATE public.user_profiles
+SET role = 'content_creator'
+WHERE role = 'contributor';
+
+-- Ensure the role check constraint is correct
+ALTER TABLE public.user_profiles
+DROP CONSTRAINT IF EXISTS user_profiles_role_check;
+
+ALTER TABLE public.user_profiles
+ADD CONSTRAINT user_profiles_role_check
+CHECK (role IN ('admin', 'seo_manager', 'content_creator'));
+
+-- Ensure new rows receive a valid default role
+ALTER TABLE public.user_profiles
+ALTER COLUMN role SET DEFAULT 'content_creator';
+
+-- Make signup trigger explicit to avoid relying on defaults
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.user_profiles (id, email, full_name, role)
+  VALUES (
+    new.id,
+    new.email,
+    COALESCE(new.raw_user_meta_data->>'full_name', ''),
+    'content_creator'
+  );
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+
+-- ===================================================================
+-- MIGRATION: 20260218090000_fix_rls_insert_update_seo_metadata.sql
+-- ===================================================================
+/*
+  # Fix RLS INSERT / UPDATE policies for seo_metadata
+
+  Problem: INSERT policy requires auth.uid() = user_id, but the client
+  was not always sending user_id on upsert (especially on edit).
+  Additionally, rows created before user_id column was added have NULL user_id.
+
+  Fix:
+  1. Backfill NULL user_id rows with the first admin user_id so they become editable
+  2. Recreate INSERT policy to allow any authenticated user to insert
+     (WITH CHECK ensures user_id is set to their own id)
+  3. Recreate UPDATE policy to allow owners + admins/seo_managers
+*/
+
+-- Backfill NULL user_id rows: assign to first admin user
+UPDATE seo_metadata
+SET user_id = (
+  SELECT id FROM user_profiles WHERE role = 'admin' ORDER BY created_at LIMIT 1
+)
+WHERE user_id IS NULL
+  AND EXISTS (SELECT 1 FROM user_profiles WHERE role = 'admin');
+
+-- Drop and recreate INSERT policy
+DROP POLICY IF EXISTS "Authenticated users can create pages" ON seo_metadata;
+CREATE POLICY "Authenticated users can create pages"
+  ON seo_metadata FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    user_id = auth.uid()
+    OR EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE id = auth.uid() AND role IN ('admin', 'seo_manager')
+    )
+  );
+
+-- Drop and recreate UPDATE policy to also allow editing own pages when user_id matches
+DROP POLICY IF EXISTS "Users can update own pages" ON seo_metadata;
+CREATE POLICY "Users can update own pages"
+  ON seo_metadata FOR UPDATE
+  TO authenticated
+  USING (
+    auth.uid() = user_id
+    OR EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE id = auth.uid() AND role IN ('admin', 'seo_manager')
+    )
+  )
+  WITH CHECK (
+    auth.uid() = user_id
+    OR EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE id = auth.uid() AND role IN ('admin', 'seo_manager')
+    )
+  );
+
+
+-- ===================================================================
+-- MIGRATION: 20260218090100_add_folder_columns.sql
+-- ===================================================================
+/*
+  # Add folder column to seo_metadata and page_templates
+
+  Allows users to organize pages and templates into folders.
+  Folder is a simple text column (nullable) representing the folder name.
+*/
+
+-- Add folder column to seo_metadata
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'seo_metadata' AND column_name = 'folder'
+  ) THEN
+    ALTER TABLE seo_metadata ADD COLUMN folder text DEFAULT NULL;
+  END IF;
+END $$;
+
+-- Add folder column to page_templates
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'page_templates' AND column_name = 'folder'
+  ) THEN
+    ALTER TABLE page_templates ADD COLUMN folder text DEFAULT NULL;
+  END IF;
+END $$;
+
+-- Indexes for folder filtering
+CREATE INDEX IF NOT EXISTS idx_seo_metadata_folder ON seo_metadata(folder);
+CREATE INDEX IF NOT EXISTS idx_page_templates_folder ON page_templates(folder);
+
+
+-- ===================================================================
+-- MIGRATION: 20260226112000_create_seo_redirects_table.sql
+-- ===================================================================
+/*
+  # Create seo_redirects table
+
+  Objectif:
+  - Conserver l'historique des anciens slugs après renommage
+  - Permettre une résolution centralisée des redirections 301
+  - Prévenir les collisions via un index unique sur source_path
+*/
+
+CREATE TABLE IF NOT EXISTS public.seo_redirects (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  source_path text NOT NULL,
+  target_path text NOT NULL,
+  source_page_id uuid REFERENCES public.seo_metadata(id) ON DELETE SET NULL,
+  target_page_id uuid REFERENCES public.seo_metadata(id) ON DELETE SET NULL,
+  reason text,
+  is_active boolean NOT NULL DEFAULT true,
+  created_by uuid REFERENCES auth.users(id) ON DELETE SET NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT seo_redirects_source_target_different CHECK (source_path <> target_path)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_seo_redirects_source_path_unique
+  ON public.seo_redirects (source_path)
+  WHERE is_active = true;
+
+CREATE INDEX IF NOT EXISTS idx_seo_redirects_target_path
+  ON public.seo_redirects (target_path);
+
+CREATE INDEX IF NOT EXISTS idx_seo_redirects_source_page_id
+  ON public.seo_redirects (source_page_id);
+
+CREATE INDEX IF NOT EXISTS idx_seo_redirects_target_page_id
+  ON public.seo_redirects (target_page_id);
+
+DROP TRIGGER IF EXISTS on_seo_redirects_updated ON public.seo_redirects;
+CREATE TRIGGER on_seo_redirects_updated
+  BEFORE UPDATE ON public.seo_redirects
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+ALTER TABLE public.seo_redirects ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public can read active redirects" ON public.seo_redirects;
+CREATE POLICY "Public can read active redirects"
+  ON public.seo_redirects FOR SELECT
+  TO anon, authenticated
+  USING (is_active = true);
+
+DROP POLICY IF EXISTS "SEO managers can create redirects" ON public.seo_redirects;
+CREATE POLICY "SEO managers can create redirects"
+  ON public.seo_redirects FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    created_by = auth.uid()
+    OR EXISTS (
+      SELECT 1 FROM public.user_profiles
+      WHERE id = auth.uid() AND role IN ('admin', 'seo_manager')
+    )
+  );
+
+DROP POLICY IF EXISTS "SEO managers can update redirects" ON public.seo_redirects;
+CREATE POLICY "SEO managers can update redirects"
+  ON public.seo_redirects FOR UPDATE
+  TO authenticated
+  USING (
+    created_by = auth.uid()
+    OR EXISTS (
+      SELECT 1 FROM public.user_profiles
+      WHERE id = auth.uid() AND role IN ('admin', 'seo_manager')
+    )
+  )
+  WITH CHECK (
+    created_by = auth.uid()
+    OR EXISTS (
+      SELECT 1 FROM public.user_profiles
+      WHERE id = auth.uid() AND role IN ('admin', 'seo_manager')
+    )
+  );
+
+DROP POLICY IF EXISTS "SEO managers can delete redirects" ON public.seo_redirects;
+CREATE POLICY "SEO managers can delete redirects"
+  ON public.seo_redirects FOR DELETE
+  TO authenticated
+  USING (
+    created_by = auth.uid()
+    OR EXISTS (
+      SELECT 1 FROM public.user_profiles
+      WHERE id = auth.uid() AND role IN ('admin', 'seo_manager')
+    )
+  );
+
+
+-- ===================================================================
+-- MIGRATION: 20260302162921_create_global_header_footer_settings.sql
+-- ===================================================================
+/*
+  # Create global header/footer settings table
+
+  ## Purpose
+  Allows administrators to define a "global" header and/or footer section
+  (stored as a JSON section object, exactly like a PageBuilderSection) that
+  can be automatically injected into pages at creation-time (import or manual)
+  or applied retroactively to a set of existing pages.
+
+  ## New Tables
+  - `global_hf_settings`
+    - `id` (uuid, PK)
+    - `label` (text) – human-readable name for this configuration
+    - `header_section` (jsonb, nullable) – full PageBuilderSection JSON for the header
+    - `footer_section` (jsonb, nullable) – full PageBuilderSection JSON for the footer
+    - `apply_on_import` (boolean, default false) – auto-inject on new import
+    - `apply_on_create` (boolean, default false) – auto-inject on manual page creation
+    - `is_active` (boolean, default true) – whether this config is currently active
+    - `created_by` (uuid, FK to user_profiles)
+    - `created_at` / `updated_at`
+
+  ## Security
+  - RLS enabled
+  - Admins and SEO managers can read/write
+  - Regular authenticated users can only read active configs
+*/
+
+CREATE TABLE IF NOT EXISTS global_hf_settings (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  label text NOT NULL DEFAULT 'Configuration par défaut',
+  header_section jsonb DEFAULT NULL,
+  footer_section jsonb DEFAULT NULL,
+  apply_on_import boolean NOT NULL DEFAULT false,
+  apply_on_create boolean NOT NULL DEFAULT false,
+  is_active boolean NOT NULL DEFAULT true,
+  created_by uuid REFERENCES user_profiles(id) ON DELETE SET NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE global_hf_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admins and managers can select global hf settings"
+  ON global_hf_settings FOR SELECT
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE user_profiles.id = auth.uid()
+        AND user_profiles.role IN ('admin', 'seo_manager', 'content_creator')
+    )
+  );
+
+CREATE POLICY "Admins and managers can insert global hf settings"
+  ON global_hf_settings FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE user_profiles.id = auth.uid()
+        AND user_profiles.role IN ('admin', 'seo_manager')
+    )
+  );
+
+CREATE POLICY "Admins and managers can update global hf settings"
+  ON global_hf_settings FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE user_profiles.id = auth.uid()
+        AND user_profiles.role IN ('admin', 'seo_manager')
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE user_profiles.id = auth.uid()
+        AND user_profiles.role IN ('admin', 'seo_manager')
+    )
+  );
+
+CREATE POLICY "Admins and managers can delete global hf settings"
+  ON global_hf_settings FOR DELETE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE user_profiles.id = auth.uid()
+        AND user_profiles.role IN ('admin', 'seo_manager')
+    )
+  );
+
+
+-- ===================================================================
+-- MIGRATION: 20260302165048_add_content_creator_access_to_global_hf_settings.sql
+-- ===================================================================
+/*
+  # Extend global_hf_settings access to content_creator role
+
+  ## Changes
+  - Drop existing INSERT, UPDATE, DELETE policies that only allowed admin/seo_manager
+  - Recreate them to also include content_creator role
+  - SELECT policy already included content_creator, no change needed
+
+  ## Security
+  - content_creator can now fully manage global header/footer settings
+  - All roles still require authentication
+*/
+
+DROP POLICY IF EXISTS "Admins and managers can insert global hf settings" ON global_hf_settings;
+DROP POLICY IF EXISTS "Admins and managers can update global hf settings" ON global_hf_settings;
+DROP POLICY IF EXISTS "Admins and managers can delete global hf settings" ON global_hf_settings;
+
+CREATE POLICY "Admins managers and creators can insert global hf settings"
+  ON global_hf_settings FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE user_profiles.id = auth.uid()
+        AND user_profiles.role IN ('admin', 'seo_manager', 'content_creator')
+    )
+  );
+
+CREATE POLICY "Admins managers and creators can update global hf settings"
+  ON global_hf_settings FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE user_profiles.id = auth.uid()
+        AND user_profiles.role IN ('admin', 'seo_manager', 'content_creator')
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE user_profiles.id = auth.uid()
+        AND user_profiles.role IN ('admin', 'seo_manager', 'content_creator')
+    )
+  );
+
+CREATE POLICY "Admins managers and creators can delete global hf settings"
+  ON global_hf_settings FOR DELETE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE user_profiles.id = auth.uid()
+        AND user_profiles.role IN ('admin', 'seo_manager', 'content_creator')
+    )
+  );
+
+
+-- ===================================================================
+-- MIGRATION: 20260302171936_add_page_ids_to_global_hf_settings.sql
+-- ===================================================================
+/*
+  # Add page targeting columns to global_hf_settings
+
+  ## Changes
+  - Add `target_page_ids` (uuid[], nullable) to specify which existing pages should receive the global H/F override
+  - When target_page_ids is NULL or empty, the setting applies to no specific existing pages (only new ones if apply_on_import/create is true)
+  - When target_page_ids contains page IDs, those pages will have their header/footer overridden at render time
+
+  ## Important Notes
+  - This does NOT modify existing page data (sections_data). The override is applied at render time only.
+  - Pages retain their original header/footer in sections_data for when the override is deactivated.
+*/
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'global_hf_settings' AND column_name = 'target_page_ids'
+  ) THEN
+    ALTER TABLE global_hf_settings ADD COLUMN target_page_ids uuid[] DEFAULT NULL;
+  END IF;
+END $$;
+
+
+-- ===================================================================
+-- MIGRATION: 20260305184750_add_anon_select_policy_global_hf_settings.sql
+-- ===================================================================
+/*
+  # Allow anonymous users to read active global HF settings
+
+  ## Problem
+  The existing SELECT policy on global_hf_settings is restricted to `authenticated`
+  users only. When a real mobile device (or any unauthenticated visitor) loads a
+  published page, the Supabase query in SEOPageViewer returns nothing because RLS
+  blocks the anon role. As a result, globalHFSetting stays null and the global
+  Header & Footer are never injected.
+
+  ## Solution
+  Add a SELECT policy for the `anon` role that allows reading settings where
+  is_active = true. Write operations (INSERT/UPDATE/DELETE) remain restricted
+  to authenticated users with the appropriate roles.
+
+  ## Security Notes
+  - Read-only: anon users can only SELECT, never INSERT/UPDATE/DELETE
+  - Filtered: only active configurations are visible (WHERE is_active = true)
+  - The data exposed is purely visual configuration (widget JSON), not personal data
+*/
+
+CREATE POLICY "Anon can read active global hf settings"
+  ON global_hf_settings FOR SELECT
+  TO anon
+  USING (is_active = true);
+
+
+-- ===================================================================
+-- MIGRATION: 20260308100000_create_redaction_tables.sql
+-- ===================================================================
+/*
+  # Menu Rédaction — Socle données et sécurité
+
+  Plan technique 01 : création des tables coeur du module Rédaction.
+
+  Structure du script (ordre résolvant les dépendances inter-tables) :
+    0. Extension pg_trgm
+    1. Création des 4 tables + index + triggers
+    2. Activation RLS + politiques de sécurité (après que toutes les tables existent)
+    3. Fonctions helpers
+*/
+
+-- ============================================================
+-- 0. EXTENSION pg_trgm (requise pour l'index gin_trgm_ops)
+-- ============================================================
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+
+-- ============================================================
+-- 1a. TABLE : seo_document_folders
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS seo_document_folders (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  parent_id uuid NULL REFERENCES seo_document_folders(id) ON DELETE CASCADE,
+  path text NOT NULL DEFAULT '',
+  depth integer NOT NULL DEFAULT 0,
+  sort_order integer NOT NULL DEFAULT 0,
+  created_by uuid NULL REFERENCES user_profiles(id) ON DELETE SET NULL,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+
+  CONSTRAINT uq_folder_name_per_parent UNIQUE NULLS NOT DISTINCT (parent_id, name)
+);
+
+CREATE INDEX IF NOT EXISTS idx_seo_document_folders_parent_id ON seo_document_folders(parent_id);
+CREATE INDEX IF NOT EXISTS idx_seo_document_folders_path ON seo_document_folders(path);
+CREATE INDEX IF NOT EXISTS idx_seo_document_folders_depth ON seo_document_folders(depth);
+
+DROP TRIGGER IF EXISTS on_seo_document_folders_updated ON seo_document_folders;
+CREATE TRIGGER on_seo_document_folders_updated
+  BEFORE UPDATE ON seo_document_folders
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+
+-- ============================================================
+-- 1b. TABLE : seo_documents
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS seo_documents (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  editor_mode text NOT NULL DEFAULT 'plain' CHECK (editor_mode IN ('plain', 'rich', 'structured')),
+  plain_content text NULL,
+  rich_content jsonb NULL,
+  structured_content jsonb NULL,
+  status text NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'ready_for_ai', 'json_generated', 'published', 'archived')),
+  folder_id uuid NULL REFERENCES seo_document_folders(id) ON DELETE SET NULL,
+  author_user_id uuid NOT NULL REFERENCES user_profiles(id) ON DELETE RESTRICT,
+  owner_user_id uuid NOT NULL REFERENCES user_profiles(id) ON DELETE RESTRICT,
+  linked_template_id uuid NULL REFERENCES page_templates(id) ON DELETE SET NULL,
+  linked_template_snapshot jsonb NULL,
+  last_generated_json jsonb NULL,
+  last_generated_at timestamptz NULL,
+  last_generated_by uuid NULL REFERENCES user_profiles(id) ON DELETE SET NULL,
+  published_page_id uuid NULL,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  archived_at timestamptz NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_seo_documents_folder_id ON seo_documents(folder_id);
+CREATE INDEX IF NOT EXISTS idx_seo_documents_author_user_id ON seo_documents(author_user_id);
+CREATE INDEX IF NOT EXISTS idx_seo_documents_owner_user_id ON seo_documents(owner_user_id);
+CREATE INDEX IF NOT EXISTS idx_seo_documents_status ON seo_documents(status);
+CREATE INDEX IF NOT EXISTS idx_seo_documents_name ON seo_documents USING gin (name gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_seo_documents_created_at ON seo_documents(created_at DESC);
+
+DROP TRIGGER IF EXISTS on_seo_documents_updated ON seo_documents;
+CREATE TRIGGER on_seo_documents_updated
+  BEFORE UPDATE ON seo_documents
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+
+-- ============================================================
+-- 1c. TABLE : seo_document_permissions
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS seo_document_permissions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  document_id uuid NOT NULL REFERENCES seo_documents(id) ON DELETE CASCADE,
+  user_id uuid NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
+  permission_level text NOT NULL CHECK (permission_level IN ('reader', 'editor', 'owner')),
+  granted_by uuid NULL REFERENCES user_profiles(id) ON DELETE SET NULL,
+  created_at timestamptz DEFAULT now(),
+
+  CONSTRAINT uq_document_permission_per_user UNIQUE (document_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_seo_doc_permissions_document_id ON seo_document_permissions(document_id);
+CREATE INDEX IF NOT EXISTS idx_seo_doc_permissions_user_id ON seo_document_permissions(user_id);
+
+
+-- ============================================================
+-- 1d. TABLE : seo_document_activity_logs
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS seo_document_activity_logs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  document_id uuid NOT NULL REFERENCES seo_documents(id) ON DELETE CASCADE,
+  actor_user_id uuid NULL REFERENCES user_profiles(id) ON DELETE SET NULL,
+  event_type text NOT NULL,
+  event_summary text NOT NULL,
+  event_payload jsonb NULL,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_seo_doc_logs_document_created
+  ON seo_document_activity_logs(document_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_seo_doc_logs_event_type
+  ON seo_document_activity_logs(event_type);
+CREATE INDEX IF NOT EXISTS idx_seo_doc_logs_actor
+  ON seo_document_activity_logs(actor_user_id);
+
+
+-- ============================================================
+-- 2. RLS + POLITIQUES (toutes les tables existent à ce stade)
+-- ============================================================
+
+-- --- seo_document_folders ---
+ALTER TABLE seo_document_folders ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read all folders"
+  ON seo_document_folders FOR SELECT
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Authenticated users can create folders"
+  ON seo_document_folders FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+CREATE POLICY "Authenticated users can update folders"
+  ON seo_document_folders FOR UPDATE
+  TO authenticated
+  USING (true)
+  WITH CHECK (true);
+
+CREATE POLICY "Admins and managers can delete folders"
+  ON seo_document_folders FOR DELETE
+  TO authenticated
+  USING (public.is_admin_or_manager());
+
+-- --- seo_documents ---
+ALTER TABLE seo_documents ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read all documents"
+  ON seo_documents FOR SELECT
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Users can create their own documents"
+  ON seo_documents FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.uid() = author_user_id AND auth.uid() = owner_user_id);
+
+CREATE POLICY "Owners and editors can update documents"
+  ON seo_documents FOR UPDATE
+  TO authenticated
+  USING (
+    auth.uid() = owner_user_id
+    OR public.is_admin_or_manager()
+    OR EXISTS (
+      SELECT 1 FROM seo_document_permissions
+      WHERE document_id = seo_documents.id
+        AND user_id = auth.uid()
+        AND permission_level IN ('editor', 'owner')
+    )
+  )
+  WITH CHECK (
+    auth.uid() = owner_user_id
+    OR public.is_admin_or_manager()
+    OR EXISTS (
+      SELECT 1 FROM seo_document_permissions
+      WHERE document_id = seo_documents.id
+        AND user_id = auth.uid()
+        AND permission_level IN ('editor', 'owner')
+    )
+  );
+
+CREATE POLICY "Owners and admins can delete documents"
+  ON seo_documents FOR DELETE
+  TO authenticated
+  USING (
+    auth.uid() = owner_user_id
+    OR public.is_admin_or_manager()
+  );
+
+-- --- seo_document_permissions ---
+ALTER TABLE seo_document_permissions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read document permissions"
+  ON seo_document_permissions FOR SELECT
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Document owners can grant permissions"
+  ON seo_document_permissions FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM seo_documents
+      WHERE id = document_id AND owner_user_id = auth.uid()
+    )
+    OR public.is_admin_or_manager()
+  );
+
+CREATE POLICY "Document owners can update permissions"
+  ON seo_document_permissions FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM seo_documents
+      WHERE id = document_id AND owner_user_id = auth.uid()
+    )
+    OR public.is_admin_or_manager()
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM seo_documents
+      WHERE id = document_id AND owner_user_id = auth.uid()
+    )
+    OR public.is_admin_or_manager()
+  );
+
+CREATE POLICY "Document owners can revoke permissions"
+  ON seo_document_permissions FOR DELETE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM seo_documents
+      WHERE id = document_id AND owner_user_id = auth.uid()
+    )
+    OR public.is_admin_or_manager()
+  );
+
+-- --- seo_document_activity_logs ---
+ALTER TABLE seo_document_activity_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read activity logs"
+  ON seo_document_activity_logs FOR SELECT
+  TO authenticated
+  USING (true);
+
+CREATE POLICY "Authenticated users can insert activity logs"
+  ON seo_document_activity_logs FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.uid() = actor_user_id);
+
+-- UPDATE : interdit (pas de policy = aucune mise à jour possible)
+
+CREATE POLICY "Only admins can delete activity logs"
+  ON seo_document_activity_logs FOR DELETE
+  TO authenticated
+  USING (public.is_admin_or_manager());
+
+
+-- ============================================================
+-- 3a. FONCTION HELPER : log_document_activity
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION public.log_document_activity(
+  p_document_id uuid,
+  p_actor_user_id uuid,
+  p_event_type text,
+  p_event_summary text,
+  p_event_payload jsonb DEFAULT NULL
+)
+RETURNS uuid
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  v_log_id uuid;
+BEGIN
+  INSERT INTO public.seo_document_activity_logs (
+    document_id, actor_user_id, event_type, event_summary, event_payload
+  ) VALUES (
+    p_document_id, p_actor_user_id, p_event_type, p_event_summary, p_event_payload
+  )
+  RETURNING id INTO v_log_id;
+
+  RETURN v_log_id;
+END;
+$$;
+
+
+-- ============================================================
+-- 3b. FONCTION HELPER : recalcul du chemin de dossier
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION public.recalculate_folder_path()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  v_parent_path text;
+  v_parent_depth integer;
+BEGIN
+  IF NEW.parent_id IS NULL THEN
+    NEW.path := NEW.name;
+    NEW.depth := 0;
+  ELSE
+    IF NEW.parent_id = NEW.id THEN
+      RAISE EXCEPTION 'Un dossier ne peut pas être son propre parent';
+    END IF;
+
+    SELECT path, depth INTO v_parent_path, v_parent_depth
+    FROM public.seo_document_folders
+    WHERE id = NEW.parent_id;
+
+    IF v_parent_path IS NULL THEN
+      RAISE EXCEPTION 'Dossier parent introuvable';
+    END IF;
+
+    NEW.path := v_parent_path || '/' || NEW.name;
+    NEW.depth := v_parent_depth + 1;
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_seo_document_folder_path ON seo_document_folders;
+CREATE TRIGGER on_seo_document_folder_path
+  BEFORE INSERT OR UPDATE ON seo_document_folders
+  FOR EACH ROW EXECUTE FUNCTION public.recalculate_folder_path();
+
+
+
+
+
+-- ===================================================================
+-- MIGRATION: 20260308120000_redaction_edition_collaboration.sql
+-- ===================================================================
+/*
+  # Menu Rédaction — Plan 02 : Édition, collaboration et actions métier
+
+  Ajouts sur seo_documents :
+    - last_edited_by   : dernier utilisateur ayant modifié
+    - edit_lock_user_id : verrou léger informatif
+    - edit_lock_at      : horodatage du verrou
+    - trashed_at        : corbeille logique
+    - trashed_by        : utilisateur ayant mis en corbeille
+
+  Ajout sur seo_document_permissions :
+    - updated_at : horodatage de dernière modification de permission
+*/
+
+-- ============================================================
+-- 1. Nouvelles colonnes sur seo_documents
+-- ============================================================
+
+ALTER TABLE seo_documents
+  ADD COLUMN IF NOT EXISTS last_edited_by uuid NULL REFERENCES user_profiles(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS edit_lock_user_id uuid NULL REFERENCES user_profiles(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS edit_lock_at timestamptz NULL,
+  ADD COLUMN IF NOT EXISTS trashed_at timestamptz NULL,
+  ADD COLUMN IF NOT EXISTS trashed_by uuid NULL REFERENCES user_profiles(id) ON DELETE SET NULL;
+
+-- Index pour filtrer rapidement les documents non mis en corbeille
+CREATE INDEX IF NOT EXISTS idx_seo_documents_trashed_at ON seo_documents(trashed_at);
+CREATE INDEX IF NOT EXISTS idx_seo_documents_last_edited_by ON seo_documents(last_edited_by);
+
+
+-- ============================================================
+-- 2. Nouvelle colonne sur seo_document_permissions
+-- ============================================================
+
+ALTER TABLE seo_document_permissions
+  ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
+
+-- Trigger updated_at sur permissions
+DROP TRIGGER IF EXISTS on_seo_document_permissions_updated ON seo_document_permissions;
+CREATE TRIGGER on_seo_document_permissions_updated
+  BEFORE UPDATE ON seo_document_permissions
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+
+-- ===================================================================
+-- MIGRATION: 20260308140000_redaction_ia_publication.sql
+-- ===================================================================
+/*
+  # Menu Rédaction — Plan 03 : IA, publication et intégration
+
+  Nouvelles tables :
+    1. seo_ai_provider_configs   — configuration fournisseur IA (global ou utilisateur)
+    2. seo_ai_system_prompts     — prompt système global
+    3. seo_document_ai_conversations — une conversation IA par document
+    4. seo_document_ai_messages     — historique des messages
+    5. seo_document_publication_runs — traçabilité des publications
+
+  Ce fichier est idempotent (IF NOT EXISTS / IF EXISTS partout).
+*/
+
+-- ============================================================
+-- 1a. Table seo_ai_provider_configs
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS seo_ai_provider_configs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  scope text NOT NULL CHECK (scope IN ('global', 'user')),
+  user_id uuid NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
+  provider_key text NOT NULL,          -- openai, anthropic, mistral, etc.
+  provider_label text NOT NULL,        -- Label d'affichage
+  api_base_url text NULL,              -- URL de base optionnelle (custom endpoints)
+  encrypted_api_key text NOT NULL,     -- Clé chiffrée stockée côté serveur
+  default_model text NULL,             -- Modèle par défaut (gpt-4o, claude-sonnet-4-20250514, etc.)
+  is_active boolean NOT NULL DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- Un utilisateur ne peut avoir qu'une config par fournisseur
+CREATE UNIQUE INDEX IF NOT EXISTS uq_ai_provider_user_key
+  ON seo_ai_provider_configs(user_id, provider_key)
+  WHERE scope = 'user';
+
+-- Un seul global par fournisseur
+CREATE UNIQUE INDEX IF NOT EXISTS uq_ai_provider_global_key
+  ON seo_ai_provider_configs(provider_key)
+  WHERE scope = 'global';
+
+ALTER TABLE seo_ai_provider_configs ENABLE ROW LEVEL SECURITY;
+
+-- RLS : les configs globales sont visibles par admin/seo_manager, les perso par leur propriétaire
+DROP POLICY IF EXISTS "AI configs: admins see global" ON seo_ai_provider_configs;
+CREATE POLICY "AI configs: admins see global" ON seo_ai_provider_configs
+  FOR SELECT USING (
+    scope = 'global' AND public.is_admin_or_manager()
+  );
+
+DROP POLICY IF EXISTS "AI configs: users see own" ON seo_ai_provider_configs;
+CREATE POLICY "AI configs: users see own" ON seo_ai_provider_configs
+  FOR SELECT USING (
+    scope = 'user' AND user_id = auth.uid()
+  );
+
+DROP POLICY IF EXISTS "AI configs: admins manage global" ON seo_ai_provider_configs;
+CREATE POLICY "AI configs: admins manage global" ON seo_ai_provider_configs
+  FOR ALL USING (
+    scope = 'global' AND public.is_admin_or_manager()
+  );
+
+DROP POLICY IF EXISTS "AI configs: users manage own" ON seo_ai_provider_configs;
+CREATE POLICY "AI configs: users manage own" ON seo_ai_provider_configs
+  FOR ALL USING (
+    scope = 'user' AND user_id = auth.uid()
+  );
+
+-- Trigger updated_at
+DROP TRIGGER IF EXISTS on_seo_ai_provider_configs_updated ON seo_ai_provider_configs;
+CREATE TRIGGER on_seo_ai_provider_configs_updated
+  BEFORE UPDATE ON seo_ai_provider_configs
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+
+-- ============================================================
+-- 1b. Table seo_ai_system_prompts
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS seo_ai_system_prompts (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  prompt_text text NOT NULL,
+  is_default boolean NOT NULL DEFAULT false,
+  created_by uuid NULL REFERENCES user_profiles(id) ON DELETE SET NULL,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE seo_ai_system_prompts ENABLE ROW LEVEL SECURITY;
+
+-- Tout utilisateur authentifié peut lire les prompts
+DROP POLICY IF EXISTS "System prompts: auth read" ON seo_ai_system_prompts;
+CREATE POLICY "System prompts: auth read" ON seo_ai_system_prompts
+  FOR SELECT USING (auth.role() = 'authenticated');
+
+-- Seuls admin/seo_manager peuvent modifier
+DROP POLICY IF EXISTS "System prompts: admins manage" ON seo_ai_system_prompts;
+CREATE POLICY "System prompts: admins manage" ON seo_ai_system_prompts
+  FOR ALL USING (public.is_admin_or_manager());
+
+DROP TRIGGER IF EXISTS on_seo_ai_system_prompts_updated ON seo_ai_system_prompts;
+CREATE TRIGGER on_seo_ai_system_prompts_updated
+  BEFORE UPDATE ON seo_ai_system_prompts
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+-- Insérer un prompt système par défaut
+INSERT INTO seo_ai_system_prompts (name, prompt_text, is_default)
+SELECT 'Prompt SEO par défaut',
+  'Tu es un expert SEO. Tu reçois un texte rédactionnel et un modèle de page CMS.' ||
+  ' Ta mission est de transformer le texte en un JSON compatible avec le système d''import du CMS.' ||
+  ' Utilise le format content_overrides pour ne modifier que le contenu éditorial.' ||
+  ' Ne modifie jamais les blocs design, les URLs d''images, les icônes ou la structure technique.' ||
+  ' Respecte strictement le contrat JSON du repo.',
+  true
+WHERE NOT EXISTS (SELECT 1 FROM seo_ai_system_prompts WHERE is_default = true);
+
+
+-- ============================================================
+-- 1c. Table seo_document_ai_conversations
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS seo_document_ai_conversations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  document_id uuid UNIQUE NOT NULL REFERENCES seo_documents(id) ON DELETE CASCADE,
+  provider_config_id uuid NULL REFERENCES seo_ai_provider_configs(id) ON DELETE SET NULL,
+  model_name text NULL,
+  system_prompt_id uuid NULL REFERENCES seo_ai_system_prompts(id) ON DELETE SET NULL,
+  system_prompt_snapshot text NOT NULL DEFAULT '',
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE seo_document_ai_conversations ENABLE ROW LEVEL SECURITY;
+
+-- Tout utilisateur authentifié peut lire et créer
+DROP POLICY IF EXISTS "AI conversations: auth read" ON seo_document_ai_conversations;
+CREATE POLICY "AI conversations: auth read" ON seo_document_ai_conversations
+  FOR SELECT USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "AI conversations: auth insert" ON seo_document_ai_conversations;
+CREATE POLICY "AI conversations: auth insert" ON seo_document_ai_conversations
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "AI conversations: auth update" ON seo_document_ai_conversations;
+CREATE POLICY "AI conversations: auth update" ON seo_document_ai_conversations
+  FOR UPDATE USING (auth.role() = 'authenticated');
+
+DROP TRIGGER IF EXISTS on_seo_document_ai_conversations_updated ON seo_document_ai_conversations;
+CREATE TRIGGER on_seo_document_ai_conversations_updated
+  BEFORE UPDATE ON seo_document_ai_conversations
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+
+-- ============================================================
+-- 1d. Table seo_document_ai_messages
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS seo_document_ai_messages (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  conversation_id uuid NOT NULL REFERENCES seo_document_ai_conversations(id) ON DELETE CASCADE,
+  role text NOT NULL CHECK (role IN ('system', 'user', 'assistant')),
+  content text NOT NULL,
+  created_by uuid NULL REFERENCES user_profiles(id) ON DELETE SET NULL,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_messages_conversation
+  ON seo_document_ai_messages(conversation_id, created_at ASC);
+
+ALTER TABLE seo_document_ai_messages ENABLE ROW LEVEL SECURITY;
+
+-- Lecture ouverte
+DROP POLICY IF EXISTS "AI messages: auth read" ON seo_document_ai_messages;
+CREATE POLICY "AI messages: auth read" ON seo_document_ai_messages
+  FOR SELECT USING (auth.role() = 'authenticated');
+
+-- Insertion via frontend
+DROP POLICY IF EXISTS "AI messages: auth insert" ON seo_document_ai_messages;
+CREATE POLICY "AI messages: auth insert" ON seo_document_ai_messages
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+-- Pas de modification ni suppression
+-- (les messages sont immuables)
+
+
+-- ============================================================
+-- 1e. Table seo_document_publication_runs
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS seo_document_publication_runs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  document_id uuid NOT NULL REFERENCES seo_documents(id) ON DELETE CASCADE,
+  actor_user_id uuid NULL REFERENCES user_profiles(id) ON DELETE SET NULL,
+  target_mode text NOT NULL CHECK (target_mode IN ('create_page', 'update_page')),
+  target_page_id uuid NULL,
+  template_id uuid NULL REFERENCES page_templates(id) ON DELETE SET NULL,
+  generated_json_snapshot jsonb NOT NULL DEFAULT '{}',
+  status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'succeeded', 'failed')),
+  error_message text NULL,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_publication_runs_document
+  ON seo_document_publication_runs(document_id, created_at DESC);
+
+ALTER TABLE seo_document_publication_runs ENABLE ROW LEVEL SECURITY;
+
+-- Lecture ouverte
+DROP POLICY IF EXISTS "Publication runs: auth read" ON seo_document_publication_runs;
+CREATE POLICY "Publication runs: auth read" ON seo_document_publication_runs
+  FOR SELECT USING (auth.role() = 'authenticated');
+
+-- Insertion authentifiée
+DROP POLICY IF EXISTS "Publication runs: auth insert" ON seo_document_publication_runs;
+CREATE POLICY "Publication runs: auth insert" ON seo_document_publication_runs
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+-- Update uniquement par le système (pour mettre à jour status/error)
+DROP POLICY IF EXISTS "Publication runs: auth update" ON seo_document_publication_runs;
+CREATE POLICY "Publication runs: auth update" ON seo_document_publication_runs
+  FOR UPDATE USING (auth.role() = 'authenticated');
 
 
 COMMIT;

@@ -207,7 +207,7 @@ export default function RedactionConversation({
             placeholder={
               activeConfig
                 ? 'Écrivez votre message… (Entrée pour envoyer)'
-                : 'Configurez un fournisseur IA d'abord…'
+                : "Configurez un fournisseur IA d\u2019abord\u2026"
             }
             disabled={!activeConfig}
             rows={2}
