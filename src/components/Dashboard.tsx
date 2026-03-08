@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FileText, Layout, Image, Settings, TrendingUp, Clock, CheckCircle, Paintbrush, Palette, Sparkles, Layers } from 'lucide-react';
+import { FileText, Layout, Image, Settings, TrendingUp, Clock, CheckCircle, Paintbrush, Palette, Sparkles, Layers, PenLine } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 
@@ -139,6 +139,21 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
               </h3>
               <p className="text-gray-600">
                 Créer, modifier et publier vos pages SEO
+              </p>
+            </button>
+
+            <button
+              onClick={() => onNavigate('redaction')}
+              className="bg-gradient-to-br from-emerald-600 to-teal-700 p-8 rounded-3xl border-2 border-emerald-500 hover:border-emerald-400 transition-all text-left group shadow-lg"
+            >
+              <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <PenLine className="w-7 h-7 text-emerald-600" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">
+                Rédaction
+              </h3>
+              <p className="text-emerald-100">
+                Produire, organiser et transformer vos textes SEO
               </p>
             </button>
 

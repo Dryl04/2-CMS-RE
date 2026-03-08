@@ -19,11 +19,12 @@ import VisualPageBuilder from '@/components/VisualPageBuilder';
 import BuilderPreviewPage from '@/components/PageBuilder/BuilderPreviewPage';
 import GlobalHFManager from '@/components/GlobalHFManager';
 import HFBuilderModal from '@/components/HFBuilderModal';
+import RedactionManager from '@/components/redaction/RedactionManager';
 import { supabase, SEOMetadata } from '@/lib/supabase';
 import { normalizeInternalPath } from '@/lib/linkRegistry';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 
-type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'links' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder' | 'page-builder' | 'global-hf';
+type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'links' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder' | 'page-builder' | 'global-hf' | 'redaction';
 
 function AppContent() {
   const { user, loading } = useAuth();
@@ -299,6 +300,12 @@ function AppContent() {
                 setHfBuilderModal({ type, initialSection, onDone });
               }}
             />
+          </div>
+        )}
+
+        {currentView === 'redaction' && (
+          <div className="max-w-7xl mx-auto px-6 py-8 w-full">
+            <RedactionManager onNavigate={handleNavigate} />
           </div>
         )}
       </div>
