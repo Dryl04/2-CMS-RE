@@ -124,7 +124,8 @@ export async function updateDocument(
     'structured_content' | 'status' | 'folder_id' |
     'linked_template_id' | 'linked_template_snapshot' |
     'last_generated_json' | 'last_generated_at' | 'last_generated_by' |
-    'archived_at'
+    'last_edited_by' | 'edit_lock_user_id' | 'edit_lock_at' |
+    'archived_at' | 'trashed_at' | 'trashed_by'
   >>
 ): Promise<SEODocument> {
   const { data, error } = await supabase
@@ -153,6 +154,22 @@ export async function archiveDocument(documentId: string): Promise<SEODocument> 
   return updateDocument(documentId, {
     status: 'archived',
     archived_at: new Date().toISOString(),
+  });
+}
+
+/** Mettre un document en corbeille (suppression logique) */
+export async function trashDocument(documentId: string, userId: string): Promise<SEODocument> {
+  return updateDocument(documentId, {
+    trashed_at: new Date().toISOString(),
+    trashed_by: userId,
+  });
+}
+
+/** Restaurer un document depuis la corbeille */
+export async function restoreDocument(documentId: string): Promise<SEODocument> {
+  return updateDocument(documentId, {
+    trashed_at: null,
+    trashed_by: null,
   });
 }
 

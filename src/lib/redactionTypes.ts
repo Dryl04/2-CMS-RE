@@ -15,13 +15,16 @@ export type PermissionLevel = 'reader' | 'editor' | 'owner';
 export type ActivityEventType =
   | 'document_created'
   | 'document_updated'
+  | 'document_content_updated'
   | 'document_renamed'
   | 'document_moved'
   | 'document_duplicated'
   | 'document_archived'
+  | 'document_trashed'
   | 'document_restored'
   | 'document_deleted'
   | 'status_changed'
+  | 'editor_mode_changed'
   | 'permission_granted'
   | 'permission_revoked'
   | 'ai_conversation_started'
@@ -63,10 +66,15 @@ export interface SEODocument {
   last_generated_json: Record<string, unknown> | null;
   last_generated_at: string | null;
   last_generated_by: string | null;
+  last_edited_by: string | null;
+  edit_lock_user_id: string | null;
+  edit_lock_at: string | null;
   published_page_id: string | null;
   created_at: string;
   updated_at: string;
   archived_at: string | null;
+  trashed_at: string | null;
+  trashed_by: string | null;
 }
 
 // --- Document avec info auteur (pour l'affichage en liste) ---
@@ -107,13 +115,29 @@ export interface SEODocumentActivityLog {
 // --- Contenu structuré (mode structuré) ---
 export interface StructuredContent {
   seo_title?: string;
+  meta_description?: string;
   h1?: string;
   h2?: string;
   body?: string;
-  cta?: string;
-  meta_description?: string;
+  cta_label?: string;
+  cta_target?: string;
+  keywords?: string;
+  notes?: string;
   [key: string]: string | undefined;
 }
+
+// --- Champs du mode structuré (pour le rendu dynamique) ---
+export const STRUCTURED_FIELDS: { key: keyof StructuredContent; label: string; multiline?: boolean }[] = [
+  { key: 'seo_title', label: 'Titre SEO' },
+  { key: 'meta_description', label: 'Meta description', multiline: true },
+  { key: 'h1', label: 'Titre H1' },
+  { key: 'h2', label: 'Titre H2' },
+  { key: 'body', label: 'Corps de texte', multiline: true },
+  { key: 'cta_label', label: 'Libellé CTA' },
+  { key: 'cta_target', label: 'Cible CTA (URL)' },
+  { key: 'keywords', label: 'Mots-clés' },
+  { key: 'notes', label: 'Notes internes', multiline: true },
+];
 
 // --- Filtres de la liste des documents ---
 export interface DocumentFilters {

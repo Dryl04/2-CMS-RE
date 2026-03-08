@@ -18,7 +18,7 @@ import RedactionBulkActionsBar from './RedactionBulkActionsBar';
 import CreateDocumentModal from './CreateDocumentModal';
 import CreateFolderModal from './CreateFolderModal';
 import RenameFolderModal from './RenameFolderModal';
-import DocumentDetailPanel from './DocumentDetailPanel';
+import RedactionDocumentEditor from './RedactionDocumentEditor';
 
 interface RedactionManagerProps {
   onNavigate: (view: string) => void;
@@ -37,7 +37,7 @@ export default function RedactionManager({ onNavigate }: RedactionManagerProps) 
   // --- État navigation ---
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [selectedDocIds, setSelectedDocIds] = useState<Set<string>>(new Set());
-  const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
+  const [editingDocId, setEditingDocId] = useState<string | null>(null);
 
   // --- État filtres ---
   const [filters, setFilters] = useState<DocumentFilters>({
@@ -86,12 +86,11 @@ export default function RedactionManager({ onNavigate }: RedactionManagerProps) 
   const handleFolderSelect = (folderId: string | null) => {
     setCurrentFolderId(folderId);
     setSelectedDocIds(new Set());
-    setSelectedDocId(null);
   };
 
   // --- Handlers sélection document ---
   const handleDocSelect = (docId: string) => {
-    setSelectedDocId(docId);
+    setEditingDocId(docId);
   };
 
   const handleDocToggle = (docId: string) => {
@@ -152,10 +151,20 @@ export default function RedactionManager({ onNavigate }: RedactionManagerProps) 
 
   const breadcrumb = getBreadcrumb();
 
-  // --- Document sélectionné pour le panel de détail ---
-  const selectedDocument = selectedDocId
-    ? documents.find((d) => d.id === selectedDocId) ?? null
-    : null;
+  // --- Vue éditeur (plein écran) ---
+  if (editingDocId) {
+    return (
+      <RedactionDocumentEditor
+        documentId={editingDocId}
+        folders={folders}
+        onBack={() => {
+          setEditingDocId(null);
+          loadData();
+        }}
+        onRefresh={loadData}
+      />
+    );
+  }
 
   return (
     <div>
@@ -251,6 +260,7 @@ export default function RedactionManager({ onNavigate }: RedactionManagerProps) 
               totalCount={documents.length}
               selectedIds={Array.from(selectedDocIds)}
               folders={folders}
+              userId={user?.id ?? ''}
               onSelectAll={handleSelectAll}
               onClearSelection={handleClearSelection}
               onDone={handleMutationDone}
@@ -302,17 +312,6 @@ export default function RedactionManager({ onNavigate }: RedactionManagerProps) 
           )}
         </div>
 
-        {/* Panel de détail document */}
-        {selectedDocument && (
-          <DocumentDetailPanel
-            document={selectedDocument}
-            userId={user?.id ?? ''}
-            userRole={profile?.role ?? 'content_creator'}
-            onClose={() => setSelectedDocId(null)}
-            onRefresh={handleMutationDone}
-            folders={folders}
-          />
-        )}
       </div>
 
       {/* Modales */}
