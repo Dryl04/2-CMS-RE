@@ -27,6 +27,8 @@ import {
   addMessage,
   callAIProvider,
   fetchAIConfigs,
+  fetchDefaultSystemPrompt,
+  updateConversation,
 } from '@/lib/redactionAiClient';
 import { supabase } from '@/lib/supabase';
 import type { PageTemplate } from '@/lib/supabase';
@@ -93,6 +95,9 @@ export default function RedactionDocumentEditor({
   const [lastJsonText, setLastJsonText] = useState<string | null>(null);
   const [template, setTemplate] = useState<PageTemplate | null>(null);
   const [templateExport, setTemplateExport] = useState<Record<string, unknown> | null>(null);
+  const [availableTemplates, setAvailableTemplates] = useState<PageTemplate[]>([]);
+  const [templatesLoading, setTemplatesLoading] = useState(true);
+  const [assigningTemplate, setAssigningTemplate] = useState(false);
 
   // --- Chargement ---
   const loadDocument = useCallback(async () => {
@@ -149,6 +154,29 @@ export default function RedactionDocumentEditor({
     loadDocument();
   }, [loadDocument]);
 
+  useEffect(() => {
+    let mounted = true;
+
+    supabase
+      .from('page_templates')
+      .select('*')
+      .order('name')
+      .then(({ data, error: templatesError }) => {
+        if (templatesError) throw templatesError;
+        if (mounted) setAvailableTemplates((data ?? []) as PageTemplate[]);
+      })
+      .catch((templatesError) => {
+        console.error('[DocumentEditor] Erreur chargement templates:', templatesError);
+      })
+      .finally(() => {
+        if (mounted) setTemplatesLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   // Heartbeat verrou
   useEffect(() => {
     if (!canEdit || !userId) return;
@@ -183,9 +211,58 @@ export default function RedactionDocumentEditor({
       .catch(console.error);
   }, [doc?.linked_template_id]);
 
+  const handleTemplateAssignment = async (nextTemplateId: string | null) => {
+    if (!doc || !canEdit) return;
+
+    const selectedTemplate = availableTemplates.find((item) => item.id === nextTemplateId) ?? null;
+    const nextSnapshot = selectedTemplate?.sections_data
+      ? { sections_data: selectedTemplate.sections_data }
+      : null;
+
+    setAssigningTemplate(true);
+    try {
+      await updateDocument(doc.id, {
+        linked_template_id: nextTemplateId,
+        linked_template_snapshot: nextSnapshot,
+      });
+
+      setDoc((prev) => (prev
+        ? {
+            ...prev,
+            linked_template_id: nextTemplateId,
+            linked_template_snapshot: nextSnapshot,
+          }
+        : prev));
+      setTemplate(selectedTemplate);
+      setTemplateExport(nextSnapshot);
+
+      await logDocumentActivity(
+        doc.id,
+        userId,
+        'document_updated',
+        nextTemplateId
+          ? `Modèle cible assigné : ${selectedTemplate?.name ?? 'Template'}`
+          : 'Modèle cible retiré',
+        { linked_template_id: nextTemplateId }
+      );
+
+      onRefresh();
+    } catch (assignmentError) {
+      console.error('[DocumentEditor] Erreur assignation template:', assignmentError);
+      alert('Impossible d\'assigner ce modèle de page.');
+    } finally {
+      setAssigningTemplate(false);
+    }
+  };
+
   // --- Génération JSON via IA ---
   const handleGenerateJson = async () => {
     if (!doc) return;
+    if (!doc.linked_template_id || !template) {
+      alert('Choisissez d\'abord un modèle de page cible pour générer un JSON directement exploitable.');
+      return;
+    }
+
     setGeneratingJson(true);
     try {
       const configs = await fetchAIConfigs();
@@ -194,7 +271,23 @@ export default function RedactionDocumentEditor({
         return;
       }
       const activeConfig = configs[0];
-      const conversation = await getOrCreateConversation(doc.id, activeConfig.id, activeConfig.default_model);
+      let conversation = await getOrCreateConversation(doc.id, activeConfig.id, activeConfig.default_model);
+      const defaultPrompt = await fetchDefaultSystemPrompt();
+
+      if (
+        defaultPrompt &&
+        (conversation.system_prompt_id !== defaultPrompt.id ||
+          conversation.system_prompt_snapshot !== defaultPrompt.prompt_text ||
+          conversation.provider_config_id !== activeConfig.id ||
+          conversation.model_name !== (activeConfig.default_model ?? 'gpt-4o'))
+      ) {
+        conversation = await updateConversation(conversation.id, {
+          provider_config_id: activeConfig.id,
+          model_name: activeConfig.default_model ?? 'gpt-4o',
+          system_prompt_id: defaultPrompt.id,
+          system_prompt_snapshot: defaultPrompt.prompt_text,
+        });
+      }
 
       // Construire le prompt de génération
       const prompt = buildGenerationPrompt(doc, template, templateExport);
@@ -237,6 +330,7 @@ export default function RedactionDocumentEditor({
 
       // Ouvrir le panneau publication
       setShowPublish(true);
+      setShowAI(false);
     } catch (err) {
       console.error('[Editor] Erreur génération JSON:', err);
       alert(`Erreur de génération : ${err instanceof Error ? err.message : String(err)}`);
@@ -459,6 +553,57 @@ export default function RedactionDocumentEditor({
         </div>
       </div>
 
+      <div className="bg-white border border-gray-200 rounded-2xl p-4">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="flex-1 min-w-[260px]">
+            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+              Modèle de page cible
+            </label>
+            <select
+              value={doc.linked_template_id ?? ''}
+              onChange={(e) => handleTemplateAssignment(e.target.value || null)}
+              disabled={!canEdit || templatesLoading || assigningTemplate}
+              className="w-full text-sm px-3 py-2.5 border border-gray-200 rounded-xl bg-white focus:border-emerald-500 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+            >
+              <option value="">— Sélectionner un modèle de page —</option>
+              {availableTemplates.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1.5 text-xs text-gray-500">
+              Le rédacteur choisit ici le modèle cible, puis l'IA génère directement un JSON prêt à copier ou à publier.
+            </p>
+          </div>
+
+          <div className="min-w-[240px] flex-1">
+            <p className="text-xs font-medium text-gray-600 mb-1.5">Prompt IA appliqué</p>
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5">
+              <p className="text-xs text-emerald-800">
+                Le prompt système global par défaut est appliqué automatiquement à chaque génération.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 ml-auto">
+            <button
+              onClick={() => setShowAI((value) => !value)}
+              className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+            >
+              {showAI ? 'Masquer l\'assistant' : 'Ouvrir l\'assistant'}
+            </button>
+            <button
+              onClick={handleGenerateJson}
+              disabled={generatingJson || !doc.linked_template_id}
+              className="px-4 py-2.5 text-sm font-medium text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              {generatingJson ? 'Génération…' : 'Générer le JSON'}
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Zone principale : éditeur + panneau IA latéral */}
       <div className="flex gap-4">
         {/* Colonne éditeur */}
@@ -496,6 +641,8 @@ export default function RedactionDocumentEditor({
                 document={doc}
                 userId={userId}
                 lastJsonText={lastJsonText}
+                templateId={doc.linked_template_id}
+                onTemplateChange={handleTemplateAssignment}
                 onPublished={() => {
                   loadDocument();
                   onRefresh();

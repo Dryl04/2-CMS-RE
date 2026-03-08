@@ -58,7 +58,7 @@ export default function RedactionDocumentList({
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-visible">
       {/* En-tête de liste */}
       <div className="grid grid-cols-[auto_1fr_120px_140px_120px_40px] gap-4 px-5 py-3 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
         <div className="w-5" />
@@ -162,13 +162,13 @@ function DocumentRow({
 
   return (
     <div
-      className={`grid grid-cols-[auto_1fr_120px_140px_120px_40px] gap-4 px-5 py-3.5 items-center transition-colors cursor-pointer ${
+      className={`relative grid grid-cols-[auto_1fr_120px_140px_120px_40px] gap-4 px-5 py-3.5 items-center transition-colors cursor-pointer ${
         isActive
           ? 'bg-emerald-50 border-l-2 border-l-emerald-500'
           : isSelected
           ? 'bg-blue-50'
           : 'hover:bg-gray-50'
-      }`}
+      } ${menuOpen ? 'z-20' : 'z-0'}`}
     >
       {/* Checkbox */}
       <div className="w-5">

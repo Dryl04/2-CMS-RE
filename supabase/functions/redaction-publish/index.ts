@@ -1,12 +1,17 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get("origin") ?? "*";
+
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-requested-with",
+    "Access-Control-Max-Age": "86400",
+    Vary: "Origin",
+  };
+}
 
 const PAGE_KEY_REGEX = /^[a-z0-9-]+$/;
 
@@ -21,6 +26,8 @@ const PAGE_KEY_REGEX = /^[a-z0-9-]+$/;
  *   { document_id, mode: "create_page"|"update_page", target_page_id? }
  */
 Deno.serve(async (req: Request) => {
+  const corsHeaders = getCorsHeaders(req);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
@@ -290,16 +297,18 @@ function validateJson(
 
 // --- Helpers ---
 
+const fallbackCorsHeaders = getCorsHeaders(new Request("http://localhost"));
+
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...fallbackCorsHeaders, "Content-Type": "application/json" },
   });
 }
 
 function jsonError(message: string, status: number) {
   return new Response(JSON.stringify({ error: message }), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...fallbackCorsHeaders, "Content-Type": "application/json" },
   });
 }

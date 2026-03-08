@@ -7,6 +7,7 @@ import {
   addMessage,
   callAIProvider,
   fetchAIConfigs,
+  fetchDefaultSystemPrompt,
   updateConversation,
 } from '@/lib/redactionAiClient';
 import RedactionMessageList from './RedactionMessageList';
@@ -39,28 +40,43 @@ export default function RedactionConversation({
     setLoading(true);
     setError(null);
     try {
-      const [conv, cfgs] = await Promise.all([
+      const [conv, cfgs, defaultPrompt] = await Promise.all([
         getOrCreateConversation(documentId),
         fetchAIConfigs(),
+        fetchDefaultSystemPrompt(),
       ]);
-      setConversation(conv);
+
+      let activeConversation = conv;
+
+      if (
+        defaultPrompt &&
+        (conv.system_prompt_id !== defaultPrompt.id ||
+          conv.system_prompt_snapshot !== defaultPrompt.prompt_text)
+      ) {
+        activeConversation = await updateConversation(conv.id, {
+          system_prompt_id: defaultPrompt.id,
+          system_prompt_snapshot: defaultPrompt.prompt_text,
+        });
+      }
+
+      setConversation(activeConversation);
       setConfigs(cfgs);
 
       // Pré-sélectionner config/model
-      if (conv.provider_config_id) {
-        setSelectedConfigId(conv.provider_config_id);
+      if (activeConversation.provider_config_id) {
+        setSelectedConfigId(activeConversation.provider_config_id);
       } else if (cfgs.length > 0) {
         setSelectedConfigId(cfgs[0].id);
       }
-      if (conv.model_name) {
-        setSelectedModel(conv.model_name);
+      if (activeConversation.model_name) {
+        setSelectedModel(activeConversation.model_name);
       } else {
-        const cfg = cfgs.find((c) => c.id === conv.provider_config_id) ?? cfgs[0];
+        const cfg = cfgs.find((c) => c.id === activeConversation.provider_config_id) ?? cfgs[0];
         if (cfg?.default_model) setSelectedModel(cfg.default_model);
       }
 
       // Charger messages
-      const msgs = await fetchMessages(conv.id);
+      const msgs = await fetchMessages(activeConversation.id);
       setMessages(msgs);
     } catch (err) {
       console.error('[Conversation] Init error:', err);

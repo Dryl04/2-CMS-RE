@@ -13,6 +13,8 @@ interface RedactionPublishPanelProps {
   document: SEODocumentWithAuthor;
   userId: string;
   lastJsonText: string | null;
+  templateId: string | null;
+  onTemplateChange: (templateId: string | null) => void;
   onPublished: () => void;
 }
 
@@ -20,11 +22,12 @@ export default function RedactionPublishPanel({
   document: doc,
   userId,
   lastJsonText,
+  templateId,
+  onTemplateChange,
   onPublished,
 }: RedactionPublishPanelProps) {
   // -- State
   const [mode, setMode] = useState<PublicationTargetMode>('create_page');
-  const [templateId, setTemplateId] = useState<string | null>(doc.linked_template_id);
   const [targetPageId, setTargetPageId] = useState<string | null>(doc.published_page_id);
   const [showConfirm, setShowConfirm] = useState(false);
   const [publishing, setPublishing] = useState(false);
@@ -72,7 +75,7 @@ export default function RedactionPublishPanel({
     return pages?.[0]?.page_key ?? '';
   }, [parsedJson]);
 
-  const canPublish = parsedJson != null && validation?.valid && (mode === 'create_page' || targetPageId);
+  const canPublish = parsedJson != null && validation?.valid && templateId != null && (mode === 'create_page' || targetPageId);
 
   // Publier
   async function handlePublish() {
@@ -142,7 +145,7 @@ export default function RedactionPublishPanel({
       ) : (
         <div className="border border-dashed border-gray-300 rounded-xl p-6 text-center">
           <p className="text-sm text-gray-500">
-            Aucun JSON généré. Utilisez l'assistant IA pour générer le contenu.
+            Aucun JSON généré. Choisissez un modèle, générez le JSON, puis copiez-le ou publiez-le immédiatement.
           </p>
         </div>
       )}
@@ -152,7 +155,7 @@ export default function RedactionPublishPanel({
         templateId={templateId}
         targetPageId={targetPageId}
         mode={mode}
-        onTemplateChange={setTemplateId}
+        onTemplateChange={onTemplateChange}
         onTargetPageChange={setTargetPageId}
         onModeChange={setMode}
       />

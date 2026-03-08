@@ -97,6 +97,7 @@ export async function createDocument(params: {
   folderId: string | null;
   userId: string;
   plainContent?: string;
+  linkedTemplateId?: string | null;
 }): Promise<SEODocument> {
   const { data, error } = await supabase
     .from('seo_documents')
@@ -107,6 +108,7 @@ export async function createDocument(params: {
       author_user_id: params.userId,
       owner_user_id: params.userId,
       plain_content: params.plainContent ?? '',
+      linked_template_id: params.linkedTemplateId ?? null,
       status: 'draft',
     })
     .select()

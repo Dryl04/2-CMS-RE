@@ -59,15 +59,22 @@ export default function RedactionAIPanel({
 
         {/* Bouton générer JSON */}
         <div className="px-3 py-2 bg-white border-b border-gray-100">
+          <p className="mb-2 text-[11px] text-gray-500 text-center">
+            Le prompt système global par défaut est appliqué automatiquement.
+          </p>
           <button
             onClick={onGenerateJson}
-            disabled={generatingJson}
+            disabled={generatingJson || !template}
             className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium
               bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl
               hover:from-emerald-700 hover:to-emerald-800 disabled:opacity-50 transition-all"
           >
             <Wand2 className="w-3.5 h-3.5" />
-            {generatingJson ? 'Génération en cours…' : 'Générer le JSON de la page'}
+            {generatingJson
+              ? 'Génération en cours…'
+              : template
+              ? 'Générer le JSON de la page'
+              : 'Choisissez un modèle cible'}
           </button>
           {template && (
             <p className="text-[10px] text-gray-400 mt-1 text-center">

@@ -75,9 +75,10 @@ export default function AIConfigModal({
     setFormSaving(true);
     try {
       const provider = AI_PROVIDERS.find((p) => p.key === formProvider);
+      const scope = isAdmin ? formScope : 'user';
       await upsertAIConfig({
-        scope: isAdmin ? formScope : 'user',
-        user_id: formScope === 'user' ? userId : null,
+        scope,
+        user_id: scope === 'user' ? userId : null,
         provider_key: formProvider,
         provider_label: provider?.label ?? formProvider,
         encrypted_api_key: formApiKey.trim(),
@@ -362,6 +363,11 @@ export default function AIConfigModal({
           ) : (
             /* Tab Prompts */
             <div className="space-y-4">
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+                <p className="text-xs text-emerald-800">
+                  Le prompt marqué comme défaut est utilisé comme prompt système global pour toutes les conversations et chaque génération de JSON.
+                </p>
+              </div>
               {prompts.length === 0 ? (
                 <p className="text-sm text-gray-500 text-center py-4">
                   Aucun prompt système configuré.

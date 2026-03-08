@@ -302,7 +302,7 @@ export default function RedactionManager({ onNavigate }: RedactionManagerProps) 
               documents={documents}
               loading={loading}
               selectedIds={selectedDocIds}
-              activeDocId={selectedDocId}
+              activeDocId={editingDocId}
               userId={user?.id ?? ''}
               onSelect={handleDocSelect}
               onToggle={handleDocToggle}

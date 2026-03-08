@@ -101,7 +101,7 @@ export default function PublishTargetSelector({
       {/* Template */}
       <div>
         <label className="text-xs font-medium text-gray-600 mb-1.5 block">
-          Template CMS
+          Modèle de page assigné
         </label>
         <select
           value={templateId ?? ''}
@@ -115,6 +115,9 @@ export default function PublishTargetSelector({
             </option>
           ))}
         </select>
+        <p className="mt-1 text-[11px] text-gray-500">
+          Ce modèle est utilisé comme cible par l'IA pour produire un JSON immédiatement exploitable.
+        </p>
       </div>
 
       {/* Page cible (mode update) */}

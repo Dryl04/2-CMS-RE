@@ -34,13 +34,85 @@ export async function upsertAIConfig(config: {
   encrypted_api_key: string;
   default_model?: string | null;
 }): Promise<AIProviderConfig> {
+  const scope = config.scope;
+  const userId = scope === 'user' ? (config.user_id ?? null) : null;
+
+  let existingQuery = supabase
+    .from('seo_ai_provider_configs')
+    .select('id')
+    .eq('scope', scope)
+    .eq('provider_key', config.provider_key);
+
+  if (scope === 'user') {
+    existingQuery = existingQuery.eq('user_id', userId);
+  } else {
+    existingQuery = existingQuery.is('user_id', null);
+  }
+
+  const { data: existing, error: existingError } = await existingQuery.maybeSingle();
+
+  if (existingError) throw existingError;
+
+  if (existing?.id) {
+    const { data, error } = await supabase
+      .from('seo_ai_provider_configs')
+      .update({
+        provider_label: config.provider_label,
+        api_base_url: config.api_base_url ?? null,
+        encrypted_api_key: config.encrypted_api_key,
+        default_model: config.default_model ?? null,
+        is_active: true,
+      })
+      .eq('id', existing.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   const { data, error } = await supabase
     .from('seo_ai_provider_configs')
-    .upsert(config, { onConflict: config.scope === 'global' ? 'provider_key' : 'user_id,provider_key' })
+    .insert({
+      scope,
+      user_id: userId,
+      provider_key: config.provider_key,
+      provider_label: config.provider_label,
+      api_base_url: config.api_base_url ?? null,
+      encrypted_api_key: config.encrypted_api_key,
+      default_model: config.default_model ?? null,
+    })
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    if (error.code === '23505') {
+      const { data: concurrentExisting, error: concurrentExistingError } = await existingQuery.maybeSingle();
+
+      if (concurrentExistingError) throw concurrentExistingError;
+
+      if (concurrentExisting?.id) {
+        const { data: updatedAfterConflict, error: updateAfterConflictError } = await supabase
+          .from('seo_ai_provider_configs')
+          .update({
+            provider_label: config.provider_label,
+            api_base_url: config.api_base_url ?? null,
+            encrypted_api_key: config.encrypted_api_key,
+            default_model: config.default_model ?? null,
+            is_active: true,
+          })
+          .eq('id', concurrentExisting.id)
+          .select()
+          .single();
+
+        if (updateAfterConflictError) throw updateAfterConflictError;
+        return updatedAfterConflict;
+      }
+    }
+
+    throw error;
+  }
+
   return data;
 }
 
@@ -103,12 +175,20 @@ export async function getOrCreateConversation(
   providerConfigId?: string | null,
   modelName?: string | null,
 ): Promise<AIConversation> {
+  const fetchExistingConversation = async () => {
+    const { data, error } = await supabase
+      .from('seo_document_ai_conversations')
+      .select('*')
+      .eq('document_id', documentId)
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  };
+
   // Essayer de récupérer une existante
-  const { data: existing } = await supabase
-    .from('seo_document_ai_conversations')
-    .select('*')
-    .eq('document_id', documentId)
-    .maybeSingle();
+  const existing = await fetchExistingConversation();
 
   if (existing) return existing;
 
@@ -127,7 +207,14 @@ export async function getOrCreateConversation(
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    if (error.code === '23505') {
+      const recoveredConversation = await fetchExistingConversation();
+      if (recoveredConversation) return recoveredConversation;
+    }
+    throw error;
+  }
+
   return data;
 }
 
@@ -206,30 +293,37 @@ interface AIChatParams {
 export async function callAIProvider(params: AIChatParams): Promise<string> {
   const { model, messages, conversationId, providerConfigId } = params;
 
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.access_token) throw new Error('Non authentifié');
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
 
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-  const response = await fetch(`${supabaseUrl}/functions/v1/redaction-ai-chat`, {
-    method: 'POST',
+  if (sessionError) {
+    throw new Error(sessionError.message);
+  }
+
+  if (!session?.access_token) {
+    throw new Error('Session utilisateur introuvable. Reconnectez-vous puis réessayez.');
+  }
+
+  const { data, error } = await supabase.functions.invoke('redaction-ai-chat', {
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${session.access_token}`,
-      'Apikey': import.meta.env.VITE_SUPABASE_ANON_KEY as string,
+      Authorization: `Bearer ${session.access_token}`,
     },
-    body: JSON.stringify({
+    body: {
       conversation_id: conversationId ?? null,
       messages,
       provider_config_id: providerConfigId ?? null,
       model: model ?? null,
-    }),
+    },
   });
 
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`Erreur IA (${response.status}): ${errText}`);
+  if (error) {
+    const details = typeof error.context === 'string'
+      ? error.context
+      : error.message;
+    throw new Error(details || 'Erreur lors de l\'appel de la fonction IA.');
   }
 
-  const data = await response.json();
-  return data.content ?? data.message ?? '';
+  return data?.content ?? data?.message ?? '';
 }

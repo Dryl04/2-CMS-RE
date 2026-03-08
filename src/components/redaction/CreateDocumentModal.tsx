@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { X, FileText, AlignLeft, Code, LayoutList } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { X, FileText, AlignLeft, LayoutList } from 'lucide-react';
 import type { EditorMode } from '@/lib/redactionTypes';
 import { createDocument } from '@/lib/redactionDocuments';
 import { logDocumentActivity } from '@/lib/redactionActivity';
+import { supabase } from '@/lib/supabase';
+import type { PageTemplate } from '@/lib/supabase';
 
 interface CreateDocumentModalProps {
   currentFolderId: string | null;
@@ -40,8 +42,34 @@ export default function CreateDocumentModal({
 }: CreateDocumentModalProps) {
   const [name, setName] = useState('');
   const [editorMode, setEditorMode] = useState<EditorMode>('plain');
+  const [linkedTemplateId, setLinkedTemplateId] = useState<string | null>(null);
+  const [templates, setTemplates] = useState<PageTemplate[]>([]);
+  const [templatesLoading, setTemplatesLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    supabase
+      .from('page_templates')
+      .select('id, name, description, daisy_theme_slug, seo_h1, seo_h2, sections_data, is_public, is_system, created_at, updated_at')
+      .order('name')
+      .then(({ data, error: loadError }) => {
+        if (loadError) throw loadError;
+        if (mounted) setTemplates((data ?? []) as PageTemplate[]);
+      })
+      .catch((loadError) => {
+        console.error('[Redaction] Erreur chargement templates:', loadError);
+      })
+      .finally(() => {
+        if (mounted) setTemplatesLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,13 +87,14 @@ export default function CreateDocumentModal({
         editorMode,
         folderId: currentFolderId,
         userId,
+        linkedTemplateId,
       });
       await logDocumentActivity(
         doc.id,
         userId,
         'document_created',
         `Document « ${trimmedName} » créé`,
-        { editor_mode: editorMode, folder_id: currentFolderId }
+        { editor_mode: editorMode, folder_id: currentFolderId, linked_template_id: linkedTemplateId }
       );
       onCreated();
       onClose();
@@ -145,6 +174,28 @@ export default function CreateDocumentModal({
                 );
               })}
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Modèle de page cible
+            </label>
+            <select
+              value={linkedTemplateId ?? ''}
+              onChange={(e) => setLinkedTemplateId(e.target.value || null)}
+              disabled={templatesLoading}
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all text-sm bg-white disabled:bg-gray-50"
+            >
+              <option value="">Choisir plus tard</option>
+              {templates.map((template) => (
+                <option key={template.id} value={template.id}>
+                  {template.name}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1.5 text-xs text-gray-500">
+              Assignez le modèle dès maintenant pour enchaîner plus vite : texte SEO, génération JSON, puis copie ou publication.
+            </p>
           </div>
 
           {/* Erreur */}
