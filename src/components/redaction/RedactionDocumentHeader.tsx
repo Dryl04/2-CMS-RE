@@ -10,6 +10,8 @@ import {
   Lock,
   Users,
   History,
+  Wand2,
+  Upload,
 } from 'lucide-react';
 import type {
   SEODocumentWithAuthor,
@@ -36,6 +38,10 @@ interface RedactionDocumentHeaderProps {
   onTrash: () => void;
   onShowPermissions: () => void;
   onShowActivity: () => void;
+  onToggleAI: () => void;
+  onTogglePublish: () => void;
+  showAI: boolean;
+  showPublish: boolean;
 }
 
 export default function RedactionDocumentHeader({
@@ -56,6 +62,10 @@ export default function RedactionDocumentHeader({
   onTrash,
   onShowPermissions,
   onShowActivity,
+  onToggleAI,
+  onTogglePublish,
+  showAI,
+  showPublish,
 }: RedactionDocumentHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -126,6 +136,30 @@ export default function RedactionDocumentHeader({
           >
             <History className="w-3.5 h-3.5" />
             Activité
+          </button>
+
+          <button
+            onClick={onToggleAI}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors
+              ${showAI
+                ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                : 'text-gray-600 bg-gray-100 hover:bg-gray-200'
+              }`}
+          >
+            <Wand2 className="w-3.5 h-3.5" />
+            IA
+          </button>
+
+          <button
+            onClick={onTogglePublish}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors
+              ${showPublish
+                ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                : 'text-gray-600 bg-gray-100 hover:bg-gray-200'
+              }`}
+          >
+            <Upload className="w-3.5 h-3.5" />
+            Publier
           </button>
 
           {canEdit && (

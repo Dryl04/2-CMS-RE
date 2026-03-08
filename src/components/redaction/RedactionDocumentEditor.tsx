@@ -20,6 +20,16 @@ import {
   plainToRich,
   richToPlain,
 } from '@/lib/redactionEditorTransforms';
+import { buildGenerationPrompt } from '@/lib/redactionPromptPolicy';
+import { extractJsonFromText } from '@/lib/redactionJsonValidation';
+import {
+  getOrCreateConversation,
+  addMessage,
+  callAIProvider,
+  fetchAIConfigs,
+} from '@/lib/redactionAiClient';
+import { supabase } from '@/lib/supabase';
+import type { PageTemplate } from '@/lib/supabase';
 
 import RedactionDocumentHeader from './RedactionDocumentHeader';
 import RedactionEditorModeSwitcher from './RedactionEditorModeSwitcher';
@@ -28,6 +38,8 @@ import RichTextEditor from './editors/RichTextEditor';
 import StructuredSeoEditor from './editors/StructuredSeoEditor';
 import ShareDocumentModal from './ShareDocumentModal';
 import RedactionActivityPanel from './RedactionActivityPanel';
+import RedactionAIPanel from './ai/RedactionAIPanel';
+import RedactionPublishPanel from './publish/RedactionPublishPanel';
 
 interface RedactionDocumentEditorProps {
   documentId: string;
@@ -73,6 +85,14 @@ export default function RedactionDocumentEditor({
   // --- Panneau partage ---
   const [showShare, setShowShare] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
+
+  // --- Panneau IA & Publication ---
+  const [showAI, setShowAI] = useState(false);
+  const [showPublish, setShowPublish] = useState(false);
+  const [generatingJson, setGeneratingJson] = useState(false);
+  const [lastJsonText, setLastJsonText] = useState<string | null>(null);
+  const [template, setTemplate] = useState<PageTemplate | null>(null);
+  const [templateExport, setTemplateExport] = useState<Record<string, unknown> | null>(null);
 
   // --- Chargement ---
   const loadDocument = useCallback(async () => {
@@ -141,6 +161,89 @@ export default function RedactionDocumentEditor({
       releaseEditLock(documentId, userId).catch(console.error);
     };
   }, [canEdit, documentId, userId]);
+
+  // Charger le template lié
+  useEffect(() => {
+    if (!doc?.linked_template_id) {
+      setTemplate(null);
+      setTemplateExport(null);
+      return;
+    }
+    supabase
+      .from('page_templates')
+      .select('*')
+      .eq('id', doc.linked_template_id)
+      .maybeSingle()
+      .then(({ data }) => {
+        setTemplate(data as PageTemplate | null);
+        if (data?.sections_data) {
+          setTemplateExport({ sections_data: data.sections_data });
+        }
+      })
+      .catch(console.error);
+  }, [doc?.linked_template_id]);
+
+  // --- Génération JSON via IA ---
+  const handleGenerateJson = async () => {
+    if (!doc) return;
+    setGeneratingJson(true);
+    try {
+      const configs = await fetchAIConfigs();
+      if (configs.length === 0) {
+        alert('Configurez un fournisseur IA d\'abord (icône ⚙️ dans le panneau IA).');
+        return;
+      }
+      const activeConfig = configs[0];
+      const conversation = await getOrCreateConversation(doc.id, activeConfig.id, activeConfig.default_model);
+
+      // Construire le prompt de génération
+      const prompt = buildGenerationPrompt(doc, template, templateExport);
+
+      // Enregistrer le message utilisateur
+      await addMessage(conversation.id, 'user', prompt, userId);
+
+      // Appeler l'IA via Edge Function
+      const response = await callAIProvider({
+        providerKey: activeConfig.provider_key,
+        model: activeConfig.default_model ?? 'gpt-4o',
+        systemPrompt: conversation.system_prompt_snapshot,
+        messages: [{ role: 'user', content: prompt }],
+        conversationId: conversation.id,
+        providerConfigId: activeConfig.id,
+      });
+
+      // Sauvegarder la réponse
+      await addMessage(conversation.id, 'assistant', response);
+
+      // Extraire le JSON
+      const extracted = extractJsonFromText(response);
+      if (extracted) {
+        setLastJsonText(JSON.stringify(extracted.json, null, 2));
+        await updateDocument(doc.id, {
+          last_generated_json: extracted.json as Record<string, unknown>,
+          last_generated_at: new Date().toISOString(),
+          last_generated_by: userId,
+          status: 'json_generated',
+        });
+        setStatus('json_generated');
+        await logDocumentActivity(doc.id, userId, 'ai_json_generated', 'JSON généré par IA');
+
+        // Recharger le document
+        const updated = await fetchDocumentById(doc.id);
+        if (updated) setDoc(updated);
+      } else {
+        setLastJsonText(response);
+      }
+
+      // Ouvrir le panneau publication
+      setShowPublish(true);
+    } catch (err) {
+      console.error('[Editor] Erreur génération JSON:', err);
+      alert(`Erreur de génération : ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setGeneratingJson(false);
+    }
+  };
 
   // --- Détection de changements ---
   const hasChanges = doc
@@ -323,6 +426,10 @@ export default function RedactionDocumentEditor({
         onTrash={handleTrash}
         onShowPermissions={() => setShowShare(true)}
         onShowActivity={() => setShowActivity(true)}
+        onToggleAI={() => setShowAI((v) => !v)}
+        onTogglePublish={() => setShowPublish((v) => !v)}
+        showAI={showAI}
+        showPublish={showPublish}
       />
 
       {/* Sélecteur de mode + dossier */}
@@ -352,28 +459,70 @@ export default function RedactionDocumentEditor({
         </div>
       </div>
 
-      {/* Zone d'édition */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6">
-        {editorMode === 'plain' && (
-          <PlainTextEditor
-            value={plainContent}
-            onChange={setPlainContent}
-            disabled={!canEdit}
-          />
-        )}
-        {editorMode === 'rich' && (
-          <RichTextEditor
-            value={richContent}
-            onChange={setRichContent}
-            disabled={!canEdit}
-          />
-        )}
-        {editorMode === 'structured' && (
-          <StructuredSeoEditor
-            value={structuredContent}
-            onChange={setStructuredContent}
-            disabled={!canEdit}
-          />
+      {/* Zone principale : éditeur + panneau IA latéral */}
+      <div className="flex gap-4">
+        {/* Colonne éditeur */}
+        <div className={`flex-1 min-w-0 space-y-4 ${showAI ? 'max-w-[60%]' : ''}`}>
+          {/* Zone d'édition */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            {editorMode === 'plain' && (
+              <PlainTextEditor
+                value={plainContent}
+                onChange={setPlainContent}
+                disabled={!canEdit}
+              />
+            )}
+            {editorMode === 'rich' && (
+              <RichTextEditor
+                value={richContent}
+                onChange={setRichContent}
+                disabled={!canEdit}
+              />
+            )}
+            {editorMode === 'structured' && (
+              <StructuredSeoEditor
+                value={structuredContent}
+                onChange={setStructuredContent}
+                disabled={!canEdit}
+              />
+            )}
+          </div>
+
+          {/* Panneau publication (sous l'éditeur) */}
+          {showPublish && (
+            <div className="bg-white border border-gray-200 rounded-2xl p-5">
+              <h3 className="text-sm font-semibold text-gray-900 mb-4">Publication</h3>
+              <RedactionPublishPanel
+                document={doc}
+                userId={userId}
+                lastJsonText={lastJsonText}
+                onPublished={() => {
+                  loadDocument();
+                  onRefresh();
+                }}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Panneau IA latéral */}
+        {showAI && (
+          <div className="w-[400px] flex-shrink-0 bg-white border border-gray-200 rounded-2xl overflow-hidden h-[calc(100vh-220px)] sticky top-4">
+            <RedactionAIPanel
+              document={doc}
+              userId={userId}
+              userRole={userRole}
+              template={template}
+              templateExport={templateExport}
+              onClose={() => setShowAI(false)}
+              onJsonDetected={(text) => {
+                setLastJsonText(text);
+                setShowPublish(true);
+              }}
+              onGenerateJson={handleGenerateJson}
+              generatingJson={generatingJson}
+            />
+          </div>
         )}
       </div>
 

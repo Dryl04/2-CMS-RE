@@ -184,3 +184,83 @@ export const STATUS_COLORS: Record<DocumentStatus, string> = {
   published: 'badge-success',
   archived: 'badge-neutral',
 };
+
+// ============================================================
+// Types Plan 03 — IA, publication et intégration
+// ============================================================
+
+// --- Configuration fournisseur IA ---
+export type AIProviderScope = 'global' | 'user';
+
+export interface AIProviderConfig {
+  id: string;
+  scope: AIProviderScope;
+  user_id: string | null;
+  provider_key: string;
+  provider_label: string;
+  api_base_url: string | null;
+  encrypted_api_key: string;
+  default_model: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// --- Fournisseurs supportés ---
+export const AI_PROVIDERS: { key: string; label: string; models: string[] }[] = [
+  { key: 'openai', label: 'OpenAI', models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo'] },
+  { key: 'anthropic', label: 'Anthropic', models: ['claude-sonnet-4-20250514', 'claude-3-5-haiku-20241022'] },
+  { key: 'mistral', label: 'Mistral', models: ['mistral-large-latest', 'mistral-medium-latest'] },
+];
+
+// --- Prompt système ---
+export interface AISystemPrompt {
+  id: string;
+  name: string;
+  prompt_text: string;
+  is_default: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// --- Conversation IA par document ---
+export interface AIConversation {
+  id: string;
+  document_id: string;
+  provider_config_id: string | null;
+  model_name: string | null;
+  system_prompt_id: string | null;
+  system_prompt_snapshot: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// --- Message IA ---
+export type AIMessageRole = 'system' | 'user' | 'assistant';
+
+export interface AIMessage {
+  id: string;
+  conversation_id: string;
+  role: AIMessageRole;
+  content: string;
+  created_by: string | null;
+  created_at: string;
+}
+
+// --- Publication ---
+export type PublicationTargetMode = 'create_page' | 'update_page';
+export type PublicationRunStatus = 'pending' | 'succeeded' | 'failed';
+
+export interface PublicationRun {
+  id: string;
+  document_id: string;
+  actor_user_id: string | null;
+  target_mode: PublicationTargetMode;
+  target_page_id: string | null;
+  template_id: string | null;
+  generated_json_snapshot: Record<string, unknown>;
+  status: PublicationRunStatus;
+  error_message: string | null;
+  created_at: string;
+}

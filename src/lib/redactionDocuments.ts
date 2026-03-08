@@ -125,7 +125,7 @@ export async function updateDocument(
     'linked_template_id' | 'linked_template_snapshot' |
     'last_generated_json' | 'last_generated_at' | 'last_generated_by' |
     'last_edited_by' | 'edit_lock_user_id' | 'edit_lock_at' |
-    'archived_at' | 'trashed_at' | 'trashed_by'
+    'archived_at' | 'trashed_at' | 'trashed_by' | 'published_page_id'
   >>
 ): Promise<SEODocument> {
   const { data, error } = await supabase
