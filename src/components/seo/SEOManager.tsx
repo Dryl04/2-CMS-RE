@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useModal } from '@/contexts/ModalContext';
 import { Search, Pencil as Edit, Trash2, Eye, FileUp, FormInput, ExternalLink, ArrowLeft, Copy, LayoutGrid as Layout, FolderOpen, FolderPlus, X } from 'lucide-react';
-import { supabase, SEOMetadata } from '@/lib/supabase';
+import { api, SEOMetadata } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import SEOImporter from './SEOImporter';
 import SEOForm from './SEOForm';
@@ -39,10 +39,7 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
 
   const handleMoveToFolder = async (pageId: string, folderName: string | null) => {
     try {
-      const { error } = await supabase
-        .from('seo_metadata')
-        .update({ folder: folderName, updated_at: new Date().toISOString() })
-        .eq('id', pageId);
+      const { error } = await api.pages.update(pageId, { folder: folderName, updated_at: new Date().toISOString() });
       if (error) throw error;
       showToast(folderName ? `Deplace dans "${folderName}"` : 'Retire du dossier');
       setMovingPageId(null);
@@ -69,10 +66,7 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
   const loadMetadata = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('seo_metadata')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await api.pages.list({ order: 'created_at:desc' });
 
       if (error) {
         throw error;
@@ -122,10 +116,7 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
 
   const handleStatusChange = async (id: string, newStatus: 'draft' | 'published' | 'archived') => {
     try {
-      const { error } = await supabase
-        .from('seo_metadata')
-        .update({ status: newStatus, updated_at: new Date().toISOString() })
-        .eq('id', id);
+      const { error } = await api.pages.update(id, { status: newStatus, updated_at: new Date().toISOString() });
 
       if (error) throw error;
       const labels: Record<string, string> = { draft: 'Brouillon', published: 'Publie', archived: 'Archive' };
@@ -141,10 +132,7 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
     if (!await modal.confirm('Supprimer cette page ? Cette action est irreversible.', 'Supprimer la page')) return;
 
     try {
-      const { error } = await supabase
-        .from('seo_metadata')
-        .delete()
-        .eq('id', id);
+      const { error } = await api.pages.delete(id);
 
       if (error) throw error;
       showToast('Page supprimee');
@@ -167,7 +155,7 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
         canonical_url: null,
         user_id: profile?.id || page.user_id,
       };
-      const { error } = await supabase.from('seo_metadata').insert(duplicateData);
+      const { error } = await api.pages.create(duplicateData);
       if (error) throw error;
       showToast('Page dupliquee');
       loadMetadata();

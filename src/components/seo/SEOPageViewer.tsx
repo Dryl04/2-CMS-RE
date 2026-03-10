@@ -4,7 +4,7 @@ import {
   getBackgroundContentClassName,
   renderBackgroundLayers,
 } from '@/lib/backgroundLayers';
-import { SEOMetadata } from '@/lib/supabase';
+import { SEOMetadata } from '@/lib/api';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import PageThemeInjector from '@/components/theme/PageThemeInjector';
 import HeaderWidget from '@/components/PageBuilder/Widgets/HeaderWidget';

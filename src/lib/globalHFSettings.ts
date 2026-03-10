@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { api } from './api';
 import { PageBuilderSection } from './pageBuilderTypes';
 
 export interface GlobalHFSetting {
@@ -40,27 +40,18 @@ export function isFooterType(type: string): boolean {
 }
 
 export async function loadActiveGlobalHFSetting(): Promise<GlobalHFSetting | null> {
-  const { data, error } = await supabase
-    .from('global_hf_settings')
-    .select('*')
-    .eq('is_active', true)
-    .order('updated_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
+  const { data, error } = await api.globalHf.getActive();
   if (error) {
     console.error('[globalHFSettings] Error loading active setting:', error);
     return null;
   }
-  return data as GlobalHFSetting | null;
+  // getActive returns an array, take the first one
+  const items = Array.isArray(data) ? data : (data ? [data] : []);
+  return (items[0] as GlobalHFSetting) || null;
 }
 
 export async function loadAllGlobalHFSettings(): Promise<GlobalHFSetting[]> {
-  const { data, error } = await supabase
-    .from('global_hf_settings')
-    .select('*')
-    .order('updated_at', { ascending: false });
-
+  const { data, error } = await api.globalHf.list();
   if (error) {
     console.error('[globalHFSettings] Error loading settings:', error);
     return [];
@@ -69,26 +60,8 @@ export async function loadAllGlobalHFSettings(): Promise<GlobalHFSetting[]> {
 }
 
 export async function activateGlobalHFSetting(settingId: string): Promise<void> {
-  const timestamp = new Date().toISOString();
-
-  const { error: deactivateError } = await supabase
-    .from('global_hf_settings')
-    .update({ is_active: false, updated_at: timestamp })
-    .neq('id', settingId)
-    .eq('is_active', true);
-
-  if (deactivateError) {
-    throw deactivateError;
-  }
-
-  const { error: activateError } = await supabase
-    .from('global_hf_settings')
-    .update({ is_active: true, updated_at: timestamp })
-    .eq('id', settingId);
-
-  if (activateError) {
-    throw activateError;
-  }
+  const { error } = await api.globalHf.activate(settingId);
+  if (error) throw error;
 }
 
 export function shouldApplyGlobalHFSetting(
@@ -161,4 +134,3 @@ export function applySectionsWithGlobalHF(
 
   return result.map((s, i) => ({ ...s, order: i }));
 }
-

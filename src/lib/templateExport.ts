@@ -1,5 +1,5 @@
 import { PageBuilderSection } from "./pageBuilderTypes";
-import { PageTemplate } from "./supabase";
+import { PageTemplate } from "./api";
 import { normalizeSectionForTheme } from "./widgetThemeHelper";
 
 export interface TemplateVariable {

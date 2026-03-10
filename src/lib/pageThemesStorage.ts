@@ -1,19 +1,14 @@
 import { PageTheme } from './pageThemes';
-import { supabase } from './supabase';
+import { api } from './api';
 
 const STORAGE_KEY = 'custom_page_themes';
 
 export async function loadAllThemes(): Promise<PageTheme[]> {
   try {
-    const { data, error } = await supabase
-      .from('page_themes')
-      .select('*')
-      .order('is_default', { ascending: false })
-      .order('created_at', { ascending: false });
-
+    const { data, error } = await api.themes.page.list();
     if (error) throw error;
 
-    return (data || []).map(row => ({
+    return (data || []).map((row: any) => ({
       id: row.id,
       name: row.name,
       description: row.description || '',
@@ -27,23 +22,21 @@ export async function loadAllThemes(): Promise<PageTheme[]> {
 
 export async function loadCustomThemes(): Promise<PageTheme[]> {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return [];
+    const { data: userData, error: userError } = await api.auth.getUser();
+    if (userError || !userData) return [];
 
-    const { data, error } = await supabase
-      .from('page_themes')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-
+    // All page themes are returned, filter client-side by user
+    const { data, error } = await api.themes.page.list();
     if (error) throw error;
 
-    return (data || []).map(row => ({
-      id: row.id,
-      name: row.name,
-      description: row.description || '',
-      css: row.css,
-    }));
+    return (data || [])
+      .filter((row: any) => row.user_id === userData.id)
+      .map((row: any) => ({
+        id: row.id,
+        name: row.name,
+        description: row.description || '',
+        css: row.css,
+      }));
   } catch (error) {
     console.error('Error loading custom themes:', error);
     return [];
@@ -52,35 +45,25 @@ export async function loadCustomThemes(): Promise<PageTheme[]> {
 
 export async function saveCustomTheme(theme: PageTheme): Promise<void> {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
+    const { data: userData, error: userError } = await api.auth.getUser();
+    if (userError || !userData) throw new Error('User not authenticated');
 
     const isExisting = await getThemeById(theme.id);
 
     if (isExisting) {
-      const { error } = await supabase
-        .from('page_themes')
-        .update({
-          name: theme.name,
-          description: theme.description,
-          css: theme.css,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', theme.id)
-        .eq('user_id', user.id);
-
+      const { error } = await api.themes.page.save({
+        id: theme.id,
+        name: theme.name,
+        description: theme.description,
+        css: theme.css,
+      });
       if (error) throw error;
     } else {
-      const { error } = await supabase
-        .from('page_themes')
-        .insert({
-          name: theme.name,
-          description: theme.description,
-          css: theme.css,
-          user_id: user.id,
-          is_default: false,
-        });
-
+      const { error } = await api.themes.page.save({
+        name: theme.name,
+        description: theme.description,
+        css: theme.css,
+      });
       if (error) throw error;
     }
   } catch (error) {
@@ -91,15 +74,10 @@ export async function saveCustomTheme(theme: PageTheme): Promise<void> {
 
 export async function deleteCustomTheme(themeId: string): Promise<void> {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
+    const { data: userData, error: userError } = await api.auth.getUser();
+    if (userError || !userData) throw new Error('User not authenticated');
 
-    const { error } = await supabase
-      .from('page_themes')
-      .delete()
-      .eq('id', themeId)
-      .eq('user_id', user.id);
-
+    const { error } = await api.themes.page.delete(themeId);
     if (error) throw error;
   } catch (error) {
     console.error('Error deleting custom theme:', error);
@@ -113,12 +91,7 @@ export function getAllThemes(): PageTheme[] {
 
 export async function getThemeById(id: string): Promise<PageTheme | null> {
   try {
-    const { data, error } = await supabase
-      .from('page_themes')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle();
-
+    const { data, error } = await api.themes.page.getById(id);
     if (error) throw error;
     if (!data) return null;
 
@@ -136,14 +109,9 @@ export async function getThemeById(id: string): Promise<PageTheme | null> {
 
 export async function isCustomTheme(themeId: string): Promise<boolean> {
   try {
-    const { data, error } = await supabase
-      .from('page_themes')
-      .select('user_id')
-      .eq('id', themeId)
-      .maybeSingle();
-
+    const { data, error } = await api.themes.page.isCustom(themeId);
     if (error) throw error;
-    return data?.user_id !== null;
+    return data?.is_custom ?? false;
   } catch (error) {
     console.error('Error checking custom theme:', error);
     return false;
@@ -189,41 +157,16 @@ export async function migrateLocalStorageThemes(): Promise<{ success: boolean; c
       return { success: true, count: 0, message: 'No themes to migrate' };
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return { success: false, count: 0, message: 'User not authenticated' };
+    const { data, error } = await api.themes.page.migrate();
+    if (error) {
+      return { success: false, count: 0, message: error.message || 'Migration failed' };
     }
 
-    let migrated = 0;
-    for (const theme of themes) {
-      try {
-        const { error } = await supabase
-          .from('page_themes')
-          .insert({
-            name: theme.name,
-            description: theme.description,
-            css: theme.css,
-            user_id: user.id,
-            is_default: false,
-          });
-
-        if (!error) {
-          migrated++;
-        }
-      } catch (err) {
-        console.error('Error migrating theme:', theme.name, err);
-      }
-    }
-
-    if (migrated > 0) {
+    if (data?.success) {
       localStorage.removeItem(STORAGE_KEY);
     }
 
-    return {
-      success: true,
-      count: migrated,
-      message: `Successfully migrated ${migrated} theme(s)`,
-    };
+    return data || { success: true, count: 0, message: 'No themes to migrate' };
   } catch (error) {
     console.error('Error migrating themes:', error);
     return {

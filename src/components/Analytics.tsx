@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FileText, Globe, Archive, Clock, TrendingUp, BarChart3, ArrowLeft } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 
 interface Stats {
   total: number;
@@ -26,10 +26,7 @@ export default function Analytics({ onNavigate }: AnalyticsProps) {
   const loadStats = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('seo_metadata')
-        .select('*')
-        .order('updated_at', { ascending: false });
+      const { data, error } = await api.pages.list({ order: 'updated_at:desc' });
 
       if (error) throw error;
 

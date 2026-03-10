@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, Layout, ChevronRight, FolderPlus, X } from 'lucide-react';
-import { supabase, PageTemplate } from '../lib/supabase';
+import { api, PageTemplate } from '../lib/api';
 import { PageBuilderSection } from '../lib/pageBuilderTypes';
 import { loadActiveGlobalHFSetting, applySectionsWithGlobalHF } from '../lib/globalHFSettings';
 
@@ -112,10 +112,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
   const loadTemplates = async () => {
     setLoadingTemplates(true);
     try {
-      const { data, error } = await supabase
-        .from('page_templates')
-        .select('*')
-        .order('name');
+      const { data, error } = await api.templates.list();
       if (error) throw error;
       setTemplates(data || []);
     } catch (error) {
@@ -127,10 +124,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
 
   const loadAvailablePages = async () => {
     try {
-      const { data, error } = await supabase
-        .from('seo_metadata')
-        .select('id, page_key, title')
-        .order('page_key');
+      const { data, error } = await api.pages.list();
       if (error) throw error;
       setAvailablePages(data || []);
     } catch (error) {
@@ -140,10 +134,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
 
   const loadExistingPageFolders = async () => {
     try {
-      const { data, error } = await supabase
-        .from('seo_metadata')
-        .select('folder')
-        .not('folder', 'is', null);
+      const { data, error } = await api.pages.list({ select: 'folder' } as any);
       if (error) throw error;
       const uniqueFolders = Array.from(new Set((data || []).map((d: any) => d.folder).filter(Boolean))) as string[];
       setExistingPageFolders(uniqueFolders.sort());
@@ -254,9 +245,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
         data.id = editingPage.id;
       }
 
-      const { error } = await supabase
-        .from('seo_metadata')
-        .upsert(data, { onConflict: 'page_key' });
+      const { error } = await api.pages.upsert([data], 'page_key');
 
       if (error) throw error;
       onSaveComplete();

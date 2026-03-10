@@ -4,7 +4,7 @@ import { Save, X, Trash2, Plus, Copy, Palette, Type, Ruler, Weight, Upload, Down
 import { PageTheme } from '@/lib/pageThemes';
 import { createEmptyTheme, isCustomTheme } from '@/lib/pageThemesStorage';
 import { usePageTheme } from '@/contexts/PageThemeContext';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import FontImporter from './FontImporter';
 
 interface PageThemeEditorProps {
@@ -79,10 +79,7 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
 
   const loadAvailableFonts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('fonts_library')
-        .select('id, font_name, font_family, font_url')
-        .order('font_name');
+      const { data, error } = await api.fonts.list();
 
       if (error) throw error;
       setAvailableFonts(data || []);

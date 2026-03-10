@@ -1,4 +1,4 @@
-import { TemplateSection } from './supabase';
+import { TemplateSection } from './api';
 
 export interface ValidationError {
   sectionId: string;

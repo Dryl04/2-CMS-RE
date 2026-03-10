@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { api } from './api';
 
 function hexToLinear(c: number): number {
   const v = c / 255;
@@ -69,7 +69,7 @@ export interface DaisyFontConfig {
   bodyFont?: string;
   headingFont?: string;
   headingWeight?: string;
-  googleFonts?: string[]; // Font names to import from Google Fonts
+  googleFonts?: string[];
 }
 
 export interface DaisyTheme {
@@ -175,58 +175,32 @@ export function createNoThemeEntry(): DaisyTheme {
 }
 
 export async function loadAllDaisyThemes(): Promise<DaisyTheme[]> {
-  const { data, error } = await supabase
-    .from('daisyui_themes')
-    .select('*');
-
+  const { data, error } = await api.themes.daisy.list();
   if (error) throw error;
-  
-  // Sort themes: light first, dark second, then daisyui themes alphabetically, then custom themes
+
   const themes = data || [];
-  const sortedThemes = themes.sort((a, b) => {
-    // Special ordering for light and dark
+  const sortedThemes = themes.sort((a: any, b: any) => {
     if (a.slug === 'light') return -1;
     if (b.slug === 'light') return 1;
     if (a.slug === 'dark') return b.slug === 'light' ? 1 : -1;
     if (b.slug === 'dark') return a.slug === 'light' ? -1 : 1;
-    
-    // Group by source: daisyui before custom
     if (a.source !== b.source) {
       return a.source === 'daisyui' ? -1 : 1;
     }
-    
-    // Within same source, sort alphabetically
     return a.name.localeCompare(b.name);
   });
-  
-  // Add "No Theme" option at the beginning
+
   return [createNoThemeEntry(), ...sortedThemes];
 }
 
 export async function loadActiveTheme(): Promise<DaisyTheme | null> {
-  const { data, error } = await supabase
-    .from('daisyui_themes')
-    .select('*')
-    .eq('is_active', true)
-    .maybeSingle();
-
+  const { data, error } = await api.themes.daisy.getActive();
   if (error) throw error;
   return data;
 }
 
 export async function setActiveTheme(themeId: string): Promise<void> {
-  const { error: clearError } = await supabase
-    .from('daisyui_themes')
-    .update({ is_active: false })
-    .eq('is_active', true);
-
-  if (clearError) throw clearError;
-
-  const { error } = await supabase
-    .from('daisyui_themes')
-    .update({ is_active: true, updated_at: new Date().toISOString() })
-    .eq('id', themeId);
-
+  const { error } = await api.themes.daisy.setActive(themeId);
   if (error) throw error;
 }
 
@@ -237,12 +211,9 @@ export async function createCustomTheme(
   userId: string,
   fontConfig?: DaisyFontConfig | null
 ): Promise<DaisyTheme> {
-  const { data, error } = await supabase
-    .from('daisyui_themes')
-    .insert({ name, slug, source: 'custom', tokens, user_id: userId, font_config: fontConfig || null })
-    .select()
-    .single();
-
+  const { data, error } = await api.themes.daisy.create({
+    name, slug, source: 'custom', tokens, user_id: userId, font_config: fontConfig || null
+  });
   if (error) throw error;
   return data;
 }
@@ -251,20 +222,12 @@ export async function updateCustomTheme(
   id: string,
   updates: { name?: string; slug?: string; tokens?: DaisyThemeTokens; font_config?: DaisyFontConfig | null }
 ): Promise<void> {
-  const { error } = await supabase
-    .from('daisyui_themes')
-    .update({ ...updates, updated_at: new Date().toISOString() })
-    .eq('id', id);
-
+  const { error } = await api.themes.daisy.update(id, updates);
   if (error) throw error;
 }
 
 export async function deleteCustomTheme(id: string): Promise<void> {
-  const { error } = await supabase
-    .from('daisyui_themes')
-    .delete()
-    .eq('id', id);
-
+  const { error } = await api.themes.daisy.delete(id);
   if (error) throw error;
 }
 
@@ -295,13 +258,12 @@ export function getThemeInlineVars(tokens: DaisyThemeTokens): Record<string, str
 
 export function generateCustomThemeCSS(slug: string, tokens: DaisyThemeTokens, fontConfig?: DaisyFontConfig | null): string {
   let css = '';
-  
-  // Add Google Fonts import if needed
+
   const googleFonts = extractGoogleFontNames(fontConfig);
   if (googleFonts.length > 0) {
     css += generateGoogleFontsImport(googleFonts, DEFAULT_FONT_WEIGHTS) + '\n\n';
   }
-  
+
   const hex = (v: string) => v.trim().startsWith('#') ? v.trim() : v.trim();
   css += `[data-theme="${slug}"] {
   --p: ${toOklchValue(tokens.primary)};
@@ -348,7 +310,7 @@ export function generateCustomThemeCSS(slug: string, tokens: DaisyThemeTokens, f
   if (fontConfig?.bodyFont) {
     css += `\n  font-family: ${fontConfig.bodyFont};`;
   }
-  
+
   css += `\n}`;
 
   if (fontConfig?.headingFont) {
@@ -368,37 +330,20 @@ export function generateCustomThemeCSS(slug: string, tokens: DaisyThemeTokens, f
   return css;
 }
 
-/**
- * Extract Google Font names from font family strings
- * E.g., "Roboto, sans-serif" -> "Roboto"
- */
 export function extractGoogleFontNames(fontConfig?: DaisyFontConfig | null): string[] {
   if (!fontConfig) return [];
-  
   const fonts: string[] = [];
-  
-  // Extract from bodyFont
   if (fontConfig.bodyFont) {
     const firstFont = fontConfig.bodyFont.split(',')[0].trim().replace(/['"]/g, '');
-    if (firstFont && !isSystemFont(firstFont)) {
-      fonts.push(firstFont);
-    }
+    if (firstFont && !isSystemFont(firstFont)) fonts.push(firstFont);
   }
-  
-  // Extract from headingFont
   if (fontConfig.headingFont) {
     const firstFont = fontConfig.headingFont.split(',')[0].trim().replace(/['"]/g, '');
-    if (firstFont && !isSystemFont(firstFont) && !fonts.includes(firstFont)) {
-      fonts.push(firstFont);
-    }
+    if (firstFont && !isSystemFont(firstFont) && !fonts.includes(firstFont)) fonts.push(firstFont);
   }
-  
   return fonts;
 }
 
-/**
- * Check if a font is a system font (no need to import)
- */
 function isSystemFont(fontName: string): boolean {
   const systemFonts = [
     'system-ui', 'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy',
@@ -408,17 +353,10 @@ function isSystemFont(fontName: string): boolean {
   return systemFonts.includes(fontName.toLowerCase());
 }
 
-/**
- * Default font weights to import from Google Fonts
- */
 const DEFAULT_FONT_WEIGHTS = ['300', '400', '500', '600', '700', '800', '900'];
 
-/**
- * Generate Google Fonts import URL
- */
 export function generateGoogleFontsImport(fonts: string[], weights: string[] = DEFAULT_FONT_WEIGHTS): string {
   if (fonts.length === 0) return '';
-  
   const fontParams = fonts
     .map(font => {
       const fontName = font.replace(/ /g, '+');
@@ -426,7 +364,6 @@ export function generateGoogleFontsImport(fonts: string[], weights: string[] = D
       return `family=${fontName}:wght@${weightParam}`;
     })
     .join('&');
-  
   return `@import url('https://fonts.googleapis.com/css2?${fontParams}&display=swap');`;
 }
 
@@ -438,7 +375,6 @@ export function slugify(name: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/-{2,}/g, '-')
     .replace(/^-|-$/g, '');
-
   return normalized || 'theme';
 }
 
@@ -449,29 +385,12 @@ export interface ThemeUsage {
 }
 
 export async function getThemeUsage(themeSlug: string): Promise<ThemeUsage> {
-  // Check page_themes table for usage
-  // Note: Using .eq() method for proper parameterization
-  const { data: pageThemesData, error: pageThemesError } = await supabase
-    .from('page_themes')
-    .select('id')
-    .eq('css->>daisyTheme', themeSlug);
-  
-  if (pageThemesError && !pageThemesError.message.includes('does not exist')) {
-    console.warn('Error checking page_themes:', pageThemesError);
+  const { data, error } = await api.themes.daisy.getUsage(themeSlug);
+  if (error) {
+    console.warn('Error checking theme usage:', error);
+    return { pageThemes: 0, pageTemplates: 0, totalUsages: 0 };
   }
-  
-  const pageThemesCount = pageThemesData?.length || 0;
-  
-  // Check page_templates for usage (if theme_id column exists)
-  const pageTemplatesCount = 0;
-  // This would require joining with daisyui_themes table
-  // For now, we'll implement a basic check
-  
-  return {
-    pageThemes: pageThemesCount,
-    pageTemplates: pageTemplatesCount,
-    totalUsages: pageThemesCount + pageTemplatesCount,
-  };
+  return data || { pageThemes: 0, pageTemplates: 0, totalUsages: 0 };
 }
 
 export class ThemeError extends Error {
@@ -494,13 +413,10 @@ export async function createCustomThemeWithValidation(
   fontConfig?: DaisyFontConfig | null,
   excludeIdFromTokensCheck?: string
 ): Promise<DaisyTheme> {
-  // Check for duplicate slug
   const duplicateSlug = existingThemes.find(t => t.slug === slug);
   if (duplicateSlug) {
     throw new ThemeError('Un thème avec ce slug existe déjà', 'DUPLICATE', 409);
   }
-
-  // Check for identical tokens (excluding the source theme when duplicating)
   const identicalTokens = existingThemes.find(
     t => (!excludeIdFromTokensCheck || t.id !== excludeIdFromTokensCheck) && !tokensAreDifferent(t.tokens, tokens)
   );
@@ -511,7 +427,6 @@ export async function createCustomThemeWithValidation(
       409
     );
   }
-
   return await createCustomTheme(name, slug, tokens, userId, fontConfig);
 }
 
@@ -524,20 +439,15 @@ export async function updateCustomThemeWithValidation(
   if (!theme) {
     throw new ThemeError('Thème non trouvé', 'NOT_FOUND', 404);
   }
-
   if (theme.source !== 'custom') {
     throw new ThemeError('Impossible de modifier un thème officiel', 'FORBIDDEN', 403);
   }
-
-  // Check for duplicate slug if slug is being updated
   if (updates.slug && updates.slug !== theme.slug) {
     const duplicateSlug = existingThemes.find(t => t.id !== id && t.slug === updates.slug);
     if (duplicateSlug) {
       throw new ThemeError('Un thème avec ce slug existe déjà', 'DUPLICATE', 409);
     }
   }
-
-  // Check for identical tokens if tokens are being updated
   if (updates.tokens) {
     const identicalTokens = existingThemes.find(
       t => t.id !== id && !tokensAreDifferent(t.tokens, updates.tokens!)
@@ -550,7 +460,6 @@ export async function updateCustomThemeWithValidation(
       );
     }
   }
-
   await updateCustomTheme(id, updates);
 }
 
@@ -562,16 +471,10 @@ export async function deleteCustomThemeWithValidation(
   if (theme.source !== 'custom') {
     throw new ThemeError('Impossible de supprimer un thème officiel', 'FORBIDDEN', 403);
   }
-
   const usage = await getThemeUsage(theme.slug);
-  
   if (usage.totalUsages > 0 && !force) {
-    return {
-      success: false,
-      usage,
-    };
+    return { success: false, usage };
   }
-
   await deleteCustomTheme(id);
   return { success: true };
 }

@@ -1,10 +1,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase, UserProfile } from '@/lib/supabase';
+import { api, UserProfile } from '@/lib/api';
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  user: UserProfile | null;
   profile: UserProfile | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
@@ -30,8 +28,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -43,12 +40,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setLoading(false);
         }, 10000);
 
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
-
-        if (currentSession?.user) {
-          await loadUserProfile(currentSession.user.id);
+        // If we have a stored token, validate it by fetching the current user
+        if (api.auth.hasToken()) {
+          const { data, error } = await api.auth.getUser();
+          if (error) {
+            console.warn('[AuthContext] Token invalid or expired, clearing');
+            setUser(null);
+            setProfile(null);
+          } else if (data) {
+            setUser(data);
+            setProfile(data);
+          }
         }
 
         clearTimeout(timeoutId);
@@ -62,82 +64,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     initializeAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      (async () => {
-        setSession(newSession);
-        setUser(newSession?.user ?? null);
-
-        if (newSession?.user) {
-          await loadUserProfile(newSession.user.id);
-        } else {
-          setProfile(null);
-        }
-      })();
+    // Listen for auth state changes (e.g., 401 token expiry)
+    const { unsubscribe } = api.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        setProfile(session.user);
+      } else {
+        setUser(null);
+        setProfile(null);
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => unsubscribe();
   }, []);
-
-  const loadUserProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      if (error) {
-        console.error('[AuthContext] Error loading user profile:', error);
-        setProfile(null);
-        return;
-      }
-
-      if (!data) {
-        console.warn('[AuthContext] No user profile found, creating default profile');
-
-        const { data: { user: currentUser } } = await supabase.auth.getUser();
-
-        if (!currentUser?.email) {
-          console.error('[AuthContext] Cannot create profile: no user email found');
-          setProfile(null);
-          return;
-        }
-
-        const { data: newProfile, error: createError } = await supabase
-          .from('user_profiles')
-          .insert([{
-            id: userId,
-            email: currentUser.email,
-            role: 'content_creator',
-            full_name: currentUser.user_metadata?.full_name || ''
-          }])
-          .select()
-          .single();
-
-        if (createError) {
-          console.error('[AuthContext] Error creating user profile:', createError);
-          setProfile(null);
-        } else {
-          setProfile(newProfile);
-        }
-        return;
-      }
-
-      setProfile(data);
-    } catch (error) {
-      console.error('[AuthContext] Unexpected error loading user profile:', error);
-      setProfile(null);
-    }
-  };
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error } = await api.auth.signIn(email, password);
 
-      return { error: error ? new Error(error.message) : null };
+      if (error) {
+        return { error: new Error(error.message) };
+      }
+
+      if (data?.user) {
+        setUser(data.user);
+        setProfile(data.user);
+      }
+
+      return { error: null };
     } catch (error) {
       return { error: error as Error };
     }
@@ -145,34 +99,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName || '',
-          },
-          emailRedirectTo: undefined,
-        },
-      });
+      const { data, error } = await api.auth.signUp(email, password, fullName);
 
       if (error) {
         return { error: new Error(error.message) };
       }
 
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .insert([{
-            id: data.user.id,
-            email: data.user.email || email,
-            full_name: fullName || '',
-            role: 'content_creator'
-          }]);
-
-        if (profileError) {
-          console.warn('Profile creation error (may already exist):', profileError);
-        }
+      if (data?.user) {
+        setUser(data.user);
+        setProfile(data.user);
       }
 
       return { error: null };
@@ -182,7 +117,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await api.auth.signOut();
+    setUser(null);
     setProfile(null);
   };
 
@@ -194,7 +130,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const value = {
     user,
-    session,
     profile,
     loading,
     signIn,

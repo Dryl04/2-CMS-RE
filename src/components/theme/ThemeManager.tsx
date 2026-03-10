@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useModal } from '@/contexts/ModalContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Theme, ThemeColors } from '@/lib/themeTypes';
-import { Palette, Trash2, Copy, Check, Eye, AlertCircle, Download, ExternalLink, ClipboardCopy, Code } from 'lucide-react';
-import { getSQLScript } from '@/lib/setupThemes';
+import { Palette, Trash2, Copy, Check, Eye, AlertCircle, Download, Code } from 'lucide-react';
 import { ThemeCSSEditor } from './ThemeCSSEditor';
 
 export const ThemeManager: React.FC = () => {
@@ -63,33 +62,6 @@ export const ThemeManager: React.FC = () => {
     }
   };
 
-  const handleCopySQL = async () => {
-    const sql = getSQLScript();
-    try {
-      await navigator.clipboard.writeText(sql);
-      modal.alert('SQL script copied to clipboard!\n\nNow:\n1. Open Supabase Dashboard\n2. Go to SQL Editor\n3. Paste and execute', 'Copied');
-    } catch (err) {
-      console.error('Failed to copy:', err);
-      const textarea = document.createElement('textarea');
-      textarea.value = sql;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-      modal.alert('SQL script copied to clipboard!', 'Copied');
-    }
-  };
-
-  const handleOpenSupabase = () => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    if (supabaseUrl) {
-      const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1];
-      if (projectRef) {
-        window.open(`https://supabase.com/dashboard/project/${projectRef}/sql/new`, '_blank');
-      }
-    }
-  };
-
   const getColorPreview = (colors: ThemeColors) => {
     return [colors.primary, colors.secondary, colors.accent, colors.success, colors.warning];
   };
@@ -113,36 +85,15 @@ export const ThemeManager: React.FC = () => {
               Theme Table Not Found
             </h2>
             <p className="text-gray-600 mb-6">
-              The themes table needs to be created in your Supabase database. Click below to set it up automatically.
+              The themes table needs to be created in your database. Run the Prisma migrations to set it up.
             </p>
 
-            <div className="flex flex-col gap-3 mb-6">
-              <button
-                onClick={async () => {
-                  await handleCopySQL();
-                  handleOpenSupabase();
-                }}
-                className="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-medium flex items-center justify-center gap-2"
-              >
-                <ExternalLink className="w-5 h-5" />
-                Copy SQL & Open Supabase Dashboard
-              </button>
-
-              <button
-                onClick={handleCopySQL}
-                className="px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium flex items-center justify-center gap-2"
-              >
-                <ClipboardCopy className="w-5 h-5" />
-                Just Copy SQL Script
-              </button>
-            </div>
-
             <div className="bg-white rounded-lg p-4 text-left">
-              <p className="text-sm font-medium text-gray-700 mb-2">Quick Steps:</p>
+              <p className="text-sm font-medium text-gray-700 mb-2">Setup Steps:</p>
               <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
-                <li>Click the button above (SQL will be copied automatically)</li>
-                <li>In the Supabase SQL Editor that opens, paste the SQL</li>
-                <li>Click "Run" or press Ctrl/Cmd + Enter</li>
+                <li>Open a terminal in the project root</li>
+                <li>Run <code className="bg-gray-100 px-1 rounded">cd backend && npx prisma migrate deploy</code></li>
+                <li>Run <code className="bg-gray-100 px-1 rounded">npx prisma db seed</code> to initialize themes</li>
                 <li>Return here and refresh the page</li>
               </ol>
             </div>
@@ -187,17 +138,10 @@ export const ThemeManager: React.FC = () => {
                 <summary className="text-sm text-gray-600 cursor-pointer hover:text-gray-900">
                   Having trouble? Use manual setup
                 </summary>
-                <div className="mt-4 flex flex-col gap-2">
-                  <button
-                    onClick={async () => {
-                      await handleCopySQL();
-                      handleOpenSupabase();
-                    }}
-                    className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm flex items-center justify-center gap-2"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Copy SQL & Open Dashboard
-                  </button>
+                <div className="mt-4 bg-white rounded-lg p-4 text-left">
+                  <p className="text-sm text-gray-700">
+                    Run <code className="bg-gray-100 px-1 rounded">cd backend && npx prisma db seed</code> to initialize themes.
+                  </p>
                 </div>
               </details>
             </div>

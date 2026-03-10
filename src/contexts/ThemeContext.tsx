@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Theme } from '@/lib/themeTypes';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import { defaultThemes } from '@/lib/defaultThemes';
 
 interface ThemeContextType {
@@ -41,15 +41,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const { data, error: fetchError } = await supabase
-        .from('themes')
-        .select('*')
-        .order('is_default', { ascending: false })
-        .order('created_at', { ascending: true });
+      const { data, error: fetchError } = await api.themes.classic.list();
 
       if (fetchError) {
         console.error('Error fetching themes:', fetchError);
-        if (fetchError.message.includes('Could not find the table')) {
+        if (fetchError.message?.includes('Could not find the table') || fetchError.message?.includes('does not exist')) {
           setThemes(defaultThemes);
           if (!currentTheme) {
             const defaultTheme = defaultThemes.find(t => t.is_default) || defaultThemes[0];
@@ -64,7 +60,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       setThemes(data || []);
 
       if (!currentTheme && data && data.length > 0) {
-        const defaultTheme = data.find(t => t.is_default) || data[0];
+        const defaultTheme = data.find((t: Theme) => t.is_default) || data[0];
         setCurrentTheme(defaultTheme);
       }
     } catch (err) {
@@ -81,26 +77,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      const themesToInsert = defaultThemes.map(theme => ({
-        name: theme.name,
-        description: theme.description,
-        colors: theme.colors,
-        typography: theme.typography,
-        spacing: theme.spacing,
-        components: theme.components,
-        user_id: null,
-        is_default: theme.is_default,
-      }));
+      const { error: initError } = await api.themes.classic.initialize();
 
-      const { error: insertError } = await supabase
-        .from('themes')
-        .insert(themesToInsert)
-        .select();
-
-      if (insertError) {
-        console.error('Error initializing themes:', insertError);
-        setError(insertError.message);
-        throw insertError;
+      if (initError) {
+        console.error('Error initializing themes:', initError);
+        setError(initError.message);
+        throw new Error(initError.message);
       }
 
       await fetchThemes();
@@ -116,21 +98,13 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const createTheme = async (themeData: Omit<Theme, 'id' | 'created_at' | 'updated_at'>): Promise<Theme | null> => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      const { data, error } = await api.themes.classic.create(themeData);
 
-      const { data, error } = await supabase
-        .from('themes')
-        .insert([{
-          ...themeData,
-          user_id: user.id,
-        }])
-        .select()
-        .single();
+      if (error) throw new Error(error.message);
 
-      if (error) throw error;
-
-      setThemes(prev => [...prev, data]);
+      if (data) {
+        setThemes(prev => [...prev, data]);
+      }
       return data;
     } catch (error) {
       console.error('Error creating theme:', error);
@@ -140,15 +114,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const updateTheme = async (id: string, updates: Partial<Theme>) => {
     try {
-      const { error } = await supabase
-        .from('themes')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', id);
+      const { error } = await api.themes.classic.update(id, {
+        ...updates,
+        updated_at: new Date().toISOString(),
+      });
 
-      if (error) throw error;
+      if (error) throw new Error(error.message);
 
       setThemes(prev =>
         prev.map(theme => (theme.id === id ? { ...theme, ...updates } : theme))
@@ -165,12 +136,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const deleteTheme = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('themes')
-        .delete()
-        .eq('id', id);
+      const { error } = await api.themes.classic.delete(id);
 
-      if (error) throw error;
+      if (error) throw new Error(error.message);
 
       setThemes(prev => prev.filter(theme => theme.id !== id));
 
@@ -186,12 +154,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const applyThemeToPage = async (pageId: string, themeId: string) => {
     try {
-      const { error } = await supabase
-        .from('page_templates')
-        .update({ theme_id: themeId })
-        .eq('id', pageId);
+      const { error } = await api.themes.classic.applyToPage(pageId, themeId);
 
-      if (error) throw error;
+      if (error) throw new Error(error.message);
     } catch (error) {
       console.error('Error applying theme to page:', error);
       throw error;

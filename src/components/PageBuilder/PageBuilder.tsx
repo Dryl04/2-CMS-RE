@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useModal } from '@/contexts/ModalContext';
 import { Monitor, Tablet, Smartphone, Eye, Save, Undo, Redo, ArrowLeft, CheckCircle, Plus, Trash2, Pencil as Edit3, FolderOpen, FolderPlus, Download, FileJson, FileSpreadsheet, X, Palette, Settings, Copy, Link2 } from 'lucide-react';
 import { PageBuilderSection, DeviceType } from '@/lib/pageBuilderTypes';
-import { supabase, PageTemplate, SEOMetadata } from '@/lib/supabase';
+import { api, PageTemplate, SEOMetadata } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDaisyTheme } from '@/contexts/DaisyThemeContext';
 import { exportTemplateAsJSON, exportTemplateAsCSV, downloadFile } from '@/lib/templateExport';
@@ -138,10 +138,7 @@ export default function PageBuilder({
   const loadTemplates = async () => {
     setLoadingTemplates(true);
     try {
-      const { data, error } = await supabase
-        .from('page_templates')
-        .select('*')
-        .order('updated_at', { ascending: false });
+      const { data, error } = await api.templates.list();
 
       if (error) throw error;
       setTemplates(data || []);
@@ -255,25 +252,17 @@ export default function PageBuilder({
         templateData.updated_at = new Date().toISOString();
         templateDataWithTheme.updated_at = templateData.updated_at;
 
-        let { error } = await supabase
-          .from('page_templates')
-          .update(templateDataWithTheme)
-          .eq('id', editingTemplateId);
+        let { error } = await api.templates.update(editingTemplateId, templateDataWithTheme);
 
         if (error && isMissingDaisyThemeSlugColumnError(error)) {
-          const retry = await supabase
-            .from('page_templates')
-            .update(templateData)
-            .eq('id', editingTemplateId);
+          const retry = await api.templates.update(editingTemplateId, templateData);
           error = retry.error;
         }
 
         if (error) throw error;
 
-        const { data: linkedPages } = await supabase
-          .from('seo_metadata')
-          .select('id, title, page_key, status')
-          .eq('template_id', editingTemplateId);
+        const { data: allPages } = await api.pages.list();
+        const linkedPages = (allPages || []).filter(p => p.template_id === editingTemplateId);
 
         if (linkedPages && linkedPages.length > 0) {
           setSaving(false);
@@ -293,14 +282,10 @@ export default function PageBuilder({
           templateDataWithTheme.created_by = profile.id;
         }
 
-        let { error } = await supabase
-          .from('page_templates')
-          .insert(templateDataWithTheme);
+        let { error } = await api.templates.create(templateDataWithTheme);
 
         if (error && isMissingDaisyThemeSlugColumnError(error)) {
-          const retry = await supabase
-            .from('page_templates')
-            .insert(templateData);
+          const retry = await api.templates.create(templateData);
           error = retry.error;
         }
 
@@ -325,10 +310,8 @@ export default function PageBuilder({
     if (choice !== 'none' && selectedPageIds.length > 0) {
       setSaving(true);
       try {
-        const { data: pageRecords, error: fetchError } = await supabase
-          .from('seo_metadata')
-          .select('id, sections_data, daisy_theme_slug')
-          .in('id', selectedPageIds);
+        const { data: allPageRecords, error: fetchError } = await api.pages.list();
+        const pageRecords = (allPageRecords || []).filter(p => selectedPageIds.includes(p.id));
 
         if (fetchError) throw fetchError;
 
@@ -361,10 +344,7 @@ export default function PageBuilder({
             updatePayload.daisy_theme_slug = diffResult.newDaisyThemeSlug;
           }
 
-          const { error } = await supabase
-            .from('seo_metadata')
-            .update(updatePayload)
-            .eq('id', pageRecord.id);
+          const { error } = await api.pages.update(pageRecord.id, updatePayload);
 
           if (error) throw error;
         }
@@ -425,10 +405,7 @@ export default function PageBuilder({
   const deleteTemplate = async (id: string) => {
     if (!await modal.confirm('Supprimer ce modele ?', 'Supprimer le modèle')) return;
     try {
-      const { error } = await supabase
-        .from('page_templates')
-        .delete()
-        .eq('id', id);
+      const { error } = await api.templates.delete(id);
       if (error) throw error;
       showToast('Modele supprime');
       loadTemplates();
@@ -451,7 +428,7 @@ export default function PageBuilder({
       if (profile?.id) {
         duplicateData.created_by = profile.id;
       }
-      const { error } = await supabase.from('page_templates').insert(duplicateData);
+      const { error } = await api.templates.create(duplicateData);
       if (error) throw error;
       showToast('Modele duplique');
       loadTemplates();
@@ -500,10 +477,7 @@ export default function PageBuilder({
 
   const handleMoveTemplateToFolder = async (templateId: string, folderName: string | null) => {
     try {
-      const { error } = await supabase
-        .from('page_templates')
-        .update({ folder: folderName, updated_at: new Date().toISOString() })
-        .eq('id', templateId);
+      const { error } = await api.templates.update(templateId, { folder: folderName, updated_at: new Date().toISOString() });
       if (error) throw error;
       showToast(folderName ? `Deplace dans "${folderName}"` : 'Retire du dossier');
       setMovingTemplateId(null);

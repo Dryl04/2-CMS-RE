@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Edit, Settings, X, ChevronUp } from 'lucide-react';
-import { SEOMetadata } from '../lib/supabase';
+import { SEOMetadata } from '../lib/api';
 import { PageBuilderSection } from '../lib/pageBuilderTypes';
 import PageThemeInjector from './PageThemeInjector';
 import HeaderWidget from './PageBuilder/Widgets/HeaderWidget';

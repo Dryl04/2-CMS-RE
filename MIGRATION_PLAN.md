@@ -1,7 +1,7 @@
 # Plan de migration : Supabase → PostgreSQL direct
 
-> **Statut : FINALISÉ — prêt pour implémentation**
-> Basé sur les réponses aux questions cruciales du 2026-03-10.
+> **Statut : IMPLÉMENTÉ ✅**
+> Migration complétée le 2026-03-10. Backend NestJS + Prisma opérationnel, frontend refactoré.
 
 ---
 

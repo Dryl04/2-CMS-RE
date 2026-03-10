@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useModal } from '@/contexts/ModalContext';
 import { ArrowLeft, Save, Plus, Trash2, Pencil as Edit3, Check, ChevronDown, ChevronUp, ToggleLeft, ToggleRight, LayoutGrid as Layout, FileText, X, Layers } from 'lucide-react';
-import { supabase, SEOMetadata } from '@/lib/supabase';
+import { api, SEOMetadata } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   GlobalHFSetting,
@@ -52,10 +52,7 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
     try {
       const [settingsData, pagesResult] = await Promise.all([
         loadAllGlobalHFSettings(),
-        supabase
-          .from('seo_metadata')
-          .select('id, page_key, title, status')
-          .order('title', { ascending: true }),
+        api.pages.list(),
       ]);
       setSettings(settingsData);
       setPages((pagesResult.data || []) as SEOMetadata[]);
@@ -121,20 +118,13 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
       };
 
       if (editingSettingId) {
-        const { error } = await supabase
-          .from('global_hf_settings')
-          .update(payload)
-          .eq('id', editingSettingId);
+        const { error } = await api.globalHf.update(editingSettingId, payload);
         if (error) throw error;
         showToast('Configuration mise a jour');
       } else {
         payload.created_by = profile?.id || null;
         payload.is_active = true;
-        const { data: insertedSetting, error } = await supabase
-          .from('global_hf_settings')
-          .insert(payload)
-          .select('id')
-          .single();
+        const { data: insertedSetting, error } = await api.globalHf.create(payload);
         if (error) throw error;
         if (insertedSetting?.id) {
           await activateGlobalHFSetting(insertedSetting.id);
@@ -155,10 +145,7 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
   const toggleActive = async (setting: GlobalHFSetting) => {
     try {
       if (setting.is_active) {
-        const { error } = await supabase
-          .from('global_hf_settings')
-          .update({ is_active: false, updated_at: new Date().toISOString() })
-          .eq('id', setting.id);
+        const { error } = await api.globalHf.update(setting.id, { is_active: false, updated_at: new Date().toISOString() });
         if (error) throw error;
       } else {
         await activateGlobalHFSetting(setting.id);
@@ -175,10 +162,7 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
   const handleDelete = async (id: string) => {
     if (!await modal.confirm('Supprimer cette configuration ?', 'Supprimer la configuration')) return;
     try {
-      const { error } = await supabase
-        .from('global_hf_settings')
-        .delete()
-        .eq('id', id);
+      const { error } = await api.globalHf.delete(id);
       if (error) throw error;
       showToast('Configuration supprimee');
       if (editingSettingId === id) resetEditingState();

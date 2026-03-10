@@ -3,7 +3,7 @@ import { useModal } from '@/contexts/ModalContext';
 import { Plus, Eye, Save, ArrowLeft, Sparkles, X, Check } from 'lucide-react';
 import { widgetLibrary } from '@/lib/widgetLibrary';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import SectionRenderer from './PageBuilder/SectionRenderer';
 
 interface VisualPageBuilderProps {
@@ -96,7 +96,7 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
 
     setSaving(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: user } = await api.auth.getUser();
 
       if (!user) {
         await modal.alert('Vous devez être connecté', 'Non connecté');
@@ -105,21 +105,7 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
 
       const finalSlug = pageSlug.trim() || generateSlug(pageName);
 
-      const { data: template, error: templateError } = await supabase
-        .from('page_templates')
-        .insert({
-          name: pageName,
-          slug: finalSlug,
-          user_id: user.id,
-          is_published: true,
-        })
-        .select()
-        .single();
-
-      if (templateError) throw templateError;
-
-      const sectionsToInsert = selectedSections.map((section, index) => ({
-        template_id: template.id,
+      const sectionsData = selectedSections.map((section, index) => ({
         section_type: section.type,
         section_variant: section.variant,
         section_order: index,
@@ -128,11 +114,13 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
         advanced_settings: section.advanced,
       }));
 
-      const { error: sectionsError } = await supabase
-        .from('page_content_sections')
-        .insert(sectionsToInsert);
+      const { error: templateError } = await api.templates.create({
+        name: pageName,
+        is_public: true,
+        sections_data: sectionsData,
+      });
 
-      if (sectionsError) throw sectionsError;
+      if (templateError) throw templateError;
 
       await modal.alert('Page créée avec succès!', 'Succès');
       if (onClose) onClose();

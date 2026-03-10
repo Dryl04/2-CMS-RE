@@ -19,7 +19,7 @@ import VisualPageBuilder from '@/components/VisualPageBuilder';
 import BuilderPreviewPage from '@/components/PageBuilder/BuilderPreviewPage';
 import GlobalHFManager from '@/components/GlobalHFManager';
 import HFBuilderModal from '@/components/HFBuilderModal';
-import { supabase, SEOMetadata } from '@/lib/supabase';
+import { api, SEOMetadata } from '@/lib/api';
 import { normalizeInternalPath } from '@/lib/linkRegistry';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 
@@ -62,12 +62,7 @@ function AppContent() {
     try {
       const normalizedPageKey = normalizeInternalPath(pageKey);
 
-      const { data, error } = await supabase
-        .from('seo_metadata')
-        .select('*')
-        .eq('page_key', normalizedPageKey)
-        .eq('status', 'published')
-        .maybeSingle();
+      const { data, error } = await api.pages.getByPageKey(normalizedPageKey, { status: 'published' });
 
       if (error) throw error;
 
@@ -78,12 +73,7 @@ function AppContent() {
       }
 
       if (allowRedirectLookup && normalizedPageKey) {
-        const { data: redirectData, error: redirectError } = await supabase
-          .from('seo_redirects')
-          .select('target_path')
-          .eq('source_path', normalizedPageKey)
-          .eq('is_active', true)
-          .maybeSingle();
+        const { data: redirectData, error: redirectError } = await api.redirects.getBySourcePath(normalizedPageKey);
 
         if (redirectError) throw redirectError;
 
@@ -203,14 +193,11 @@ function AppContent() {
             mode="page"
             onSavePageSections={async (sections, daisyThemeSlug) => {
               try {
-                const { error } = await supabase
-                  .from('seo_metadata')
-                  .update({
+                const { error } = await api.pages.update(builderPageId, {
                     sections_data: sections,
                     daisy_theme_slug: daisyThemeSlug,
                     updated_at: new Date().toISOString(),
-                  })
-                  .eq('id', builderPageId);
+                  });
                 if (error) throw error;
                 handleNavigate('pages');
               } catch (err) {

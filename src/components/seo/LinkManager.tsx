@@ -17,7 +17,7 @@ import {
   Trash2,
   X,
 } from 'lucide-react';
-import { supabase, SEOMetadata, SEORedirect } from '@/lib/supabase';
+import { api, SEOMetadata, SEORedirect } from '@/lib/api';
 import {
   classifyLink,
   extractLinksFromSections,
@@ -168,11 +168,8 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
     setLoading(true);
     try {
       const [pagesResult, redirectsResult] = await Promise.all([
-        supabase
-          .from('seo_metadata')
-          .select('id, page_key, title, sections_data, status')
-          .order('updated_at', { ascending: false }),
-        supabase.from('seo_redirects').select('*').order('created_at', { ascending: false }),
+        api.pages.list({ order: 'updated_at:desc' }),
+        api.redirects.list(),
       ]);
       if (pagesResult.error) throw pagesResult.error;
       if (redirectsResult.error) throw redirectsResult.error;
@@ -460,10 +457,7 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
 
       if (result.updatedCount === 0) continue;
 
-      const { error } = await supabase
-        .from('seo_metadata')
-        .update({ sections_data: result.sections })
-        .eq('id', page.id);
+      const { error } = await api.pages.update(page.id, { sections_data: result.sections });
 
       if (error) {
         console.error('[LinkManager] Replace error on page', page.page_key, error);
@@ -486,7 +480,7 @@ export default function LinkManager({ onNavigate }: LinkManagerProps) {
 
   const handleDeleteRedirect = async (id: string) => {
     if (!await modal.confirm('Supprimer cette redirection ?', 'Supprimer la redirection')) return;
-    const { error } = await supabase.from('seo_redirects').delete().eq('id', id);
+    const { error } = await api.redirects.delete(id);
     if (error) {
       showToast('Suppression impossible', 'err');
     } else {

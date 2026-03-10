@@ -3,7 +3,7 @@ import { useModal } from '@/contexts/ModalContext';
 import { Upload, Search, Trash2, Check, Image as ImageIcon, X as XIcon, ArrowLeft } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import imageCompression from 'browser-image-compression';
-import { supabase, MediaFile } from '@/lib/supabase';
+import { api, MediaFile } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface MediaLibraryProps {
@@ -28,10 +28,7 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
 
   const loadMedia = async () => {
     try {
-      const { data, error } = await supabase
-        .from('media_files')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await api.media.list();
 
       if (error) throw error;
       const files = data || [];
@@ -78,50 +75,11 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
 
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-        const filePath = `${profile.id}/${fileName}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from('media')
-          .upload(filePath, fileToUpload);
+        const { data: uploadData, error: uploadError } = await api.media.upload(fileToUpload);
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('media')
-          .getPublicUrl(filePath);
-
-        let width, height;
-        if (file.type.startsWith('image/')) {
-          const img = new Image();
-          img.src = URL.createObjectURL(file);
-          await new Promise((resolve) => {
-            img.onload = () => {
-              width = img.width;
-              height = img.height;
-              URL.revokeObjectURL(img.src);
-              resolve(null);
-            };
-            img.onerror = () => {
-              URL.revokeObjectURL(img.src);
-              resolve(null);
-            };
-          });
-        }
-
-        const { error: dbError } = await supabase
-          .from('media_files')
-          .insert({
-            filename: fileName,
-            original_filename: file.name,
-            file_path: publicUrl,
-            file_size: fileToUpload.size,
-            mime_type: file.type,
-            width,
-            height,
-            uploaded_by: profile?.id,
-          });
-
-        if (dbError) throw dbError;
         successCount += 1;
       } catch (error) {
         console.error('Error uploading file:', error);
@@ -152,24 +110,9 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
     if (!await modal.confirm(`Supprimer ${file.original_filename} ?`, 'Supprimer le fichier')) return;
 
     try {
-      if (!file.uploaded_by || !file.filename) {
-        throw new Error('Informations de stockage manquantes');
-      }
+      const { error: deleteError } = await api.media.delete(file.id);
 
-      const filePath = `${file.uploaded_by}/${file.filename}`;
-
-      const { error: storageError } = await supabase.storage
-        .from('media')
-        .remove([filePath]);
-
-      if (storageError) throw storageError;
-
-      const { error: dbError } = await supabase
-        .from('media_files')
-        .delete()
-        .eq('id', file.id);
-
-      if (dbError) throw dbError;
+      if (deleteError) throw deleteError;
 
       await loadMedia();
       setActionMessage({ type: 'success', text: 'Média supprimé.' });
@@ -203,14 +146,8 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
       const file = mediaFiles.find(f => f.id === fileId);
       if (file) {
         try {
-          if (!file.uploaded_by || !file.filename) {
-            throw new Error('Informations de stockage manquantes');
-          }
-
-          const filePath = `${file.uploaded_by}/${file.filename}`;
-
-          await supabase.storage.from('media').remove([filePath]);
-          await supabase.from('media_files').delete().eq('id', file.id);
+          const { error: deleteError } = await api.media.delete(file.id);
+          if (deleteError) throw deleteError;
           deletedCount += 1;
         } catch (error) {
           console.error('Error deleting file:', error);

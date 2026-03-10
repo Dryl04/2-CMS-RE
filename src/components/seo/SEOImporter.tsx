@@ -4,7 +4,7 @@ import {
   Sparkles, FileUp, Eye, ChevronDown, ChevronUp, Rocket,
   X, Layers
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import { normalizeSectionForTheme } from '@/lib/widgetThemeHelper';
 import { sanitizeSectionUrls, extractPlainUrl } from '@/lib/contentSanitizer';
 import { loadActiveGlobalHFSetting, applySectionsWithGlobalHF } from '@/lib/globalHFSettings';
@@ -385,10 +385,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
 
       const templateSectionsById: Record<string, any[]> = {};
       if (templateIds.length > 0) {
-        const { data: templatesData, error: templatesError } = await supabase
-          .from('page_templates')
-          .select('id, sections_data')
-          .in('id', templateIds);
+        const { data: templatesData, error: templatesError } = await api.templates.list({ ids: templateIds });
 
         if (templatesError) throw templatesError;
 
@@ -469,9 +466,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
         return row;
       });
 
-      const { error } = await supabase
-        .from('seo_metadata')
-        .upsert(dataToImport, { onConflict: 'page_key' });
+      const { error } = await api.pages.upsert(dataToImport, 'page_key');
 
       if (error) throw error;
 

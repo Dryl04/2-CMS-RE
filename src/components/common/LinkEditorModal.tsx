@@ -12,7 +12,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ExternalLink, Link, Globe, Home, Search } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -142,11 +142,7 @@ async function fetchProjectLinks(): Promise<LinkSuggestionItem[]> {
 
   try {
     // 1) Internal pages from seo_metadata
-    const { data: pages } = await supabase
-      .from('seo_metadata')
-      .select('page_key, title')
-      .order('title', { ascending: true })
-      .limit(500);
+    const { data: pages } = await api.links.listPageLinks();
 
     if (pages) {
       for (const p of pages) {
@@ -159,10 +155,7 @@ async function fetchProjectLinks(): Promise<LinkSuggestionItem[]> {
     }
 
     // 2) External + all links used across pages (from page_templates.sections_data)
-    const { data: templates } = await supabase
-      .from('page_templates')
-      .select('name, sections_data')
-      .limit(200);
+    const { data: templates } = await api.links.listTemplateLinks();
 
     if (templates) {
       for (const tpl of templates) {

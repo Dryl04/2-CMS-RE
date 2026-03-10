@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useModal } from '@/contexts/ModalContext';
 import { X, Search, Download, Check } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 
 interface FontImporterProps {
   onClose: () => void;
@@ -88,10 +88,7 @@ export default function FontImporter({ onClose, onFontImported }: FontImporterPr
 
   const loadImportedFonts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('fonts_library')
-        .select('*')
-        .order('font_name');
+      const { data, error } = await api.fonts.list();
 
       if (error) throw error;
       setImportedFonts(data || []);
@@ -116,8 +113,8 @@ export default function FontImporter({ onClose, onFontImported }: FontImporterPr
 
     setImporting(normalizedName);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: userData } = await api.auth.getUser();
+      if (!userData) {
         showToast('Vous devez être connecté');
         return;
       }
@@ -143,15 +140,13 @@ export default function FontImporter({ onClose, onFontImported }: FontImporterPr
         ? ['400', '700']
         : ['300', '400', '500', '600', '700', '800', '900'];
 
-      const { error } = await supabase
-        .from('fonts_library')
-        .insert({
+      const { error } = await api.fonts.create({
           font_name: normalizedName,
           font_family: fontFamily,
           font_url: fontUrl,
           font_weights: fontWeights,
           is_google_font: !isWebSafeFont,
-          imported_by: user.id,
+          imported_by: userData.id,
           is_system: false,
         });
 
@@ -184,10 +179,7 @@ export default function FontImporter({ onClose, onFontImported }: FontImporterPr
     if (!await modal.confirm(`Supprimer la police ${fontName} ?`, 'Supprimer la police')) return;
 
     try {
-      const { error } = await supabase
-        .from('fonts_library')
-        .delete()
-        .eq('id', fontId);
+      const { error } = await api.fonts.delete(fontId);
 
       if (error) throw error;
 

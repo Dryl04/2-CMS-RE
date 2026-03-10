@@ -5,7 +5,7 @@ import { LinkInputField } from '@/components/common/LinkInputField';
 import { RichTextArea } from '@/components/common/RichTextArea';
 import { getWidgetCapabilities } from '@/lib/widgetCapabilities';
 import { widgetLibrary } from '@/lib/widgetLibrary';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import { getWidgetFieldLabel, getWidgetFieldLabelForType } from '@/lib/widgetFieldLabels';
 import WidgetThemeSelector from './WidgetThemeSelector';
 import { GradientPicker } from './GradientPicker';
@@ -67,14 +67,10 @@ async function fetchPageSlugs(): Promise<{ slug: string; title: string }[]> {
   const now = Date.now();
   if (_cachedPageSlugs && now - _cacheTimestamp < CACHE_TTL) return _cachedPageSlugs;
   try {
-    const { data } = await supabase
-      .from('seo_metadata')
-      .select('slug, title')
-      .order('title', { ascending: true })
-      .limit(500);
+    const { data } = await api.pages.list();
     _cachedPageSlugs = (data || []).map((p) => ({
-      slug: `/${p.slug}`,
-      title: p.title || p.slug,
+      slug: `/${p.page_key}`,
+      title: p.title || p.page_key,
     }));
     _cacheTimestamp = now;
   } catch {

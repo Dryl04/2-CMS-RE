@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useModal } from '@/contexts/ModalContext';
 import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, LayoutGrid as Layout, ChevronRight, FolderPlus, X } from 'lucide-react';
-import { supabase, PageTemplate } from '@/lib/supabase';
+import { api, PageTemplate } from '@/lib/api';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { normalizeInternalPath, replaceInternalLinksInSections } from '@/lib/linkRegistry';
 import { loadActiveGlobalHFSetting, applySectionsWithGlobalHF } from '@/lib/globalHFSettings';
@@ -115,10 +115,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
   const loadTemplates = async () => {
     setLoadingTemplates(true);
     try {
-      const { data, error } = await supabase
-        .from('page_templates')
-        .select('*')
-        .order('name');
+      const { data, error } = await api.templates.list();
       if (error) throw error;
       setTemplates(data || []);
     } catch (error) {
@@ -130,10 +127,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
 
   const loadAvailablePages = async () => {
     try {
-      const { data, error } = await supabase
-        .from('seo_metadata')
-        .select('id, page_key, title')
-        .order('page_key');
+      const { data, error } = await api.pages.list();
       if (error) throw error;
       setAvailablePages(data || []);
     } catch (error) {
@@ -143,10 +137,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
 
   const loadExistingPageFolders = async () => {
     try {
-      const { data, error } = await supabase
-        .from('seo_metadata')
-        .select('folder')
-        .not('folder', 'is', null);
+      const { data, error } = await api.pages.list();
       if (error) throw error;
       const uniqueFolders = Array.from(new Set((data || []).map((d: any) => d.folder).filter(Boolean))) as string[];
       setExistingPageFolders(uniqueFolders.sort());
@@ -257,31 +248,22 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
       let savedPageId = editingPage?.id || '';
 
       if (editingPage?.id) {
-        const { error } = await supabase
-          .from('seo_metadata')
-          .update({ ...data, updated_at: new Date().toISOString() })
-          .eq('id', editingPage.id);
+        const { error } = await api.pages.update(editingPage.id, { ...data, updated_at: new Date().toISOString() });
 
         if (error) throw error;
         savedPageId = editingPage.id;
       } else {
-        const { data: insertedPage, error } = await supabase
-          .from('seo_metadata')
-          .insert(data)
-          .select('id')
-          .single();
+        const { data: insertedPage, error } = await api.pages.create(data);
 
         if (error) throw error;
-        savedPageId = insertedPage.id;
+        savedPageId = insertedPage?.id || '';
       }
 
       const previousPageKey = editingPage?.page_key ? normalizeInternalPath(editingPage.page_key) : '';
       const nextPageKey = normalizeInternalPath(pageKey);
 
       if (previousPageKey && nextPageKey && previousPageKey !== nextPageKey) {
-        const { data: allPages, error: pagesError } = await supabase
-          .from('seo_metadata')
-          .select('id, sections_data');
+        const { data: allPages, error: pagesError } = await api.pages.list();
 
         if (pagesError) throw pagesError;
 
@@ -295,10 +277,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
           const replacement = replaceInternalLinksInSections(pageSections, previousPageKey, nextPageKey);
 
           if (replacement.updatedCount > 0) {
-            const { error: updateSectionsError } = await supabase
-              .from('seo_metadata')
-              .update({ sections_data: replacement.sections, updated_at: new Date().toISOString() })
-              .eq('id', (page as any).id);
+            const { error: updateSectionsError } = await api.pages.update((page as any).id, { sections_data: replacement.sections, updated_at: new Date().toISOString() });
 
             if (updateSectionsError) throw updateSectionsError;
           }
@@ -314,25 +293,16 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
           created_by: userId || editingPage?.user_id || null,
         };
 
-        const { data: existingRedirect, error: existingRedirectError } = await supabase
-          .from('seo_redirects')
-          .select('id')
-          .eq('source_path', previousPageKey)
-          .maybeSingle();
+        const { data: existingRedirect, error: existingRedirectError } = await api.redirects.getBySourcePath(previousPageKey);
 
         if (existingRedirectError) throw existingRedirectError;
 
         if (existingRedirect?.id) {
-          const { error: updateRedirectError } = await supabase
-            .from('seo_redirects')
-            .update({ ...redirectPayload, updated_at: new Date().toISOString() })
-            .eq('id', existingRedirect.id);
+          const { error: updateRedirectError } = await api.redirects.update(existingRedirect.id, { ...redirectPayload, updated_at: new Date().toISOString() });
 
           if (updateRedirectError) throw updateRedirectError;
         } else {
-          const { error: insertRedirectError } = await supabase
-            .from('seo_redirects')
-            .insert(redirectPayload);
+          const { error: insertRedirectError } = await api.redirects.create(redirectPayload as any);
 
           if (insertRedirectError) throw insertRedirectError;
         }

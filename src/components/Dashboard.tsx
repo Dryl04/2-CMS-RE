@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FileText, Layout, Image, Settings, TrendingUp, Clock, CheckCircle, Paintbrush, Palette, Sparkles, Layers } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 
 interface Stats {
   totalPages: number;
@@ -31,8 +31,8 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
   const loadStats = async () => {
     try {
       const [pagesResult, templatesResult] = await Promise.all([
-        supabase.from('seo_metadata').select('status', { count: 'exact' }),
-        supabase.from('page_templates').select('id', { count: 'exact' }),
+        api.pages.list(),
+        api.templates.count(),
       ]);
 
       if (pagesResult.error) {
@@ -47,7 +47,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       const totalPages = pages.length;
       const publishedPages = pages.filter((p) => p.status === 'published').length;
       const draftPages = pages.filter((p) => p.status === 'draft').length;
-      const templates = templatesResult.count || 0;
+      const templates = templatesResult.data?.count || 0;
 
       setStats({ totalPages, publishedPages, draftPages, templates });
     } catch (error) {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 import { useDaisyTheme } from '@/contexts/DaisyThemeContext';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import FontImporter from './FontImporter';
 import {
   DaisyTheme,
@@ -92,10 +92,7 @@ export default function DaisyThemeEditorModal({ theme, onClose, onSaved, sourceT
 
   const loadAvailableFonts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('fonts_library')
-        .select('id, font_name, font_family')
-        .order('font_name');
+      const { data, error } = await api.fonts.list();
 
       if (error) throw error;
       setAvailableFonts(data || []);
