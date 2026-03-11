@@ -4,6 +4,7 @@ import { Save, Link as LinkIcon, Globe, HelpCircle, Sparkles, LayoutGrid as Layo
 import { supabase, PageTemplate } from '@/lib/supabase';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { normalizeInternalPath, replaceInternalLinksInSections } from '@/lib/linkRegistry';
+import { loadActiveGlobalHFSetting, applySectionsWithGlobalHF } from '@/lib/globalHFSettings';
 
 interface SEOFormProps {
   onSaveComplete: () => void;
@@ -210,6 +211,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
       const pageKey = getPageKey();
       const keywordsArray = keywords.split(',').map(k => k.trim()).filter(k => k);
       let sectionsToSave = sectionsData;
+      const activeGlobalHFSetting = !editingPage?.id ? await loadActiveGlobalHFSetting() : null;
       const selectedTemplate = selectedTemplateId
         ? templates.find((template) => template.id === selectedTemplateId)
         : null;
@@ -219,6 +221,10 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
         if (templateSections.length > 0) {
           sectionsToSave = templateSections;
         }
+      }
+
+      if (activeGlobalHFSetting) {
+        sectionsToSave = applySectionsWithGlobalHF(sectionsToSave, activeGlobalHFSetting, { context: 'create' });
       }
 
 

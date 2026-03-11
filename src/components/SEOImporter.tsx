@@ -7,6 +7,7 @@ import {
 import { supabase } from '../lib/supabase';
 import { normalizeSectionForTheme } from '../lib/widgetThemeHelper';
 import { sanitizeSectionUrls, extractPlainUrl } from '../lib/contentSanitizer';
+import { loadActiveGlobalHFSetting, applySectionsWithGlobalHF } from '../lib/globalHFSettings';
 
 interface ImportedPage {
   page_key: string;
@@ -109,6 +110,96 @@ function setNestedValue(target: Record<string, any>, path: string[], value: any)
   current[path[path.length - 1]] = value;
 }
 
+function getNestedValue(target: Record<string, any>, path: string[]) {
+  let current: any = target;
+
+  for (const key of path) {
+    if (current === null || current === undefined) {
+      return undefined;
+    }
+
+    current = current[key];
+  }
+
+  return current;
+}
+
+function isPlainObject(value: unknown): value is Record<string, any> {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function cloneValue<T>(value: T): T {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  if (typeof value !== 'object') {
+    return value;
+  }
+
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
+function mergeWithTemplateDefaults(templateValue: any, importedValue: any): any {
+  if (importedValue === undefined || importedValue === null) {
+    return cloneValue(templateValue);
+  }
+
+  if (
+    typeof importedValue === 'string' &&
+    importedValue.trim() === '' &&
+    typeof templateValue === 'string' &&
+    templateValue.trim() !== ''
+  ) {
+    return templateValue;
+  }
+
+  if (Array.isArray(templateValue) && Array.isArray(importedValue)) {
+    if (importedValue.length === 0 && templateValue.length > 0) {
+      return cloneValue(templateValue);
+    }
+
+    const maxLength = Math.max(templateValue.length, importedValue.length);
+
+    return Array.from({ length: maxLength }, (_, index) =>
+      mergeWithTemplateDefaults(templateValue[index], importedValue[index]),
+    );
+  }
+
+  if (isPlainObject(templateValue) && isPlainObject(importedValue)) {
+    const merged: Record<string, any> = {};
+    const keys = new Set([
+      ...Object.keys(templateValue),
+      ...Object.keys(importedValue),
+    ]);
+
+    keys.forEach((key) => {
+      merged[key] = mergeWithTemplateDefaults(templateValue[key], importedValue[key]);
+    });
+
+    return merged;
+  }
+
+  return importedValue;
+}
+
+function mergeSectionsWithTemplateDefaults(baseSections: any[], importedSections: any[]) {
+  const baseSectionsById = new Map(
+    baseSections
+      .filter((section) => section && typeof section === 'object' && section.id)
+      .map((section) => [section.id, section]),
+  );
+
+  return importedSections.map((section) => {
+    const baseSection = section?.id ? baseSectionsById.get(section.id) : undefined;
+    const mergedSection = baseSection
+      ? mergeWithTemplateDefaults(baseSection, section)
+      : section;
+
+    return normalizeSectionForTheme(sanitizeSectionUrls(mergedSection));
+  });
+}
+
 function applyContentOverrides(baseSections: any[], overrides: Record<string, Record<string, any>>) {
   return baseSections.map((rawSection) => {
     const section = JSON.parse(JSON.stringify(rawSection));
@@ -118,7 +209,10 @@ function applyContentOverrides(baseSections: any[], overrides: Record<string, Re
       Object.entries(sectionOverrides).forEach(([fieldPath, value]) => {
         const pathParts = fieldPath.split('.').filter(Boolean);
         if (pathParts[0] !== 'content') return;
-        setNestedValue(section, pathParts, value);
+
+        const currentValue = getNestedValue(section, pathParts);
+        const mergedValue = mergeWithTemplateDefaults(currentValue, value);
+        setNestedValue(section, pathParts, mergedValue);
       });
     }
 
@@ -284,15 +378,9 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
   const handleImport = async () => {
     setIsImporting(true);
     try {
-      const pagesNeedingTemplateHydration = previewData.filter(
-        (page) =>
-          (!page.sections_data || page.sections_data.length === 0) &&
-          !!page.content_overrides &&
-          !!page.template_id,
-      );
-
+      const activeGlobalHFSetting = await loadActiveGlobalHFSetting();
       const templateIds = Array.from(
-        new Set(pagesNeedingTemplateHydration.map((page) => page.template_id).filter(Boolean) as string[]),
+        new Set(previewData.map((page) => page.template_id).filter(Boolean) as string[]),
       );
 
       const templateSectionsById: Record<string, any[]> = {};
@@ -312,9 +400,14 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
       const resolvedPreviewData = previewData.map((page) => {
         const hasSections = Array.isArray(page.sections_data) && page.sections_data.length > 0;
         if (hasSections) {
+          const normalizedSections = normalizeSectionsForImport(page.sections_data || []);
+          const baseSections = page.template_id ? (templateSectionsById[page.template_id] || []) : [];
+
           return {
             ...page,
-            sections_data: normalizeSectionsForImport(page.sections_data || []),
+            sections_data: baseSections.length > 0
+              ? mergeSectionsWithTemplateDefaults(baseSections, normalizedSections)
+              : normalizedSections,
           };
         }
 
@@ -347,6 +440,10 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
       }
 
       const dataToImport = resolvedPreviewData.map(page => {
+        const sectionsWithGlobalHF = activeGlobalHFSetting
+          ? applySectionsWithGlobalHF(page.sections_data || [], activeGlobalHFSetting, { context: 'import' })
+          : (page.sections_data || []);
+
         const row: Record<string, any> = {
           page_key: page.page_key,
           title: page.title,
@@ -363,7 +460,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
           seo_h2: page.seo_h2 || null,
           template_id: page.template_id || null,
           daisy_theme_slug: page.daisy_theme_slug ?? null,
-          sections_data: page.sections_data || [],
+          sections_data: sectionsWithGlobalHF,
           imported_at: new Date().toISOString(),
         };
         if (userId) {

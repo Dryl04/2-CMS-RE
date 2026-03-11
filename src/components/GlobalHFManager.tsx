@@ -8,6 +8,7 @@ import {
   loadAllGlobalHFSettings,
 } from '@/lib/globalHFSettings';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
+import GlobalHFPreview from '@/components/GlobalHFPreview';
 
 interface GlobalHFManagerProps {
   onNavigate: (view: string) => void;
@@ -126,10 +127,15 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
       } else {
         payload.created_by = profile?.id || null;
         payload.is_active = true;
-        const { error } = await supabase
+        const { data: insertedSetting, error } = await supabase
           .from('global_hf_settings')
-          .insert(payload);
+          .insert(payload)
+          .select('id')
+          .single();
         if (error) throw error;
+        if (insertedSetting?.id) {
+          await activateGlobalHFSetting(insertedSetting.id);
+        }
         showToast('Configuration creee');
       }
 
@@ -145,15 +151,21 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
 
   const toggleActive = async (setting: GlobalHFSetting) => {
     try {
-      const { error } = await supabase
-        .from('global_hf_settings')
-        .update({ is_active: !setting.is_active, updated_at: new Date().toISOString() })
-        .eq('id', setting.id);
-      if (error) throw error;
+      if (setting.is_active) {
+        const { error } = await supabase
+          .from('global_hf_settings')
+          .update({ is_active: false, updated_at: new Date().toISOString() })
+          .eq('id', setting.id);
+        if (error) throw error;
+      } else {
+        await activateGlobalHFSetting(setting.id);
+      }
+
       showToast(setting.is_active ? 'Configuration desactivee' : 'Configuration activee');
       await loadData();
     } catch (error) {
       console.error('[GlobalHFManager] Error toggling:', error);
+      showToast('Erreur lors du changement d\'etat');
     }
   };
 
@@ -334,41 +346,41 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
         <div className="border-t border-gray-200 pt-6">
           <h4 className="text-sm font-semibold text-gray-800 mb-4">Options d'application</h4>
           <div className="space-y-3">
-            <label className="flex items-center space-x-3 cursor-pointer group">
-              <button
-                type="button"
-                onClick={() => setEditingApplyOnCreate(!editingApplyOnCreate)}
-                className="flex-shrink-0"
-              >
+            <button
+              type="button"
+              onClick={() => setEditingApplyOnCreate((prev) => !prev)}
+              className="w-full flex items-center space-x-3 text-left group"
+            >
+              <span className="flex-shrink-0">
                 {editingApplyOnCreate ? (
                   <ToggleRight className="w-8 h-5 text-blue-600" />
                 ) : (
                   <ToggleLeft className="w-8 h-5 text-gray-400 group-hover:text-gray-500" />
                 )}
-              </button>
+              </span>
               <div>
                 <span className="text-sm font-medium text-gray-900">Appliquer aux nouvelles pages creees</span>
                 <p className="text-xs text-gray-500">Le header/footer sera automatiquement insere lors de la creation manuelle</p>
               </div>
-            </label>
+            </button>
 
-            <label className="flex items-center space-x-3 cursor-pointer group">
-              <button
-                type="button"
-                onClick={() => setEditingApplyOnImport(!editingApplyOnImport)}
-                className="flex-shrink-0"
-              >
+            <button
+              type="button"
+              onClick={() => setEditingApplyOnImport((prev) => !prev)}
+              className="w-full flex items-center space-x-3 text-left group"
+            >
+              <span className="flex-shrink-0">
                 {editingApplyOnImport ? (
                   <ToggleRight className="w-8 h-5 text-blue-600" />
                 ) : (
                   <ToggleLeft className="w-8 h-5 text-gray-400 group-hover:text-gray-500" />
                 )}
-              </button>
+              </span>
               <div>
                 <span className="text-sm font-medium text-gray-900">Appliquer aux pages importees</span>
                 <p className="text-xs text-gray-500">Le header/footer sera automatiquement insere lors de l'importation</p>
               </div>
-            </label>
+            </button>
           </div>
         </div>
 
@@ -473,7 +485,10 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
         key={setting.id}
         className={`bg-white rounded-2xl border transition-all ${setting.is_active ? 'border-blue-200 shadow-sm' : 'border-gray-200 opacity-75'}`}
       >
-        <div className="p-5">
+        <div
+          className="p-5 cursor-pointer"
+          onClick={() => setExpandedId(isExpanded ? null : setting.id)}
+        >
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2 mb-1">
@@ -522,7 +537,10 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
 
             <div className="flex items-center space-x-1 ml-4 flex-shrink-0">
               <button
-                onClick={() => toggleActive(setting)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  toggleActive(setting);
+                }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 title={setting.is_active ? 'Desactiver' : 'Activer'}
               >
@@ -533,21 +551,30 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
                 )}
               </button>
               <button
-                onClick={() => startEdit(setting)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  startEdit(setting);
+                }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Modifier"
               >
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
               <button
-                onClick={() => handleDelete(setting.id)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleDelete(setting.id);
+                }}
                 className="p-2 hover:bg-red-50 rounded-lg transition-colors"
                 title="Supprimer"
               >
                 <Trash2 className="w-4 h-4 text-red-400" />
               </button>
               <button
-                onClick={() => setExpandedId(isExpanded ? null : setting.id)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setExpandedId(isExpanded ? null : setting.id);
+                }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
@@ -559,6 +586,29 @@ export default function GlobalHFManager({ onNavigate, onOpenHFBuilder }: GlobalH
         {isExpanded && (
           <div className="px-5 pb-5 pt-0 border-t border-gray-100 mt-0">
             <div className="pt-4 space-y-3">
+              <div>
+                <h4 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Parametres actifs</h4>
+                <div className="flex flex-wrap gap-2">
+                  <span className={`text-[10px] font-medium px-2 py-1 rounded ${setting.is_active ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
+                    {setting.is_active ? 'Configuration active' : 'Configuration inactive'}
+                  </span>
+                  <span className={`text-[10px] font-medium px-2 py-1 rounded ${setting.apply_on_import ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                    Importation {setting.apply_on_import ? 'active' : 'inactive'}
+                  </span>
+                  <span className={`text-[10px] font-medium px-2 py-1 rounded ${setting.apply_on_create ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                    Creation {setting.apply_on_create ? 'active' : 'inactive'}
+                  </span>
+                  <span className={`text-[10px] font-medium px-2 py-1 rounded ${pageCount > 0 ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
+                    Pages ciblees {pageCount > 0 ? `(${pageCount})` : 'aucune'}
+                  </span>
+                </div>
+              </div>
+
+              <GlobalHFPreview
+                headerSection={setting.header_section}
+                footerSection={setting.footer_section}
+              />
+
               {pageCount > 0 && (
                 <div>
                   <h4 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Pages ciblees</h4>
