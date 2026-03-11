@@ -89,11 +89,27 @@ npm run dev
 ### 1. Export Supabase data
 
 ```bash
-export SUPABASE_DB_URL='postgresql://postgres:password@db.example.supabase.co:5432/postgres?sslmode=require'
+export SUPABASE_DB_POOLER_URL='postgresql://postgres.PROJECT_REF:YOUR_DB_PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres?sslmode=require'
 npm run migrate:export-supabase
 ```
 
 This writes `scripts/supabase_export.sql`.
+
+Notes:
+
+- this export is read-only: `pg_dump` does not modify or delete data in Supabase
+- use the Session pooler URL when your machine does not support IPv6 routing
+- the direct host `db.PROJECT_REF.supabase.co:5432` is IPv6-only by default
+
+Fallback when no IPv4 pooler is available:
+
+```bash
+export SUPABASE_URL='https://jpyzyxdmdqfujprgyndc.supabase.co'
+export SUPABASE_SERVICE_ROLE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpweXp5eGRtZHFmdWpwcmd5bmRjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTMxODAxNCwiZXhwIjoyMDg2ODk0MDE0fQ.46-LOAEJpQt3r8nGESD1GSGPO5xltpwVHQrJ6_CO-z0'
+npm run migrate:export-supabase
+```
+
+This uses the HTTPS REST API in read-only mode and still generates `scripts/supabase_export.sql`.
 
 ### 2. Transform the export for the new schema
 

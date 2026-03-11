@@ -10,6 +10,56 @@ interface CliOptions {
   tempPasswordHash: string;
 }
 
+function stripLeadingSqlComments(input: string): string {
+  return input.replace(/^(?:\s*--.*(?:\r?\n|$))+/, '').trimStart();
+}
+
+function splitSqlStatements(sql: string): string[] {
+  const statements: string[] = [];
+  let current = '';
+  let inString = false;
+
+  for (let index = 0; index < sql.length; index += 1) {
+    const char = sql[index];
+    const next = sql[index + 1];
+
+    if (!inString && char === '-' && next === '-') {
+      while (index < sql.length && sql[index] !== '\n') {
+        index += 1;
+      }
+      continue;
+    }
+
+    current += char;
+
+    if (char === "'") {
+      if (inString && next === "'") {
+        current += next;
+        index += 1;
+        continue;
+      }
+
+      inString = !inString;
+      continue;
+    }
+
+    if (char === ';' && !inString) {
+      const statement = current.trim();
+      if (statement) {
+        statements.push(statement);
+      }
+      current = '';
+    }
+  }
+
+  const trailingStatement = current.trim();
+  if (trailingStatement) {
+    statements.push(trailingStatement);
+  }
+
+  return statements;
+}
+
 function splitSqlList(input: string): string[] {
   const values: string[] = [];
   let current = '';
@@ -59,9 +109,41 @@ function normalizeNullableValue(value: string | undefined): string {
   return value?.trim() || 'NULL';
 }
 
+function toSqlStringLiteral(value: string): string {
+  return `'${value.replace(/'/g, "''")}'`;
+}
+
+function convertJsonbUuidArrayValue(value: string | undefined): string {
+  const normalized = normalizeNullableValue(value);
+
+  if (/^NULL$/i.test(normalized)) {
+    return 'ARRAY[]::uuid[]';
+  }
+
+  const jsonbMatch = normalized.match(/^'(.*)'::jsonb$/is);
+  if (!jsonbMatch) {
+    return normalized;
+  }
+
+  try {
+    const parsed = JSON.parse(jsonbMatch[1].replace(/''/g, "'"));
+    if (!Array.isArray(parsed)) {
+      return normalized;
+    }
+
+    if (parsed.length === 0) {
+      return 'ARRAY[]::uuid[]';
+    }
+
+    return `ARRAY[${parsed.map((item) => toSqlStringLiteral(String(item))).join(', ')}]::uuid[]`;
+  } catch {
+    return normalized;
+  }
+}
+
 function transformUserProfilesInsert(statement: string, tempPasswordHash: string): string {
   const match = statement.match(
-    /^INSERT INTO public\.user_profiles\s*\(([\s\S]*?)\)\s*VALUES\s*\(([\s\S]*?)\);\s*$/i,
+    /^INSERT INTO public\.(?:"user_profiles"|user_profiles)\s*\(([\s\S]*?)\)\s*VALUES\s*\(([\s\S]*?)\);?\s*$/i,
   );
 
   if (!match) {
@@ -97,22 +179,52 @@ function transformUserProfilesInsert(statement: string, tempPasswordHash: string
   return `INSERT INTO public.users (${usersColumns.join(', ')}) VALUES (${usersValues.join(', ')});`;
 }
 
+function transformGlobalHfSettingsInsert(statement: string): string {
+  const match = statement.match(
+    /^INSERT INTO public\."global_hf_settings"\s*\(([\s\S]*?)\)\s*VALUES\s*\(([\s\S]*?)\);?\s*$/i,
+  );
+
+  if (!match) {
+    return statement;
+  }
+
+  const columns = parseColumns(match[1]);
+  const values = splitSqlList(match[2]);
+
+  const transformedValues = columns.map((column, index) => {
+    const value = values[index] ?? 'NULL';
+
+    if (column === 'target_page_ids') {
+      return convertJsonbUuidArrayValue(value);
+    }
+
+    return value;
+  });
+
+  const quotedColumns = columns.map((column) => `"${column}"`);
+
+  return `INSERT INTO public."global_hf_settings" (${quotedColumns.join(', ')}) VALUES (${transformedValues.join(', ')});`;
+}
+
 export function transformSql(sql: string, tempPasswordHash = DEFAULT_TEMP_PASSWORD_HASH): string {
-  const statements = sql
-    .split(/;\s*(?:\r?\n|$)/)
-    .map((statement) => statement.trim())
-    .filter(Boolean);
+  const statements = splitSqlStatements(sql);
 
   const transformedStatements = statements.flatMap((statement) => {
     if (/\bauth\./i.test(statement)) {
       return [];
     }
 
-    if (/^INSERT INTO public\.user_profiles\b/i.test(statement)) {
-      return [transformUserProfilesInsert(`${statement};`, tempPasswordHash)];
+    const normalizedStatement = stripLeadingSqlComments(statement);
+
+    if (/^INSERT INTO public\.(?:"user_profiles"|user_profiles)\s*\(/i.test(normalizedStatement)) {
+      return [transformUserProfilesInsert(normalizedStatement, tempPasswordHash)];
     }
 
-    return [`${statement};`];
+    if (/^INSERT INTO public\."global_hf_settings"\s*\(/i.test(normalizedStatement)) {
+      return [transformGlobalHfSettingsInsert(normalizedStatement)];
+    }
+
+    return [normalizedStatement.endsWith(';') ? normalizedStatement : `${normalizedStatement};`];
   });
 
   return [
@@ -172,4 +284,10 @@ if (entrypoint && import.meta.url === `file://${entrypoint}`) {
   });
 }
 
-export { parseCliOptions, splitSqlList, transformUserProfilesInsert };
+export {
+  convertJsonbUuidArrayValue,
+  parseCliOptions,
+  splitSqlList,
+  transformGlobalHfSettingsInsert,
+  transformUserProfilesInsert,
+};

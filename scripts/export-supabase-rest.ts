@@ -1,0 +1,217 @@
+import { writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+
+const DEFAULT_OUTPUT = resolve(import.meta.dirname, "supabase_export.sql");
+const PAGE_SIZE = 1000;
+
+type ScalarArrayType = "text" | "uuid";
+
+interface TableConfig {
+  name: string;
+  arrayColumns?: Record<string, ScalarArrayType>;
+  jsonColumns?: string[];
+}
+
+const TABLES: TableConfig[] = [
+  { name: "user_profiles" },
+  { name: "page_themes", jsonColumns: ["css"] },
+  { name: "daisyui_themes", jsonColumns: ["tokens"] },
+  { name: "fonts_library", arrayColumns: { font_weights: "text" } },
+  { name: "section_types", jsonColumns: ["schema"] },
+  { name: "page_templates" },
+  { name: "seo_metadata", arrayColumns: { keywords: "text" } },
+  { name: "template_sections", jsonColumns: ["settings"] },
+  { name: "page_content_sections", jsonColumns: ["content"] },
+  { name: "media_files" },
+  { name: "seo_redirects" },
+  {
+    name: "global_hf_settings",
+    jsonColumns: ["header_section", "footer_section"],
+  },
+];
+
+function env(name: string): string {
+  return process.env[name]?.trim() || "";
+}
+
+function getSupabaseUrl(): string {
+  const value = env("SUPABASE_URL") || env("VITE_SUPABASE_URL");
+  return value.replace(/\/$/, "");
+}
+
+function getServiceRoleKey(): string {
+  return env("SUPABASE_SERVICE_ROLE_KEY");
+}
+
+function quoteIdentifier(value: string): string {
+  return `"${value.replace(/"/g, '""')}"`;
+}
+
+function quoteString(value: string): string {
+  return `'${value.replace(/'/g, "''")}'`;
+}
+
+function serializeScalar(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "NULL";
+  }
+
+  if (typeof value === "boolean") {
+    return value ? "TRUE" : "FALSE";
+  }
+
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? String(value) : "NULL";
+  }
+
+  return quoteString(String(value));
+}
+
+function serializeArray(value: unknown[], subtype: ScalarArrayType): string {
+  if (value.length === 0) {
+    return `ARRAY[]::${subtype}[]`;
+  }
+
+  return `ARRAY[${value.map((entry) => serializeScalar(entry)).join(", ")}]`;
+}
+
+function serializeJson(value: unknown): string {
+  return `${quoteString(JSON.stringify(value))}::jsonb`;
+}
+
+function serializeValue(
+  table: TableConfig,
+  column: string,
+  value: unknown,
+): string {
+  if (value === null || value === undefined) {
+    return "NULL";
+  }
+
+  const arrayType = table.arrayColumns?.[column];
+  if (arrayType && Array.isArray(value)) {
+    return serializeArray(value, arrayType);
+  }
+
+  if (table.jsonColumns?.includes(column)) {
+    return serializeJson(value);
+  }
+
+  if (Array.isArray(value) || typeof value === "object") {
+    return serializeJson(value);
+  }
+
+  return serializeScalar(value);
+}
+
+async function fetchPage(
+  baseUrl: string,
+  apiKey: string,
+  table: string,
+  from: number,
+  to: number,
+) {
+  const url = new URL(`/rest/v1/${table}`, baseUrl);
+  url.searchParams.set("select", "*");
+  url.searchParams.set("order", "id.asc");
+
+  const response = await fetch(url, {
+    headers: {
+      apikey: apiKey,
+      Authorization: `Bearer ${apiKey}`,
+      Accept: "application/json",
+      "Accept-Profile": "public",
+      Range: `${from}-${to}`,
+      Prefer: "count=exact",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Supabase REST export failed for ${table}: ${response.status} ${response.statusText} - ${await response.text()}`,
+    );
+  }
+
+  const rows = (await response.json()) as Record<string, unknown>[];
+  return rows;
+}
+
+async function fetchAllRows(baseUrl: string, apiKey: string, table: string) {
+  const rows: Record<string, unknown>[] = [];
+
+  for (let offset = 0; ; offset += PAGE_SIZE) {
+    const page = await fetchPage(
+      baseUrl,
+      apiKey,
+      table,
+      offset,
+      offset + PAGE_SIZE - 1,
+    );
+    rows.push(...page);
+
+    if (page.length < PAGE_SIZE) {
+      break;
+    }
+  }
+
+  return rows;
+}
+
+function buildInsertStatement(
+  table: TableConfig,
+  row: Record<string, unknown>,
+): string | null {
+  const columns = Object.keys(row);
+  if (columns.length === 0) {
+    return null;
+  }
+
+  const quotedColumns = columns.map(quoteIdentifier).join(", ");
+  const values = columns
+    .map((column) => serializeValue(table, column, row[column]))
+    .join(", ");
+  return `INSERT INTO public.${quoteIdentifier(table.name)} (${quotedColumns}) VALUES (${values});`;
+}
+
+async function main() {
+  const outputPath = process.argv[2]
+    ? resolve(process.argv[2])
+    : DEFAULT_OUTPUT;
+  const supabaseUrl = getSupabaseUrl();
+  const serviceRoleKey = getServiceRoleKey();
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    console.error(
+      "SUPABASE_URL (or VITE_SUPABASE_URL) and SUPABASE_SERVICE_ROLE_KEY are required for REST export.",
+    );
+    process.exit(1);
+  }
+
+  const statements: string[] = [
+    "-- Generated by scripts/export-supabase-rest.ts",
+    "-- Read-only export via Supabase REST API",
+    "",
+  ];
+
+  for (const table of TABLES) {
+    const rows = await fetchAllRows(supabaseUrl, serviceRoleKey, table.name);
+    statements.push(`-- Table: ${table.name} (${rows.length} rows)`);
+
+    for (const row of rows) {
+      const statement = buildInsertStatement(table, row);
+      if (statement) {
+        statements.push(statement);
+      }
+    }
+
+    statements.push("");
+  }
+
+  await writeFile(outputPath, `${statements.join("\n")}\n`, "utf8");
+  console.log(`Export termine : ${outputPath}`);
+}
+
+main().catch((error) => {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+});
