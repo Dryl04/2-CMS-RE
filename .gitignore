@@ -21,3 +21,8 @@ dist-ssr
 *.sln
 *.sw?
 .env
+backend/coverage
+backend/uploads/*
+!backend/uploads/.gitkeep
+scripts/supabase_export.sql
+scripts/postgres_import.sql

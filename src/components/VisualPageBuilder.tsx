@@ -105,34 +105,20 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
 
       const finalSlug = pageSlug.trim() || generateSlug(pageName);
 
-      const { data: template, error: templateError } = await supabase
-        .from('page_templates')
+      const { data: page, error: pageError } = await supabase
+        .from('seo_metadata')
         .insert({
-          name: pageName,
-          slug: finalSlug,
+          page_key: finalSlug,
+          title: pageName,
+          sections_data: selectedSections,
+          status: 'published',
           user_id: user.id,
-          is_published: true,
         })
         .select()
         .single();
 
-      if (templateError) throw templateError;
-
-      const sectionsToInsert = selectedSections.map((section, index) => ({
-        template_id: template.id,
-        section_type: section.type,
-        section_variant: section.variant,
-        section_order: index,
-        section_data: section.content,
-        design_settings: section.design,
-        advanced_settings: section.advanced,
-      }));
-
-      const { error: sectionsError } = await supabase
-        .from('page_content_sections')
-        .insert(sectionsToInsert);
-
-      if (sectionsError) throw sectionsError;
+      if (pageError) throw pageError;
+      if (!page?.id) throw new Error('La page créée est invalide');
 
       await modal.alert('Page créée avec succès!', 'Succès');
       if (onClose) onClose();
