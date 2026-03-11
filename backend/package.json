@@ -2,9 +2,13 @@
   "name": "cms-re-backend",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20.x",
+    "npm": ">=10"
+  },
   "scripts": {
     "build": "npm run prisma:generate && nest build",
-    "start": "node dist/main.js",
+    "start": "node dist/src/main.js",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "test": "npm run prisma:generate && jest --runInBand",
