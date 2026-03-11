@@ -92,7 +92,7 @@ export interface PageBuilderSection {
         | "bottom-right"
         | "center";
       overlaySize?: string;
-      overlayZIndex?: 'behind-bg' | 'above-bg' | 'above-content' | 'above-all';
+      overlayZIndex?: "behind-bg" | "above-bg" | "above-content" | "above-all";
       overlayOpacity?: number;
       overlayBrightness?: number;
       overlayContrast?: number;
@@ -225,7 +225,15 @@ export interface WidgetDefinition {
   label: string;
   description: string;
   icon: string;
-  category?: "navigation" | "content" | "marketing";
+  category?:
+    | "navigation"
+    | "content"
+    | "marketing"
+    | "hero"
+    | "header"
+    | "testimonials"
+    | "social"
+    | "features";
   unique?: boolean;
   variants: WidgetVariant[];
   defaultContent: Record<string, any>;

@@ -19,6 +19,7 @@ import VisualPageBuilder from '@/components/VisualPageBuilder';
 import BuilderPreviewPage from '@/components/PageBuilder/BuilderPreviewPage';
 import GlobalHFManager from '@/components/GlobalHFManager';
 import HFBuilderModal from '@/components/HFBuilderModal';
+import ForcePasswordChange from '@/components/ForcePasswordChange';
 import { supabase, SEOMetadata } from '@/lib/supabase';
 import { normalizeInternalPath } from '@/lib/linkRegistry';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
@@ -26,7 +27,7 @@ import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'links' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder' | 'page-builder' | 'global-hf';
 
 function AppContent() {
-  const { user, loading } = useAuth();
+  const { user, loading, requiresPasswordChange } = useAuth();
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [seoPage, setSeoPage] = useState<SEOMetadata | null>(null);
   const [builderPageId, setBuilderPageId] = useState<string | null>(null);
@@ -173,6 +174,10 @@ function AppContent() {
 
   if (!user) {
     return <Auth />;
+  }
+
+  if (requiresPasswordChange) {
+    return <ForcePasswordChange />;
   }
 
   const showFooter = currentView !== 'templates' && currentView !== 'visual-builder' && currentView !== 'page-builder';

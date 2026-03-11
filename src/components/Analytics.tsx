@@ -2,6 +2,14 @@ import { useState, useEffect } from 'react';
 import { FileText, Globe, Archive, Clock, TrendingUp, BarChart3, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
+interface SeoMetadataRow {
+  page_key: string;
+  title: string;
+  status: string;
+  updated_at: string;
+  language?: string | null;
+}
+
 interface Stats {
   total: number;
   published: number;
@@ -33,23 +41,23 @@ export default function Analytics({ onNavigate }: AnalyticsProps) {
 
       if (error) throw error;
 
-      const pages = data || [];
+      const pages: SeoMetadataRow[] = (data || []) as SeoMetadataRow[];
       const languageBreakdown: Record<string, number> = {};
-      pages.forEach(p => {
-        const lang = p.language || 'fr';
+      pages.forEach((page) => {
+        const lang = page.language || 'fr';
         languageBreakdown[lang] = (languageBreakdown[lang] || 0) + 1;
       });
 
       setStats({
         total: pages.length,
-        published: pages.filter(p => p.status === 'published').length,
-        draft: pages.filter(p => p.status === 'draft').length,
-        archived: pages.filter(p => p.status === 'archived').length,
-        recentPages: pages.slice(0, 10).map(p => ({
-          page_key: p.page_key,
-          title: p.title,
-          status: p.status,
-          updated_at: p.updated_at,
+        published: pages.filter((page) => page.status === 'published').length,
+        draft: pages.filter((page) => page.status === 'draft').length,
+        archived: pages.filter((page) => page.status === 'archived').length,
+        recentPages: pages.slice(0, 10).map((page) => ({
+          page_key: page.page_key,
+          title: page.title,
+          status: page.status,
+          updated_at: page.updated_at,
         })),
         languageBreakdown,
       });

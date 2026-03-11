@@ -6,9 +6,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   GlobalHFSetting,
   loadAllGlobalHFSettings,
-  activateGlobalHFSetting,
-  isHeaderType,
-  isFooterType,
 } from '@/lib/globalHFSettings';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import GlobalHFPreview from '@/components/GlobalHFPreview';

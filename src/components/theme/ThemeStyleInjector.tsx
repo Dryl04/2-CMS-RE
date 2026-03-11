@@ -30,3 +30,5 @@ export const ThemeStyleInjector: React.FC = () => {
 
   return null;
 };
+
+export default ThemeStyleInjector;

@@ -572,7 +572,7 @@ export function VideoHeroContentEditor({ section, updateContent }: ContentEditor
 export function GalleryContentEditor({ section, updateContent }: ContentEditorProps) {
   const items = section.content.items || [];
 
-  const updateItem = (index: number, field: string, value: string) => {
+  const updateItem = (index: number, field: string, value: string | number) => {
     const updated = [...items];
     updated[index] = { ...updated[index], [field]: value };
     updateContent('items', updated);
@@ -869,7 +869,7 @@ export function ProcessContentEditor({ section, updateContent }: ContentEditorPr
 export function ServicesGridContentEditor({ section, updateContent }: ContentEditorProps) {
   const services = section.content.services || [];
 
-  const updateService = (index: number, field: string, value: string) => {
+  const updateService = (index: number, field: string, value: string | number) => {
     const updated = [...services];
     updated[index] = { ...updated[index], [field]: value };
     updateContent('services', updated);
@@ -1035,7 +1035,7 @@ export function FeedbackContactContentEditor({ section, updateContent }: Content
 export function ServicesCardsContentEditor({ section, updateContent }: ContentEditorProps) {
   const services = section.content.services || [];
 
-  const updateService = (index: number, field: string, value: string) => {
+  const updateService = (index: number, field: string, value: string | number) => {
     const updated = [...services];
     updated[index] = { ...updated[index], [field]: value };
     updateContent('services', updated);
@@ -1539,7 +1539,7 @@ export function HeroWithTestimonialsContentEditor({ section, updateContent }: Co
 export function HeroWithServicesContentEditor({ section, updateContent }: ContentEditorProps) {
   const services = section.content.services || [];
 
-  const updateService = (index: number, field: string, value: string) => {
+  const updateService = (index: number, field: string, value: string | number) => {
     const updated = [...services];
     updated[index] = { ...updated[index], [field]: value };
     updateContent('services', updated);

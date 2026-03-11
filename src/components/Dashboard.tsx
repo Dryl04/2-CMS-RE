@@ -3,6 +3,10 @@ import { FileText, Layout, Image, Settings, TrendingUp, Clock, CheckCircle, Pain
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 
+interface SeoStatusRow {
+  status: string;
+}
+
 interface Stats {
   totalPages: number;
   publishedPages: number;
@@ -43,7 +47,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         console.error('[Dashboard] Error loading templates:', templatesResult.error);
       }
 
-      const pages = pagesResult.data || [];
+      const pages: SeoStatusRow[] = (pagesResult.data || []) as SeoStatusRow[];
       const totalPages = pages.length;
       const publishedPages = pages.filter((p) => p.status === 'published').length;
       const draftPages = pages.filter((p) => p.status === 'draft').length;

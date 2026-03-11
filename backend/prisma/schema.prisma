@@ -1,0 +1,274 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  mustChangePassword Boolean @default(false) @map("must_change_password")
+  fullName     String?  @map("full_name")
+  role         Role     @default(content_creator)
+  avatarUrl    String?  @map("avatar_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  pageTemplates    PageTemplate[]
+  seoMetadata      SeoMetadata[]
+  mediaFiles       MediaFile[]
+  pageThemes       PageTheme[]
+  fontsLibrary     FontsLibrary[]
+  daisyuiThemes    DaisyuiTheme[]
+  seoRedirects     SeoRedirect[]
+  globalHfSettings GlobalHfSetting[]
+
+  @@map("users")
+}
+
+enum Role {
+  admin
+  seo_manager
+  content_creator
+
+  @@map("role")
+}
+
+model SectionType {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String   @unique
+  label        String
+  description  String?
+  icon         String?
+  schema       Json?
+  previewImage String?  @map("preview_image")
+  isSystem     Boolean  @default(false) @map("is_system")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  templateSections    TemplateSection[]
+  pageContentSections PageContentSection[]
+
+  @@map("section_types")
+}
+
+model PageTheme {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  description String?
+  css         Json?
+  userId      String?  @map("user_id") @db.Uuid
+  isDefault   Boolean  @default(false) @map("is_default")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user          User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  pageTemplates PageTemplate[]
+
+  @@map("page_themes")
+}
+
+model FontsLibrary {
+  id           String   @id @default(uuid()) @db.Uuid
+  fontName     String   @unique @map("font_name")
+  fontFamily   String   @map("font_family")
+  fontUrl      String?  @map("font_url")
+  fontWeights  String[] @default([]) @map("font_weights")
+  isGoogleFont Boolean  @default(false) @map("is_google_font")
+  importedBy   String?  @map("imported_by") @db.Uuid
+  isSystem     Boolean  @default(false) @map("is_system")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [importedBy], references: [id], onDelete: SetNull)
+
+  @@map("fonts_library")
+}
+
+model DaisyuiTheme {
+  id         String      @id @default(uuid()) @db.Uuid
+  name       String
+  slug       String      @unique
+  source     ThemeSource @default(daisyui)
+  tokens     Json
+  fontConfig Json?       @map("font_config")
+  isActive   Boolean     @default(true) @map("is_active")
+  userId     String?     @map("user_id") @db.Uuid
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("daisyui_themes")
+}
+
+enum ThemeSource {
+  daisyui
+  custom
+
+  @@map("theme_source")
+}
+
+model PageTemplate {
+  id             String   @id @default(uuid()) @db.Uuid
+  name           String
+  description    String?
+  thumbnail      String?
+  sectionsData   Json?    @map("sections_data")
+  seoH1          String?  @map("seo_h1")
+  seoH2          String?  @map("seo_h2")
+  daisyThemeSlug String?  @map("daisy_theme_slug")
+  folder         String?
+  isPublic       Boolean  @default(false) @map("is_public")
+  isSystem       Boolean  @default(false) @map("is_system")
+  createdBy      String?  @map("created_by") @db.Uuid
+  pageThemeId    String?  @map("page_theme_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user             User?             @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  pageTheme        PageTheme?        @relation(fields: [pageThemeId], references: [id], onDelete: SetNull)
+  templateSections TemplateSection[]
+  seoMetadata      SeoMetadata[]
+
+  @@index([folder])
+  @@map("page_templates")
+}
+
+model SeoMetadata {
+  id             String       @id @default(uuid()) @db.Uuid
+  pageKey        String       @unique @map("page_key")
+  title          String?
+  description    String?
+  keywords       String[]     @default([])
+  ogTitle        String?      @map("og_title")
+  ogDescription  String?      @map("og_description")
+  ogImage        String?      @map("og_image")
+  canonicalUrl   String?      @map("canonical_url")
+  language       String       @default("fr")
+  status         PageStatus   @default(draft)
+  content        String?
+  sectionsData   Json?        @map("sections_data")
+  seoH1          String?      @map("seo_h1")
+  seoH2          String?      @map("seo_h2")
+  importedAt     DateTime?    @map("imported_at")
+  createdBy      String?      @map("created_by") @db.Uuid
+  userId         String?      @map("user_id") @db.Uuid
+  templateId     String?      @map("template_id") @db.Uuid
+  daisyThemeSlug String?      @map("daisy_theme_slug")
+  folder         String?
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  user                User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  template            PageTemplate?       @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  pageContentSections PageContentSection[]
+  sourceRedirects     SeoRedirect[]       @relation("SourceRedirects")
+  targetRedirects     SeoRedirect[]       @relation("TargetRedirects")
+
+  @@index([folder])
+  @@map("seo_metadata")
+}
+
+enum PageStatus {
+  draft
+  published
+  archived
+
+  @@map("page_status")
+}
+
+model TemplateSection {
+  id              String   @id @default(uuid()) @db.Uuid
+  templateId      String   @map("template_id") @db.Uuid
+  sectionTypeId   String   @map("section_type_id") @db.Uuid
+  orderIndex      Int      @map("order_index")
+  label           String?
+  minWords        Int?     @map("min_words")
+  maxWords        Int?     @map("max_words")
+  required        Boolean  @default(false)
+  settings        Json?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  template            PageTemplate         @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  sectionType         SectionType          @relation(fields: [sectionTypeId], references: [id], onDelete: Restrict)
+  pageContentSections PageContentSection[]
+
+  @@map("template_sections")
+}
+
+model PageContentSection {
+  id                String   @id @default(uuid()) @db.Uuid
+  pageId            String   @map("page_id") @db.Uuid
+  templateSectionId String?  @map("template_section_id") @db.Uuid
+  sectionTypeId     String?  @map("section_type_id") @db.Uuid
+  orderIndex        Int      @map("order_index")
+  content           Json?
+  backgroundImage   String?  @map("background_image")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  page            SeoMetadata      @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  templateSection TemplateSection? @relation(fields: [templateSectionId], references: [id], onDelete: SetNull)
+  sectionType     SectionType?     @relation(fields: [sectionTypeId], references: [id], onDelete: SetNull)
+
+  @@map("page_content_sections")
+}
+
+model MediaFile {
+  id               String   @id @default(uuid()) @db.Uuid
+  filename         String
+  originalFilename String   @map("original_filename")
+  filePath         String   @map("file_path")
+  fileSize         BigInt   @map("file_size")
+  mimeType         String   @map("mime_type")
+  width            Int?
+  height           Int?
+  altText          String?  @map("alt_text")
+  uploadedBy       String?  @map("uploaded_by") @db.Uuid
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [uploadedBy], references: [id], onDelete: SetNull)
+
+  @@map("media_files")
+}
+
+model SeoRedirect {
+  id           String   @id @default(uuid()) @db.Uuid
+  sourcePath   String   @map("source_path")
+  targetPath   String   @map("target_path")
+  sourcePageId String?  @map("source_page_id") @db.Uuid
+  targetPageId String?  @map("target_page_id") @db.Uuid
+  reason       String?
+  isActive     Boolean  @default(true) @map("is_active")
+  createdBy    String?  @map("created_by") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  sourcePage SeoMetadata? @relation("SourceRedirects", fields: [sourcePageId], references: [id], onDelete: SetNull)
+  targetPage SeoMetadata? @relation("TargetRedirects", fields: [targetPageId], references: [id], onDelete: SetNull)
+  creator    User?        @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@index([sourcePath, isActive])
+  @@map("seo_redirects")
+}
+
+model GlobalHfSetting {
+  id            String   @id @default(uuid()) @db.Uuid
+  label         String
+  headerSection Json?    @map("header_section")
+  footerSection Json?    @map("footer_section")
+  applyOnImport Boolean  @default(false) @map("apply_on_import")
+  applyOnCreate Boolean  @default(false) @map("apply_on_create")
+  isActive      Boolean  @default(false) @map("is_active")
+  targetPageIds String[] @default([]) @map("target_page_ids") @db.Uuid
+  createdBy     String?  @map("created_by") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user User? @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@map("global_hf_settings")
+}

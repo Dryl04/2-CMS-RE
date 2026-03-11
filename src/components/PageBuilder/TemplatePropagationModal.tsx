@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { X, CheckCircle, Circle, Layers, RefreshCw, Ban } from 'lucide-react';
+import { X, Layers, RefreshCw, Ban } from 'lucide-react';
 
 export interface PageInfo {
   id: string;
@@ -127,11 +127,10 @@ export default function TemplatePropagationModal({
           </p>
 
           <label
-            className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
-              choice === 'all'
+            className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${choice === 'all'
                 ? 'border-primary bg-primary/5'
                 : 'border-base-200 hover:border-base-300 hover:bg-base-50'
-            }`}
+              }`}
             onClick={() => setChoice('all')}
           >
             <div className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${choice === 'all' ? 'border-primary bg-primary' : 'border-base-300'}`}>
@@ -149,11 +148,10 @@ export default function TemplatePropagationModal({
           </label>
 
           <label
-            className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
-              choice === 'some'
+            className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${choice === 'some'
                 ? 'border-primary bg-primary/5'
                 : 'border-base-200 hover:border-base-300 hover:bg-base-50'
-            }`}
+              }`}
             onClick={() => setChoice('some')}
           >
             <div className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${choice === 'some' ? 'border-primary bg-primary' : 'border-base-300'}`}>
@@ -182,11 +180,10 @@ export default function TemplatePropagationModal({
               {pages.map((page) => (
                 <label
                   key={page.id}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border cursor-pointer transition-all ${
-                    selectedIds.has(page.id)
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border cursor-pointer transition-all ${selectedIds.has(page.id)
                       ? 'border-primary/40 bg-primary/5'
                       : 'border-base-200 hover:border-base-300'
-                  }`}
+                    }`}
                   onClick={() => togglePage(page.id)}
                 >
                   <div className={`flex-shrink-0 w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedIds.has(page.id) ? 'bg-primary border-primary' : 'border-base-300'}`}>
@@ -200,13 +197,12 @@ export default function TemplatePropagationModal({
                     <p className="text-sm font-medium text-base-content truncate">{page.title}</p>
                     <p className="text-xs text-base-content/40 truncate">{page.page_key}</p>
                   </div>
-                  <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 ${
-                    page.status === 'published'
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 ${page.status === 'published'
                       ? 'bg-success/10 text-success'
                       : page.status === 'draft'
-                      ? 'bg-warning/10 text-warning'
-                      : 'bg-base-200 text-base-content/50'
-                  }`}>
+                        ? 'bg-warning/10 text-warning'
+                        : 'bg-base-200 text-base-content/50'
+                    }`}>
                     {page.status === 'published' ? 'Publié' : page.status === 'draft' ? 'Brouillon' : page.status}
                   </span>
                 </label>
@@ -215,11 +211,10 @@ export default function TemplatePropagationModal({
           )}
 
           <label
-            className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
-              choice === 'none'
+            className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${choice === 'none'
                 ? 'border-base-300 bg-base-200/50'
                 : 'border-base-200 hover:border-base-300 hover:bg-base-50'
-            }`}
+              }`}
             onClick={() => setChoice('none')}
           >
             <div className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${choice === 'none' ? 'border-base-content/40 bg-base-content/10' : 'border-base-300'}`}>

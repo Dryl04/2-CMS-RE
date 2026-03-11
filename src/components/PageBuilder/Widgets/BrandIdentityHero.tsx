@@ -21,11 +21,6 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
     ...(typo.h2FontSize || typo.headingFontSize ? { fontSize: typo.h2FontSize || typo.headingFontSize } : {}),
     ...(typo.h2Color || typo.subtitleColor || typo.headingColor ? { color: typo.h2Color || typo.subtitleColor || typo.headingColor } : {}),
   };
-  const headingStyle = {
-    ...(typo.headingFontFamily || typo.fontFamily ? { fontFamily: typo.headingFontFamily || typo.fontFamily } : {}),
-    ...(typo.headingFontWeight ? { fontWeight: typo.headingFontWeight } : {}),
-    ...(typo.headingFontSize ? { fontSize: typo.headingFontSize } : {}),
-  };
   const textStyle = {
     ...(typo.fontFamily ? { fontFamily: typo.fontFamily } : {}),
     ...(typo.textFontSize ? { fontSize: typo.textFontSize } : {}),
@@ -100,10 +95,10 @@ export default function BrandIdentityHero({ section }: BrandIdentityHeroProps) {
           {content.socialLinks && content.socialLinks.length > 0 && (
             <div className="flex items-center gap-4 sm:gap-6">
               {content.socialLinks.map((social: any, index: number) => (
-                  <a key={index} href={social.url || '#'} className="hover:opacity-70 transition" style={linkStyle}>
-                    {renderIcon(social.icon, 'text-base-content', social.iconSize || 24)}
-                  </a>
-                ))}
+                <a key={index} href={social.url || '#'} className="hover:opacity-70 transition" style={linkStyle}>
+                  {renderIcon(social.icon, 'text-base-content', social.iconSize || 24)}
+                </a>
+              ))}
             </div>
           )}
         </div>

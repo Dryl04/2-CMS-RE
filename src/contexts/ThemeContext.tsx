@@ -1,7 +1,66 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Theme } from '@/lib/themeTypes';
-import { supabase } from '@/lib/supabase';
 import { defaultThemes } from '@/lib/defaultThemes';
+
+const THEMES_STORAGE_KEY = 'cms_legacy_themes';
+const CURRENT_THEME_STORAGE_KEY = 'cms_legacy_current_theme_id';
+
+function buildDefaultThemes(): Theme[] {
+  const now = new Date().toISOString();
+  return defaultThemes.map((theme, index) => ({
+    ...theme,
+    id: `legacy-theme-${index + 1}`,
+    created_at: now,
+    updated_at: now,
+  }));
+}
+
+function readStoredThemes(): Theme[] {
+  if (typeof localStorage === 'undefined') {
+    return buildDefaultThemes();
+  }
+
+  try {
+    const raw = localStorage.getItem(THEMES_STORAGE_KEY);
+    if (!raw) {
+      return buildDefaultThemes();
+    }
+
+    const parsed = JSON.parse(raw) as Theme[];
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : buildDefaultThemes();
+  } catch {
+    return buildDefaultThemes();
+  }
+}
+
+function persistThemes(themes: Theme[]) {
+  if (typeof localStorage === 'undefined') {
+    return;
+  }
+
+  localStorage.setItem(THEMES_STORAGE_KEY, JSON.stringify(themes));
+}
+
+function persistCurrentTheme(themeId: string | null) {
+  if (typeof localStorage === 'undefined') {
+    return;
+  }
+
+  if (!themeId) {
+    localStorage.removeItem(CURRENT_THEME_STORAGE_KEY);
+    return;
+  }
+
+  localStorage.setItem(CURRENT_THEME_STORAGE_KEY, themeId);
+}
+
+function readCurrentThemeId(): string | null {
+  if (typeof localStorage === 'undefined') {
+    return null;
+  }
+
+  return localStorage.getItem(CURRENT_THEME_STORAGE_KEY);
+}
 
 interface ThemeContextType {
   currentTheme: Theme | null;
@@ -41,32 +100,17 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const { data, error: fetchError } = await supabase
-        .from('themes')
-        .select('*')
-        .order('is_default', { ascending: false })
-        .order('created_at', { ascending: true });
+      const storedThemes = readStoredThemes();
+      setThemes(storedThemes);
 
-      if (fetchError) {
-        console.error('Error fetching themes:', fetchError);
-        if (fetchError.message.includes('Could not find the table')) {
-          setThemes(defaultThemes);
-          if (!currentTheme) {
-            const defaultTheme = defaultThemes.find(t => t.is_default) || defaultThemes[0];
-            setCurrentTheme(defaultTheme);
-          }
-        } else {
-          setError(fetchError.message);
-        }
-        return;
-      }
+      const storedCurrentThemeId = readCurrentThemeId();
+      const resolvedTheme =
+        storedThemes.find((theme) => theme.id === storedCurrentThemeId) ||
+        storedThemes.find((theme) => theme.is_default) ||
+        storedThemes[0] ||
+        null;
 
-      setThemes(data || []);
-
-      if (!currentTheme && data && data.length > 0) {
-        const defaultTheme = data.find(t => t.is_default) || data[0];
-        setCurrentTheme(defaultTheme);
-      }
+      setCurrentTheme(resolvedTheme);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       console.error('Error fetching themes:', err);
@@ -80,30 +124,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-
-      const themesToInsert = defaultThemes.map(theme => ({
-        name: theme.name,
-        description: theme.description,
-        colors: theme.colors,
-        typography: theme.typography,
-        spacing: theme.spacing,
-        components: theme.components,
-        user_id: null,
-        is_default: theme.is_default,
-      }));
-
-      const { error: insertError } = await supabase
-        .from('themes')
-        .insert(themesToInsert)
-        .select();
-
-      if (insertError) {
-        console.error('Error initializing themes:', insertError);
-        setError(insertError.message);
-        throw insertError;
-      }
-
-      await fetchThemes();
+      const nextThemes = buildDefaultThemes();
+      persistThemes(nextThemes);
+      const defaultTheme = nextThemes.find((theme) => theme.is_default) || nextThemes[0] || null;
+      persistCurrentTheme(defaultTheme?.id ?? null);
+      setThemes(nextThemes);
+      setCurrentTheme(defaultTheme);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       console.error('Error initializing default themes:', err);
@@ -116,22 +142,20 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const createTheme = async (themeData: Omit<Theme, 'id' | 'created_at' | 'updated_at'>): Promise<Theme | null> => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      const nextTheme: Theme = {
+        ...themeData,
+        custom_css: themeData.custom_css ?? null,
+        id: crypto.randomUUID(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
 
-      const { data, error } = await supabase
-        .from('themes')
-        .insert([{
-          ...themeData,
-          user_id: user.id,
-        }])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setThemes(prev => [...prev, data]);
-      return data;
+      setThemes(prev => {
+        const nextThemes = [...prev, nextTheme];
+        persistThemes(nextThemes);
+        return nextThemes;
+      });
+      return nextTheme;
     } catch (error) {
       console.error('Error creating theme:', error);
       return null;
@@ -140,19 +164,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const updateTheme = async (id: string, updates: Partial<Theme>) => {
     try {
-      const { error } = await supabase
-        .from('themes')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      setThemes(prev =>
-        prev.map(theme => (theme.id === id ? { ...theme, ...updates } : theme))
-      );
+      setThemes(prev => {
+        const nextThemes = prev.map(theme => (theme.id === id ? { ...theme, ...updates, updated_at: new Date().toISOString() } : theme));
+        persistThemes(nextThemes);
+        return nextThemes;
+      });
 
       if (currentTheme?.id === id) {
         setCurrentTheme(prev => (prev ? { ...prev, ...updates } : null));
@@ -165,18 +181,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const deleteTheme = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('themes')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      setThemes(prev => prev.filter(theme => theme.id !== id));
+      const nextThemes = themes.filter(theme => theme.id !== id);
+      persistThemes(nextThemes);
+      setThemes(nextThemes);
 
       if (currentTheme?.id === id) {
-        const nextTheme = themes.find(t => t.id !== id && t.is_default) || themes.find(t => t.id !== id);
+        const nextTheme = nextThemes.find(t => t.is_default) || nextThemes[0] || null;
         setCurrentTheme(nextTheme || null);
+        persistCurrentTheme(nextTheme?.id ?? null);
       }
     } catch (error) {
       console.error('Error deleting theme:', error);
@@ -186,12 +198,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const applyThemeToPage = async (pageId: string, themeId: string) => {
     try {
-      const { error } = await supabase
-        .from('page_templates')
-        .update({ theme_id: themeId })
-        .eq('id', pageId);
-
-      if (error) throw error;
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(`cms_legacy_page_theme:${pageId}`, themeId);
+      }
     } catch (error) {
       console.error('Error applying theme to page:', error);
       throw error;
@@ -201,6 +210,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   useEffect(() => {
     fetchThemes();
   }, []);
+
+  useEffect(() => {
+    persistCurrentTheme(currentTheme?.id ?? null);
+  }, [currentTheme]);
 
   const value: ThemeContextType = {
     currentTheme,
