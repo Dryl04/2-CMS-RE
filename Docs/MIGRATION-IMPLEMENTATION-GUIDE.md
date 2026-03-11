@@ -23,6 +23,7 @@ This document captures the implemented migration foundation from direct Supabase
 - `scripts/export-supabase.sh` exports public schema data from Supabase in read-only mode.
 - `scripts/transform-export.ts` converts the export into a PostgreSQL import file compatible with the new `users` table.
 - `scripts/transform-export.test.ts` covers the transformation logic.
+- `scripts/import-postgres.sh` imports `scripts/postgres_import.sql` into any PostgreSQL database URL compatible with the Prisma schema.
 
 ## Validation commands
 
@@ -124,13 +125,97 @@ What the transform currently does:
 - removes statements referencing the `auth` schema
 - converts `public.user_profiles` inserts into `public.users`
 - injects a temporary bcrypt hash for the password `ChangeMe123!`
+- converts `global_hf_settings.target_page_ids` from exported JSONB arrays into PostgreSQL `uuid[]`
 - preserves other public table inserts as-is
 
 ### 3. Import into PostgreSQL
 
+Recommended command from the repository root:
+
 ```bash
-psql "$DATABASE_URL" < scripts/postgres_import.sql
+npm run migrate:import-postgres
 ```
+
+This script:
+
+- opens a single SQL transaction
+- truncates the migrated tables in dependency-safe order
+- imports [scripts/postgres_import.sql](scripts/postgres_import.sql)
+- commits only if the full import succeeds
+
+You can also target any PostgreSQL database directly with a connection string, without editing `.env`:
+
+```bash
+bash ./scripts/import-postgres.sh --db-url 'postgresql://cms_user:cms_password@localhost:5432/cms_db'
+```
+
+Or with a positional argument:
+
+```bash
+bash ./scripts/import-postgres.sh 'postgresql://cms_user:cms_password@localhost:5432/cms_db'
+```
+
+To import a different SQL file:
+
+```bash
+bash ./scripts/import-postgres.sh \
+   --db-url 'postgresql://cms_user:cms_password@localhost:5432/cms_db' \
+   --file /absolute/path/to/postgres_import.sql
+```
+
+Fallback manual command, only if you are sure the target database is empty or already reset:
+
+```bash
+psql 'postgresql://cms_user:cms_password@localhost:5432/cms_db' < scripts/postgres_import.sql
+```
+
+### 4. Post-import validation
+
+After import, verify that the main migrated tables contain data:
+
+```bash
+psql "$DATABASE_URL" -At <<'SQL'
+SELECT 'users', count(*) FROM public.users
+UNION ALL SELECT 'page_themes', count(*) FROM public.page_themes
+UNION ALL SELECT 'daisyui_themes', count(*) FROM public.daisyui_themes
+UNION ALL SELECT 'fonts_library', count(*) FROM public.fonts_library
+UNION ALL SELECT 'section_types', count(*) FROM public.section_types
+UNION ALL SELECT 'page_templates', count(*) FROM public.page_templates
+UNION ALL SELECT 'seo_metadata', count(*) FROM public.seo_metadata
+UNION ALL SELECT 'media_files', count(*) FROM public.media_files
+UNION ALL SELECT 'seo_redirects', count(*) FROM public.seo_redirects
+UNION ALL SELECT 'global_hf_settings', count(*) FROM public.global_hf_settings
+ORDER BY 1;
+SQL
+```
+
+Validated import counts on the local migration run:
+
+- `users`: 2
+- `page_themes`: 6
+- `daisyui_themes`: 35
+- `fonts_library`: 12
+- `section_types`: 8
+- `page_templates`: 23
+- `seo_metadata`: 40
+- `media_files`: 49
+- `seo_redirects`: 4
+- `global_hf_settings`: 2
+
+### 5. Authorization notes after migration
+
+The imported users currently receive the role `content_creator`.
+
+The backend now allows `admin`, `seo_manager`, and `content_creator` to manage the main editor resources used in the UI, including:
+
+- global header/footer settings
+- templates
+- pages
+- redirects
+- DaisyUI themes
+- font deletion
+
+This avoids post-migration `403 Forbidden` errors for authenticated editor users on standard CMS actions.
 
 ## Media migration
 

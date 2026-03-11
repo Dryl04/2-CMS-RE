@@ -1,13 +1,28 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
-import { Role } from '@prisma/client';
-import { JwtUser } from '../auth/auth.types';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { CreateGlobalHfDto } from './dto/create-global-hf.dto';
-import { UpdateGlobalHfDto } from './dto/update-global-hf.dto';
-import { GlobalHfService } from './global-hf.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from "@nestjs/common";
+import { Role } from "@prisma/client";
+import { JwtUser } from "../auth/auth.types";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import { Roles } from "../auth/decorators/roles.decorator";
+import { CreateGlobalHfDto } from "./dto/create-global-hf.dto";
+import { UpdateGlobalHfDto } from "./dto/update-global-hf.dto";
+import { GlobalHfService } from "./global-hf.service";
 
-@Controller('api/global-hf')
+const EDITOR_ROLES = [
+  Role.admin,
+  Role.seo_manager,
+  Role.content_creator,
+] as const;
+
+@Controller("api/global-hf")
 export class GlobalHfController {
   constructor(private readonly globalHfService: GlobalHfService) {}
 
@@ -16,21 +31,24 @@ export class GlobalHfController {
     return this.globalHfService.findAll();
   }
 
-  @Roles(Role.admin)
+  @Roles(...EDITOR_ROLES)
   @Post()
   create(@Body() dto: CreateGlobalHfDto, @CurrentUser() user: JwtUser) {
     return this.globalHfService.create(dto, user);
   }
 
-  @Roles(Role.admin)
-  @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateGlobalHfDto) {
+  @Roles(...EDITOR_ROLES)
+  @Patch(":id")
+  update(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body() dto: UpdateGlobalHfDto,
+  ) {
     return this.globalHfService.update(id, dto);
   }
 
-  @Roles(Role.admin)
-  @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  @Roles(...EDITOR_ROLES)
+  @Delete(":id")
+  remove(@Param("id", ParseUUIDPipe) id: string) {
     return this.globalHfService.remove(id);
   }
 }
