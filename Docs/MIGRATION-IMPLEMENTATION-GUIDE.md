@@ -106,7 +106,7 @@ Fallback when no IPv4 pooler is available:
 
 ```bash
 export SUPABASE_URL='https://jpyzyxdmdqfujprgyndc.supabase.co'
-export SUPABASE_SERVICE_ROLE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpweXp5eGRtZHFmdWpwcmd5bmRjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTMxODAxNCwiZXhwIjoyMDg2ODk0MDE0fQ.46-LOAEJpQt3r8nGESD1GSGPO5xltpwVHQrJ6_CO-z0'
+export SUPABASE_SERVICE_ROLE_KEY='your-supabase-service-role-key'
 npm run migrate:export-supabase
 ```
 
