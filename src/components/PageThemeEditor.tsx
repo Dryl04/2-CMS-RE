@@ -11,23 +11,6 @@ interface PageThemeEditorProps {
   initialThemeId?: string;
 }
 
-const GOOGLE_FONTS = [
-  'Inter',
-  'Roboto',
-  'Open Sans',
-  'Lato',
-  'Montserrat',
-  'Poppins',
-  'Work Sans',
-  'Playfair Display',
-  'Merriweather',
-  'Lora',
-  'Georgia',
-  'Times New Roman',
-  'Arial',
-  'Helvetica',
-];
-
 const FONT_WEIGHTS = [
   { value: '300', label: 'Léger (300)' },
   { value: '400', label: 'Normal (400)' },
@@ -84,7 +67,7 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
       if (error) throw error;
       setAvailableFonts(data || []);
 
-      (data || []).forEach(font => {
+      ((data || []) as FontLibraryItem[]).forEach((font) => {
         if (!font.font_url || font.font_url === 'about:blank') return;
         const link = document.createElement('link');
         const fontUrl = font.font_url;
@@ -127,7 +110,7 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
       } else {
         showToast(`Erreur: ${result.message}`);
       }
-    } catch (error) {
+    } catch {
       showToast('Erreur lors de la migration');
     } finally {
       setMigrating(false);
@@ -167,7 +150,7 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
       await saveTheme(editingTheme);
       showToast('Thème enregistré');
       setEditingTheme(null);
-    } catch (error) {
+    } catch {
       showToast('Erreur lors de l\'enregistrement');
     }
   };
@@ -181,7 +164,7 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
       if (editingTheme?.id === themeId) {
         setEditingTheme(null);
       }
-    } catch (error) {
+    } catch {
       showToast('Erreur lors de la suppression');
     }
   };
@@ -271,25 +254,25 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
                 <div className="space-y-2">
                   <h3 className="text-xs font-semibold text-gray-500 uppercase px-2">Thèmes par défaut</h3>
                   {defaultThemes.map(theme => (
-                  <div
-                    key={theme.id}
-                    className="bg-white rounded-lg p-3 border border-gray-200"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">{theme.name}</h4>
-                        <p className="text-xs text-gray-500 mt-1">{theme.description}</p>
+                    <div
+                      key={theme.id}
+                      className="bg-white rounded-lg p-3 border border-gray-200"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900">{theme.name}</h4>
+                          <p className="text-xs text-gray-500 mt-1">{theme.description}</p>
+                        </div>
+                        <button
+                          onClick={() => handleDuplicateTheme(theme)}
+                          className="p-1.5 hover:bg-gray-100 rounded transition-colors"
+                          title="Dupliquer"
+                        >
+                          <Copy className="w-4 h-4 text-gray-400" />
+                        </button>
                       </div>
-                      <button
-                        onClick={() => handleDuplicateTheme(theme)}
-                        className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-                        title="Dupliquer"
-                      >
-                        <Copy className="w-4 h-4 text-gray-400" />
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  ))}
                 </div>
               )}
 
@@ -299,11 +282,10 @@ export default function PageThemeEditor({ onClose, initialThemeId }: PageThemeEd
                   {customThemes.map(theme => (
                     <div
                       key={theme.id}
-                      className={`bg-white rounded-lg p-3 border-2 cursor-pointer transition-colors ${
-                        editingTheme?.id === theme.id
+                      className={`bg-white rounded-lg p-3 border-2 cursor-pointer transition-colors ${editingTheme?.id === theme.id
                           ? 'border-blue-500 bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
-                      }`}
+                        }`}
                       onClick={() => setEditingTheme({ ...theme })}
                     >
                       <div className="flex items-start justify-between">

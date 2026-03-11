@@ -1,5 +1,12 @@
-import type { ApiSession, ApiAuthUser, QueryFilter, QueryOrder, QueryResult } from './api.ts';
+import type {
+  ApiSession,
+  ApiAuthUser,
+  QueryFilter,
+  QueryOrder,
+  QueryResult,
+} from "./api.ts";
 import {
+  changePassword as changePasswordApi,
   getSession as getApiSession,
   getUploadedMediaPublicUrl,
   getUser as getApiUser,
@@ -10,14 +17,14 @@ import {
   signOut as signOutApi,
   signUp as signUpApi,
   uploadMediaFile,
-} from './api.ts';
+} from "./api.ts";
 
-type MutationAction = 'insert' | 'update' | 'delete' | 'upsert';
+type MutationAction = "insert" | "update" | "delete" | "upsert";
 
 class SupabaseQueryBuilder implements PromiseLike<QueryResult<any>> {
   private readonly table: string;
-  private action: 'select' | MutationAction = 'select';
-  private columns = '*';
+  private action: "select" | MutationAction = "select";
+  private columns = "*";
   private countRequested = false;
   private filters: QueryFilter[] = [];
   private orders: QueryOrder[] = [];
@@ -32,10 +39,10 @@ class SupabaseQueryBuilder implements PromiseLike<QueryResult<any>> {
     this.table = table;
   }
 
-  select(columns = '*', options?: { count?: 'exact' }) {
-    if (this.action === 'select') {
+  select(columns = "*", options?: { count?: "exact" }) {
+    if (this.action === "select") {
       this.columns = columns;
-      this.countRequested = options?.count === 'exact';
+      this.countRequested = options?.count === "exact";
       return this;
     }
 
@@ -44,17 +51,17 @@ class SupabaseQueryBuilder implements PromiseLike<QueryResult<any>> {
   }
 
   eq(column: string, value: unknown) {
-    this.filters.push({ type: 'eq', column, value });
+    this.filters.push({ type: "eq", column, value });
     return this;
   }
 
   in(column: string, value: unknown[]) {
-    this.filters.push({ type: 'in', column, value });
+    this.filters.push({ type: "in", column, value });
     return this;
   }
 
-  not(column: string, operator: 'is', value: unknown) {
-    this.filters.push({ type: 'not', column, operator, value });
+  not(column: string, operator: "is", value: unknown) {
+    this.filters.push({ type: "not", column, operator, value });
     return this;
   }
 
@@ -81,25 +88,28 @@ class SupabaseQueryBuilder implements PromiseLike<QueryResult<any>> {
   }
 
   insert(payload: Record<string, any> | Record<string, any>[]) {
-    this.action = 'insert';
+    this.action = "insert";
     this.payload = payload;
     return this;
   }
 
   update(payload: Record<string, any>) {
-    this.action = 'update';
+    this.action = "update";
     this.payload = payload;
     return this;
   }
 
   delete() {
-    this.action = 'delete';
+    this.action = "delete";
     this.payload = null;
     return this;
   }
 
-  upsert(payload: Record<string, any> | Record<string, any>[], _options?: { onConflict?: string }) {
-    this.action = 'upsert';
+  upsert(
+    payload: Record<string, any> | Record<string, any>[],
+    _options?: { onConflict?: string },
+  ) {
+    this.action = "upsert";
     this.payload = payload;
     return this;
   }
@@ -114,7 +124,7 @@ class SupabaseQueryBuilder implements PromiseLike<QueryResult<any>> {
       return { data: [], error: null };
     }
 
-    if (this.action === 'select') {
+    if (this.action === "select") {
       return queryRows(
         this.table,
         this.columns,
@@ -129,7 +139,12 @@ class SupabaseQueryBuilder implements PromiseLike<QueryResult<any>> {
       );
     }
 
-    const result = await mutateRows(this.table, this.action, this.payload, this.filters);
+    const result = await mutateRows(
+      this.table,
+      this.action,
+      this.payload,
+      this.filters,
+    );
     if (result.error || !this.mutationSelectColumns) {
       return result;
     }
@@ -140,12 +155,11 @@ class SupabaseQueryBuilder implements PromiseLike<QueryResult<any>> {
 
     const rows = Array.isArray(result.data) ? result.data : [result.data];
     const selectedRows =
-      this.mutationSelectColumns === '*'
+      this.mutationSelectColumns === "*"
         ? rows
         : rows.map((row) =>
             Object.fromEntries(
-              this.mutationSelectColumns!
-                .split(',')
+              this.mutationSelectColumns!.split(",")
                 .map((column) => column.trim())
                 .filter(Boolean)
                 .map((column) => [column, row[column]]),
@@ -154,14 +168,20 @@ class SupabaseQueryBuilder implements PromiseLike<QueryResult<any>> {
 
     if (this.expectsSingle) {
       if (selectedRows.length !== 1) {
-        return { data: null, error: new Error(`Expected a single row from ${this.table}`) };
+        return {
+          data: null,
+          error: new Error(`Expected a single row from ${this.table}`),
+        };
       }
       return { data: selectedRows[0], error: null };
     }
 
     if (this.expectsMaybeSingle) {
       if (selectedRows.length > 1) {
-        return { data: null, error: new Error(`Expected zero or one row from ${this.table}`) };
+        return {
+          data: null,
+          error: new Error(`Expected zero or one row from ${this.table}`),
+        };
       }
       return { data: selectedRows[0] ?? null, error: null };
     }
@@ -174,7 +194,9 @@ class SupabaseQueryBuilder implements PromiseLike<QueryResult<any>> {
   }
 
   then<TResult1 = QueryResult<any>, TResult2 = never>(
-    onfulfilled?: ((value: QueryResult<any>) => TResult1 | PromiseLike<TResult1>) | null,
+    onfulfilled?:
+      | ((value: QueryResult<any>) => TResult1 | PromiseLike<TResult1>)
+      | null,
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ): Promise<TResult1 | TResult2> {
     return this.execute().then(onfulfilled, onrejected);
@@ -185,8 +207,13 @@ export const supabase = {
   auth: {
     getSession: getApiSession,
     getUser: getApiUser,
-    signInWithPassword: ({ email, password }: { email: string; password: string }) =>
-      signInWithPasswordApi(email, password),
+    signInWithPassword: ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }) => signInWithPasswordApi(email, password),
     signUp: ({
       email,
       password,
@@ -196,6 +223,13 @@ export const supabase = {
       password: string;
       options?: { data?: { full_name?: string }; emailRedirectTo?: string };
     }) => signUpApi(email, password, options?.data?.full_name),
+    changePassword: ({
+      currentPassword,
+      newPassword,
+    }: {
+      currentPassword: string;
+      newPassword: string;
+    }) => changePasswordApi(currentPassword, newPassword),
     signOut: signOutApi,
     onAuthStateChange: onApiAuthStateChange,
   },
@@ -204,18 +238,22 @@ export const supabase = {
   },
   storage: {
     from(bucket: string) {
-      if (bucket !== 'media') {
-        throw new Error(`Unsupported storage bucket "${bucket}". Only "media" is available in the migration adapter.`);
+      if (bucket !== "media") {
+        throw new Error(
+          `Unsupported storage bucket "${bucket}". Only "media" is available in the migration adapter.`,
+        );
       }
 
       return {
-        upload: (filePath: string, file: File) => uploadMediaFile(filePath, file),
+        upload: (filePath: string, file: File) =>
+          uploadMediaFile(filePath, file),
         getPublicUrl: (filePath: string) => ({
           data: {
             publicUrl: getUploadedMediaPublicUrl(filePath),
           },
         }),
-        remove: (_paths: string[]) => new SupabaseQueryBuilder('media_files').storageRemove(),
+        remove: (_paths: string[]) =>
+          new SupabaseQueryBuilder("media_files").storageRemove(),
       };
     },
   },
@@ -223,13 +261,14 @@ export const supabase = {
 
 export type User = ApiAuthUser;
 export type Session = ApiSession;
-export type UserRole = 'admin' | 'seo_manager' | 'content_creator';
+export type UserRole = "admin" | "seo_manager" | "content_creator";
 
 export interface UserProfile {
   id: string;
   email: string;
   full_name?: string;
   role: UserRole;
+  must_change_password: boolean;
   avatar_url?: string;
   created_at: string;
   updated_at: string;
@@ -246,7 +285,7 @@ export interface SEOMetadata {
   og_image?: string;
   canonical_url?: string;
   language?: string;
-  status: 'draft' | 'published' | 'archived';
+  status: "draft" | "published" | "archived";
   content?: string;
   sections_data?: any[];
   seo_h1?: string;

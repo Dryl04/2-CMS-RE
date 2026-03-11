@@ -48,7 +48,7 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
       const files = data || [];
       setMediaFiles(files);
       setSelectedFiles((previous) => {
-        const existing = new Set(files.map((file) => file.id));
+        const existing = new Set(files.map((file: MediaFile) => file.id));
         return new Set([...previous].filter((id) => existing.has(id)));
       });
     } catch (error) {
@@ -213,7 +213,7 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
     let deletedCount = 0;
     let failedCount = 0;
     for (const fileId of selectedFiles) {
-      const file = mediaFiles.find(f => f.id === fileId);
+      const file = mediaFiles.find((item: MediaFile) => item.id === fileId);
       if (file) {
         try {
           if (!file.uploaded_by || !file.filename) {

@@ -18,7 +18,7 @@ test("splitSqlList keeps commas inside SQL strings", () => {
   assert.deepEqual(parts, [
     "'user-1'",
     "'Jean, Dupont'",
-    '\'{\"role\":\"admin\"}\'',
+    '\'{"role":"admin"}\'',
     "NULL",
   ]);
 });
@@ -34,10 +34,12 @@ test("transformUserProfilesInsert remaps user_profiles rows to users with a temp
 
   assert.match(output, /^INSERT INTO public\.users/);
   assert.match(output, /password_hash/);
+  assert.match(output, /must_change_password/);
   assert.match(
     output,
     new RegExp(DEFAULT_TEMP_PASSWORD_HASH.replace(/\$/g, "\\$")),
   );
+  assert.match(output, /true/);
   assert.match(output, /'seo_manager'/);
 });
 

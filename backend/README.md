@@ -69,6 +69,7 @@ From the repository root:
 cd backend
 npm install
 npm run prisma:generate
+npm run prisma:migrate:deploy
 ```
 
 ## Local development
@@ -125,18 +126,28 @@ cd backend
 npm run prisma:validate
 ```
 
+### Prisma migration deploy
+
+```bash
+cd backend
+npm run prisma:migrate:deploy
+```
+
+This applies the versioned SQL migrations from [backend/prisma/migrations](backend/prisma/migrations) to the target PostgreSQL database.
+
 > Important: tests are intentionally designed to mock `PrismaService`. No live database is required for unit tests or e2e-style request tests.
 
 ## Current endpoint surface
 
 ### Auth
 
-| Method | Route            | Auth   | Description                                         |
-| ------ | ---------------- | ------ | --------------------------------------------------- |
-| `POST` | `/auth/register` | Public | Create a user with default `content_creator` role   |
-| `POST` | `/auth/login`    | Public | Exchange email/password for JWT                     |
-| `POST` | `/auth/logout`   | JWT    | Stateless logout placeholder for current foundation |
-| `GET`  | `/auth/me`       | JWT    | Return the authenticated user profile               |
+| Method | Route                   | Auth   | Description                                                  |
+| ------ | ----------------------- | ------ | ------------------------------------------------------------ |
+| `POST` | `/auth/register`        | Public | Create a user with default `content_creator` role            |
+| `POST` | `/auth/login`           | Public | Exchange email/password for JWT                              |
+| `POST` | `/auth/logout`          | JWT    | Stateless logout placeholder for current foundation          |
+| `POST` | `/auth/change-password` | JWT    | Rotate the current password and clear the forced-change flag |
+| `GET`  | `/auth/me`              | JWT    | Return the authenticated user profile                        |
 
 ### Pages
 
@@ -207,3 +218,4 @@ npm run prisma:validate
 - Refresh tokens, password reset/change flows, and data migration scripts are intentionally left for later migration steps.
 - All build/test paths are designed to avoid accidental database access by mocking Prisma in tests.
 - "editor roles" currently means `admin`, `seo_manager`, and `content_creator`.
+- Production deployments should apply `prisma migrate deploy` before starting the NestJS application.

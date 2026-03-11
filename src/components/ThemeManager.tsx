@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { Theme, ThemeColors } from '../lib/themeTypes';
-import { Palette, Plus, Trash2, Copy, Check, Eye, AlertCircle, Download, ExternalLink, ClipboardCopy, Code } from 'lucide-react';
+import { Palette, Trash2, Copy, Check, Eye, AlertCircle, Download, ExternalLink, ClipboardCopy, Code } from 'lucide-react';
 import { getSQLScript } from '../lib/setupThemes';
 import { ThemeCSSEditor } from './ThemeCSSEditor';
 
@@ -10,7 +10,6 @@ export const ThemeManager: React.FC = () => {
   const [initializing, setInitializing] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingCSSTheme, setEditingCSSTheme] = useState<Theme | null>(null);
-  const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
   const [newThemeName, setNewThemeName] = useState('');
   const [newThemeDescription, setNewThemeDescription] = useState('');
   const [baseTheme, setBaseTheme] = useState<Theme | null>(null);
@@ -32,6 +31,7 @@ export const ThemeManager: React.FC = () => {
       typography: baseTheme.typography,
       spacing: baseTheme.spacing,
       components: baseTheme.components,
+      custom_css: baseTheme.custom_css,
       user_id: null,
       is_default: false,
     });
@@ -65,7 +65,7 @@ export const ThemeManager: React.FC = () => {
     const sql = getSQLScript();
     try {
       await navigator.clipboard.writeText(sql);
-      alert('✅ SQL script copied to clipboard!\n\nNow:\n1. Open Supabase Dashboard\n2. Go to SQL Editor\n3. Paste and execute');
+      alert('Legacy note copied to clipboard.');
     } catch (err) {
       console.error('Failed to copy:', err);
       const textarea = document.createElement('textarea');
@@ -74,17 +74,7 @@ export const ThemeManager: React.FC = () => {
       textarea.select();
       document.execCommand('copy');
       document.body.removeChild(textarea);
-      alert('✅ SQL script copied to clipboard!');
-    }
-  };
-
-  const handleOpenSupabase = () => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    if (supabaseUrl) {
-      const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1];
-      if (projectRef) {
-        window.open(`https://supabase.com/dashboard/project/${projectRef}/sql/new`, '_blank');
-      }
+      alert('Legacy note copied to clipboard.');
     }
   };
 
@@ -101,29 +91,28 @@ export const ThemeManager: React.FC = () => {
     );
   }
 
-  if (error && error.includes('relation "themes" does not exist')) {
+  if (error) {
     return (
       <div className="p-6">
         <div className="max-w-2xl mx-auto">
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 text-center">
             <AlertCircle className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Theme Table Not Found
+              Legacy Theme Manager
             </h2>
             <p className="text-gray-600 mb-6">
-              The themes table needs to be created in your Supabase database. Click below to set it up automatically.
+              This legacy theme manager is no longer backed by Supabase. Use the PostgreSQL-backed page theme and DaisyUI theme managers instead.
             </p>
 
             <div className="flex flex-col gap-3 mb-6">
               <button
                 onClick={async () => {
                   await handleCopySQL();
-                  handleOpenSupabase();
                 }}
                 className="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-medium flex items-center justify-center gap-2"
               >
                 <ExternalLink className="w-5 h-5" />
-                Copy SQL & Open Supabase Dashboard
+                Copy legacy note
               </button>
 
               <button
@@ -138,10 +127,9 @@ export const ThemeManager: React.FC = () => {
             <div className="bg-white rounded-lg p-4 text-left">
               <p className="text-sm font-medium text-gray-700 mb-2">Quick Steps:</p>
               <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
-                <li>Click the button above (SQL will be copied automatically)</li>
-                <li>In the Supabase SQL Editor that opens, paste the SQL</li>
-                <li>Click "Run" or press Ctrl/Cmd + Enter</li>
-                <li>Return here and refresh the page</li>
+                <li>Use the active DaisyUI theme manager for visual tokens</li>
+                <li>Use the page theme manager for CSS/page-level theming</li>
+                <li>Do not reintroduce the deprecated Supabase `themes` table</li>
               </ol>
             </div>
           </div>
@@ -189,12 +177,11 @@ export const ThemeManager: React.FC = () => {
                   <button
                     onClick={async () => {
                       await handleCopySQL();
-                      handleOpenSupabase();
                     }}
                     className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm flex items-center justify-center gap-2"
                   >
                     <ExternalLink className="w-4 h-4" />
-                    Copy SQL & Open Dashboard
+                    Copy legacy note
                   </button>
                 </div>
               </details>
@@ -237,9 +224,8 @@ export const ThemeManager: React.FC = () => {
         {themes.map(theme => (
           <div
             key={theme.id}
-            className={`relative bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-xl ${
-              currentTheme?.id === theme.id ? 'ring-2 ring-blue-500' : ''
-            }`}
+            className={`relative bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-xl ${currentTheme?.id === theme.id ? 'ring-2 ring-blue-500' : ''
+              }`}
           >
             <div
               className="h-32 p-6 flex items-center justify-center"

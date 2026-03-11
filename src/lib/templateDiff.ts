@@ -1,10 +1,10 @@
-import { PageBuilderSection } from './pageBuilderTypes';
+import { PageBuilderSection } from "./pageBuilderTypes";
 
 function deepEqual(a: unknown, b: unknown): boolean {
   if (a === b) return true;
   if (a === null || b === null) return a === b;
   if (typeof a !== typeof b) return false;
-  if (typeof a !== 'object') return false;
+  if (typeof a !== "object") return false;
   if (Array.isArray(a) !== Array.isArray(b)) return false;
 
   if (Array.isArray(a) && Array.isArray(b)) {
@@ -20,31 +20,10 @@ function deepEqual(a: unknown, b: unknown): boolean {
   return keysA.every((k) => deepEqual(objA[k], objB[k]));
 }
 
-function shallowMergeChangedKeys(
-  oldObj: Record<string, unknown>,
-  newObj: Record<string, unknown>,
-  pageObj: Record<string, unknown>
-): Record<string, unknown> {
-  const result = { ...pageObj };
-
-  const allKeys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
-
-  for (const key of allKeys) {
-    const oldVal = oldObj[key];
-    const newVal = newObj[key];
-
-    if (!deepEqual(oldVal, newVal)) {
-      result[key] = newVal;
-    }
-  }
-
-  return result;
-}
-
 function deepMergeChangedKeys(
   oldObj: Record<string, unknown>,
   newObj: Record<string, unknown>,
-  pageObj: Record<string, unknown>
+  pageObj: Record<string, unknown>,
 ): Record<string, unknown> {
   const result = { ...pageObj };
 
@@ -61,21 +40,21 @@ function deepMergeChangedKeys(
     if (
       oldVal !== null &&
       newVal !== null &&
-      typeof oldVal === 'object' &&
-      typeof newVal === 'object' &&
+      typeof oldVal === "object" &&
+      typeof newVal === "object" &&
       !Array.isArray(oldVal) &&
       !Array.isArray(newVal)
     ) {
       const pageSubObj =
         result[key] !== null &&
-        typeof result[key] === 'object' &&
+        typeof result[key] === "object" &&
         !Array.isArray(result[key])
           ? (result[key] as Record<string, unknown>)
           : {};
       result[key] = deepMergeChangedKeys(
         oldVal as Record<string, unknown>,
         newVal as Record<string, unknown>,
-        pageSubObj
+        pageSubObj,
       );
     } else {
       result[key] = newVal;
@@ -96,16 +75,14 @@ export function applyTemplateDiffToPage(
   newTemplateSections: PageBuilderSection[],
   pageSections: PageBuilderSection[],
   oldDaisyThemeSlug: string | null,
-  newDaisyThemeSlug: string | null
+  newDaisyThemeSlug: string | null,
 ): TemplateDiffResult {
   const oldById = new Map(oldTemplateSections.map((s) => [s.id, s]));
   const newById = new Map(newTemplateSections.map((s) => [s.id, s]));
   const pageById = new Map(pageSections.map((s) => [s.id, s]));
 
   const removedIds = new Set(
-    oldTemplateSections
-      .filter((s) => !newById.has(s.id))
-      .map((s) => s.id)
+    oldTemplateSections.filter((s) => !newById.has(s.id)).map((s) => s.id),
   );
 
   const mergedSections: PageBuilderSection[] = [];
@@ -127,29 +104,38 @@ export function applyTemplateDiffToPage(
     const mergedContent = deepMergeChangedKeys(
       oldSection.content as Record<string, unknown>,
       newSection.content as Record<string, unknown>,
-      pageSection.content as Record<string, unknown>
+      pageSection.content as Record<string, unknown>,
     ) as Record<string, any>;
 
     const mergedDesign = deepMergeChangedKeys(
       oldSection.design as unknown as Record<string, unknown>,
       newSection.design as unknown as Record<string, unknown>,
-      pageSection.design as unknown as Record<string, unknown>
-    ) as PageBuilderSection['design'];
+      pageSection.design as unknown as Record<string, unknown>,
+    ) as PageBuilderSection["design"];
 
     const mergedAdvanced = deepMergeChangedKeys(
       oldSection.advanced as unknown as Record<string, unknown>,
       newSection.advanced as unknown as Record<string, unknown>,
-      pageSection.advanced as unknown as Record<string, unknown>
-    ) as PageBuilderSection['advanced'];
+      pageSection.advanced as unknown as Record<string, unknown>,
+    ) as PageBuilderSection["advanced"];
 
-    const oldThemeConfig = (oldSection.themeConfig ?? {}) as Record<string, unknown>;
-    const newThemeConfig = (newSection.themeConfig ?? {}) as Record<string, unknown>;
-    const pageThemeConfig = (pageSection.themeConfig ?? {}) as Record<string, unknown>;
+    const oldThemeConfig = (oldSection.themeConfig ?? {}) as Record<
+      string,
+      unknown
+    >;
+    const newThemeConfig = (newSection.themeConfig ?? {}) as Record<
+      string,
+      unknown
+    >;
+    const pageThemeConfig = (pageSection.themeConfig ?? {}) as Record<
+      string,
+      unknown
+    >;
     const mergedThemeConfig = deepMergeChangedKeys(
       oldThemeConfig,
       newThemeConfig,
-      pageThemeConfig
-    ) as PageBuilderSection['themeConfig'];
+      pageThemeConfig,
+    ) as PageBuilderSection["themeConfig"];
 
     const typeChanged = !deepEqual(oldSection.type, newSection.type);
     const variantChanged = !deepEqual(oldSection.variant, newSection.variant);
@@ -167,7 +153,7 @@ export function applyTemplateDiffToPage(
   }
 
   const pageOnlySections = pageSections.filter(
-    (s) => !oldById.has(s.id) && !newById.has(s.id) && !removedIds.has(s.id)
+    (s) => !oldById.has(s.id) && !newById.has(s.id) && !removedIds.has(s.id),
   );
   mergedSections.push(...pageOnlySections);
 
@@ -175,7 +161,10 @@ export function applyTemplateDiffToPage(
     mergedSections[i] = { ...mergedSections[i], order: i };
   }
 
-  const daisyThemeSlugChanged = !deepEqual(oldDaisyThemeSlug, newDaisyThemeSlug);
+  const daisyThemeSlugChanged = !deepEqual(
+    oldDaisyThemeSlug,
+    newDaisyThemeSlug,
+  );
 
   return {
     sectionsData: mergedSections,

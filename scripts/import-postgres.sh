@@ -67,6 +67,8 @@ echo "ℹ️  Remise à zéro des tables migrées puis import en transaction uni
 
 psql "$DATABASE_URL_VALUE" -v ON_ERROR_STOP=1 <<SQL
 BEGIN;
+ALTER TABLE public.users
+  ADD COLUMN IF NOT EXISTS must_change_password boolean NOT NULL DEFAULT false;
 TRUNCATE TABLE
   public.seo_redirects,
   public.global_hf_settings,

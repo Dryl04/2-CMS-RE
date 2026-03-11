@@ -58,7 +58,7 @@ export default function CodeInsertWidget({ section }: CodeInsertWidgetProps) {
                     <div className="overflow-x-auto p-4">
                         <pre className="text-sm leading-relaxed">
                             <code className="text-gray-100 font-mono">
-                                {lines.map((line, i) => (
+                                {lines.map((line: string, i: number) => (
                                     <div key={i} className="flex">
                                         {showLineNumbers && (
                                             <span className="select-none text-gray-500 pr-4 text-right inline-block" style={{ minWidth: '2.5rem' }}>

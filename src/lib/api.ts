@@ -38,6 +38,7 @@ export interface ApiAuthUser {
   id: string;
   email: string;
   role: UserRole;
+  must_change_password: boolean;
   full_name?: string;
   avatar_url?: string;
   created_at: string;
@@ -68,6 +69,7 @@ interface BackendAuthUser {
   id: string;
   email: string;
   role: UserRole;
+  mustChangePassword?: boolean;
   fullName?: string | null;
   avatarUrl?: string | null;
   createdAt?: string | Date;
@@ -167,11 +169,16 @@ function toBackendAuthUser(raw: BackendAuthUser | ApiAuthUser): ApiAuthUser {
   const updatedAt =
     "updated_at" in raw ? frontendUser.updated_at : backendUser.updatedAt;
   const role = raw.role ?? "content_creator";
+  const mustChangePassword =
+    "must_change_password" in raw
+      ? frontendUser.must_change_password
+      : backendUser.mustChangePassword;
 
   return {
     id: raw.id,
     email: raw.email,
     role,
+    must_change_password: mustChangePassword ?? false,
     full_name: fullName ?? undefined,
     avatar_url: avatarUrl ?? undefined,
     created_at: ensureDateString(createdAt),
@@ -634,6 +641,8 @@ function normalizeUserProfileRow(row: Record<string, any>) {
     full_name:
       row.full_name ?? row.fullName ?? row.user_metadata?.full_name ?? "",
     role: row.role ?? row.app_metadata?.role ?? "content_creator",
+    must_change_password:
+      row.must_change_password ?? row.mustChangePassword ?? false,
     avatar_url: row.avatar_url ?? row.avatarUrl ?? undefined,
     created_at: ensureDateString(row.created_at ?? row.createdAt),
     updated_at: ensureDateString(row.updated_at ?? row.updatedAt),
@@ -1412,6 +1421,32 @@ export async function signUp(
     return {
       data: { session: null, user: null },
       error: toApiError(error, "Sign up failed"),
+    };
+  }
+}
+
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string,
+) {
+  try {
+    const response = await apiRequest<BackendAuthResponse>(
+      "/auth/change-password",
+      {
+        method: "POST",
+        body: JSON.stringify({ currentPassword, newPassword }),
+        auth: true,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+
+    const session = createSession(response.access_token, response.user);
+    emitAuthChange("USER_UPDATED", session);
+    return { data: { session, user: session.user }, error: null };
+  } catch (error) {
+    return {
+      data: { session: null, user: null },
+      error: toApiError(error, "Password change failed"),
     };
   }
 }

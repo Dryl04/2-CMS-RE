@@ -1,10 +1,11 @@
-import { Role } from '@prisma/client';
+import { Role } from "@prisma/client";
 
 export interface JwtUser {
   userId: string;
   email: string;
   role: Role;
   fullName?: string | null;
+  mustChangePassword: boolean;
 }
 
 export interface JwtPayload {
@@ -12,4 +13,5 @@ export interface JwtPayload {
   email: string;
   role: Role;
   fullName?: string | null;
+  mustChangePassword: boolean;
 }

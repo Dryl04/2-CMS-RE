@@ -11,6 +11,7 @@
     "backend:build": "npm --prefix backend run prisma:generate && npm --prefix backend run build",
     "backend:test": "npm --prefix backend run test",
     "backend:test:e2e": "npm --prefix backend run test:e2e",
+    "backend:migrate:deploy": "npm --prefix backend run prisma:migrate:deploy",
     "migrate:export-supabase": "bash ./scripts/export-supabase.sh",
     "migrate:export-supabase:rest": "node --experimental-strip-types ./scripts/export-supabase-rest.ts",
     "migrate:transform-export": "node --experimental-strip-types ./scripts/transform-export.ts",

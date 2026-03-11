@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PageStatus, Prisma } from '@prisma/client';
-import { JwtUser } from '../auth/auth.types';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreatePageDto } from './dto/create-page.dto';
-import { ListPagesQueryDto } from './dto/list-pages.query.dto';
-import { UpdatePageDto } from './dto/update-page.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PageStatus, Prisma } from "@prisma/client";
+import { JwtUser } from "../auth/auth.types";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreatePageDto } from "./dto/create-page.dto";
+import { ListPagesQueryDto } from "./dto/list-pages.query.dto";
+import { UpdatePageDto } from "./dto/update-page.dto";
 
 @Injectable()
 export class PagesService {
@@ -20,14 +20,16 @@ export class PagesService {
         template: true,
         pageContentSections: {
           orderBy: {
-            orderIndex: 'asc',
+            orderIndex: "asc",
           },
         },
       },
     });
 
     if (!page) {
-      throw new NotFoundException(`Published page not found for key \"${pageKey}\"`);
+      throw new NotFoundException(
+        `Published page not found for key "${pageKey}"`,
+      );
     }
 
     return page;
@@ -36,7 +38,7 @@ export class PagesService {
   async getPublicRedirects() {
     return this.prisma.seoRedirect.findMany({
       where: { isActive: true },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { updatedAt: "desc" },
       select: {
         id: true,
         sourcePath: true,
@@ -58,13 +60,13 @@ export class PagesService {
         {
           pageKey: {
             contains: query.search,
-            mode: 'insensitive',
+            mode: "insensitive",
           },
         },
         {
           title: {
             contains: query.search,
-            mode: 'insensitive',
+            mode: "insensitive",
           },
         },
       ];
@@ -76,7 +78,7 @@ export class PagesService {
         template: true,
       },
       orderBy: {
-        updatedAt: 'desc',
+        updatedAt: "desc",
       },
     });
   }
@@ -91,7 +93,7 @@ export class PagesService {
       ogDescription: dto.ogDescription,
       ogImage: dto.ogImage,
       canonicalUrl: dto.canonicalUrl,
-      language: dto.language ?? 'fr',
+      language: dto.language ?? "fr",
       status: dto.status ?? PageStatus.draft,
       content: dto.content,
       sectionsData: dto.sectionsData as Prisma.InputJsonValue | undefined,

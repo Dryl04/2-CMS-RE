@@ -161,7 +161,7 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
   const handleDuplicate = async (page: SEOMetadata) => {
     try {
       const newPageKey = `${page.page_key}-copie-${Date.now().toString(36)}`;
-      const { id, created_at, updated_at, ...rest } = page as any;
+      const { id: _id, created_at: _createdAt, updated_at: _updatedAt, ...rest } = page as any;
       const duplicateData = {
         ...rest,
         page_key: newPageKey,

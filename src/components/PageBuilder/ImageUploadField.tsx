@@ -8,6 +8,7 @@ interface ImageUploadFieldProps {
   onChange: (url: string) => void;
   placeholder?: string;
   mediaType?: 'image' | 'video' | 'auto';
+  accept?: string;
 }
 
 const isVideoUrl = (url: string) => /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(url);
@@ -18,17 +19,20 @@ export default function ImageUploadField({
   onChange,
   placeholder,
   mediaType = 'image',
+  accept,
 }: ImageUploadFieldProps) {
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [inputMode, setInputMode] = useState<'url' | 'upload'>('url');
 
-  const resolvedMediaType = mediaType === 'auto' ? (isVideoUrl(value) ? 'video' : 'image') : mediaType;
+  const resolvedMediaType = mediaType === 'auto'
+    ? (accept?.startsWith('video/') || isVideoUrl(value) ? 'video' : 'image')
+    : mediaType;
   const uploadLabel =
     resolvedMediaType === 'video'
       ? 'Choisir ou uploader une vidéo'
       : mediaType === 'auto'
-      ? 'Choisir ou uploader un média'
-      : 'Choisir ou uploader une image';
+        ? 'Choisir ou uploader un média'
+        : 'Choisir ou uploader une image';
 
   const handleSelectMedia = (url: string) => {
     onChange(url);
@@ -45,11 +49,10 @@ export default function ImageUploadField({
         <button
           type="button"
           onClick={() => setInputMode('url')}
-          className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
-            inputMode === 'url'
+          className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors ${inputMode === 'url'
               ? 'bg-black text-white'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+            }`}
         >
           <LinkIcon className="w-3 h-3 inline mr-1" />
           URL
@@ -57,11 +60,10 @@ export default function ImageUploadField({
         <button
           type="button"
           onClick={() => setInputMode('upload')}
-          className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
-            inputMode === 'upload'
+          className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-colors ${inputMode === 'upload'
               ? 'bg-black text-white'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+            }`}
         >
           <Upload className="w-3 h-3 inline mr-1" />
           Upload

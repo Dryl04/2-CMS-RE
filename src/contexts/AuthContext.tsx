@@ -6,8 +6,10 @@ interface AuthContextType {
   session: Session | null;
   profile: UserProfile | null;
   loading: boolean;
+  requiresPasswordChange: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: Error | null }>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   isAdmin: () => boolean;
   isSEOManager: () => boolean;
@@ -33,6 +35,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const requiresPasswordChange = Boolean(user?.must_change_password);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -185,6 +188,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setProfile(null);
   };
 
+  const changePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+      const { data, error } = await supabase.auth.changePassword({
+        currentPassword,
+        newPassword,
+      });
+
+      if (error) {
+        return { error: new Error(error.message) };
+      }
+
+      setSession(data.session);
+      setUser(data.user ?? null);
+      if (data.user) {
+        await loadUserProfile(data.user.id);
+      }
+
+      return { error: null };
+    } catch (error) {
+      return { error: error as Error };
+    }
+  };
+
   const isAdmin = () => profile?.role === 'admin';
 
   const isSEOManager = () => profile?.role === 'seo_manager';
@@ -196,8 +222,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     session,
     profile,
     loading,
+    requiresPasswordChange,
     signIn,
     signUp,
+    changePassword,
     signOut,
     isAdmin,
     isSEOManager,

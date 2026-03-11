@@ -6,8 +6,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   GlobalHFSetting,
   loadAllGlobalHFSettings,
-  isHeaderType,
-  isFooterType,
 } from '@/lib/globalHFSettings';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 

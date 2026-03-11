@@ -1,16 +1,18 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Role, User } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
-import { PrismaService } from '../prisma/prisma.service';
-import { JwtPayload, JwtUser } from './auth.types';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { Role, User } from "@prisma/client";
+import * as bcrypt from "bcrypt";
+import { PrismaService } from "../prisma/prisma.service";
+import { JwtPayload, JwtUser } from "./auth.types";
+import { ChangePasswordDto } from "./dto/change-password.dto";
+import { LoginDto } from "./dto/login.dto";
+import { RegisterDto } from "./dto/register.dto";
 
 const SALT_ROUNDS = 10;
 
@@ -21,6 +23,7 @@ export interface AuthResponse {
     email: string;
     fullName: string | null;
     role: Role;
+    mustChangePassword: boolean;
     createdAt: Date;
     updatedAt: Date;
   };
@@ -40,7 +43,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('A user with this email already exists');
+      throw new ConflictException("A user with this email already exists");
     }
 
     const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
@@ -48,12 +51,51 @@ export class AuthService {
       data: {
         email,
         passwordHash,
+        mustChangePassword: false,
         fullName: dto.fullName?.trim() || null,
         role: Role.content_creator,
       },
     });
 
     return this.buildAuthResponse(user);
+  }
+
+  async changePassword(
+    currentUser: JwtUser,
+    dto: ChangePasswordDto,
+  ): Promise<AuthResponse> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: currentUser.userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException("Authenticated user was not found");
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      dto.currentPassword,
+      user.passwordHash,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException("Current password is invalid");
+    }
+
+    if (dto.currentPassword === dto.newPassword) {
+      throw new BadRequestException(
+        "The new password must be different from the current password",
+      );
+    }
+
+    const passwordHash = await bcrypt.hash(dto.newPassword, SALT_ROUNDS);
+    const updatedUser = await this.prisma.user.update({
+      where: { id: currentUser.userId },
+      data: {
+        passwordHash,
+        mustChangePassword: false,
+      },
+    });
+
+    return this.buildAuthResponse(updatedUser);
   }
 
   async login(dto: LoginDto): Promise<AuthResponse> {
@@ -63,12 +105,15 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException("Invalid email or password");
     }
 
-    const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash);
+    const isPasswordValid = await bcrypt.compare(
+      dto.password,
+      user.passwordHash,
+    );
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException("Invalid email or password");
     }
 
     return this.buildAuthResponse(user);
@@ -80,7 +125,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException('Authenticated user was not found');
+      throw new NotFoundException("Authenticated user was not found");
     }
 
     return this.serializeUser(user);
@@ -96,6 +141,7 @@ export class AuthService {
       email: user.email,
       role: user.role,
       fullName: user.fullName,
+      mustChangePassword: user.mustChangePassword,
     };
 
     const accessToken = await this.jwtService.signAsync(payload);
@@ -112,6 +158,7 @@ export class AuthService {
       email: user.email,
       fullName: user.fullName,
       role: user.role,
+      mustChangePassword: user.mustChangePassword,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };

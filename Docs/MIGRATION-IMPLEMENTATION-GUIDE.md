@@ -24,6 +24,7 @@ This document captures the implemented migration foundation from direct Supabase
 - `scripts/transform-export.ts` converts the export into a PostgreSQL import file compatible with the new `users` table.
 - `scripts/transform-export.test.ts` covers the transformation logic.
 - `scripts/import-postgres.sh` imports `scripts/postgres_import.sql` into any PostgreSQL database URL compatible with the Prisma schema.
+- `backend/prisma/migrations/` contains the versioned Prisma SQL migration baseline for repeatable deployments.
 
 ## Validation commands
 
@@ -42,6 +43,7 @@ npm run build
 npm run backend:build
 npm run backend:test
 npm run backend:test:e2e
+npm run backend:migrate:deploy
 ```
 
 ### Docker
