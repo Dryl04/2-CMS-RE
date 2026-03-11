@@ -22,6 +22,17 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
   const [copySuccessId, setCopySuccessId] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  const ensureNamedFile = (candidate: File | Blob, originalFile: File) => {
+    if (candidate instanceof File && candidate.name && candidate.name !== 'blob') {
+      return candidate;
+    }
+
+    return new File([candidate], originalFile.name, {
+      type: candidate.type || originalFile.type,
+      lastModified: Date.now(),
+    });
+  };
+
   useEffect(() => {
     loadMedia();
   }, []);
@@ -60,7 +71,7 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
 
     for (const file of acceptedFiles) {
       try {
-        let fileToUpload = file;
+        let fileToUpload: File | Blob = file;
 
         if (file.type.startsWith('image/')) {
           const options = {
@@ -76,13 +87,15 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
           }
         }
 
+        const normalizedUploadFile = ensureNamedFile(fileToUpload, file);
+
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
         const filePath = `${profile.id}/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
           .from('media')
-          .upload(filePath, fileToUpload);
+          .upload(filePath, normalizedUploadFile);
 
         if (uploadError) throw uploadError;
 
@@ -114,8 +127,8 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
             filename: fileName,
             original_filename: file.name,
             file_path: publicUrl,
-            file_size: fileToUpload.size,
-            mime_type: file.type,
+            file_size: normalizedUploadFile.size,
+            mime_type: normalizedUploadFile.type || file.type,
             width,
             height,
             uploaded_by: profile?.id,
@@ -276,8 +289,8 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
     <div>
       {actionMessage && (
         <div className={`mb-4 rounded-xl border px-4 py-3 text-sm font-medium flex items-center justify-between ${actionMessage.type === 'success'
-            ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-            : 'bg-red-50 border-red-200 text-red-800'
+          ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+          : 'bg-red-50 border-red-200 text-red-800'
           }`}>
           <span>{actionMessage.text}</span>
           <button
@@ -309,8 +322,8 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-3xl p-12 text-center cursor-pointer transition-all ${isDragActive
-              ? 'border-black bg-gray-50'
-              : 'border-gray-300 hover:border-gray-400'
+            ? 'border-black bg-gray-50'
+            : 'border-gray-300 hover:border-gray-400'
             }`}
         >
           <input {...getInputProps()} />
@@ -400,8 +413,8 @@ export default function MediaLibrary({ onNavigate, onSelectMedia }: MediaLibrary
             <div
               key={file.id}
               className={`group relative bg-white rounded-2xl border-2 overflow-hidden transition-all ${selectedFiles.has(file.id)
-                  ? 'border-black'
-                  : 'border-gray-200 hover:border-gray-300'
+                ? 'border-black'
+                : 'border-gray-200 hover:border-gray-300'
                 }`}
             >
               <div className="aspect-square bg-gray-100 relative">

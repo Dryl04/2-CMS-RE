@@ -8,6 +8,12 @@ interface FooterWidgetProps {
   onUpdate: (updates: Partial<PageBuilderSection>) => void;
 }
 
+const buildItemKey = (...parts: Array<string | number | null | undefined>) =>
+  parts
+    .filter((part) => part !== null && part !== undefined && String(part).trim() !== '')
+    .map((part) => String(part).trim())
+    .join('::');
+
 export default function FooterWidget({ section }: FooterWidgetProps) {
   const { logo, logoText, description, columns, socialLinks, copyright } = section.content;
 
@@ -49,28 +55,28 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
             {socialLinks && socialLinks.length > 0 && (
               <div className="flex items-center space-x-3">
                 {socialLinks.map((social: any, index: number) => (
-                    <a
-                      key={index}
-                      href={social.url || '#'}
-                      className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center hover:opacity-80 transition-opacity bg-primary text-primary-content"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {renderIcon(social.platform, '', social.iconSize || 20)}
-                    </a>
-                  ))}
+                  <a
+                    key={buildItemKey('social', social.platform, social.url, index)}
+                    href={social.url || '#'}
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center hover:opacity-80 transition-opacity bg-primary text-primary-content"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {renderIcon(social.platform, '', social.iconSize || 20)}
+                  </a>
+                ))}
               </div>
             )}
           </div>
 
           {(columns || []).map((column: any, index: number) => (
-            <div key={index}>
+            <div key={buildItemKey('column', column.title, index)}>
               <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">
                 {column.title}
               </h3>
               <ul className="space-y-2">
                 {(column.links || []).map((link: any, linkIndex: number) => (
-                  <li key={linkIndex}>
+                  <li key={buildItemKey('column-link', column.title, link.label, link.url, linkIndex)}>
                     <a
                       href={link.url || '#'}
                       className="text-sm hover:opacity-80 transition-opacity opacity-70"
@@ -108,10 +114,10 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
           </div>
 
           <nav className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-            {(columns || []).flatMap((column: any) =>
-              (column.links || []).map((link: any, index: number) => (
+            {(columns || []).flatMap((column: any, columnIndex: number) =>
+              (column.links || []).map((link: any, linkIndex: number) => (
                 <a
-                  key={index}
+                  key={buildItemKey('minimal-link', column.title, columnIndex, link.label, link.url, linkIndex)}
                   href={link.url || '#'}
                   className="text-sm hover:opacity-80 transition-opacity text-base-content/70"
                   style={linkStyle}
@@ -125,16 +131,16 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
           {socialLinks && socialLinks.length > 0 && (
             <div className="flex items-center space-x-3">
               {socialLinks.map((social: any, index: number) => (
-                  <a
-                    key={index}
-                    href={social.url || '#'}
-                    className="hover:opacity-80 transition-opacity text-base-content/70"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {renderIcon(social.platform, '', social.iconSize || 20)}
-                  </a>
-                ))}
+                <a
+                  key={buildItemKey('minimal-social', social.platform, social.url, index)}
+                  href={social.url || '#'}
+                  className="hover:opacity-80 transition-opacity text-base-content/70"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {renderIcon(social.platform, '', social.iconSize || 20)}
+                </a>
+              ))}
             </div>
           )}
         </div>
@@ -168,29 +174,29 @@ export default function FooterWidget({ section }: FooterWidgetProps) {
           {socialLinks && socialLinks.length > 0 && (
             <div className="flex items-center justify-center space-x-3 mb-8">
               {socialLinks.map((social: any, index: number) => (
-                  <a
-                    key={index}
-                    href={social.url || '#'}
-                    className="w-9 h-9 sm:w-10 sm:h-10 bg-base-100 hover:bg-base-300 border border-base-content/10 rounded-lg flex items-center justify-center transition-colors"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {renderIcon(social.platform, 'text-base-content/70', social.iconSize || 20)}
-                  </a>
-                ))}
+                <a
+                  key={buildItemKey('centered-social', social.platform, social.url, index)}
+                  href={social.url || '#'}
+                  className="w-9 h-9 sm:w-10 sm:h-10 bg-base-100 hover:bg-base-300 border border-base-content/10 rounded-lg flex items-center justify-center transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {renderIcon(social.platform, 'text-base-content/70', social.iconSize || 20)}
+                </a>
+              ))}
             </div>
           )}
         </div>
 
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8 text-center">
           {(columns || []).map((column: any, index: number) => (
-            <div key={index}>
+            <div key={buildItemKey('centered-column', column.title, index)}>
               <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base text-base-content" style={headingStyle}>
                 {column.title}
               </h3>
               <ul className="space-y-2">
                 {(column.links || []).map((link: any, linkIndex: number) => (
-                  <li key={linkIndex}>
+                  <li key={buildItemKey('centered-link', column.title, link.label, link.url, linkIndex)}>
                     <a
                       href={link.url || '#'}
                       className="text-sm hover:opacity-80 transition-opacity text-base-content/70"
