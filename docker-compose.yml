@@ -6,11 +6,15 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cms_password}
       POSTGRES_DB: ${POSTGRES_DB:-cms_db}
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-cms_user} -d ${POSTGRES_DB:-cms_db}']
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-cms_user} -d ${POSTGRES_DB:-cms_db}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -27,7 +31,7 @@ services:
       DATABASE_URL: ${DATABASE_URL:-postgresql://cms_user:cms_password@postgres:5432/cms_db}
       PORT: ${PORT:-3001}
       NODE_ENV: development
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
       JWT_SECRET: ${JWT_SECRET:-replace-this-in-local-dev}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-replace-this-refresh-secret-in-local-dev}
@@ -36,7 +40,7 @@ services:
       UPLOADS_DIR: /app/uploads
       UPLOADS_PUBLIC_PATH: ${UPLOADS_PUBLIC_PATH:-/uploads}
     ports:
-      - '3001:3001'
+      - "3001:3001"
     depends_on:
       postgres:
         condition: service_healthy

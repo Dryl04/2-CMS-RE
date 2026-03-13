@@ -13,6 +13,7 @@ import { JwtPayload, JwtUser } from "./auth.types";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
+import { UpdateProfileDto } from "./dto/update-profile.dto";
 
 const SALT_ROUNDS = 10;
 
@@ -129,6 +130,46 @@ export class AuthService {
     }
 
     return this.serializeUser(user);
+  }
+
+  async updateProfile(currentUser: JwtUser, dto: UpdateProfileDto): Promise<AuthResponse> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: currentUser.userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException("Authenticated user was not found");
+    }
+
+    let emailToUpdate = user.email;
+    if (dto.email) {
+      const email = dto.email.trim().toLowerCase();
+      if (email !== user.email) {
+        const existingUser = await this.prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (existingUser) {
+          throw new ConflictException("A user with this email already exists");
+        }
+        emailToUpdate = email;
+      }
+    }
+
+    let fullNameToUpdate = user.fullName;
+    if (dto.fullName !== undefined) {
+      fullNameToUpdate = dto.fullName?.trim() || null;
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: currentUser.userId },
+      data: {
+        email: emailToUpdate,
+        fullName: fullNameToUpdate,
+      },
+    });
+
+    return this.buildAuthResponse(updatedUser);
   }
 
   async logout() {

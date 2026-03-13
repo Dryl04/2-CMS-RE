@@ -58,8 +58,17 @@ export interface ApiSession {
   user: ApiAuthUser;
 }
 
+export interface PublicPageRouteResult {
+  kind: "page" | "redirect";
+  page?: Record<string, any>;
+  redirectUrl?: string;
+  targetPath?: string;
+  statusCode?: number;
+  reason?: string;
+}
+
 interface ApiRequestOptions {
-  method?: "GET" | "POST" | "PATCH" | "DELETE";
+  method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
   body?: BodyInit | string;
   auth?: boolean;
   headers?: Record<string, string>;
@@ -321,7 +330,10 @@ async function apiRequest<T>(
 ): Promise<T> {
   const { method = "GET", body, auth = true, headers = {} } = options;
   const token = auth ? getAccessToken() : null;
-  const requestHeaders = new Headers(headers);
+  const requestHeaders = new Headers({
+    ...getPublicSiteContextHeaders(path, auth),
+    ...headers,
+  });
 
   if (auth && token) {
     requestHeaders.set("Authorization", `Bearer ${token}`);
@@ -357,6 +369,31 @@ async function apiRequest<T>(
   }
 
   return payload as T;
+}
+
+function getPublicSiteContextHeaders(path: string, auth: boolean) {
+  if (auth || typeof window === "undefined") {
+    return {};
+  }
+
+  const isPublicPublishingPath =
+    path.startsWith("/api/pages/public") ||
+    path.startsWith("/api/pages/public-resolve") ||
+    path === "/robots.txt" ||
+    path === "/sitemap.xml" ||
+    path.startsWith("/.well-known/");
+
+  if (!isPublicPublishingPath) {
+    return {};
+  }
+
+  const host = window.location.host?.trim();
+  const protocol = window.location.protocol.replace(":", "").trim();
+
+  return stripUndefined({
+    "X-Site-Host": host || undefined,
+    "X-Site-Protocol": protocol || undefined,
+  });
 }
 
 function encodePublicPath(value: string): string {
@@ -482,6 +519,73 @@ function normalizePageTheme(row: Record<string, any>) {
   };
 }
 
+function normalizeSiteDomain(row: Record<string, any>) {
+  const normalized = {
+    id: row.id,
+    site_id: row.site_id ?? row.siteId ?? null,
+    host: row.host ?? "",
+    scheme: row.scheme ?? "https",
+    is_primary: row.is_primary ?? row.isPrimary ?? false,
+    is_canonical: row.is_canonical ?? row.isCanonical ?? false,
+    locale: row.locale ?? null,
+    is_active: row.is_active ?? row.isActive ?? true,
+    redirect_to_primary:
+      row.redirect_to_primary ?? row.redirectToPrimary ?? false,
+    business_owner: row.business_owner ?? row.businessOwner ?? null,
+    technical_owner: row.technical_owner ?? row.technicalOwner ?? null,
+    registrar: row.registrar ?? null,
+    dns_provider: row.dns_provider ?? row.dnsProvider ?? null,
+    dns_target: row.dns_target ?? row.dnsTarget ?? null,
+    hosting_target: row.hosting_target ?? row.hostingTarget ?? null,
+    verification_method:
+      row.verification_method ?? row.verificationMethod ?? "manual",
+    verification_status:
+      row.verification_status ?? row.verificationStatus ?? "pending",
+    verification_token:
+      row.verification_token ?? row.verificationToken ?? null,
+    verified_at: row.verified_at ?? row.verifiedAt ?? null,
+    ssl_status: row.ssl_status ?? row.sslStatus ?? "pending",
+    robots_txt_enabled:
+      row.robots_txt_enabled ?? row.robotsTxtEnabled ?? true,
+    sitemap_enabled: row.sitemap_enabled ?? row.sitemapEnabled ?? true,
+    allow_indexing: row.allow_indexing ?? row.allowIndexing ?? true,
+    notes: row.notes ?? null,
+    go_live_at: row.go_live_at ?? row.goLiveAt ?? null,
+    created_at: ensureDateString(row.created_at ?? row.createdAt),
+    updated_at: ensureDateString(row.updated_at ?? row.updatedAt),
+  } as Record<string, any>;
+
+  if (row.site) {
+    normalized.site = normalizeSite(row.site);
+  }
+
+  return normalized;
+}
+
+function normalizeSite(row: Record<string, any>) {
+  const normalized = {
+    id: row.id,
+    name: row.name ?? "",
+    code: row.code ?? "",
+    default_locale: row.default_locale ?? row.defaultLocale ?? "fr",
+    homepage_page_key: row.homepage_page_key ?? row.homepagePageKey ?? "home",
+    canonical_strategy:
+      row.canonical_strategy ?? row.canonicalStrategy ?? "canonical_domain",
+    is_active: row.is_active ?? row.isActive ?? true,
+    created_at: ensureDateString(row.created_at ?? row.createdAt),
+    updated_at: ensureDateString(row.updated_at ?? row.updatedAt),
+    _count: row._count ?? undefined,
+  } as Record<string, any>;
+
+  if (Array.isArray(row.domains)) {
+    normalized.domains = row.domains.map((domain) =>
+      normalizeSiteDomain(domain),
+    );
+  }
+
+  return normalized;
+}
+
 function normalizePageTemplate(row: Record<string, any>) {
   const normalized = {
     id: row.id,
@@ -513,11 +617,12 @@ function normalizePageTemplate(row: Record<string, any>) {
   return normalized;
 }
 
-function normalizeSeoMetadata(row: Record<string, any>) {
+export function normalizeSeoMetadata(row: Record<string, any>) {
   const pageKey = row.page_key ?? row.pageKey ?? row.slug ?? "";
 
   const normalized = {
     id: row.id,
+    site_id: row.site_id ?? row.siteId ?? null,
     page_key: pageKey,
     slug: pageKey,
     title: row.title ?? "",
@@ -538,6 +643,11 @@ function normalizeSeoMetadata(row: Record<string, any>) {
     user_id: row.user_id ?? row.userId ?? null,
     template_id: row.template_id ?? row.templateId ?? null,
     daisy_theme_slug: row.daisy_theme_slug ?? row.daisyThemeSlug ?? null,
+    effective_canonical_url:
+      row.effective_canonical_url ?? row.effectiveCanonicalUrl ?? null,
+    robots_directive:
+      row.robots_directive ?? row.robotsDirective ?? "index,follow",
+    public_base_url: row.public_base_url ?? row.publicBaseUrl ?? null,
     folder: row.folder ?? null,
     created_at: ensureDateString(row.created_at ?? row.createdAt),
     updated_at: ensureDateString(row.updated_at ?? row.updatedAt),
@@ -547,12 +657,21 @@ function normalizeSeoMetadata(row: Record<string, any>) {
     normalized.template = normalizePageTemplate(row.template);
   }
 
+  if (row.site) {
+    normalized.site = normalizeSite(row.site);
+  }
+
+  if (row.resolvedDomain) {
+    normalized.resolved_domain = normalizeSiteDomain(row.resolvedDomain);
+  }
+
   return normalized;
 }
 
 function normalizeRedirect(row: Record<string, any>) {
-  return {
+  const normalized = {
     id: row.id,
+    site_id: row.site_id ?? row.siteId ?? null,
     source_path: row.source_path ?? row.sourcePath ?? "",
     target_path: row.target_path ?? row.targetPath ?? "",
     source_page_id: row.source_page_id ?? row.sourcePageId ?? null,
@@ -562,7 +681,13 @@ function normalizeRedirect(row: Record<string, any>) {
     created_by: row.created_by ?? row.createdBy ?? null,
     created_at: ensureDateString(row.created_at ?? row.createdAt),
     updated_at: ensureDateString(row.updated_at ?? row.updatedAt),
-  };
+  } as Record<string, any>;
+
+  if (row.site) {
+    normalized.site = normalizeSite(row.site);
+  }
+
+  return normalized;
 }
 
 function normalizeDaisyTheme(row: Record<string, any>) {
@@ -663,6 +788,7 @@ function pickAllowed(payload: Record<string, any>, keys: string[]) {
 
 function serializeSeoMetadata(payload: Record<string, any>) {
   const allowed = pickAllowed(payload, [
+    "site_id",
     "page_key",
     "title",
     "description",
@@ -683,6 +809,7 @@ function serializeSeoMetadata(payload: Record<string, any>) {
   ]);
 
   return stripUndefined({
+    siteId: allowed.site_id,
     pageKey: allowed.page_key,
     title: allowed.title,
     description: allowed.description,
@@ -736,6 +863,7 @@ function serializePageTemplate(payload: Record<string, any>) {
 
 function serializeRedirect(payload: Record<string, any>) {
   const allowed = pickAllowed(payload, [
+    "site_id",
     "source_path",
     "target_path",
     "source_page_id",
@@ -745,6 +873,7 @@ function serializeRedirect(payload: Record<string, any>) {
   ]);
 
   return stripUndefined({
+    siteId: allowed.site_id,
     sourcePath: allowed.source_path,
     targetPath: allowed.target_path,
     sourcePageId: allowed.source_page_id,
@@ -834,7 +963,99 @@ function serializeGlobalHF(payload: Record<string, any>) {
   });
 }
 
+function serializeSite(payload: Record<string, any>) {
+  const allowed = pickAllowed(payload, [
+    "name",
+    "code",
+    "default_locale",
+    "homepage_page_key",
+    "canonical_strategy",
+    "is_active",
+  ]);
+
+  return stripUndefined({
+    name: allowed.name,
+    code: allowed.code,
+    defaultLocale: allowed.default_locale,
+    homepagePageKey: allowed.homepage_page_key,
+    canonicalStrategy: allowed.canonical_strategy,
+    isActive: allowed.is_active,
+  });
+}
+
+function serializeSiteDomain(payload: Record<string, any>) {
+  const allowed = pickAllowed(payload, [
+    "site_id",
+    "host",
+    "scheme",
+    "is_primary",
+    "is_canonical",
+    "locale",
+    "is_active",
+    "redirect_to_primary",
+    "business_owner",
+    "technical_owner",
+    "registrar",
+    "dns_provider",
+    "dns_target",
+    "hosting_target",
+    "verification_method",
+    "verification_status",
+    "verification_token",
+    "verified_at",
+    "ssl_status",
+    "robots_txt_enabled",
+    "sitemap_enabled",
+    "allow_indexing",
+    "notes",
+    "go_live_at",
+  ]);
+
+  return stripUndefined({
+    siteId: allowed.site_id,
+    host: allowed.host,
+    scheme: allowed.scheme,
+    isPrimary: allowed.is_primary,
+    isCanonical: allowed.is_canonical,
+    locale: allowed.locale,
+    isActive: allowed.is_active,
+    redirectToPrimary: allowed.redirect_to_primary,
+    businessOwner: allowed.business_owner,
+    technicalOwner: allowed.technical_owner,
+    registrar: allowed.registrar,
+    dnsProvider: allowed.dns_provider,
+    dnsTarget: allowed.dns_target,
+    hostingTarget: allowed.hosting_target,
+    verificationMethod: allowed.verification_method,
+    verificationStatus: allowed.verification_status,
+    verificationToken: allowed.verification_token,
+    verifiedAt: allowed.verified_at,
+    sslStatus: allowed.ssl_status,
+    robotsTxtEnabled: allowed.robots_txt_enabled,
+    sitemapEnabled: allowed.sitemap_enabled,
+    allowIndexing: allowed.allow_indexing,
+    notes: allowed.notes,
+    goLiveAt: allowed.go_live_at,
+  });
+}
+
 const resourceDefinitions: Record<string, ResourceDefinition> = {
+  sites: {
+    listPath: "/api/sites",
+    createPath: "/api/sites",
+    updatePath: (id) => `/api/sites/${id}`,
+    deletePath: (id) => `/api/sites/${id}`,
+    normalize: normalizeSite,
+    serialize: serializeSite,
+  },
+  site_domains: {
+    listPath: "/api/site-domains",
+    createPath: "/api/site-domains",
+    updatePath: (id) => `/api/site-domains/${id}`,
+    deletePath: (id) => `/api/site-domains/${id}`,
+    normalize: normalizeSiteDomain,
+    serialize: serializeSiteDomain,
+  },
   seo_metadata: {
     listPath: "/api/pages",
     createPath: "/api/pages",
@@ -1106,6 +1327,16 @@ export async function queryRows(
   }
 }
 
+export async function fetchPublicPageRoute(
+  pageKey: string,
+): Promise<PublicPageRouteResult> {
+  const normalizedPath = encodePublicPath(pageKey);
+  return apiRequest<PublicPageRouteResult>(
+    `/api/pages/public-resolve/${normalizedPath}`,
+    { auth: false },
+  );
+}
+
 function getIdFromFilters(
   table: string,
   filters: QueryFilter[],
@@ -1250,15 +1481,19 @@ async function upsertSeoMetadataRows(
   const rows = Array.isArray(payload) ? payload : [payload];
   const existingRows = await listPrivateRows("seo_metadata");
   const existingByPageKey = new Map(
-    existingRows.map((row) => [row.page_key, row]),
+    existingRows.map((row) => [
+      `${row.site_id ?? ""}::${row.page_key ?? ""}`,
+      row,
+    ]),
   );
   const resource = getResource("seo_metadata");
 
   return Promise.all(
     rows.map(async (row) => {
+      const rowKey = `${row.site_id ?? ""}::${row.page_key ?? ""}`;
       const current =
         typeof row.page_key === "string"
-          ? existingByPageKey.get(row.page_key)
+          ? existingByPageKey.get(rowKey)
           : undefined;
       if (current?.id) {
         const response = await apiRequest<Record<string, any>>(
@@ -1447,6 +1682,32 @@ export async function changePassword(
     return {
       data: { session: null, user: null },
       error: toApiError(error, "Password change failed"),
+    };
+  }
+}
+
+export async function updateProfile(
+  fullName?: string,
+  email?: string,
+) {
+  try {
+    const response = await apiRequest<BackendAuthResponse>(
+      "/auth/me",
+      {
+        method: "PUT",
+        body: JSON.stringify({ fullName, email }),
+        auth: true,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+
+    const session = createSession(response.access_token, response.user);
+    emitAuthChange("USER_UPDATED", session);
+    return { data: { session, user: session.user }, error: null };
+  } catch (error) {
+    return {
+      data: { session: null, user: null },
+      error: toApiError(error, "Profile update failed"),
     };
   }
 }

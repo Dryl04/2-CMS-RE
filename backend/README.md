@@ -42,24 +42,24 @@ backend/
 
 The root `.env.example` is the source of truth for local setup. The backend uses these variables:
 
-| Variable                 | Required                  | Default                     | Purpose                             |
-| ------------------------ | ------------------------- | --------------------------- | ----------------------------------- |
-| `DATABASE_URL`           | Yes for real DB work      | –                           | Prisma PostgreSQL connection string |
-| `PORT`                   | No                        | `3001`                      | NestJS HTTP port                    |
-| `NODE_ENV`               | No                        | `development`               | Runtime mode                        |
-| `JWT_SECRET`             | Yes in real environments  | fallback for tests/dev only | JWT signing secret                  |
-| `JWT_EXPIRES_IN`         | No                        | `7d`                        | Access token lifetime               |
-| `JWT_REFRESH_SECRET`     | No for current foundation | –                           | Reserved for refresh-token phase    |
-| `JWT_REFRESH_EXPIRES_IN` | No                        | `30d`                       | Reserved for refresh-token phase    |
-| `CORS_ORIGIN`            | No                        | `http://localhost:5173`     | Allowed frontend origin             |
-| `STORAGE_TYPE`           | No                        | `local`                     | `local` or `r2`                     |
-| `UPLOADS_DIR`            | No                        | `./uploads`                 | Local uploads directory             |
-| `UPLOADS_PUBLIC_PATH`    | No                        | `/uploads`                  | Public path served by Nest          |
-| `R2_ACCOUNT_ID`          | Only if `STORAGE_TYPE=r2` | –                           | Cloudflare R2 account               |
-| `R2_ACCESS_KEY_ID`       | Only if `STORAGE_TYPE=r2` | –                           | Cloudflare R2 access key            |
-| `R2_SECRET_ACCESS_KEY`   | Only if `STORAGE_TYPE=r2` | –                           | Cloudflare R2 secret key            |
-| `R2_BUCKET_NAME`         | Only if `STORAGE_TYPE=r2` | –                           | R2 bucket name                      |
-| `R2_PUBLIC_URL`          | Only if `STORAGE_TYPE=r2` | –                           | Public base URL for media           |
+| Variable                 | Required                  | Default                     | Purpose                                   |
+| ------------------------ | ------------------------- | --------------------------- | ----------------------------------------- |
+| `DATABASE_URL`           | Yes for real DB work      | –                           | Prisma PostgreSQL connection string       |
+| `PORT`                   | No                        | `3001`                      | NestJS HTTP port                          |
+| `NODE_ENV`               | No                        | `development`               | Runtime mode                              |
+| `JWT_SECRET`             | Yes in real environments  | fallback for tests/dev only | JWT signing secret                        |
+| `JWT_EXPIRES_IN`         | No                        | `7d`                        | Access token lifetime                     |
+| `JWT_REFRESH_SECRET`     | No for current foundation | –                           | Reserved for refresh-token phase          |
+| `JWT_REFRESH_EXPIRES_IN` | No                        | `30d`                       | Reserved for refresh-token phase          |
+| `CORS_ORIGINS`           | No                        | `http://localhost:5173`     | Allowed frontend origins, comma-separated |
+| `STORAGE_TYPE`           | No                        | `local`                     | `local` or `r2`                           |
+| `UPLOADS_DIR`            | No                        | `./uploads`                 | Local uploads directory                   |
+| `UPLOADS_PUBLIC_PATH`    | No                        | `/uploads`                  | Public path served by Nest                |
+| `R2_ACCOUNT_ID`          | Only if `STORAGE_TYPE=r2` | –                           | Cloudflare R2 account                     |
+| `R2_ACCESS_KEY_ID`       | Only if `STORAGE_TYPE=r2` | –                           | Cloudflare R2 access key                  |
+| `R2_SECRET_ACCESS_KEY`   | Only if `STORAGE_TYPE=r2` | –                           | Cloudflare R2 secret key                  |
+| `R2_BUCKET_NAME`         | Only if `STORAGE_TYPE=r2` | –                           | R2 bucket name                            |
+| `R2_PUBLIC_URL`          | Only if `STORAGE_TYPE=r2` | –                           | Public base URL for media                 |
 
 ## Install
 

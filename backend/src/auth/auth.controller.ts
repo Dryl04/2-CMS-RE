@@ -14,6 +14,8 @@ import { Public } from "./decorators/public.decorator";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
+import { UpdateProfileDto } from "./dto/update-profile.dto";
+import { Put } from "@nestjs/common";
 
 @Controller("auth")
 export class AuthController {
@@ -50,5 +52,11 @@ export class AuthController {
   @AllowPasswordChange()
   me(@CurrentUser() user: JwtUser) {
     return this.authService.me(user);
+  }
+
+  @Put("me")
+  @AllowPasswordChange()
+  updateProfile(@CurrentUser() user: JwtUser, @Body() dto: UpdateProfileDto) {
+    return this.authService.updateProfile(user, dto);
   }
 }

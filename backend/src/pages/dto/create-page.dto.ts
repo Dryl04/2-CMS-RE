@@ -1,20 +1,25 @@
-import { Transform } from 'class-transformer';
+import { Transform } from "class-transformer";
 import {
   IsArray,
   IsEnum,
-  IsObject,
   IsOptional,
   IsString,
   IsUrl,
   IsUUID,
   MaxLength,
-} from 'class-validator';
-import { PageStatus } from '@prisma/client';
+} from "class-validator";
+import { PageStatus } from "@prisma/client";
+import { IsJsonContainer } from "../../common/validators/is-json-container.validator";
 
 export class CreatePageDto {
+  @IsUUID()
+  siteId!: string;
+
   @IsString()
   @MaxLength(160)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim().toLowerCase() : value))
+  @Transform(({ value }) =>
+    typeof value === "string" ? value.trim().toLowerCase() : value,
+  )
   pageKey!: string;
 
   @IsOptional()
@@ -64,8 +69,8 @@ export class CreatePageDto {
   content?: string;
 
   @IsOptional()
-  @IsObject()
-  sectionsData?: Record<string, unknown>;
+  @IsJsonContainer()
+  sectionsData?: Record<string, unknown> | unknown[];
 
   @IsOptional()
   @IsString()

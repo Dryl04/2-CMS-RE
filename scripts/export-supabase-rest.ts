@@ -14,6 +14,8 @@ interface TableConfig {
 
 const TABLES: TableConfig[] = [
   { name: "user_profiles" },
+  { name: "sites" },
+  { name: "site_domains" },
   { name: "page_themes", jsonColumns: ["css"] },
   { name: "daisyui_themes", jsonColumns: ["tokens"] },
   { name: "fonts_library", arrayColumns: { font_weights: "text" } },

@@ -1,4 +1,12 @@
-import { IsBoolean, IsObject, IsOptional, IsString, IsUUID, IsUrl, MaxLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  IsUUID,
+  IsUrl,
+  MaxLength,
+} from "class-validator";
+import { IsJsonContainer } from "../../common/validators/is-json-container.validator";
 
 export class CreateTemplateDto {
   @IsString()
@@ -15,8 +23,8 @@ export class CreateTemplateDto {
   thumbnail?: string;
 
   @IsOptional()
-  @IsObject()
-  sectionsData?: Record<string, unknown>;
+  @IsJsonContainer()
+  sectionsData?: Record<string, unknown> | unknown[];
 
   @IsOptional()
   @IsString()

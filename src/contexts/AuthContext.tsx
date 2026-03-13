@@ -10,11 +10,13 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: Error | null }>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ error: Error | null }>;
+  updateProfile: (fullName?: string, email?: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   isAdmin: () => boolean;
   isSEOManager: () => boolean;
   canManagePages: () => boolean;
 }
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -211,6 +213,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const updateProfile = async (fullName?: string, email?: string) => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        data: { full_name: fullName },
+        email,
+      });
+
+      if (error) {
+        return { error: new Error(error.message) };
+      }
+
+      setSession(data.session);
+      setUser(data.user ?? null);
+      if (data.user) {
+        await loadUserProfile(data.user.id);
+      }
+
+      return { error: null };
+    } catch (error) {
+      return { error: error as Error };
+    }
+  };
+
   const isAdmin = () => profile?.role === 'admin';
 
   const isSEOManager = () => profile?.role === 'seo_manager';
@@ -226,6 +251,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     signIn,
     signUp,
     changePassword,
+    updateProfile,
     signOut,
     isAdmin,
     isSEOManager,

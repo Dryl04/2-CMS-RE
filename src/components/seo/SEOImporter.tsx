@@ -1,13 +1,21 @@
-import { useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Upload, FileJson, CheckCircle, AlertCircle,
   Sparkles, FileUp, Eye, ChevronDown, ChevronUp, Rocket,
   X, Layers
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { Site, supabase } from '@/lib/supabase';
 import { normalizeSectionForTheme } from '@/lib/widgetThemeHelper';
 import { sanitizeSectionUrls, extractPlainUrl } from '@/lib/contentSanitizer';
 import { loadActiveGlobalHFSetting, applySectionsWithGlobalHF } from '@/lib/globalHFSettings';
+import {
+  buildSitePageUrl,
+  getActiveSiteDomains,
+  getCanonicalSiteDomain,
+  getDomainLabel,
+  getSiteLabel,
+  loadSites,
+} from '@/lib/sites';
 
 interface ImportedPage {
   page_key: string;
@@ -222,6 +230,10 @@ function applyContentOverrides(baseSections: any[], overrides: Record<string, Re
 
 export default function SEOImporter({ onImportComplete, userId }: SEOImporterProps) {
   const [importMode, setImportMode] = useState<'simple' | 'template'>('template');
+  const [sites, setSites] = useState<Site[]>([]);
+  const [selectedSiteId, setSelectedSiteId] = useState('');
+  const [selectedDomainId, setSelectedDomainId] = useState('');
+  const [loadingSites, setLoadingSites] = useState(true);
   const [inputData, setInputData] = useState('');
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [previewData, setPreviewData] = useState<ImportedPage[]>([]);
@@ -231,6 +243,44 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
   const [expandedPreview, setExpandedPreview] = useState<number | null>(null);
   const [autoPublish, setAutoPublish] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const loadSiteOptions = async () => {
+      setLoadingSites(true);
+      try {
+        const nextSites = await loadSites();
+        setSites(nextSites);
+        const defaultSite = nextSites.find((site) => site.is_active) || nextSites[0];
+        if (defaultSite) {
+          setSelectedSiteId(defaultSite.id);
+          const defaultDomain = getCanonicalSiteDomain(defaultSite);
+          setSelectedDomainId(defaultDomain?.id || '');
+        }
+      } catch (error) {
+        console.error('Error loading sites for import:', error);
+      } finally {
+        setLoadingSites(false);
+      }
+    };
+
+    loadSiteOptions();
+  }, []);
+
+  useEffect(() => {
+    const selectedSite = sites.find((site) => site.id === selectedSiteId) || null;
+    const domains = getActiveSiteDomains(selectedSite);
+    if (!domains.length) {
+      setSelectedDomainId('');
+      return;
+    }
+
+    if (selectedDomainId && domains.some((domain) => domain.id === selectedDomainId)) {
+      return;
+    }
+
+    const fallback = getCanonicalSiteDomain(selectedSite);
+    setSelectedDomainId(fallback?.id || domains[0].id);
+  }, [selectedDomainId, selectedSiteId, sites]);
 
   const validatePage = (page: ImportedPage, index: number): ValidationError[] => {
     const errors: ValidationError[] = [];
@@ -341,6 +391,17 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
     setPreviewData([]);
     setImportStats(null);
 
+    if (!selectedSiteId) {
+      setValidationErrors([{ row: 0, field: 'site_id', message: 'Choisissez un groupe de publication avant de valider.' }]);
+      return;
+    }
+
+    const selectedSite = sites.find((site) => site.id === selectedSiteId) || null;
+    if (getActiveSiteDomains(selectedSite).length === 0) {
+      setValidationErrors([{ row: 0, field: 'site_id', message: 'Le groupe sélectionné ne possède aucun domaine actif.' }]);
+      return;
+    }
+
     try {
       const pages = parseInput(inputData);
 
@@ -378,6 +439,15 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
   const handleImport = async () => {
     setIsImporting(true);
     try {
+      const selectedSite = sites.find((site) => site.id === selectedSiteId) || null;
+      if (!selectedSite) {
+        throw new Error('Aucun groupe de publication sélectionné.');
+      }
+
+      if (getActiveSiteDomains(selectedSite).length === 0) {
+        throw new Error('Le groupe de publication sélectionné ne possède aucun domaine actif.');
+      }
+
       const activeGlobalHFSetting = await loadActiveGlobalHFSetting();
       const templateIds = Array.from(
         new Set(previewData.map((page) => page.template_id).filter(Boolean) as string[]),
@@ -445,6 +515,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
           : (page.sections_data || []);
 
         const row: Record<string, any> = {
+          site_id: selectedSiteId,
           page_key: page.page_key,
           title: page.title,
           description: page.description || null,
@@ -452,7 +523,7 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
           og_title: page.og_title || null,
           og_description: page.og_description || null,
           og_image: page.og_image ? extractPlainUrl(page.og_image) : null,
-          canonical_url: page.canonical_url || null,
+          canonical_url: buildSitePageUrl(selectedSite, page.page_key, selectedDomainId),
           language: page.language || 'fr',
           status: page.status || 'draft',
           content: page.content || null,
@@ -557,6 +628,53 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
           <FileJson className="w-4 h-4" />
           <span>SEO simple</span>
         </button>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 mb-6">
+        <div>
+          <label className="block text-sm font-semibold text-gray-900 mb-2">
+            Groupe de publication
+          </label>
+          <select
+            value={selectedSiteId}
+            onChange={(e) => setSelectedSiteId(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-gray-900 bg-white"
+            disabled={loadingSites}
+          >
+            <option value="">Choisir un groupe</option>
+            {sites.map((site) => (
+              <option key={site.id} value={site.id}>
+                {getSiteLabel(site)}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-gray-500 mt-1">
+            Toutes les pages importées seront rattachées à ce groupe de domaines.
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-gray-900 mb-2">
+            Domaine canonique / aperçu
+          </label>
+          <select
+            value={selectedDomainId}
+            onChange={(e) => setSelectedDomainId(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-gray-900 bg-white"
+            disabled={!selectedSiteId}
+          >
+            <option value="">Choisir un domaine actif</option>
+            {getActiveSiteDomains(sites.find((site) => site.id === selectedSiteId) || null).map((domain) => (
+              <option key={domain.id} value={domain.id}>
+                {getDomainLabel(domain)}
+                {domain.is_canonical ? ' · canonique' : domain.is_primary ? ' · principal' : ''}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-gray-500 mt-1">
+            Les URL canoniques générées utiliseront ce domaine.
+          </p>
+        </div>
       </div>
 
       {importMode === 'template' ? (
@@ -714,6 +832,13 @@ export default function SEOImporter({ onImportComplete, userId }: SEOImporterPro
                         </span>
                       </div>
                       <p className="text-sm text-gray-500 truncate mt-0.5">{page.title}</p>
+                      <p className="text-xs text-gray-400 truncate mt-0.5">
+                        {buildSitePageUrl(
+                          sites.find((site) => site.id === selectedSiteId) || null,
+                          page.page_key,
+                          selectedDomainId,
+                        ) || 'URL canonique indisponible'}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0 ml-3">

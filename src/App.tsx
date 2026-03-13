@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { DaisyThemeProvider } from '@/contexts/DaisyThemeContext';
@@ -20,11 +20,15 @@ import BuilderPreviewPage from '@/components/PageBuilder/BuilderPreviewPage';
 import GlobalHFManager from '@/components/GlobalHFManager';
 import HFBuilderModal from '@/components/HFBuilderModal';
 import ForcePasswordChange from '@/components/ForcePasswordChange';
+import SiteSettings from '@/components/settings/SiteSettings';
+import SettingsHub from '@/components/settings/SettingsHub';
+import UserSettings from '@/components/settings/UserSettings';
 import { supabase, SEOMetadata } from '@/lib/supabase';
+import { ApiError, fetchPublicPageRoute, normalizeSeoMetadata } from '@/lib/api';
 import { normalizeInternalPath } from '@/lib/linkRegistry';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 
-type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'links' | 'analytics' | 'themes' | 'settings' | 'page-view' | 'visual-builder' | 'page-builder' | 'global-hf';
+type View = 'dashboard' | 'pages' | 'templates' | 'media' | 'links' | 'analytics' | 'themes' | 'settings' | 'site-settings' | 'user-settings' | 'settings-hub' | 'page-view' | 'visual-builder' | 'page-builder' | 'global-hf';
 
 function AppContent() {
   const { user, loading, requiresPasswordChange } = useAuth();
@@ -34,6 +38,7 @@ function AppContent() {
   const [builderInitialSections, setBuilderInitialSections] = useState<any[] | undefined>(undefined);
   const [builderInitialDaisyTheme, setBuilderInitialDaisyTheme] = useState<string | null>(null);
   const [isLoadingPage, setIsLoadingPage] = useState(false);
+  const [publicPageNotFound, setPublicPageNotFound] = useState<string | null>(null);
   const [showDaisyThemeManager, setShowDaisyThemeManager] = useState(false);
   const [hfBuilderModal, setHfBuilderModal] = useState<{
     type: 'header' | 'footer';
@@ -41,13 +46,46 @@ function AppContent() {
     onDone: (section: PageBuilderSection | null) => void;
   } | null>(null);
 
+  const loadPublicSEOPage = useCallback(async (pageKey: string) => {
+    setIsLoadingPage(true);
+    setPublicPageNotFound(null);
+
+    try {
+      const normalizedPageKey = normalizeInternalPath(pageKey);
+      const result = await fetchPublicPageRoute(normalizedPageKey);
+
+      if (result.kind === 'redirect' && result.redirectUrl) {
+        window.location.replace(result.redirectUrl);
+        return;
+      }
+
+      if (result.kind === 'page' && result.page) {
+        setSeoPage(normalizeSeoMetadata(result.page) as SEOMetadata);
+        setCurrentView('page-view');
+        return;
+      }
+
+      setSeoPage(null);
+      setCurrentView('dashboard');
+      setPublicPageNotFound(normalizedPageKey ? normalizedPageKey : null);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) {
+        setSeoPage(null);
+        setCurrentView('dashboard');
+        setPublicPageNotFound(normalizeInternalPath(pageKey) || null);
+      } else {
+        console.error('Error loading SEO page:', error);
+      }
+    } finally {
+      setIsLoadingPage(false);
+    }
+  }, []);
+
   useEffect(() => {
     const handlePathChange = () => {
       const path = window.location.pathname;
-      if (path && path !== '/') {
-        const slug = path.replace(/^\//, '');
-        loadPublicSEOPage(slug);
-      }
+      const slug = path === '/' ? '' : path.replace(/^\//, '');
+      loadPublicSEOPage(slug);
     };
 
     handlePathChange();
@@ -58,54 +96,10 @@ function AppContent() {
     };
   }, []);
 
-  const loadPublicSEOPage = async (pageKey: string, allowRedirectLookup = true) => {
-    setIsLoadingPage(true);
-    try {
-      const normalizedPageKey = normalizeInternalPath(pageKey);
-
-      const { data, error } = await supabase
-        .from('seo_metadata')
-        .select('*')
-        .eq('page_key', normalizedPageKey)
-        .eq('status', 'published')
-        .maybeSingle();
-
-      if (error) throw error;
-
-      if (data) {
-        setSeoPage(data);
-        setCurrentView('page-view');
-        return;
-      }
-
-      if (allowRedirectLookup && normalizedPageKey) {
-        const { data: redirectData, error: redirectError } = await supabase
-          .from('seo_redirects')
-          .select('target_path')
-          .eq('source_path', normalizedPageKey)
-          .eq('is_active', true)
-          .maybeSingle();
-
-        if (redirectError) throw redirectError;
-
-        if (redirectData?.target_path) {
-          const targetPath = normalizeInternalPath(redirectData.target_path);
-          if (targetPath && targetPath !== normalizedPageKey) {
-            window.history.replaceState({}, '', `/${targetPath}`);
-            await loadPublicSEOPage(targetPath, false);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error loading SEO page:', error);
-    } finally {
-      setIsLoadingPage(false);
-    }
-  };
-
   const handleNavigate = (view: string) => {
     setCurrentView(view as View);
     setSeoPage(null);
+    setPublicPageNotFound(null);
     setBuilderPageId(null);
     setBuilderInitialSections(undefined);
     setBuilderInitialDaisyTheme(null);
@@ -173,6 +167,26 @@ function AppContent() {
   }
 
   if (!user) {
+    if (publicPageNotFound) {
+      return (
+        <div className="min-h-screen bg-base-200 flex items-center justify-center px-6">
+          <div className="max-w-xl text-center">
+            <p className="text-sm uppercase tracking-[0.2em] text-base-content/50 mb-4">404</p>
+            <h1 className="text-4xl font-bold text-base-content mb-4">Page introuvable</h1>
+            <p className="text-base-content/70 mb-8">
+              Aucune page publiee ne correspond au chemin <code className="font-mono">{publicPageNotFound}</code> pour ce domaine.
+            </p>
+            <button
+              onClick={() => window.location.assign('/')}
+              className="btn btn-primary"
+            >
+              Revenir a l'accueil
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return <Auth />;
   }
 
@@ -278,21 +292,25 @@ function AppContent() {
 
         {currentView === 'settings' && (
           <div className="max-w-7xl mx-auto px-6 py-8 w-full">
-            <button
-              onClick={() => handleNavigate('dashboard')}
-              className="flex items-center space-x-2 text-base-content/60 hover:text-base-content mb-6 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm font-medium">Retour au tableau de bord</span>
-            </button>
-            <div className="bg-base-100 rounded-2xl border border-base-300 p-12 text-center">
-              <h2 className="text-3xl font-serif font-bold text-base-content mb-4">
-                Parametres
-              </h2>
-              <p className="text-base-content/60 text-lg mb-8">
-                Cette fonctionnalite sera disponible prochainement
-              </p>
-            </div>
+            <SettingsHub onNavigate={handleNavigate} />
+          </div>
+        )}
+
+        {currentView === 'settings-hub' && (
+          <div className="max-w-7xl mx-auto px-6 py-8 w-full">
+            <SettingsHub onNavigate={handleNavigate} />
+          </div>
+        )}
+
+        {currentView === 'site-settings' && (
+          <div className="max-w-7xl mx-auto px-6 py-8 w-full">
+            <SiteSettings onNavigate={handleNavigate} />
+          </div>
+        )}
+
+        {currentView === 'user-settings' && (
+          <div className="max-w-7xl mx-auto px-6 py-8 w-full">
+            <UserSettings onNavigate={handleNavigate} />
           </div>
         )}
 

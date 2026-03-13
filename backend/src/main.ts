@@ -9,10 +9,26 @@ async function bootstrap() {
   });
   const logger = new Logger("Bootstrap");
   const configService = app.get(ConfigService);
+  const allowedOrigins = resolveCorsOrigins(configService);
 
   app.enableCors({
-    origin: configService.get<string>("CORS_ORIGIN", "http://localhost:5173"),
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`CORS origin not allowed: ${origin}`), false);
+    },
     credentials: true,
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Site-Host",
+      "X-Site-Protocol",
+      "X-Forwarded-Host",
+      "X-Forwarded-Proto",
+    ],
   });
   app.useGlobalPipes(
     new ValidationPipe({
@@ -30,6 +46,18 @@ async function bootstrap() {
   const host = configService.get<string>("HOST", "0.0.0.0");
   await app.listen(port, host);
   logger.log(`Backend listening on http://${host}:${port}`);
+}
+
+function resolveCorsOrigins(configService: ConfigService) {
+  const configuredOrigins =
+    configService.get<string>("CORS_ORIGINS") ??
+    configService.get<string>("CORS_ORIGIN") ??
+    "http://localhost:5173";
+
+  return configuredOrigins
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 }
 
 bootstrap().catch((error) => {

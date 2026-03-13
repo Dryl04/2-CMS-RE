@@ -4,6 +4,7 @@ import { Plus, Eye, Save, ArrowLeft, Sparkles, X, Check } from 'lucide-react';
 import { widgetLibrary } from '@/lib/widgetLibrary';
 import { PageBuilderSection } from '@/lib/pageBuilderTypes';
 import { supabase } from '@/lib/supabase';
+import { buildSitePageUrl, getCanonicalSiteDomain, loadSites } from '@/lib/sites';
 import SectionRenderer from './PageBuilder/SectionRenderer';
 
 interface VisualPageBuilderProps {
@@ -104,12 +105,24 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
       }
 
       const finalSlug = pageSlug.trim() || generateSlug(pageName);
+      const sites = await loadSites();
+      const selectedSite = sites.find((site) => site.is_active) || sites[0];
+
+      if (!selectedSite) {
+        throw new Error('Aucun groupe de publication n’est configuré. Créez un groupe dans Paramètres > Sites & domaines.');
+      }
+
+      if (!getCanonicalSiteDomain(selectedSite)) {
+        throw new Error('Le groupe de publication par défaut ne possède aucun domaine actif.');
+      }
 
       const { data: page, error: pageError } = await supabase
         .from('seo_metadata')
         .insert({
+          site_id: selectedSite.id,
           page_key: finalSlug,
           title: pageName,
+          canonical_url: buildSitePageUrl(selectedSite, finalSlug),
           sections_data: selectedSections,
           status: 'published',
           user_id: user.id,
@@ -271,8 +284,8 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2 rounded-lg font-medium transition ${selectedCategory === cat.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
                   }`}
               >
                 {cat.label}
@@ -338,8 +351,8 @@ export default function VisualPageBuilder({ onClose }: VisualPageBuilderProps) {
                       onClick={() => addSection(wv.widget, wv.variant.id)}
                       disabled={added}
                       className={`absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold shadow-lg transition-all duration-300 ${added
-                          ? 'bg-green-500 text-white cursor-not-allowed'
-                          : 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-105'
+                        ? 'bg-green-500 text-white cursor-not-allowed'
+                        : 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-105'
                         } ${hoveredWidget === wv.id ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}
                     >
                       {added ? (

@@ -236,22 +236,20 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
               </p>
             </button>
 
-            {(profile?.role === 'admin' || profile?.role === 'seo_manager') && (
-              <button
-                onClick={() => onNavigate('settings')}
-                className="bg-white p-8 rounded-3xl border border-gray-200 hover:border-gray-300 transition-all text-left group"
-              >
-                <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Settings className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Paramètres
-                </h3>
-                <p className="text-gray-600">
-                  Configurer votre application
-                </p>
-              </button>
-            )}
+            <button
+              onClick={() => onNavigate('settings')}
+              className="bg-white p-8 rounded-3xl border border-gray-200 hover:border-gray-300 transition-all text-left group"
+            >
+              <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Settings className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                Paramètres
+              </h3>
+              <p className="text-gray-600">
+                Configurer votre application
+              </p>
+            </button>
           </div>
         </div>
       </div>

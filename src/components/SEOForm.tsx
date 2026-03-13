@@ -11,6 +11,32 @@ interface SEOFormProps {
   onOpenBuilder?: (sections: PageBuilderSection[], onDone: (sections: PageBuilderSection[]) => void) => void;
 }
 
+function normalizeSectionsData(raw: unknown): PageBuilderSection[] {
+  if (Array.isArray(raw)) {
+    return raw as PageBuilderSection[];
+  }
+
+  if (typeof raw === 'string') {
+    try {
+      return normalizeSectionsData(JSON.parse(raw));
+    } catch {
+      return [];
+    }
+  }
+
+  if (raw && typeof raw === 'object') {
+    const maybeRecord = raw as Record<string, unknown>;
+    if (Array.isArray(maybeRecord.sections)) {
+      return maybeRecord.sections as PageBuilderSection[];
+    }
+    if (Array.isArray(maybeRecord.sections_data)) {
+      return maybeRecord.sections_data as PageBuilderSection[];
+    }
+  }
+
+  return [];
+}
+
 export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBuilder }: SEOFormProps) {
   const normalizeSlug = (value: string) =>
     value
@@ -93,7 +119,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
       setOgDescription(editingPage.og_description || '');
       setOgImage(editingPage.og_image || '');
       setStatus(editingPage.status || 'draft');
-      setSectionsData(editingPage.sections_data || []);
+      setSectionsData(normalizeSectionsData(editingPage.sections_data));
       setSelectedTemplateId(editingPage.template_id || null);
 
       setFolder((editingPage as any).folder || '');
@@ -169,7 +195,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
 
   const applyTemplate = (template: PageTemplate) => {
     setSelectedTemplateId(template.id);
-    setSectionsData((template.sections_data || []) as PageBuilderSection[]);
+    setSectionsData(normalizeSectionsData(template.sections_data));
     setShowTemplateSelector(false);
   };
 
@@ -214,7 +240,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
         : null;
 
       if (selectedTemplateId && (!Array.isArray(sectionsData) || sectionsData.length === 0)) {
-        const templateSections = (selectedTemplate?.sections_data || []) as PageBuilderSection[];
+        const templateSections = normalizeSectionsData(selectedTemplate?.sections_data);
         if (templateSections.length > 0) {
           sectionsToSave = templateSections;
         }
@@ -397,7 +423,7 @@ export default function SEOForm({ onSaveComplete, editingPage, userId, onOpenBui
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   {templates.map((template) => {
-                    const tSections = (template.sections_data || []) as PageBuilderSection[];
+                    const tSections = normalizeSectionsData(template.sections_data);
                     const isSelected = selectedTemplateId === template.id;
                     return (
                       <button

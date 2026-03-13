@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useModal } from '@/contexts/ModalContext';
 import { Search, Pencil as Edit, Trash2, Eye, FileUp, FormInput, ExternalLink, ArrowLeft, Copy, LayoutGrid as Layout, FolderOpen, FolderPlus, X } from 'lucide-react';
-import { supabase, SEOMetadata } from '@/lib/supabase';
+import { Site, supabase, SEOMetadata } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import SEOImporter from './SEOImporter';
 import SEOForm from './SEOForm';
 import SEOPageViewer from './SEOPageViewer';
 import { computePageWordCount, formatWordCount } from '@/lib/wordCount';
+import { buildSitePageUrl, getSiteLabel, loadSites } from '@/lib/sites';
 
 type ViewMode = 'list' | 'form' | 'import' | 'view';
 
@@ -22,7 +23,9 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
   const [filteredMetadata, setFilteredMetadata] = useState<SEOMetadata[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'draft' | 'published' | 'archived'>('all');
+  const [siteFilter, setSiteFilter] = useState<string>('all');
   const [folderFilter, setFolderFilter] = useState<string>('all');
+  const [sites, setSites] = useState<Site[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [editingPage, setEditingPage] = useState<SEOMetadata | undefined>(undefined);
@@ -69,16 +72,22 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
   const loadMetadata = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('seo_metadata')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const [pagesResult, sitesResult] = await Promise.all([
+        supabase
+          .from('seo_metadata')
+          .select('*')
+          .order('created_at', { ascending: false }),
+        loadSites(),
+      ]);
+
+      const { data, error } = pagesResult;
 
       if (error) {
         throw error;
       }
 
       setMetadata(data || []);
+      setSites(sitesResult);
     } catch (error) {
       console.error('[SEOManager] Error loading metadata:', error);
       showToast('Erreur lors du chargement des pages', 'error');
@@ -96,6 +105,10 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
 
     if (statusFilter !== 'all') {
       filtered = filtered.filter(item => item.status === statusFilter);
+    }
+
+    if (siteFilter !== 'all') {
+      filtered = filtered.filter(item => (item.site_id || item.site?.id || '') === siteFilter);
     }
 
     if (folderFilter !== 'all') {
@@ -116,7 +129,7 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
     }
 
     setFilteredMetadata(filtered);
-  }, [searchQuery, statusFilter, folderFilter, metadata]);
+  }, [folderFilter, metadata, searchQuery, siteFilter, statusFilter]);
 
   const folders = Array.from(new Set(metadata.map(m => (m as any).folder).filter(Boolean))) as string[];
 
@@ -159,12 +172,13 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
     try {
       const newPageKey = `${page.page_key}-copie-${Date.now().toString(36)}`;
       const { id: _id, created_at: _created_at, updated_at: _updated_at, ...rest } = page as any;
+      const canonicalUrl = buildSitePageUrl(page.site || null, newPageKey);
       const duplicateData = {
         ...rest,
         page_key: newPageKey,
         title: `${page.title} (copie)`,
         status: 'draft' as const,
-        canonical_url: null,
+        canonical_url: canonicalUrl,
         user_id: profile?.id || page.user_id,
       };
       const { error } = await supabase.from('seo_metadata').insert(duplicateData);
@@ -196,8 +210,15 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
     setViewMode('view');
   };
 
-  const openPublicPage = (pageKey: string) => {
-    window.history.pushState({}, '', `/${pageKey}`);
+  const openPublicPage = (page: SEOMetadata) => {
+    const targetUrl = page.canonical_url || buildSitePageUrl(page.site || null, page.page_key);
+
+    if (targetUrl) {
+      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    window.history.pushState({}, '', `/${page.page_key}`);
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
 
@@ -287,6 +308,19 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
               </div>
 
               <div className="flex space-x-2">
+                {sites.length > 0 && (
+                  <select
+                    value={siteFilter}
+                    onChange={(e) => setSiteFilter(e.target.value)}
+                    className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  >
+                    <option value="all">Tous les groupes</option>
+                    {sites.map((site) => (
+                      <option key={site.id} value={site.id}>{site.name}</option>
+                    ))}
+                  </select>
+                )}
+
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as any)}
@@ -391,6 +425,11 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
                           <span className={`px-2 py-0.5 rounded text-xs font-medium ${badge.bg}`}>
                             {badge.label}
                           </span>
+                          {item.site && (
+                            <span className="px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">
+                              {getSiteLabel(item.site)}
+                            </span>
+                          )}
                           {(item as any).folder && (
                             <span className="px-2 py-0.5 rounded text-xs font-medium bg-purple-50 text-purple-700 flex items-center space-x-1">
                               <FolderOpen className="w-3 h-3" />
@@ -426,9 +465,9 @@ export default function SEOManager({ onNavigate, onOpenPageBuilder }: SEOManager
                         </button>
                         {item.status === 'published' && (
                           <button
-                            onClick={() => openPublicPage(item.page_key)}
+                            onClick={() => openPublicPage(item)}
                             className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-                            title={`Voir a /${item.page_key}`}
+                            title={item.canonical_url || `Voir /${item.page_key}`}
                           >
                             <ExternalLink className="w-4 h-4 text-blue-500" />
                           </button>

@@ -17,6 +17,7 @@ import {
   signOut as signOutApi,
   signUp as signUpApi,
   uploadMediaFile,
+  updateProfile as updateProfileApi,
 } from "./api.ts";
 
 type MutationAction = "insert" | "update" | "delete" | "upsert";
@@ -230,6 +231,13 @@ export const supabase = {
       currentPassword: string;
       newPassword: string;
     }) => changePasswordApi(currentPassword, newPassword),
+    updateUser: ({
+      data,
+      email,
+    }: {
+      data?: { full_name?: string };
+      email?: string;
+    }) => updateProfileApi(data?.full_name, email),
     signOut: signOutApi,
     onAuthStateChange: onApiAuthStateChange,
   },
@@ -276,6 +284,7 @@ export interface UserProfile {
 
 export interface SEOMetadata {
   id: string;
+  site_id?: string | null;
   page_key: string;
   title: string;
   description?: string;
@@ -295,12 +304,18 @@ export interface SEOMetadata {
   user_id?: string;
   template_id?: string;
   daisy_theme_slug?: string | null;
+  effective_canonical_url?: string | null;
+  robots_directive?: string | null;
+  public_base_url?: string | null;
+  resolved_domain?: SiteDomain | null;
+  site?: Site;
   created_at: string;
   updated_at: string;
 }
 
 export interface SEORedirect {
   id: string;
+  site_id?: string | null;
   source_path: string;
   target_path: string;
   source_page_id?: string | null;
@@ -308,6 +323,56 @@ export interface SEORedirect {
   reason?: string | null;
   is_active: boolean;
   created_by?: string | null;
+  site?: Site;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SiteDomain {
+  id: string;
+  site_id: string;
+  host: string;
+  scheme: "http" | "https" | string;
+  is_primary: boolean;
+  is_canonical: boolean;
+  locale?: string | null;
+  is_active: boolean;
+  redirect_to_primary: boolean;
+  business_owner?: string | null;
+  technical_owner?: string | null;
+  registrar?: string | null;
+  dns_provider?: string | null;
+  dns_target?: string | null;
+  hosting_target?: string | null;
+  verification_method?: "dns_txt" | "http_file" | "manual" | string;
+  verification_status?: "pending" | "verified" | "failed" | string;
+  verification_token?: string | null;
+  verified_at?: string | null;
+  ssl_status?: "pending" | "active" | "issue" | string;
+  robots_txt_enabled?: boolean;
+  sitemap_enabled?: boolean;
+  allow_indexing?: boolean;
+  notes?: string | null;
+  go_live_at?: string | null;
+  site?: Site;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Site {
+  id: string;
+  name: string;
+  code: string;
+  default_locale: string;
+  homepage_page_key?: string;
+  canonical_strategy?: "canonical_domain" | "served_domain" | string;
+  is_active: boolean;
+  domains?: SiteDomain[];
+  _count?: {
+    pages?: number;
+    redirects?: number;
+    domains?: number;
+  };
   created_at: string;
   updated_at: string;
 }

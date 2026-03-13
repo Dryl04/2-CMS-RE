@@ -505,7 +505,7 @@ function FallbackPage({ page }: { page: SEOMetadata }) {
 }
 
 export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThemeId }: SEOPageViewerProps) {
-  const sections = normalizeSectionsData(page.sections_data);
+  const sections = normalizeSectionsData(page.sections_data ?? page.template?.sections_data);
   const hasSections = sections.length > 0;
   const hasRenderableSections = sections.some((section) => canRenderSectionType(section?.type));
   const [showAdminPanel, setShowAdminPanel] = useState(false);

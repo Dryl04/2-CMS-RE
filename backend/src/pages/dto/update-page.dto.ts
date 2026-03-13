@@ -1,7 +1,20 @@
-import { IsArray, IsEnum, IsObject, IsOptional, IsString, IsUrl, IsUUID, MaxLength } from 'class-validator';
-import { PageStatus } from '@prisma/client';
+import {
+  IsArray,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUrl,
+  IsUUID,
+  MaxLength,
+} from "class-validator";
+import { PageStatus } from "@prisma/client";
+import { IsJsonContainer } from "../../common/validators/is-json-container.validator";
 
 export class UpdatePageDto {
+  @IsOptional()
+  @IsUUID()
+  siteId?: string;
+
   @IsOptional()
   @IsString()
   @MaxLength(160)
@@ -54,8 +67,8 @@ export class UpdatePageDto {
   content?: string;
 
   @IsOptional()
-  @IsObject()
-  sectionsData?: Record<string, unknown>;
+  @IsJsonContainer()
+  sectionsData?: Record<string, unknown> | unknown[];
 
   @IsOptional()
   @IsString()

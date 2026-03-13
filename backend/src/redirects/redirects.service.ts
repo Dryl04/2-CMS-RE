@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { JwtUser } from '../auth/auth.types';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateRedirectDto } from './dto/create-redirect.dto';
-import { UpdateRedirectDto } from './dto/update-redirect.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { JwtUser } from "../auth/auth.types";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateRedirectDto } from "./dto/create-redirect.dto";
+import { UpdateRedirectDto } from "./dto/update-redirect.dto";
 
 @Injectable()
 export class RedirectsService {
@@ -11,16 +11,22 @@ export class RedirectsService {
   findAll() {
     return this.prisma.seoRedirect.findMany({
       include: {
+        site: {
+          include: {
+            domains: true,
+          },
+        },
         sourcePage: true,
         targetPage: true,
       },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { updatedAt: "desc" },
     });
   }
 
   create(dto: CreateRedirectDto, user: JwtUser) {
     return this.prisma.seoRedirect.create({
       data: {
+        siteId: dto.siteId,
         sourcePath: dto.sourcePath,
         targetPath: dto.targetPath,
         sourcePageId: dto.sourcePageId,
@@ -37,6 +43,7 @@ export class RedirectsService {
     return this.prisma.seoRedirect.update({
       where: { id },
       data: {
+        siteId: dto.siteId,
         sourcePath: dto.sourcePath,
         targetPath: dto.targetPath,
         sourcePageId: dto.sourcePageId,
@@ -53,7 +60,9 @@ export class RedirectsService {
   }
 
   private async ensureExists(id: string) {
-    const redirect = await this.prisma.seoRedirect.findUnique({ where: { id } });
+    const redirect = await this.prisma.seoRedirect.findUnique({
+      where: { id },
+    });
     if (!redirect) {
       throw new NotFoundException(`Redirect ${id} not found`);
     }

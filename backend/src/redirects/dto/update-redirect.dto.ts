@@ -1,6 +1,16 @@
-import { IsBoolean, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from "class-validator";
 
 export class UpdateRedirectDto {
+  @IsOptional()
+  @IsUUID()
+  siteId?: string;
+
   @IsOptional()
   @IsString()
   @MaxLength(255)

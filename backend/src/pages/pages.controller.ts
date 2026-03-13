@@ -16,6 +16,7 @@ import { JwtUser } from "../auth/auth.types";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Public } from "../auth/decorators/public.decorator";
 import { Roles } from "../auth/decorators/roles.decorator";
+import { getPublicRequestContext } from "../publishing/public-request.util";
 import { CreatePageDto } from "./dto/create-page.dto";
 import { ListPagesQueryDto } from "./dto/list-pages.query.dto";
 import { UpdatePageDto } from "./dto/update-page.dto";
@@ -33,15 +34,30 @@ export class PagesController {
 
   @Public()
   @Get("public/redirects")
-  getPublicRedirects() {
-    return this.pagesService.getPublicRedirects();
+  getPublicRedirects(@Req() request: Request) {
+    return this.pagesService.getPublicRedirects(
+      getPublicRequestContext(request).host ?? undefined,
+    );
+  }
+
+  @Public()
+  @Get("public-resolve/*")
+  resolvePublicRoute(@Req() request: Request): Promise<unknown> {
+    const pageKey = request.params[0];
+    return this.pagesService.resolvePublicRoute(
+      pageKey,
+      getPublicRequestContext(request),
+    );
   }
 
   @Public()
   @Get("public/*")
   getPublicPage(@Req() request: Request) {
     const pageKey = request.params[0];
-    return this.pagesService.getPublicPage(pageKey);
+    return this.pagesService.getPublicPage(
+      pageKey,
+      getPublicRequestContext(request).host ?? undefined,
+    );
   }
 
   @Get()

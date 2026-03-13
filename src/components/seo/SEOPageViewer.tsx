@@ -189,6 +189,104 @@ function normalizeSectionsData(raw: unknown): PageBuilderSection[] {
   return [];
 }
 
+function upsertHeadTag(selector: string, create: () => HTMLElement, update: (element: HTMLElement) => void) {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  const existing = document.head.querySelector<HTMLElement>(selector);
+  const element = existing || create();
+  update(element);
+
+  if (!existing) {
+    document.head.appendChild(element);
+  }
+}
+
+function syncSeoHead(page: SEOMetadata) {
+  if (typeof document === 'undefined') {
+    return () => undefined;
+  }
+
+  const previousTitle = document.title;
+  document.title = page.title || page.seo_h1 || page.page_key || 'Page';
+
+  const description = page.description || '';
+  const keywords = Array.isArray(page.keywords) ? page.keywords.join(', ') : '';
+  const canonicalUrl = page.effective_canonical_url || page.canonical_url || '';
+  const robotsDirective = page.robots_directive || 'index,follow';
+
+  upsertHeadTag('meta[name="description"]', () => {
+    const meta = document.createElement('meta');
+    meta.setAttribute('name', 'description');
+    meta.dataset.cmsManaged = 'true';
+    return meta;
+  }, (element) => {
+    element.setAttribute('content', description);
+  });
+
+  upsertHeadTag('meta[name="keywords"]', () => {
+    const meta = document.createElement('meta');
+    meta.setAttribute('name', 'keywords');
+    meta.dataset.cmsManaged = 'true';
+    return meta;
+  }, (element) => {
+    element.setAttribute('content', keywords);
+  });
+
+  upsertHeadTag('meta[name="robots"]', () => {
+    const meta = document.createElement('meta');
+    meta.setAttribute('name', 'robots');
+    meta.dataset.cmsManaged = 'true';
+    return meta;
+  }, (element) => {
+    element.setAttribute('content', robotsDirective);
+  });
+
+  upsertHeadTag('meta[property="og:title"]', () => {
+    const meta = document.createElement('meta');
+    meta.setAttribute('property', 'og:title');
+    meta.dataset.cmsManaged = 'true';
+    return meta;
+  }, (element) => {
+    element.setAttribute('content', page.og_title || page.title || '');
+  });
+
+  upsertHeadTag('meta[property="og:description"]', () => {
+    const meta = document.createElement('meta');
+    meta.setAttribute('property', 'og:description');
+    meta.dataset.cmsManaged = 'true';
+    return meta;
+  }, (element) => {
+    element.setAttribute('content', page.og_description || description);
+  });
+
+  upsertHeadTag('meta[property="og:image"]', () => {
+    const meta = document.createElement('meta');
+    meta.setAttribute('property', 'og:image');
+    meta.dataset.cmsManaged = 'true';
+    return meta;
+  }, (element) => {
+    element.setAttribute('content', page.og_image || '');
+  });
+
+  upsertHeadTag('link[rel="canonical"]', () => {
+    const link = document.createElement('link');
+    link.setAttribute('rel', 'canonical');
+    link.dataset.cmsManaged = 'true';
+    return link;
+  }, (element) => {
+    element.setAttribute('href', canonicalUrl);
+  });
+
+  return () => {
+    document.title = previousTitle;
+    document.head
+      .querySelectorAll('[data-cms-managed="true"]')
+      .forEach((element) => element.remove());
+  };
+}
+
 function SectionRenderer({ section }: { section: PageBuilderSection }) {
   const noop = () => { };
   const sanitizedSection = sanitizeSectionUrls(section);
@@ -460,13 +558,17 @@ function FallbackPage({ page }: { page: SEOMetadata }) {
 }
 
 export default function SEOPageViewer({ page, onEdit, onBack, isPublic, pageThemeId }: SEOPageViewerProps) {
-  const rawSections = normalizeSectionsData(page.sections_data);
+  const rawSections = normalizeSectionsData(
+    page.sections_data ?? page.template?.sections_data,
+  );
   const [globalHFSetting, setGlobalHFSetting] = useState<GlobalHFSetting | null>(null);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
 
   useEffect(() => {
     loadActiveGlobalHFSetting().then(setGlobalHFSetting);
   }, []);
+
+  useEffect(() => syncSeoHead(page), [page]);
 
   const sections = useMemo(() => {
     if (!globalHFSetting) return rawSections;

@@ -1,8 +1,18 @@
-import { Transform } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
-import { PageStatus } from '@prisma/client';
+import { Transform } from "class-transformer";
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from "class-validator";
+import { PageStatus } from "@prisma/client";
 
 export class ListPagesQueryDto {
+  @IsOptional()
+  @IsUUID()
+  siteId?: string;
+
   @IsOptional()
   @IsEnum(PageStatus)
   status?: PageStatus;
@@ -15,6 +25,6 @@ export class ListPagesQueryDto {
   @IsOptional()
   @IsString()
   @MaxLength(120)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }) => (typeof value === "string" ? value.trim() : value))
   search?: string;
 }

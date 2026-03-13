@@ -111,6 +111,90 @@ enum ThemeSource {
   @@map("theme_source")
 }
 
+model Site {
+  id            String       @id @default(uuid()) @db.Uuid
+  name          String
+  code          String       @unique
+  defaultLocale String       @default("fr") @map("default_locale")
+  homepagePageKey String     @default("home") @map("homepage_page_key")
+  canonicalStrategy SiteCanonicalStrategy @default(canonical_domain) @map("canonical_strategy")
+  isActive      Boolean      @default(true) @map("is_active")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  domains   SiteDomain[]
+  pages     SeoMetadata[]
+  redirects SeoRedirect[]
+
+  @@map("sites")
+}
+
+model SiteDomain {
+  id                String   @id @default(uuid()) @db.Uuid
+  siteId            String   @map("site_id") @db.Uuid
+  host              String   @unique
+  scheme            String   @default("https")
+  isPrimary         Boolean  @default(false) @map("is_primary")
+  isCanonical       Boolean  @default(false) @map("is_canonical")
+  locale            String?
+  isActive          Boolean  @default(true) @map("is_active")
+  redirectToPrimary Boolean  @default(false) @map("redirect_to_primary")
+  businessOwner     String?  @map("business_owner")
+  technicalOwner    String?  @map("technical_owner")
+  registrar         String?
+  dnsProvider       String?  @map("dns_provider")
+  dnsTarget         String?  @map("dns_target")
+  hostingTarget     String?  @map("hosting_target")
+  verificationMethod DomainVerificationMethod @default(manual) @map("verification_method")
+  verificationStatus DomainVerificationStatus @default(pending) @map("verification_status")
+  verificationToken String?  @map("verification_token")
+  verifiedAt        DateTime? @map("verified_at")
+  sslStatus         DomainSslStatus @default(pending) @map("ssl_status")
+  robotsTxtEnabled  Boolean  @default(true) @map("robots_txt_enabled")
+  sitemapEnabled    Boolean  @default(true) @map("sitemap_enabled")
+  allowIndexing     Boolean  @default(true) @map("allow_indexing")
+  notes             String?
+  goLiveAt          DateTime? @map("go_live_at")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, isActive])
+  @@map("site_domains")
+}
+
+enum SiteCanonicalStrategy {
+  canonical_domain
+  served_domain
+
+  @@map("site_canonical_strategy")
+}
+
+enum DomainVerificationMethod {
+  dns_txt
+  http_file
+  manual
+
+  @@map("domain_verification_method")
+}
+
+enum DomainVerificationStatus {
+  pending
+  verified
+  failed
+
+  @@map("domain_verification_status")
+}
+
+enum DomainSslStatus {
+  pending
+  active
+  issue
+
+  @@map("domain_ssl_status")
+}
+
 model PageTemplate {
   id             String   @id @default(uuid()) @db.Uuid
   name           String
@@ -139,7 +223,8 @@ model PageTemplate {
 
 model SeoMetadata {
   id             String       @id @default(uuid()) @db.Uuid
-  pageKey        String       @unique @map("page_key")
+  siteId         String       @map("site_id") @db.Uuid
+  pageKey        String       @map("page_key")
   title          String?
   description    String?
   keywords       String[]     @default([])
@@ -162,12 +247,15 @@ model SeoMetadata {
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
 
+  site                Site                @relation(fields: [siteId], references: [id], onDelete: Restrict)
   user                User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
   template            PageTemplate?       @relation(fields: [templateId], references: [id], onDelete: SetNull)
   pageContentSections PageContentSection[]
   sourceRedirects     SeoRedirect[]       @relation("SourceRedirects")
   targetRedirects     SeoRedirect[]       @relation("TargetRedirects")
 
+  @@unique([siteId, pageKey])
+  @@index([siteId, status])
   @@index([folder])
   @@map("seo_metadata")
 }
@@ -237,6 +325,7 @@ model MediaFile {
 
 model SeoRedirect {
   id           String   @id @default(uuid()) @db.Uuid
+  siteId       String   @map("site_id") @db.Uuid
   sourcePath   String   @map("source_path")
   targetPath   String   @map("target_path")
   sourcePageId String?  @map("source_page_id") @db.Uuid
@@ -247,10 +336,12 @@ model SeoRedirect {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
+  site       Site         @relation(fields: [siteId], references: [id], onDelete: Restrict)
   sourcePage SeoMetadata? @relation("SourceRedirects", fields: [sourcePageId], references: [id], onDelete: SetNull)
   targetPage SeoMetadata? @relation("TargetRedirects", fields: [targetPageId], references: [id], onDelete: SetNull)
   creator    User?        @relation(fields: [createdBy], references: [id], onDelete: SetNull)
 
+  @@index([siteId, sourcePath, isActive])
   @@index([sourcePath, isActive])
   @@map("seo_redirects")
 }
